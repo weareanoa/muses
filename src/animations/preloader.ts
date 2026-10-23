@@ -11,12 +11,13 @@ export function initPreloader(preloaderId: string = 'brand-preloader'): Preloade
   }
 
   const preloader = document.getElementById(preloaderId);
-  const logoContainer = document.getElementById('preloader-logo-container');
-  const groupContainer = document.getElementById('preloader-group-container');
+  const titleContainer = document.getElementById('preloader-title-container');
+  const musesTitle = document.getElementById('preloader-muses-title');
+  const metaWrap = document.getElementById('preloader-meta-wrap');
   const progressBar = document.getElementById('preloader-progress-bar');
   const skipBtn = document.getElementById('skip-preloader');
 
-  if (!preloader || !logoContainer) {
+  if (!preloader || !titleContainer || !musesTitle) {
     return { skip: () => {}, destroy: () => {} };
   }
 
@@ -32,7 +33,7 @@ export function initPreloader(preloaderId: string = 'brand-preloader'): Preloade
     if (tl) tl.kill();
     gsap.to(preloader, {
       opacity: 0,
-      duration: fast ? 0.25 : 0.6,
+      duration: fast ? 0.2 : 0.4,
       ease: 'power2.inOut',
       onComplete: () => {
         preloader.style.display = 'none';
@@ -51,54 +52,79 @@ export function initPreloader(preloaderId: string = 'brand-preloader'): Preloade
         progressBar,
         {
           width: '100%',
-          duration: 3.2,
-          ease: 'none',
+          duration: 1.3,
+          ease: 'power1.inOut',
         },
         0
       );
     }
 
     tl.fromTo(
-      logoContainer,
-      { scale: 0.9, opacity: 0, y: 15 },
-      { scale: 1, opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
-      0.1
+      musesTitle,
+      { scale: 0.9, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.6, ease: 'power3.out' },
+      0
     );
 
-    if (groupContainer) {
+    if (metaWrap) {
       tl.fromTo(
-        groupContainer,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' },
-        0.3
+        metaWrap,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+        0.2
       );
     }
 
-    tl.to({}, { duration: 1.5 });
-
-    tl.to(
-      logoContainer,
-      {
-        scale: 0.44,
-        y: -130,
-        duration: 1.2,
-        ease: 'power2.inOut',
-      }
-    );
-
-    if (groupContainer) {
+    if (metaWrap) {
       tl.to(
-        groupContainer,
+        metaWrap,
         {
           opacity: 0,
-          scale: 0.96,
-          y: 15,
-          duration: 0.8,
+          scale: 0.9,
+          y: -10,
+          duration: 0.25,
           ease: 'power2.in',
         },
-        '<+=0.1'
+        1.2
       );
     }
+
+    tl.to(
+      titleContainer,
+      {
+        y: () => {
+          const heroTitle = document.getElementById('hero-muses-title');
+          if (heroTitle && musesTitle) {
+            const heroRect = heroTitle.getBoundingClientRect();
+            const titleRect = musesTitle.getBoundingClientRect();
+            return (heroRect.top + heroRect.height / 2) - (titleRect.top + titleRect.height / 2);
+          }
+          return -150;
+        },
+        scale: () => {
+          const heroTitle = document.getElementById('hero-muses-title');
+          if (heroTitle && musesTitle) {
+            const heroRect = heroTitle.getBoundingClientRect();
+            const titleRect = musesTitle.getBoundingClientRect();
+            return Math.max(0.3, heroRect.height / titleRect.height);
+          }
+          return 0.52;
+        },
+        duration: 0.8,
+        ease: 'power3.inOut',
+      },
+      1.2
+    );
+
+    tl.to(
+      preloader,
+      {
+        opacity: 0,
+        duration: 0.45,
+        ease: 'power2.inOut',
+      },
+      1.55
+    );
   }, preloader);
 
   const handleSkip = () => finish(true);

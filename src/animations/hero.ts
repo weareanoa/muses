@@ -137,6 +137,24 @@ export function initHeroAnimation(rootContainer: HTMLElement | null): HeroAnimat
     });
   });
 
+  function runEntrance() {
+    gsap.from(cards, {
+      opacity: 0,
+      y: '+=50',
+      stagger: 0.04,
+      duration: 0.7,
+      ease: 'power2.out',
+      clearProps: 'opacity,y',
+    });
+  }
+
+  const preloaderEl = document.getElementById('brand-preloader');
+  if (preloaderEl && preloaderEl.style.display !== 'none') {
+    window.addEventListener('preloader-complete', runEntrance, { once: true });
+  } else {
+    runEntrance();
+  }
+
   const ctx = gsap.context(() => {
     if (window.innerWidth >= 640 && arcTrack) {
       ScrollTrigger.create({
