@@ -1,261 +1,611 @@
 [
   {
-    "id": "soobin",
-    "stageName": "Soobin",
-    "fullName": "Choi Soo-bin",
-    "hangul": "최수빈",
-    "role": "Leader, Vocalist",
-    "birthDate": "2000-12-05",
-    "zodiac": "Sagittarius",
-    "bloodType": "A",
-    "height": "186 cm (6’1″)",
-    "weight": "69 kg (152 lbs)",
-    "mbti": "ISFP-A",
-    "emoticon": "🐰",
-    "animal": "Kelinci (Bunny)",
-    "nicknames": ["Giant Bunny", "Sloth", "Flower Prince"],
-    "photoThumb": "/images/members/soobin.webp",
-    "photoFull": "/images/members/soobin.webp",
-    "photoFrame": "/images/members/soobin-frame.webp",
-    "photoStory1": "/images/members/soobin-story1.webp",
-    "photoCloseup": "/images/members/soobin-closeup.webp",
-    "editorialDate": "Dec 05",
-    "editorialSubtitle": "The gentle anchor & modern youth leader",
-    "codeNumber": "12 05 00",
-    "quotePart1": "Please...",
-    "quotePart2": "Find tomorrow with me",
-    "biodata": [
-      { "label": "Stage Name", "value": "Soobin (수빈)" },
-      { "label": "Birth Name", "value": "Choi Soo Bin (최수빈)" },
-      { "label": "English Name", "value": "Steve Choi" },
-      { "label": "Birthday", "value": "December 5th, 2000" },
-      { "label": "Zodiac Sign", "value": "Sagittarius" },
-      { "label": "Height", "value": "186 cm (6’1″)" },
-      { "label": "Weight", "value": "69 kg (152 lbs)" },
-      { "label": "Blood Type", "value": "A" },
-      { "label": "MBTI Type", "value": "ISFP-A" },
-      { "label": "Nationality", "value": "Korean" },
-      { "label": "Representative Emoticon", "value": "🐰" },
-      { "label": "Instagram", "value": "@page.soobin", "link": "https://www.instagram.com/page.soobin/?hl=en" },
-      { "label": "Fandom Name", "value": "Soobrangdan / Soobders" }
-    ],
-    "story01": "Member tertinggi di grup (186 cm) dan salah satu idol tertinggi generasi ke-4. Dikenal sebagai MC legendaris di KBS Music Bank bersama Arin Oh My Girl.",
-    "story02": "Suka banget sama susu almond, roti, dan tteokbokki. Pernah memelihara landak mini bernama Odi yang sangat dicintai oleh MOA.",
-    "themeColor": "#00e5ff",
-    "vocalRole": "Sub-vocalist with delicate falsetto & warm emotional tone",
-    "tmi": [
-      "Suka banget sama susu almond, roti, dan tteokbokki.",
-      "Pernah memelihara landak mini bernama Odi yang sangat dicintai MOA.",
-      "Member tertinggi di grup (186 cm) dan salah satu idol tertinggi generasi ke-4.",
-      "Dikenal sebagai MC legendaris di KBS Music Bank bersama Arin Oh My Girl."
-    ]
-  },
-  {
-    "id": "yeonjun",
-    "stageName": "Yeonjun",
-    "fullName": "Choi Yeon-jun",
-    "hangul": "최연준",
-    "role": "Rapper, Dancer, Vocalist",
-    "birthDate": "1999-09-13",
+    "id": "member-01",
+    "stageName": "Zia",
+    "fullName": "Zia Azzahra",
+    "role": "Sub-Vocalist, Maknae",
+    "museTitle": "Muse of Erato · The Lyric Heart",
+    "birthDate": "2004-09-18",
     "zodiac": "Virgo",
-    "bloodType": "A",
-    "height": "181.5 cm (5’11”)",
-    "weight": "65 kg (143 lbs)",
-    "mbti": "ENFP",
-    "emoticon": "🦊",
-    "animal": "Rubah (Desert Fox)",
-    "nicknames": ["BigHit Legendary Trainee", "Yeonjunie", "4th Gen It Boy"],
-    "photoThumb": "/images/members/yeonjun.webp",
-    "photoFull": "/images/members/yeonjun.webp",
-    "photoFrame": "/images/members/yeonjun-frame.webp",
-    "photoStory1": "/images/members/yeonjun-story1.webp",
-    "photoCloseup": "/images/members/yeonjun-closeup.webp",
-    "editorialDate": "Sep 13",
-    "editorialSubtitle": "The charismatic virtuoso & runway icon",
-    "codeNumber": "09 13 99",
-    "quotePart1": "Watch me...",
-    "quotePart2": "Cross every boundary",
-    "biodata": [
-      { "label": "Stage Name", "value": "Yeonjun (연준)" },
-      { "label": "Birth Name", "value": "Choi Yeon Jun (최연준)" },
-      { "label": "English Name", "value": "Daniel Choi" },
-      { "label": "Birthday", "value": "September 13th, 1999" },
-      { "label": "Zodiac Sign", "value": "Virgo" },
-      { "label": "Chinese Zodiac Sign", "value": "Hare/Rabbit" },
-      { "label": "Height", "value": "181.5 cm (5’11”)" },
-      { "label": "Weight", "value": "65 kg (143 lbs)" },
-      { "label": "Blood Type", "value": "A" },
-      { "label": "MBTI Type", "value": "ENFP (previously ENFP, ESFP)" },
-      { "label": "Nationality", "value": "Korean" },
-      { "label": "Representative Emoticon", "value": "🦊" },
-      { "label": "Instagram", "value": "@yawnzzn", "link": "https://www.instagram.com/yawnzzn/" },
-      { "label": "Fandom Name", "value": "Moawajjunie" }
-    ],
-    "story01": "Dijuluki 'BigHit's Legendary Trainee' karena selalu ranking 1 di rap, dance, dan vocal bulanan. Debut mixtape solo pertamanya berjudul 'GGUM' dengan koreografi viral permen karet.",
-    "story02": "Sangat tertarik pada dunia fashion dan pernah debut sebagai runway model di New York Fashion Week. Pencipta logo dan gestur tangan resmi TXT yang ikonik.",
-    "themeColor": "#F8138D",
-    "vocalRole": "Main rapper & versatile vocalist with unique charismatic vocal fry",
-    "tmi": [
-      "Dijuluki 'BigHit's Legendary Trainee' karena selalu ranking 1 di rap, dance, dan vocal bulanan.",
-      "Debut mixtape solo pertamanya berjudul 'GGUM' dengan koreografi viral permen karet.",
-      "Sangat tertarik pada dunia fashion dan pernah debut sebagai runway model di New York Fashion Week.",
-      "Pencipta logo dan gestur tangan resmi TXT yang ikonik."
-    ]
-  },
-  {
-    "id": "beomgyu",
-    "stageName": "Beomgyu",
-    "fullName": "Choi Beom-gyu",
-    "hangul": "최범규",
-    "role": "Vocalist, Dancer, Visual",
-    "birthDate": "2001-03-13",
-    "zodiac": "Pisces",
     "bloodType": "AB",
-    "height": "180 cm (5’11”) / Real: 179 cm (5’10.5″)",
-    "weight": "55 kg (121 lbs)",
-    "mbti": "INFP",
-    "emoticon": "🐻",
-    "animal": "Beruang (Bear / Beom-tori)",
-    "nicknames": ["Beom-tori", "Daegu Prince", "Mood Maker"],
-    "photoThumb": "/images/members/beomgyu.webp",
-    "photoFull": "/images/members/beomgyu.webp",
-    "photoFrame": "/images/members/beomgyu-frame.webp",
-    "photoStory1": "/images/members/beomgyu-story1.webp",
-    "photoCloseup": "/images/members/beomgyu-closeup.webp",
-    "editorialDate": "Mar 13",
-    "editorialSubtitle": "The poetic resonance & acoustic romantic",
-    "codeNumber": "03 13 01",
-    "quotePart1": "Whisper...",
-    "quotePart2": "Through the acoustic haze",
-    "biodata": [
-      { "label": "Stage Name", "value": "Beomgyu (범규)" },
-      { "label": "Birth Name", "value": "Choi Beom-gyu (최범규)" },
-      { "label": "English Name", "value": "Ben Choi" },
-      { "label": "Birthday", "value": "March 13th, 2001" },
-      { "label": "Zodiac Sign", "value": "Pisces" },
-      { "label": "Chinese Zodiac Sign", "value": "Snake" },
-      { "label": "Height", "value": "Official: 180 cm (5’11”) / Real: 179 cm (5’10.5″)" },
-      { "label": "Weight", "value": "55 kg (121 lbs)" },
-      { "label": "Blood Type", "value": "AB" },
-      { "label": "MBTI Type", "value": "INFP (previously ENFJ, INFJ, ISFJ, ISFP)" },
-      { "label": "Nationality", "value": "Korean" },
-      { "label": "Representative Emoticon", "value": "🐻 / 🌰" },
-      { "label": "Instagram", "value": "@bamgyuuuu", "link": "https://www.instagram.com/bamgyuuuu/" },
-      { "label": "Fandom Name", "value": "Bamtori / Beombadan" }
+    "height": "164 cm",
+    "mbti": "ENFP",
+    "emoticon": "◈",
+    "gradientStart": "#F8BBD0",
+    "gradientEnd": "#EC407A",
+    "themeColor": "#EC407A",
+    "bgTint": "#FCE4EC",
+    "icon": "◈",
+    "nicknames": [
+      "Baby Zia",
+      "Sunshine Maknae"
     ],
-    "story01": "Pemain gitar akustik & elektrik handal dan produser lagu 'Maze in the Mirror'. Mood maker grup yang selalu menceriakan suasana di backstage maupun reality show.",
-    "story02": "Sangat menyukai aroma lilin aromaterapi dan lagu-lagu bergenre indie-pop. Punya burung beo peliharaan bernama Toto saat masih tinggal di Daegu.",
-    "themeColor": "#e5a93c",
-    "vocalRole": "Acoustic rhythm guitar, deep baritone charm & emotive vocals",
+    "photoThumb": "/images/members/portrait_pink.png",
+    "photoFull": "/images/members/portrait_pink.png",
+    "photoFrame": "/images/members/portrait_pink.png",
+    "photoStory1": "/images/members/portrait_pink.png",
+    "photoCloseup": "/images/members/portrait_pink.png",
+    "editorialDate": "SEP 18",
+    "editorialSubtitle": "Energi manis dan pesona termuda yang selalu mencerahkan suasana MUSES.",
+    "codeNumber": "01 09 04",
+    "quotePart1": "Joyful beginnings...",
+    "quotePart2": "Every melody brings a smile.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Zia"
+      },
+      {
+        "label": "Full Name",
+        "value": "Zia Azzahra"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Erato · The Lyric Heart"
+      },
+      {
+        "label": "Birthday",
+        "value": "18 September 2004"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Virgo"
+      },
+      {
+        "label": "Height",
+        "value": "164 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "AB"
+      },
+      {
+        "label": "MBTI",
+        "value": "ENFP"
+      },
+      {
+        "label": "Position",
+        "value": "Sub-Vocalist, Maknae"
+      },
+      {
+        "label": "Instagram",
+        "value": "@zia.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "◈ Pink Crystal"
+      }
+    ],
+    "story01": "Member termuda MUSES dengan aura ceria yang menular. Zia selalu membawa tawa di ruang latihan dan menghadirkan vokal manis penuh kehangatan.",
+    "story02": "Dikenal dengan gaya panggung yang menggemaskan dan interaksi tulus bersama para penggemar.",
+    "vocalRole": "Sweet lyric tone with expressive bright dynamics",
     "tmi": [
-      "Pemain gitar akustik & elektrik handal dan produser lagu 'Maze in the Mirror'.",
-      "Mood maker grup yang selalu menceriakan suasana di backstage maupun reality show.",
-      "Punya burung beo peliharaan bernama Toto saat masih tinggal di Daegu.",
-      "Sangat menyukai aroma lilin aromaterapi dan lagu-lagu bergenre indie-pop."
+      "Suka membawa boneka kelinci kecil saat bepergian tur.",
+      "Paling suka es krim stroberi dan minuman matcha manis.",
+      "Sering merekam video keseharian di belakang panggung."
     ]
   },
   {
-    "id": "taehyun",
-    "stageName": "Taehyun",
-    "fullName": "Kang Tae-hyun",
-    "hangul": "강태현",
-    "role": "Main Vocalist, Acrobatic",
-    "birthDate": "2002-02-05",
-    "zodiac": "Aquarius",
+    "id": "member-02",
+    "stageName": "Aria",
+    "fullName": "Aria Kirana",
+    "role": "Leader, Lead Vocalist",
+    "museTitle": "Muse of Polyhymnia · The Serene Voice",
+    "birthDate": "2001-04-12",
+    "zodiac": "Aries",
     "bloodType": "A",
-    "height": "177 cm (5’10”)",
-    "weight": "63 kg (138.8 lbs)",
-    "mbti": "ESTP",
-    "emoticon": "🐿️",
-    "animal": "Tupai & Kucing (Squirrel / Cat)",
-    "nicknames": ["Terry", "English King", "Passion Taehyun"],
-    "photoThumb": "/images/members/taehyun.webp",
-    "photoFull": "/images/members/taehyun.webp",
-    "photoFrame": "/images/members/taehyun-frame.webp",
-    "photoStory1": "/images/members/taehyun-story1.webp",
-    "photoCloseup": "/images/members/taehyun-closeup.webp",
-    "editorialDate": "Feb 05",
-    "editorialSubtitle": "The razor intellect & soaring vocal belter",
-    "codeNumber": "02 05 02",
-    "quotePart1": "Listen...",
-    "quotePart2": "Passion never tells a lie",
-    "biodata": [
-      { "label": "Stage Name", "value": "Taehyun (태현)" },
-      { "label": "Birth Name", "value": "Kang Tae Hyun (강태현)" },
-      { "label": "English Name", "value": "Terry" },
-      { "label": "Birthday", "value": "February 5th, 2002" },
-      { "label": "Zodiac Sign", "value": "Aquarius" },
-      { "label": "Chinese Zodiac", "value": "Snake" },
-      { "label": "Height", "value": "177 cm (5’10”)" },
-      { "label": "Weight", "value": "63 kg (138.8 lbs)" },
-      { "label": "Blood Type", "value": "A" },
-      { "label": "MBTI Type", "value": "ESTP" },
-      { "label": "Nationality", "value": "Korean" },
-      { "label": "Representative Emoticon", "value": "🐿️" },
-      { "label": "Instagram", "value": "@you.th", "link": "https://www.instagram.com/you.th" },
-      { "label": "Fandom Name", "value": "Solomon" }
+    "height": "168 cm",
+    "mbti": "ENFJ",
+    "emoticon": "✦",
+    "gradientStart": "#B3E5FC",
+    "gradientEnd": "#29B6F6",
+    "themeColor": "#0288D1",
+    "bgTint": "#E1F5FE",
+    "icon": "✦",
+    "nicknames": [
+      "Kirana",
+      "Captain Aria"
     ],
-    "story01": "Mampu menyanyikan nada tinggi dengan stabil bahkan saat menari intens. Kidal dan terkenal sangat logis, cerdas, serta selalu berpikir rasional (F-killer).",
-    "story02": "Pernah menjadi atlet tinju saat remaja dan gemar berolahraga kekuatan. Sangat fasih berbahasa Inggris dan belajar sulap secara otodidak.",
-    "themeColor": "#ef4444",
-    "vocalRole": "Main vocal with explosive high-range belting and clean vocal agility",
+    "photoThumb": "/images/members/portrait_blue.png",
+    "photoFull": "/images/members/portrait_blue.png",
+    "photoFrame": "/images/members/portrait_blue.png",
+    "photoStory1": "/images/members/portrait_blue.png",
+    "photoCloseup": "/images/members/portrait_blue.png",
+    "editorialDate": "APR 12",
+    "editorialSubtitle": "The charismatic anchor and steadfast heart of MUSES.",
+    "codeNumber": "02 04 01",
+    "quotePart1": "Together we ignite...",
+    "quotePart2": "Every stage is our dawn.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Aria"
+      },
+      {
+        "label": "Full Name",
+        "value": "Aria Kirana"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Polyhymnia · The Serene Voice"
+      },
+      {
+        "label": "Birthday",
+        "value": "12 April 2001"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Aries"
+      },
+      {
+        "label": "Height",
+        "value": "168 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "A"
+      },
+      {
+        "label": "MBTI",
+        "value": "ENFJ"
+      },
+      {
+        "label": "Position",
+        "value": "Leader, Lead Vocalist"
+      },
+      {
+        "label": "Instagram",
+        "value": "@aria.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "✦ Sparkle Star"
+      }
+    ],
+    "story01": "Memimpin MUSES dengan visi hangat dan dedikasi penuh. Aria memastikan energi dan harmoni setiap member terjaga sebelum melangkah ke panggung.",
+    "story02": "Dikenal dengan vokal melodis yang jernih dan kemampuan improvisasi panggung yang memukau penonton.",
+    "vocalRole": "Warm lyric soprano with commanding stage presence",
     "tmi": [
-      "Kidal dan terkenal sangat logis, cerdas, serta selalu berpikir rasional (F-killer).",
-      "Pernah menjadi atlet tinju saat remaja dan gemar berolahraga kekuatan.",
-      "Sangat fasih berbahasa Inggris dan belajar sulap secara otodidak.",
-      "Mampu menyanyikan nada tinggi dengan stabil bahkan saat menari intens."
+      "Gemar menyeduh teh melati sebelum setiap latihan vokal.",
+      "Selalu membawa jurnal kecil berisi sketsa ide lagu baru.",
+      "Kolektor piringan hitam klasik dan menyukai aroma buku tua."
     ]
   },
   {
-    "id": "hueningkai",
-    "stageName": "Hueningkai",
-    "fullName": "Kai Kamal Huening",
-    "hangul": "휴닝카이",
-    "role": "Main Vocalist, Visual, Maknae",
-    "birthDate": "2002-08-14",
+    "id": "member-03",
+    "stageName": "Clara",
+    "fullName": "Clara Renata",
+    "role": "Main Vocalist",
+    "museTitle": "Muse of Euterpe · The Melody Weaver",
+    "birthDate": "2002-08-20",
+    "zodiac": "Leo",
+    "bloodType": "O",
+    "height": "165 cm",
+    "mbti": "ISFP",
+    "emoticon": "✿",
+    "gradientStart": "#FFF59D",
+    "gradientEnd": "#FBC02D",
+    "themeColor": "#F57F17",
+    "bgTint": "#FFFDE7",
+    "icon": "✿",
+    "nicknames": [
+      "Renata",
+      "Golden Voice"
+    ],
+    "photoThumb": "/images/members/portrait_yellow.png",
+    "photoFull": "/images/members/portrait_yellow.png",
+    "photoFrame": "/images/members/portrait_yellow.png",
+    "photoStory1": "/images/members/portrait_yellow.png",
+    "photoCloseup": "/images/members/portrait_yellow.png",
+    "editorialDate": "AUG 20",
+    "editorialSubtitle": "A powerhouse vocal resonance that reaches the soul.",
+    "codeNumber": "03 08 02",
+    "quotePart1": "Sing through the wind...",
+    "quotePart2": "Echoing every heartbeat.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Clara"
+      },
+      {
+        "label": "Full Name",
+        "value": "Clara Renata"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Euterpe · The Melody Weaver"
+      },
+      {
+        "label": "Birthday",
+        "value": "20 Agustus 2002"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Leo"
+      },
+      {
+        "label": "Height",
+        "value": "165 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "O"
+      },
+      {
+        "label": "MBTI",
+        "value": "ISFP"
+      },
+      {
+        "label": "Position",
+        "value": "Main Vocalist"
+      },
+      {
+        "label": "Instagram",
+        "value": "@clara.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "✿ Golden Blossom"
+      }
+    ],
+    "story01": "Dianugerahi jangkauan vokal luas dan timbre emosional. Bagi Clara, setiap notasi dalam lagu adalah pesan rahasia yang menghangatkan jiwa.",
+    "story02": "Sering membawakan bagian klimaks emosional lagu-lagu utama MUSES dengan teknik vokal yang sangat stabil.",
+    "vocalRole": "Rich dramatic mezzo-soprano with soaring high registers",
+    "tmi": [
+      "Paling suka camilan rasa vanila dan madu.",
+      "Bisa memainkan piano klasik tanpa partitur.",
+      "Pencinta kucing dan suka mengeringkan bunga liar."
+    ]
+  },
+  {
+    "id": "member-04",
+    "stageName": "Faril",
+    "fullName": "Faril Melpomene",
+    "role": "Center, Lead Vocalist",
+    "museTitle": "Muse of Melpomene · The Dramatic Artist",
+    "birthDate": "2003-05-15",
+    "zodiac": "Taurus",
+    "bloodType": "B",
+    "height": "166 cm",
+    "mbti": "INFJ",
+    "emoticon": "☾",
+    "gradientStart": "#CE93D8",
+    "gradientEnd": "#8E24AA",
+    "themeColor": "#8E24AA",
+    "bgTint": "#F3E5F5",
+    "icon": "☾",
+    "nicknames": [
+      "Faril",
+      "The Muse"
+    ],
+    "photoThumb": "/images/members/card4_clean_faril.png",
+    "photoFull": "/images/members/card4_clean_faril.png",
+    "photoFrame": "/images/members/card4_clean_faril.png",
+    "photoStory1": "/images/members/card4_clean_faril.png",
+    "photoCloseup": "/images/members/card4_clean_faril.png",
+    "editorialDate": "MAY 15",
+    "editorialSubtitle": "Center karismatik dengan ekspresi panggung teater yang mendalam.",
+    "codeNumber": "04 05 03",
+    "quotePart1": "Drama and passion...",
+    "quotePart2": "Every heartbeat tells a story.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Faril"
+      },
+      {
+        "label": "Full Name",
+        "value": "Faril Melpomene"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Melpomene · The Dramatic Artist"
+      },
+      {
+        "label": "Birthday",
+        "value": "15 Mei 2003"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Taurus"
+      },
+      {
+        "label": "Height",
+        "value": "166 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "B"
+      },
+      {
+        "label": "MBTI",
+        "value": "INFJ"
+      },
+      {
+        "label": "Position",
+        "value": "Center, Lead Vocalist"
+      },
+      {
+        "label": "Instagram",
+        "value": "@faril.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "☾ Lilac Butterfly"
+      }
+    ],
+    "story01": "Sebagai center MUSES, Faril memadukan kekuatan vokal teater dengan penghayatan emosi yang sangat memukau di atas panggung.",
+    "story02": "Sosok anggun dengan simbol kupu-kupu ungu yang merepresentasikan metamorfosis dan keindahan seni pertunjukan.",
+    "vocalRole": "Deep expressive tone with soulful resonance and theatrical flair",
+    "tmi": [
+      "Menyukai seni teater klasik dan sastra drama.",
+      "Sangat menyukai warna lilac dan motif kupu-kupu.",
+      "Paling teliti saat menata konsep visual panggung grup."
+    ]
+  },
+  {
+    "id": "member-05",
+    "stageName": "Stella",
+    "fullName": "Stella Maheswari",
+    "role": "Main Dancer, Lead Rapper",
+    "museTitle": "Muse of Terpsichore · The Dynamic Dancer",
+    "birthDate": "2002-11-05",
+    "zodiac": "Scorpio",
+    "bloodType": "B",
+    "height": "170 cm",
+    "mbti": "ENTP",
+    "emoticon": "✧",
+    "gradientStart": "#A5D6A7",
+    "gradientEnd": "#43A047",
+    "themeColor": "#2E7D32",
+    "bgTint": "#E8F5E9",
+    "icon": "✧",
+    "nicknames": [
+      "Mahes",
+      "Dancing Flame"
+    ],
+    "photoThumb": "/images/members/portrait_green.png",
+    "photoFull": "/images/members/portrait_green.png",
+    "photoFrame": "/images/members/portrait_green.png",
+    "photoStory1": "/images/members/portrait_green.png",
+    "photoCloseup": "/images/members/portrait_green.png",
+    "editorialDate": "NOV 05",
+    "editorialSubtitle": "Precision in motion, fierce cadence in rhythm.",
+    "codeNumber": "05 11 02",
+    "quotePart1": "Electric movements...",
+    "quotePart2": "Redefining every beat.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Stella"
+      },
+      {
+        "label": "Full Name",
+        "value": "Stella Maheswari"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Terpsichore · The Dynamic Dancer"
+      },
+      {
+        "label": "Birthday",
+        "value": "05 November 2002"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Scorpio"
+      },
+      {
+        "label": "Height",
+        "value": "170 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "B"
+      },
+      {
+        "label": "MBTI",
+        "value": "ENTP"
+      },
+      {
+        "label": "Position",
+        "value": "Main Dancer, Lead Rapper"
+      },
+      {
+        "label": "Instagram",
+        "value": "@stella.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "✧ Emerald Radiance"
+      }
+    ],
+    "story01": "Setiap gerakan tarinya penuh ketajaman dan daya pikat. Stella sering menyusun koreografi utama untuk nomor panggung MUSES.",
+    "story02": "Kombinasi kemampuan rap ritmis dan kelenturan tubuh menjadikannya magnet panggung setiap pertunjukan dimulai.",
+    "vocalRole": "Rhythmic flow with sharp articulation and dynamic delivery",
+    "tmi": [
+      "Pernah menjuarai kompetisi tari modern nasional.",
+      "Suka musik perkusi dinamis dan funk kontemporer.",
+      "Penggemar jaket oversized dan street fashion."
+    ]
+  },
+  {
+    "id": "member-06",
+    "stageName": "Reva",
+    "fullName": "Reva Calista",
+    "role": "Lead Dancer, Sub-Vocalist",
+    "museTitle": "Muse of Thalia · The Radiance Blossom",
+    "birthDate": "2004-03-19",
+    "zodiac": "Pisces",
+    "bloodType": "O",
+    "height": "169 cm",
+    "mbti": "ESFP",
+    "emoticon": "✺",
+    "gradientStart": "#FFCDD2",
+    "gradientEnd": "#E53935",
+    "themeColor": "#C62828",
+    "bgTint": "#FFEBEE",
+    "icon": "✺",
+    "nicknames": [
+      "Calista",
+      "Crimson Spark"
+    ],
+    "photoThumb": "/images/members/portrait_red.png",
+    "photoFull": "/images/members/portrait_red.png",
+    "photoFrame": "/images/members/portrait_red.png",
+    "photoStory1": "/images/members/portrait_red.png",
+    "photoCloseup": "/images/members/portrait_red.png",
+    "editorialDate": "MAR 19",
+    "editorialSubtitle": "Langkah penuh semangat yang memancarkan kilau panggung merah merona.",
+    "codeNumber": "06 03 04",
+    "quotePart1": "Spark in the dark...",
+    "quotePart2": "Dancing under the red spotlight.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Reva"
+      },
+      {
+        "label": "Full Name",
+        "value": "Reva Calista"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Thalia · The Radiance Blossom"
+      },
+      {
+        "label": "Birthday",
+        "value": "19 Maret 2004"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Pisces"
+      },
+      {
+        "label": "Height",
+        "value": "169 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "O"
+      },
+      {
+        "label": "MBTI",
+        "value": "ESFP"
+      },
+      {
+        "label": "Position",
+        "value": "Lead Dancer, Sub-Vocalist"
+      },
+      {
+        "label": "Instagram",
+        "value": "@reva.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "✺ Crimson Spark"
+      }
+    ],
+    "story01": "Membawa energi ceria dan keanggunan gerakan dalam satu tarikan napas. Reva selalu tampil penuh percaya diri dengan senyum memikat.",
+    "story02": "Sangat mahir dalam sinkronisasi tarian grup dan menjaga tempo penampilan panggung tetap bersemangat.",
+    "vocalRole": "Lively melodic vocal with cheerful stage charisma",
+    "tmi": [
+      "Suka membuat aksesori pita rambut buatan tangan.",
+      "Paling cepat menghafal koreografi baru di grup.",
+      "Suka buah beri segar dan kue tart stroberi."
+    ]
+  },
+  {
+    "id": "member-07",
+    "stageName": "Maya",
+    "fullName": "Maya Danastri",
+    "role": "Main Rapper, Sub-Vocalist",
+    "museTitle": "Muse of Calliope · The Epic Cadence",
+    "birthDate": "2003-07-28",
     "zodiac": "Leo",
     "bloodType": "A",
-    "height": "183 cm (6’0″)",
-    "weight": "74-75 kg (~164 lbs)",
-    "mbti": "ISTP",
-    "emoticon": "🐧",
-    "animal": "Penguin & Unicorn",
-    "nicknames": ["NingNing", "Hyuka", "Diamond Maknae"],
-    "photoThumb": "/images/members/hueningkai.webp",
-    "photoFull": "/images/members/hueningkai.webp",
-    "photoFrame": "/images/members/hueningkai-frame.webp",
-    "photoStory1": "/images/members/hueningkai-story1.webp",
-    "photoCloseup": "/images/members/hueningkai-closeup.webp",
-    "editorialDate": "Aug 14",
-    "editorialSubtitle": "The crystalline tenor & diamond prodigy",
-    "codeNumber": "08 14 02",
-    "quotePart1": "Forever...",
-    "quotePart2": "Our youthful melody never fades",
-    "biodata": [
-      { "label": "Stage Name", "value": "Hueningkai (휴닝카이)" },
-      { "label": "Birth Name", "value": "Kai Kamal Huening" },
-      { "label": "Korean Name", "value": "Jung Hawon (정하원)" },
-      { "label": "Chinese Name", "value": "Xiuning Kai (休宁凯)" },
-      { "label": "Birthday", "value": "August 14th, 2002" },
-      { "label": "Zodiac Sign", "value": "Leo" },
-      { "label": "Chinese Zodiac", "value": "Horse" },
-      { "label": "Height", "value": "183 cm (6’0″)" },
-      { "label": "Weight", "value": "74-75 kg (~164 lbs)" },
-      { "label": "Blood Type", "value": "A" },
-      { "label": "MBTI Type", "value": "ISTP (His previous were ENFP & INFJ)" },
-      { "label": "Nationality", "value": "Korean-American" },
-      { "label": "Representative Emoticon", "value": "🐧" },
-      { "label": "Fandom Name", "value": "Ningdungie" }
+    "height": "166 cm",
+    "mbti": "ESTP",
+    "emoticon": "❖",
+    "gradientStart": "#D7CCC8",
+    "gradientEnd": "#8D6E63",
+    "themeColor": "#5D4037",
+    "bgTint": "#EFEBE9",
+    "icon": "❖",
+    "nicknames": [
+      "Dana",
+      "Bronze Poet"
     ],
-    "story01": "Lahir di Honolulu, Hawaii, dan merupakan idol asing pertama yang debut di BigHit Music. Mahir memainkan berbagai alat musik: piano, drum, gitar akustik, dan flute.",
-    "story02": "Kolektor setia boneka plushie lucu dengan puluhan koleksi boneka di kamarnya. Memiliki tawa lumba-lumba yang sangat khas dan menular ke semua member.",
-    "themeColor": "#a855f7",
-    "vocalRole": "Multi-instrumentalist (piano, drum, guitar) with crystalline high tenor",
+    "photoThumb": "/images/members/portrait_brown.png",
+    "photoFull": "/images/members/portrait_brown.png",
+    "photoFrame": "/images/members/portrait_brown.png",
+    "photoStory1": "/images/members/portrait_brown.png",
+    "photoCloseup": "/images/members/portrait_brown.png",
+    "editorialDate": "JUL 28",
+    "editorialSubtitle": "Bold lyricism sculpted with deep bronze cadence.",
+    "codeNumber": "07 07 03",
+    "quotePart1": "Words into power...",
+    "quotePart2": "Resonating across every stage.",
+    "biodata": [
+      {
+        "label": "Stage Name",
+        "value": "Maya"
+      },
+      {
+        "label": "Full Name",
+        "value": "Maya Danastri"
+      },
+      {
+        "label": "Role",
+        "value": "Muse of Calliope · The Epic Cadence"
+      },
+      {
+        "label": "Birthday",
+        "value": "28 Juli 2003"
+      },
+      {
+        "label": "Zodiac Sign",
+        "value": "Leo"
+      },
+      {
+        "label": "Height",
+        "value": "166 cm"
+      },
+      {
+        "label": "Blood Type",
+        "value": "A"
+      },
+      {
+        "label": "MBTI",
+        "value": "ESTP"
+      },
+      {
+        "label": "Position",
+        "value": "Main Rapper, Sub-Vocalist"
+      },
+      {
+        "label": "Instagram",
+        "value": "@maya.muses",
+        "link": "https://instagram.com"
+      },
+      {
+        "label": "Signature Icon",
+        "value": "❖ Bronze Crest"
+      }
+    ],
+    "story01": "Penulis bait rap dan lirik naratif di lagu-lagu MUSES. Maya memiliki intonasi vokal khas bernada hangat yang kuat.",
+    "story02": "Energi panggungnya tak pernah padam, mampu menyulut riuh penonton hanya dengan satu seruan bait lagu.",
+    "vocalRole": "Warm low-register cadence with sharp poetic rhythm",
     "tmi": [
-      "Lahir di Honolulu, Hawaii, dan merupakan idol asing pertama yang debut di BigHit Music.",
-      "Mahir memainkan berbagai alat musik: piano, drum, gitar akustik, dan flute.",
-      "Kolektor setia boneka plushie lucu (punya lusinan koleksi boneka di kamarnya).",
-      "Memiliki tawa lumba-lumba yang sangat khas dan menular ke semua member."
+      "Menulis lirik sejak masa sekolah menengah.",
+      "Suka kopi arabika hangat dan musik folk jazz.",
+      "Kolektor topi baret dan kacamata vintage."
     ]
   }
 ]

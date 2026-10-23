@@ -1,64 +1,246 @@
+---
+import membersData from '../../data/members.json';
 
-<section id="hero-section" class="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[#0a0a0a] pt-20">
-  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-b from-[#F8138D]/15 via-transparent to-transparent rounded-full blur-[140px] pointer-events-none z-0"></div>
+const arcCardConfigs = [
+  { rot: -10, y: 22, scale: 0.76, z: 10 },
+  { rot: -6, y: 11, scale: 0.78, z: 20 },
+  { rot: -2, y: 3, scale: 0.80, z: 30 },
+  { rot: 0, y: 0, scale: 0.82, z: 40 },
+  { rot: 2, y: 3, scale: 0.80, z: 30 },
+  { rot: 6, y: 11, scale: 0.78, z: 20 },
+  { rot: 10, y: 22, scale: 0.76, z: 10 },
+];
+---
 
-  <div id="hero-layer-bg" class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none select-none z-0 opacity-15 overflow-hidden">
-    <div class="whitespace-nowrap font-display font-black text-[12vw] tracking-tighter text-white leading-none">
-      TOMORROW X TOGETHER
-    </div>
-    <div class="whitespace-nowrap font-display font-black text-[10vw] tracking-tight text-white/50 leading-none">
-      THE NAME CHAPTER • PROMISE
-    </div>
-  </div>
+<div id="hero-scroll-container" class="relative w-full bg-[#FCFAF5] overflow-visible">
+  <section
+    id="hero-arc-section"
+    class="relative w-full min-h-[92vh] sm:min-h-[96vh] flex flex-col items-center justify-between overflow-visible pt-20 sm:pt-24 pb-4 sm:pb-6 select-none"
+  >
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-gradient-to-b from-[#F7E08F]/20 via-[#C9971C]/8 to-transparent rounded-full blur-[140px] pointer-events-none z-0"></div>
 
-  <div id="hero-layer-mid" class="relative z-10 w-full max-w-6xl px-4 flex flex-col items-center justify-center">
-    <div class="relative w-full max-w-4xl flex items-center justify-center">
-      <div class="absolute inset-0 rounded-3xl bg-radial from-[#F8138D]/10 to-transparent blur-2xl"></div>
-
-      <img
-        src="/images/group-photo.jfif"
-        alt="Tomorrow X Together group photo"
-        class="w-full max-h-[90vh] object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.9)] filter brightness-95 contrast-105 z-10 transition-transform duration-500"
-      />
-
-      <div class="absolute -bottom-10 inset-x-0 h-40 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-20 pointer-events-none"></div>
-    </div>
-  </div>
-
-  <div id="hero-layer-fore" class="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between p-6 sm:p-12">
-    <div class="cross-accent absolute top-28 left-[10%] text-[#F8138D] text-2xl font-bold opacity-60">
-      +
-    </div>
-    <div class="cross-accent absolute top-40 right-[12%] text-white text-3xl font-bold opacity-40">
-      +
-    </div>
-    <div class="cross-accent absolute bottom-44 left-[15%] text-white text-4xl font-bold opacity-30">
-      ×
-    </div>
-    <div class="cross-accent absolute bottom-36 right-[18%] text-[#f570b7] text-2xl font-bold opacity-50">
-      +
-    </div>
-
-    <div class="w-full flex justify-between items-center text-[10px] sm:text-xs font-mono tracking-wider sm:tracking-[0.3em] uppercase text-neutral-400">
-      <span class="flex items-center gap-1.5 sm:gap-2">
-        <span class="w-2 h-2 rounded-full bg-[#F8138D] animate-ping"></span>
-        ACT : PROMISE ERA
+    <div class="relative z-10 w-full flex flex-col items-center justify-center pt-2 sm:pt-4 mb-2">
+      <span class="text-[120px] font-display font-black tracking-widest gold-gradient-text">
+          MUSES
       </span>
-      <span>BIG HIT MUSIC • HYBE</span>
     </div>
 
-    <div class="w-full max-w-4xl mx-auto flex flex-col items-center text-center space-y-6 pointer-events-auto pb-8">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[11px] font-mono tracking-widest text-[#F8138D]">
-        <span>+ × +</span>
+    <div
+      id="cards-viewport-wrap"
+      class="relative z-20 w-full max-w-[1380px] mx-auto px-2 sm:px-4 flex flex-col items-center justify-end mt-auto pb-0 overflow-visible"
+    >
+      <div
+        id="active-member-info"
+        class="relative z-30 mb-4 sm:mb-6 flex flex-col items-center justify-center text-center select-none transition-all duration-300 min-h-[50px]"
+      >
+        <div id="info-hover-state" class="hidden flex-col items-center justify-center transition-opacity duration-300">
+          <div class="relative flex items-center justify-center">
+            <img
+              id="active-butterfly-left"
+              src="/images/butterfly_purple.svg"
+              alt="butterfly"
+              class="w-6 h-6 sm:w-8 sm:h-8 object-contain mr-3 sm:mr-4 -rotate-12 animate-pulse"
+            />
+            <h2
+              id="active-member-name"
+              class="text-2xl sm:text-3xl md:text-4xl font-display font-black tracking-tight text-[#1F1A12] uppercase drop-shadow-xs"
+            >
+              Member
+            </h2>
+            <img
+              id="active-butterfly-right"
+              src="/images/butterfly_purple.svg"
+              alt="butterfly"
+              class="w-6 h-6 sm:w-8 sm:h-8 object-contain ml-3 sm:mr-4 rotate-12 animate-pulse"
+            />
+          </div>
+
+          <p
+            id="active-member-subtitle"
+            class="text-xs sm:text-sm font-sans font-medium text-[#4A154B] mt-1 flex items-center justify-center gap-2"
+          >
+            <span id="active-bullet" class="w-2 h-2 rounded-full bg-[#C9971C]"></span>
+            <span id="active-subtitle-text">Muse Title</span>
+          </p>
+        </div>
+      </div>
+
+      <div
+        id="arc-cards-track"
+        class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-2 lg:gap-2 xl:gap-2.5 2xl:gap-3 py-1 w-full will-change-transform overflow-visible"
+      >
+        {
+          membersData.map((member, index) => {
+            const cfg = arcCardConfigs[index] || { rot: 0, y: 0, scale: 1, z: 10 };
+            return (
+              <div
+                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform transition-all duration-300
+                  w-[110px] sm:w-[130px] md:w-[145px] lg:w-[155px] xl:w-[170px] 2xl:w-[195px]
+                  h-[165px] sm:h-[195px] md:h-[218px] lg:h-[235px] xl:h-[255px] 2xl:h-[292px]
+                  rounded-2xl sm:rounded-3xl overflow-hidden
+                  bg-white/90 backdrop-blur-xs border-2 border-[#C9971C]/30 shadow-[0_8px_24px_rgba(201,151,28,0.1)]
+                "
+                style={{
+                  transform: `translateY(${cfg.y}px) rotate(${cfg.rot}deg) scale(${cfg.scale})`,
+                  zIndex: cfg.z,
+                }}
+                data-member-id={member.id}
+                data-member-index={index}
+                data-member-name={member.stageName}
+                data-muse-title={member.museTitle || member.role}
+                data-theme-color={member.themeColor}
+                data-gradient-start={member.gradientStart}
+                data-gradient-end={member.gradientEnd || member.themeColor}
+                data-bg-tint={member.bgTint || '#FFF'}
+                data-icon={member.icon || member.emoticon}
+                data-default-rot={cfg.rot}
+                data-default-y={cfg.y}
+                data-default-scale={cfg.scale}
+                data-default-z={cfg.z}
+              >
+                <div class="hero-neutral-view absolute inset-0 p-3 sm:p-4 flex flex-col justify-between items-center text-center transition-opacity duration-300 group-hover:opacity-0">
+                  <div class="w-full flex items-center justify-between text-[#8C6A1C]/60">
+                    <span class="text-[9px] sm:text-[10px] font-mono font-bold tracking-widest">
+                      0{index + 1}
+                    </span>
+                    <span class="text-[11px] sm:text-xs font-serif text-[#C9971C]">
+                      ✦
+                    </span>
+                  </div>
+
+                  <div class="my-auto flex flex-col items-center">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#FAF6EC] border border-[#C9971C]/25 shadow-xs flex items-center justify-center text-[#8C6A1C] mb-2">
+                      <span class="text-sm sm:text-base font-bold">✦</span>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase text-[#8C6A1C]/75">
+                      MUSE
+                    </span>
+                  </div>
+
+                  <div class="w-full flex justify-center">
+                    <span class="w-5 h-0.5 bg-[#C9971C]/30 rounded-full"></span>
+                  </div>
+                </div>
+
+                <div class="settled-txt-view absolute inset-0 p-3.5 sm:p-4 flex flex-col justify-between text-left opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-0 bg-gradient-to-b from-white/95 via-white/85 to-[#FAF6EC]/95">
+                  <div class="w-full flex items-center justify-between">
+                    <span class="text-[9px] sm:text-[10px] font-mono font-black tracking-widest text-[#8C6A1C]/70">
+                      0{index + 1}
+                    </span>
+                    <span class="text-xs font-bold" style={{ color: member.themeColor }}>
+                      {member.icon || member.emoticon}
+                    </span>
+                  </div>
+
+                  <div class="my-auto flex flex-col items-center justify-center">
+                    <div
+                      class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-lg sm:text-xl font-bold shadow-xs border"
+                      style={{
+                        backgroundColor: `${member.themeColor}12`,
+                        borderColor: `${member.themeColor}25`,
+                        color: member.themeColor,
+                      }}
+                    >
+                      <span>{member.icon || '✦'}</span>
+                    </div>
+                  </div>
+
+                  <div class="w-full pt-2 border-t border-[#1F1A12]/8">
+                    <span
+                      class="text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black tracking-widest uppercase block line-clamp-1"
+                      style={{ color: member.themeColor }}
+                    >
+                      {member.role.split(',')[0]}
+                    </span>
+                    <h3 class="text-base sm:text-lg md:text-xl font-display font-black tracking-wider uppercase text-[#1F1A12] leading-tight mt-0.5">
+                      {member.stageName}
+                    </h3>
+                    <p class="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium text-[#6E6453] mt-0.5 line-clamp-1">
+                      {member.fullName}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  class="card-hover-view absolute inset-0 p-3.5 sm:p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(155deg, ${member.bgTint || '#FFF'}, ${member.gradientStart}, ${member.gradientEnd || member.themeColor})`,
+                  }}
+                >
+                  <div class="w-full flex items-center justify-between text-[#1F1A12]/80">
+                    <span class="text-[9px] sm:text-[10px] font-mono font-black tracking-widest">
+                      0{index + 1}
+                    </span>
+                    <span class="text-xs sm:text-sm font-bold">
+                      {member.icon || member.emoticon}
+                    </span>
+                  </div>
+
+                  <div class="my-auto flex flex-col items-center justify-center">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/90 shadow-sm flex items-center justify-center text-lg sm:text-xl font-bold text-[#1F1A12] border border-white">
+                      <span>{member.icon || '✦'}</span>
+                    </div>
+                  </div>
+
+                  <div class="w-full pt-2 border-t border-[#1F1A12]/15">
+                    <span class="text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black tracking-widest uppercase text-[#1F1A12]/85 block line-clamp-1">
+                      {member.role.split(',')[0]}
+                    </span>
+                    <h3 class="text-base sm:text-lg md:text-xl font-display font-black tracking-wider uppercase text-[#1F1A12] leading-tight drop-shadow-xs mt-0.5">
+                      {member.stageName}
+                    </h3>
+                    <p class="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium text-[#1F1A12]/80 mt-0.5 line-clamp-1">
+                      {member.fullName}
+                    </p>
+                    <span class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#8C6A1C] mt-2 block">
+                      Buka Profil →
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
     </div>
-  </div>
 
-  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-[10px] font-mono tracking-widest text-neutral-500 uppercase pointer-events-none z-30">
-    <span>One Dream</span>
-    <span class="w-0.5 h-6 bg-gradient-to-b from-[#F8138D] to-transparent animate-pulse"></span>
-  </div>
-</section>
+    <div
+      id="hero-bottom-glow"
+      class="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#D1C4E9]/50 via-[#EDE7F6]/30 to-transparent pointer-events-none z-10"
+    ></div>
+  </section>
+
+  <section
+    id="members-settled-section"
+    class="relative w-full bg-[#FCFAF5] pt-14 pb-28 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-visible"
+  >
+    <div id="members-heading-wrap" class="max-w-7xl mx-auto w-full mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-[#C9971C] mb-1.5">
+          <span class="w-2.5 h-0.5 bg-[#C9971C]"></span>
+          <span>MEET THE MEMBERS</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-[#1F1A12] uppercase">
+          7 Karakter, Satu Harmoni
+        </h2>
+        <p class="max-w-2xl text-[#6E6453] text-xs sm:text-sm md:text-base leading-relaxed mt-2">
+          Kartu hero kini sejajar dalam harmoni penuh. Klik kartu member mana saja untuk membuka profil, karakteristik panggung, dan kisah mendalam mereka.
+        </p>
+      </div>
+    </div>
+
+    <div
+      id="settled-target-container"
+      class="relative w-full min-h-[275px] 2xl:min-h-[310px] flex items-center justify-center overflow-x-auto scrollbar-none overscroll-x-contain pb-4"
+    >
+      <div
+        id="settled-cards-slot"
+        class="w-full max-w-7xl mx-auto flex items-center justify-center min-w-max h-[265px] 2xl:h-[300px]"
+      >
+      </div>
+    </div>
+  </section>
+</div>
 
 <script>
   import gsap from 'gsap';
@@ -66,67 +248,178 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  function initHeroParallax() {
-    const heroSection = document.getElementById('hero-section');
-    const layerBg = document.getElementById('hero-layer-bg');
-    const layerMid = document.getElementById('hero-layer-mid');
-    const layerFore = document.getElementById('hero-layer-fore');
-    const crossAccents = document.querySelectorAll('.cross-accent');
+  function initHeroInteractive() {
+    const cards = document.querySelectorAll<HTMLElement>('.muses-hero-card');
+    const infoDefaultState = document.getElementById('info-default-state');
+    const infoHoverState = document.getElementById('info-hover-state');
+    const activeNameEl = document.getElementById('active-member-name');
+    const activeSubtitleTextEl = document.getElementById('active-subtitle-text');
+    const activeBulletEl = document.getElementById('active-bullet');
+    const arcTrack = document.getElementById('arc-cards-track');
+    const targetSlot = document.getElementById('settled-cards-slot');
+    const infoSection = document.getElementById('active-member-info');
 
-    if (!heroSection || !layerBg || !layerMid) return;
+    if (!cards.length) return;
 
-    gsap.to(layerBg, {
-      yPercent: -15,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroSection,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      },
+    cards.forEach((card) => {
+      card.addEventListener('mouseenter', () => {
+        hoverInHeroCard(card);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        hoverOutHeroCard(card);
+      });
+
+      card.addEventListener('click', () => {
+        const memberId = card.getAttribute('data-member-id');
+        if (memberId) {
+          window.dispatchEvent(new CustomEvent('open-member-modal', { detail: memberId }));
+        }
+      });
     });
 
-    gsap.to(layerMid, {
-      yPercent: -35,
-      scale: 1.05,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroSection,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      },
+    let currentScrollProgress = 0;
+
+    function hoverInHeroCard(card: HTMLElement) {
+      const defaultRot = parseFloat(card.getAttribute('data-default-rot') || '0');
+      const defaultY = parseFloat(card.getAttribute('data-default-y') || '0');
+      const defaultScale = parseFloat(card.getAttribute('data-default-scale') || '1');
+      const themeColor = card.getAttribute('data-theme-color') || '#8E24AA';
+      const gradStart = card.getAttribute('data-gradient-start') || '#CE93D8';
+      const gradEnd = card.getAttribute('data-gradient-end') || '#8E24AA';
+      const bgTint = card.getAttribute('data-bg-tint') || '#FFF';
+
+      const currentBaseRot = defaultRot * (1 - currentScrollProgress);
+      const currentBaseY = defaultY * (1 - currentScrollProgress) + currentScrollProgress * deltaY;
+      const targetBaseScale = 1.0;
+      const currentBaseScale = defaultScale + (targetBaseScale - defaultScale) * currentScrollProgress;
+      const hoverScale = currentBaseScale * 1.08;
+
+      card.style.zIndex = '50';
+      card.style.transform = `translateY(${currentBaseY - 16}px) rotate(${currentBaseRot}deg) scale(${hoverScale})`;
+      card.style.background = `linear-gradient(155deg, ${bgTint}, ${gradStart}, ${gradEnd})`;
+      card.classList.remove('bg-white/90', 'border-[#C9971C]/30', 'shadow-[0_8px_24px_rgba(201,151,28,0.1)]');
+      card.classList.add('border-white', 'shadow-[0_20px_45px_rgba(0,0,0,0.25)]');
+
+      const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
+      const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
+      const hoverView = card.querySelector<HTMLElement>('.card-hover-view');
+      if (neutralView) neutralView.style.opacity = '0';
+      if (settledView) settledView.style.opacity = '0';
+      if (hoverView) hoverView.style.opacity = '1';
+
+      const name = card.getAttribute('data-member-name') || 'MUSE';
+      const museTitle = card.getAttribute('data-muse-title') || 'Official Artist';
+
+      if (activeNameEl) activeNameEl.textContent = name;
+      if (activeSubtitleTextEl) activeSubtitleTextEl.textContent = museTitle;
+      if (activeBulletEl) activeBulletEl.style.backgroundColor = themeColor;
+
+      if (infoHoverState) {
+        infoHoverState.classList.remove('hidden');
+        infoHoverState.classList.add('flex');
+      }
+    }
+
+    function hoverOutHeroCard(card: HTMLElement) {
+      const defaultRot = parseFloat(card.getAttribute('data-default-rot') || '0');
+      const defaultY = parseFloat(card.getAttribute('data-default-y') || '0');
+      const defaultScale = parseFloat(card.getAttribute('data-default-scale') || '1');
+      const defaultZ = parseInt(card.getAttribute('data-default-z') || '10');
+
+      const currentBaseRot = defaultRot * (1 - currentScrollProgress);
+      const currentBaseY = defaultY * (1 - currentScrollProgress) + currentScrollProgress * deltaY;
+      const targetBaseScale = 1.0;
+      const currentBaseScale = defaultScale + (targetBaseScale - defaultScale) * currentScrollProgress;
+
+      card.style.zIndex = `${defaultZ}`;
+      card.style.transform = `translateY(${currentBaseY}px) rotate(${currentBaseRot}deg) scale(${currentBaseScale})`;
+      card.style.background = '';
+      card.classList.add('bg-white/90', 'border-[#C9971C]/30', 'shadow-[0_8px_24px_rgba(201,151,28,0.1)]');
+      card.classList.remove('border-white', 'shadow-[0_20px_45px_rgba(0,0,0,0.25)]');
+
+      const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
+      const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
+      const hoverView = card.querySelector<HTMLElement>('.card-hover-view');
+      const settledFade = Math.min(1, Math.max(0, (currentScrollProgress - 0.2) / 0.5));
+      if (neutralView) neutralView.style.opacity = `${1 - settledFade}`;
+      if (settledView) settledView.style.opacity = `${settledFade}`;
+      if (hoverView) hoverView.style.opacity = '0';
+
+      if (infoHoverState) {
+        infoHoverState.classList.add('hidden');
+        infoHoverState.classList.remove('flex');
+      }
+    }
+
+    function getDocTop(el: HTMLElement): number {
+      let top = 0;
+      let curr: HTMLElement | null = el;
+      while (curr) {
+        top += curr.offsetTop;
+        curr = curr.offsetParent as HTMLElement | null;
+      }
+      return top;
+    }
+
+    function calculateDeltaY() {
+      if (!arcTrack || !targetSlot) return 680;
+      const trackTop = getDocTop(arcTrack);
+      const slotTop = getDocTop(targetSlot);
+      return Math.max(580, slotTop - trackTop);
+    }
+
+    let deltaY = calculateDeltaY();
+    window.addEventListener('resize', () => {
+      deltaY = calculateDeltaY();
     });
 
-    if (layerFore) {
-      gsap.to(layerFore, {
-        yPercent: -60,
-        opacity: 0.3,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroSection,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
+    if (window.innerWidth >= 640 && arcTrack) {
+      ScrollTrigger.create({
+        trigger: '#hero-scroll-container',
+        start: 'top top',
+        end: () => `+=${deltaY}`,
+        scrub: 1,
+        onUpdate: (self) => {
+          currentScrollProgress = self.progress;
+          const progress = self.progress;
+          const settledFade = Math.min(1, Math.max(0, (progress - 0.2) / 0.5));
+
+          cards.forEach((card) => {
+            const rot = parseFloat(card.getAttribute('data-default-rot') || '0');
+            const y = parseFloat(card.getAttribute('data-default-y') || '0');
+            const scale = parseFloat(card.getAttribute('data-default-scale') || '1');
+
+            const currentRot = rot * (1 - progress);
+            const currentY = y * (1 - progress) + progress * deltaY;
+            const targetBaseScale = 1.0;
+            const currentScale = scale + (targetBaseScale - scale) * progress;
+
+            card.style.transform = `translateY(${currentY}px) rotate(${currentRot}deg) scale(${currentScale})`;
+
+            const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
+            const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
+            if (neutralView) neutralView.style.opacity = `${1 - settledFade}`;
+            if (settledView) settledView.style.opacity = `${settledFade}`;
+          });
+
+          if (infoSection) {
+            infoSection.style.opacity = `${Math.max(0, 1 - progress * 2.8)}`;
+            infoSection.style.transform = `translateY(${progress * 30}px)`;
+          }
+
+          const bottomGlow = document.getElementById('hero-bottom-glow');
+          if (bottomGlow) {
+            bottomGlow.style.opacity = `${Math.max(0, 1 - progress * 2)}`;
+          }
         },
       });
     }
-
-    crossAccents.forEach((cross, i) => {
-      gsap.to(cross, {
-        y: i % 2 === 0 ? -15 : 15,
-        rotation: i % 2 === 0 ? 30 : -30,
-        duration: 3 + i,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHeroParallax);
+    document.addEventListener('DOMContentLoaded', initHeroInteractive);
   } else {
-    initHeroParallax();
+    initHeroInteractive();
   }
 </script>

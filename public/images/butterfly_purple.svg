@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="bfWingLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC" />
+      <stop offset="60%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#7E22CE" />
+    </linearGradient>
+    <linearGradient id="bfWingRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E9D5FF" />
+      <stop offset="50%" stop-color="#C084FC" />
+      <stop offset="100%" stop-color="#9333EA" />
+    </linearGradient>
+    <filter id="bfGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <g filter="url(#bfGlow)">
+    <path d="M48 48 C30 20 10 25 15 50 C18 65 35 62 48 54 Z" fill="url(#bfWingLeft)" />
+    <path d="M46 56 C30 65 20 80 32 88 C42 92 48 75 48 62 Z" fill="url(#bfWingLeft)" opacity="0.9" />
+
+    <path d="M52 48 C70 15 92 20 86 48 C82 65 65 62 52 54 Z" fill="url(#bfWingRight)" />
+    <path d="M54 56 C70 65 80 82 68 88 C58 92 52 75 52 62 Z" fill="url(#bfWingRight)" opacity="0.9" />
+
+    <circle cx="75" cy="35" r="4.5" fill="#6B21A8" opacity="0.6" />
+    <circle cx="82" cy="48" r="3.2" fill="#581C87" opacity="0.7" />
+    <circle cx="70" cy="55" r="2.5" fill="#6B21A8" opacity="0.6" />
+    <circle cx="68" cy="78" r="3" fill="#581C87" opacity="0.6" />
+
+    <circle cx="25" cy="38" r="4" fill="#6B21A8" opacity="0.6" />
+    <circle cx="18" cy="50" r="3" fill="#581C87" opacity="0.7" />
+    <circle cx="32" cy="80" r="2.5" fill="#581C87" opacity="0.6" />
+
+    <ellipse cx="50" cy="55" rx="3" ry="16" fill="#3B0764" />
+    <circle cx="50" cy="38" r="3" fill="#3B0764" />
+
+    <path d="M48 37 Q42 25 36 22" stroke="#FDE047" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M52 37 Q58 25 64 22" stroke="#FDE047" stroke-width="1.2" stroke-linecap="round" />
+    <circle cx="36" cy="22" r="1.5" fill="#FDE047" />
+    <circle cx="64" cy="22" r="1.5" fill="#FDE047" />
+  </g>
+</svg>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
 import membersData from '../../data/members.json';
-import { X, ChevronLeft, ChevronRight, Music, Sparkles, Disc3 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Sparkles, ExternalLink, Calendar, Compass, Ruler, Heart } from 'lucide-react';
 import gsap from 'gsap';
 
 export default function MemberModal() {
@@ -31,32 +31,14 @@ export default function MemberModal() {
     if (lenisInstance) {
       try {
         lenisInstance.stop();
-      } catch (err) {
-        console.warn('Could not pause Lenis:', err);
-      }
+      } catch (err) {}
     }
 
     const originalBodyOverflow = document.body.style.overflow;
     const originalHtmlOverflow = document.documentElement.style.overflow;
-    const originalBodyTouch = document.body.style.touchAction;
 
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
-
-    const handleWheelPrevent = (e: WheelEvent) => {
-      e.stopPropagation();
-    };
-
-    const handleTouchPrevent = (e: TouchEvent) => {
-      e.stopPropagation();
-    };
-
-    const containerEl = overlayRef.current;
-    if (containerEl) {
-      containerEl.addEventListener('wheel', handleWheelPrevent, { passive: false });
-      containerEl.addEventListener('touchmove', handleTouchPrevent, { passive: false });
-    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -78,12 +60,6 @@ export default function MemberModal() {
       }
       document.documentElement.style.overflow = originalHtmlOverflow;
       document.body.style.overflow = originalBodyOverflow;
-      document.body.style.touchAction = originalBodyTouch;
-
-      if (containerEl) {
-        containerEl.removeEventListener('wheel', handleWheelPrevent);
-        containerEl.removeEventListener('touchmove', handleTouchPrevent);
-      }
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [currentId, currentIndex]);
@@ -93,12 +69,12 @@ export default function MemberModal() {
       gsap.fromTo(
         overlayRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.35, ease: 'power2.out' }
+        { opacity: 1, duration: 0.3, ease: 'power2.out' }
       );
       gsap.fromTo(
         containerRef.current,
         { scale: 0.94, opacity: 0, y: 20 },
-        { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+        { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
       );
     }
   }, [currentId]);
@@ -107,8 +83,8 @@ export default function MemberModal() {
     if (member && contentRef.current) {
       gsap.fromTo(
         contentRef.current,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.28, ease: 'power2.out' }
+        { opacity: 0, x: 12 },
+        { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' }
       );
     }
   }, [currentIndex]);
@@ -121,14 +97,14 @@ export default function MemberModal() {
 
     gsap.to(overlayRef.current, {
       opacity: 0,
-      duration: 0.25,
+      duration: 0.2,
       ease: 'power2.in',
     });
     gsap.to(containerRef.current, {
       scale: 0.95,
       opacity: 0,
       y: 15,
-      duration: 0.25,
+      duration: 0.2,
       ease: 'power2.in',
       onComplete: () => {
         closeMemberModal();
@@ -160,7 +136,6 @@ export default function MemberModal() {
   return (
     <div
       ref={overlayRef}
-      data-lenis-prevent
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 lg:p-6 bg-black/85 backdrop-blur-2xl overflow-hidden select-none"
       onClick={(e) => {
         if (e.target === overlayRef.current) handleClose();
@@ -168,241 +143,243 @@ export default function MemberModal() {
     >
       <div
         ref={containerRef}
-        data-lenis-prevent
         role="dialog"
         aria-modal="true"
-        aria-labelledby="editorial-member-title"
-        className="relative w-full max-w-[1340px] h-[92vh] sm:h-[90vh] max-h-[92vh] sm:max-h-[90vh] bg-[#121215] text-neutral-300 border border-white/10 rounded-2xl sm:rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col"
+        aria-labelledby="member-modal-title"
+        className="relative w-full max-w-[1240px] h-[92vh] sm:h-[90vh] max-h-[92vh] sm:max-h-[90vh] bg-[#FCFAF5] text-[#1F1A12] border border-[#C9971C]/35 rounded-3xl shadow-[0_25px_80px_rgba(201,151,28,0.25)] overflow-hidden flex flex-col"
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-white/[0.02] pointer-events-none" />
         <div
-          className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-[140px] opacity-15 pointer-events-none"
-          style={{ backgroundColor: member.themeColor || '#F8138D' }}
+          className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-[140px] opacity-25 pointer-events-none transition-colors duration-500"
+          style={{ backgroundColor: member.themeColor || '#C9971C' }}
         />
 
-        <div className="relative z-20 px-6 sm:px-8 py-3.5 border-b border-white/10 flex items-center justify-between gap-4 shrink-0 bg-[#121215]/90 backdrop-blur-sm">
+        <div className="relative z-20 px-6 sm:px-8 py-3.5 border-b border-[#C9971C]/25 flex items-center justify-between gap-4 shrink-0 bg-white/90 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div>
-              <span className="text-xs font-mono font-medium uppercase tracking-wider text-neutral-400 block">
-                {member.editorialDate || 'OCT 2026'}
-              </span>
-              <div className="w-8 h-0.5 bg-neutral-600 mt-1" />
-            </div>
+            <span className="text-xl font-display font-black tracking-widest gold-gradient-text">
+              MUSES
+            </span>
+            <span className="h-4 w-px bg-[#C9971C]/30" />
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#8C6A1C]">
+              OFFICIAL PROFILE • {currentNumberPill}/{totalNumber}
+            </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-6">
-            <div className="text-center">
-              <span className="text-xs font-serif italic text-neutral-400 block">Identity?</span>
-              <span className="text-[10px] text-neutral-600 tracking-widest">...</span>
-            </div>
-
-            <div className="px-3 py-1 rounded-md bg-[#19191f] border border-white/10 text-xs font-mono tracking-[0.25em] text-neutral-300">
-              {member.codeNumber || '10 02 02'}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="hidden sm:block text-right">
-              <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase block">
-                {currentNumberPill} / {totalNumber}
-              </span>
-              <p className="text-xs font-serif italic text-neutral-400 leading-tight">
-                {member.quotePart1 || 'Please...'}
-              </p>
-              <p className="text-xs font-serif font-bold text-white leading-tight">
-                {member.quotePart2 || 'Give me your blood'}
-              </p>
-            </div>
-
+          <div className="flex items-center gap-3">
             <button
               onClick={handleClose}
-              aria-label="Close Profile"
-              className="group/close inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30 text-xs font-mono tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer backdrop-blur-md"
+              aria-label="Tutup Profil Member"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1F1A12]/5 hover:bg-[#C9971C]/20 border border-[#C9971C]/30 text-xs font-mono tracking-wider text-[#1F1A12] transition-all cursor-pointer group/close"
             >
-              <span className="hidden sm:inline">CLOSE</span>
+              <span className="hidden sm:inline">TUTUP</span>
               <X className="w-4 h-4 transition-transform group-hover/close:rotate-90" />
             </button>
           </div>
         </div>
 
-        <div
-          data-lenis-prevent
-          className="relative z-10 overflow-y-auto overscroll-contain flex-1 min-h-0 p-6 sm:p-8 lg:p-9 scrollbar-thin scrollbar-thumb-white/15 scrollbar-track-transparent"
-        >
+        <div className="relative z-10 overflow-y-auto overscroll-contain flex-1 min-h-0 p-5 sm:p-8 lg:p-10 scrollbar-none">
           <div
             ref={contentRef}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-0 items-start"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch min-h-full"
           >
-            <div className="lg:col-span-3 lg:pr-6 relative min-w-0">
-              <div className="mb-4 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="relative w-full max-w-[360px] aspect-[4/5] rounded-2xl overflow-hidden bg-white border border-[#C9971C]/30 shadow-2xl p-2.5">
+                <div className="relative w-full h-full rounded-xl overflow-hidden bg-[#FDF6E7]">
+                  <img
+                    src={member.photoFull || member.photoThumb}
+                    alt={member.stageName}
+                    className="w-full h-full object-cover object-center filter contrast-105 transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                  <div className="absolute bottom-4 inset-x-4 flex items-end justify-between text-white pointer-events-none">
+                    <div>
+                      <span className="text-[10px] font-mono tracking-widest uppercase opacity-80 block">
+                        MUSES MEMBER
+                      </span>
+                      <h3 className="text-2xl font-display font-black tracking-wider uppercase text-[#F7E08F]">
+                        {member.stageName}
+                      </h3>
+                    </div>
+                    <span
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold shadow-lg"
+                      style={{
+                        background: `linear-gradient(135deg, ${member.gradientStart || '#C9971C'}, ${member.gradientEnd || '#F7E08F'})`,
+                        color: '#1F1A12',
+                      }}
+                    >
+                      {member.icon || member.emoticon}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <span
+                      className="px-3 py-1 rounded-full text-[11px] font-mono uppercase tracking-widest font-bold"
+                      style={{
+                        background: `linear-gradient(135deg, ${member.gradientStart || '#C9971C'}, ${member.gradientEnd || '#F7E08F'})`,
+                        color: '#1F1A12',
+                      }}
+                    >
+                      {member.role}
+                    </span>
+                    <span className="text-xs font-mono text-[#8C6A1C] font-semibold">
+                      {member.fullName}
+                    </span>
+                  </div>
+
                   <h2
-                    id="editorial-member-title"
-                    className={`font-display font-black tracking-tight text-white uppercase leading-none break-words ${
-                      member.stageName.length > 7
-                        ? 'text-2xl sm:text-3xl lg:text-[24px] xl:text-[28px]'
-                        : 'text-2xl sm:text-3xl lg:text-3xl xl:text-4xl'
-                    }`}
+                    id="member-modal-title"
+                    className="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-[#1F1A12] uppercase tracking-tight"
                   >
                     {member.stageName}
                   </h2>
-                  <span className="text-base text-neutral-400 shrink-0 select-none">{member.emoticon}</span>
+                  <p className="text-xs sm:text-sm text-[#6E6453] mt-1 italic font-serif">
+                    "{member.quotePart1} {member.quotePart2}"
+                  </p>
                 </div>
-                <p className="text-xs font-mono text-neutral-400 mt-2 tracking-wide capitalize">
-                  {member.editorialSubtitle || member.role}
-                </p>
-                <p className="text-[11px] font-mono text-neutral-500 mt-0.5">
-                  {member.fullName} • {member.hangul}
-                </p>
-              </div>
 
-              <div className="relative aspect-[3/4] max-h-[270px] sm:max-h-[300px] rounded-xl overflow-hidden bg-neutral-950 border border-black/40 group max-w-[240px] mx-auto lg:mx-0">
-                <img
-                  src={member.photoFrame || member.photoThumb}
-                  alt={member.stageName}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-px bg-white/10">
-                <span className="absolute -left-[5px] top-6 w-2.5 h-2.5 rounded-full border border-neutral-500 bg-[#121215]" />
-              </div>
-            </div>
-
-            <div className="lg:col-span-3 lg:px-6 relative min-w-0">
-              <div className="mb-3">
-                <div className="flex items-baseline justify-between">
-                  <h3 className="text-xl font-serif text-white tracking-wide">
-                    Biodata
-                  </h3>
-                  <span className="text-[10px] font-mono tracking-widest text-[#F8138D] uppercase font-semibold">
-                    Profile
-                  </span>
-                </div>
-                <div className="w-full h-px bg-white/15 mt-2" />
-              </div>
-
-              <div className="space-y-2.5 my-3 max-h-[380px] sm:max-h-[440px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/15 scrollbar-track-transparent">
-                {member.biodata?.map((item: any, idx: number) => (
-                  <div
-                    key={idx}
-                    className="pb-2 border-b border-white/5 last:border-b-0 flex flex-col gap-0.5 group/bio"
-                  >
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
-                      {item.label}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                  <div className="p-3 rounded-xl bg-white border border-[#C9971C]/25 shadow-xs">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6453] block mb-0.5">
+                      Tanggal Lahir
                     </span>
-                    {item.link ? (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] text-[#F8138D] hover:text-white font-medium transition-colors group-hover/bio:translate-x-0.5 transform duration-200"
-                      >
-                        <span>{item.value}</span>
-                        <svg
-                          className="w-3 h-3 opacity-70 group-hover/bio:opacity-100 transition-opacity"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M7 17L17 7" />
-                          <path d="M7 7h10v10" />
-                        </svg>
-                      </a>
-                    ) : (
-                      <span className="text-xs sm:text-[13px] text-neutral-200 font-medium leading-snug">
-                        {item.value}
-                      </span>
-                    )}
+                    <span className="text-xs font-bold text-[#1F1A12]">
+                      {member.birthDate}
+                    </span>
                   </div>
-                ))}
+                  <div className="p-3 rounded-xl bg-white border border-[#C9971C]/25 shadow-xs">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6453] block mb-0.5">
+                      Zodiak
+                    </span>
+                    <span className="text-xs font-bold text-[#1F1A12]">
+                      {member.zodiac}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white border border-[#C9971C]/25 shadow-xs">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6453] block mb-0.5">
+                      Tinggi Badan
+                    </span>
+                    <span className="text-xs font-bold text-[#1F1A12]">
+                      {member.height}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white border border-[#C9971C]/25 shadow-xs">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6453] block mb-0.5">
+                      Warna & Ikon
+                    </span>
+                    <span className="text-xs font-bold text-[#1F1A12] flex items-center gap-1.5">
+                      <span
+                        className="w-3 h-3 rounded-full inline-block"
+                        style={{ backgroundColor: member.themeColor }}
+                      />
+                      <span>{member.icon || member.emoticon}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/80 border border-[#C9971C]/25 space-y-2.5 shadow-xs">
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-[#8C6A1C] font-bold block">
+                    BIOGRAFI & CERITA
+                  </span>
+                  <p className="text-xs sm:text-sm text-[#3E3628] leading-relaxed">
+                    {member.story01}
+                  </p>
+                  <p className="text-xs sm:text-sm text-[#3E3628] leading-relaxed">
+                    {member.story02}
+                  </p>
+                </div>
+
+                {member.tmi && member.tmi.length > 0 && (
+                  <div className="p-4 rounded-xl bg-[#FDF6E7] border border-[#C9971C]/20 space-y-1.5">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C6A1C] font-bold block">
+                      FAKTA UNIK & TMI
+                    </span>
+                    <ul className="text-xs text-[#524838] space-y-1 list-disc list-inside">
+                      {member.tmi.map((fact: string, idx: number) => (
+                        <li key={idx}>{fact}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
-              <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-px bg-white/10" />
-            </div>
+              <div className="pt-2 flex items-center justify-between border-t border-[#C9971C]/20">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono text-[#6E6453]">Sosial Media:</span>
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-[#8C6A1C] hover:text-[#C9971C] inline-flex items-center gap-1"
+                  >
+                    <span>@{member.stageName.toLowerCase()}.muses</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
 
-            <div className="lg:col-span-3 lg:px-6 relative min-w-0">
-              <div className="w-full rounded-xl overflow-hidden bg-neutral-950 border border-white/10 aspect-video sm:aspect-[16/10] mb-4 shadow-lg group">
-                <img
-                  src={member.photoStory1 || member.photoThumb}
-                  alt={`${member.stageName} Story 01`}
-                  className="w-full h-full object-cover object-center filter grayscale contrast-125 transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-
-              <div className="space-y-2.5">
-                <h3 className="text-3xl font-display font-black text-white tracking-tight leading-none">
-                  01
-                </h3>
-                <p className="text-xs sm:text-sm font-light text-neutral-300 leading-relaxed font-sans text-left sm:text-justify opacity-95">
-                  {member.story01 || member.vocalRole}
-                </p>
-              </div>
-
-              <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-px bg-white/10" />
-            </div>
-
-            <div className="lg:col-span-3 lg:px-6 relative min-w-0">
-              <div className="w-full rounded-xl overflow-hidden bg-neutral-950 border border-white/10 aspect-video sm:aspect-[16/10] mb-4 shadow-lg group">
-                <img
-                  src={member.photoCloseup || member.photoThumb}
-                  alt={`${member.stageName} Close-up 02`}
-                  className="w-full h-full object-cover object-center filter grayscale contrast-130 transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-
-              <div className="space-y-2.5">
-                <h3 className="text-3xl font-display font-black text-white tracking-tight leading-none">
-                  02
-                </h3>
-                <p className="text-xs sm:text-sm font-light text-neutral-300 leading-relaxed font-sans text-left sm:text-justify opacity-95">
-                  {member.story02 || member.tmi?.join(' ')}
-                </p>
-              </div>
-
-              <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-px bg-white/10">
-                <span className="absolute -left-[5px] bottom-10 w-2.5 h-2.5 rounded-full border border-neutral-500 bg-[#121215]" />
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrev}
+                    aria-label="Member Sebelumnya"
+                    className="p-2 rounded-xl bg-white hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    aria-label="Member Selanjutnya"
+                    className="p-2 rounded-xl bg-white hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative z-20 px-6 sm:px-8 py-3.5 border-t border-white/10 bg-[#0e0e11] flex items-center justify-between gap-4 shrink-0">
-          <button
-            onClick={handlePrev}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer group"
-          >
-            <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-            <span className="hidden sm:inline">Prev Member</span>
-          </button>
+        <div className="relative z-20 px-4 sm:px-8 py-3 border-t border-[#C9971C]/25 bg-white/95 backdrop-blur-md flex items-center justify-between gap-3 shrink-0">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C6A1C] font-semibold hidden md:inline">
+            7 MUSES MEMBERS:
+          </span>
 
-          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto py-1 scrollbar-none">
-            {membersData.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => openMemberModal(m.id)}
-                className={`px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer shrink-0 ${
-                  m.id === member.id
-                    ? 'bg-white text-black font-bold shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-105'
-                    : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {m.stageName}
-              </button>
-            ))}
+          <div className="flex items-center gap-2.5 sm:gap-4 overflow-x-auto py-1 scrollbar-none mx-auto md:mx-0">
+            {membersData.map((m) => {
+              const isSelected = m.id === member.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => openMemberModal(m.id)}
+                  className={`group relative flex items-center gap-2 p-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#FDF6E7] ring-2 ring-[#C9971C] shadow-[0_0_15px_rgba(201,151,28,0.35)] scale-105'
+                      : 'hover:bg-[#1F1A12]/5 opacity-70 hover:opacity-100'
+                  }`}
+                  aria-label={`Lihat profil ${m.stageName}`}
+                >
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-[#FCFAF5] border border-[#C9971C]/40 shrink-0">
+                    <img
+                      src={m.photoThumb || m.photoFull}
+                      alt={m.stageName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span
+                    className={`text-xs font-bold pr-2 transition-colors ${
+                      isSelected ? 'text-[#1F1A12]' : 'text-[#6E6453] group-hover:text-[#1F1A12]'
+                    }`}
+                  >
+                    {m.stageName}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-
-          <button
-            onClick={handleNext}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer group"
-          >
-            <span className="hidden sm:inline">Next Member</span>
-            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
         </div>
       </div>
     </div>

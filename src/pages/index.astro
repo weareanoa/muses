@@ -2,30 +2,33 @@
 import RootLayout from '../layouts/RootLayout.astro';
 import Preloader from '../components/sections/Preloader.astro';
 import Hero from '../components/sections/Hero.astro';
-import ProfilePinned from '../components/sections/ProfilePinned.astro';
 import VinylPlayer from '../components/islands/VinylPlayer';
 import ScheduleTimeline from '../components/sections/ScheduleTimeline.astro';
+import GallerySection from '../components/sections/GallerySection.astro';
 import ShopPreview from '../components/sections/ShopPreview.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
 import FooterCTA from '../components/sections/FooterCTA.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
 ---
 
-<RootLayout title="TOMORROW X TOGETHER | Official Showcase & Store">
+<RootLayout
+  title="MUSES | Official Idol Group Website"
+  description="Situs profil resmi idol grup lokal MUSES (7 member: Aria, Clara, Stella, Luna, Maya, Reva, Zia). Musik, jadwal tur, galeri, merchandise, dan kontak manajemen."
+  currentPath="/"
+>
   <Preloader />
 
   <Hero />
 
-  <ProfilePinned />
-
-  <section id="discography-section" class="relative bg-[#0c0c0f] py-24 px-6 sm:px-12 border-t border-white/5">
+  <section id="discography-section" class="relative bg-[#FCFAF5] py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
     <div class="max-w-7xl mx-auto">
       <SectionHeading
-        subtitle="Interactive Archive"
-        title="DISCOGRAPHY & TURNTABLE"
+        subtitle="Arsip Musik Resmi"
+        title="DISCOGRAPHY & VINYL TURNTABLE"
         align="center"
       />
-      <p class="max-w-xl mx-auto text-center text-neutral-400 text-xs sm:text-sm -mt-6 mb-12">
-        Spin the vinyl records and experience 30-second legal audio previews streamed directly via Public Music APIs with client-side time-slicing.
+      <p class="max-w-xl mx-auto text-center text-[#6E6453] text-xs sm:text-sm -mt-6 mb-12">
+        Putar piringan hitam vinyl untuk mendengarkan cuplikan audio legal dan saksikan cuplikan video musik resmi idol grup MUSES.
       </p>
 
       <VinylPlayer client:visible />
@@ -34,7 +37,11 @@ import SectionHeading from '../components/ui/SectionHeading.astro';
 
   <ScheduleTimeline />
 
+  <GallerySection />
+
   <ShopPreview />
+
+  <ContactSection />
 
   <FooterCTA />
 </RootLayout>

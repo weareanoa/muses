@@ -9,13 +9,13 @@ const { status, class: className = '' } = Astro.props;
 const normalized = (status || '').toLowerCase().replace(/\s+/g, '-');
 
 const styles: Record<string, string> = {
-  upcoming: 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
-  'sold-out': 'bg-rose-950/80 text-rose-400 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.2)]',
-  new: 'bg-pink-950/80 text-[var(--color-accent-pink)] border-[var(--color-accent-pink)]/50 shadow-[0_0_10px_rgba(248,19,141,0.35)]',
-  streaming: 'bg-violet-950/80 text-violet-400 border-violet-500/40 shadow-[0_0_10px_rgba(139,92,246,0.2)]',
+  upcoming: 'bg-emerald-50 text-emerald-700 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
+  'sold-out': 'bg-rose-50 text-rose-600 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.2)]',
+  new: 'bg-[#9A7420] text-[#FCFAF5] border-[#9A7420] shadow-[0_0_10px_rgba(154,116,32,0.35)]',
+  streaming: 'bg-[#FBF8F1] text-[#7D5C16] border-[#9A7420]/40 shadow-[0_0_10px_rgba(154,116,32,0.15)]',
 };
 
-const badgeStyle = styles[normalized] || 'bg-neutral-800 text-neutral-300 border-neutral-700';
+const badgeStyle = styles[normalized] || 'bg-[#EDE6D6] text-[#4B4335] border-[#1F1A12]/15';
 ---
 
 <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase border ${badgeStyle} ${className}`}>

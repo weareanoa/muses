@@ -1,47 +1,21 @@
 ---
 import RootLayout from '../layouts/RootLayout.astro';
 import AddressIsland from '../components/islands/AddressIsland';
-import HeroBackground from '../components/ui/HeroBackground.astro';
-import SectionHeading from '../components/ui/SectionHeading.astro';
 ---
 
 <RootLayout
-  title="Alamat Pengiriman & Checkout | TOMORROW X TOGETHER"
-  description="Kelola alamat pengiriman pesanan merchandise resmi dan album TOMORROW X TOGETHER."
+  title="Checkout | MUSES Official"
+  description="Proses checkout dan pembayaran pesanan merchandise resmi MUSES."
   solidHeader={true}
 >
-  <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden bg-[#0a0a0a]">
-    <HeroBackground
-      topSubtitle="OFFICIAL SHIPPING & DISPATCH"
-      largeTextPrimary="TOMORROW X TOGETHER"
-      largeTextSecondary="THE NAME CHAPTER • PROMISE"
-    />
-
-    <div class="relative z-10 mb-8">
-      <div class="mb-4 flex items-center justify-between text-xs text-neutral-400">
-        <a href="/" class="inline-flex items-center gap-1.5 hover:text-white transition-colors group">
-          <span class="group-hover:-translate-x-1 transition-transform">←</span>
-          <span>Kembali ke Showcase</span>
-        </a>
-        <div class="flex items-center gap-3">
-          <a href="/checkout" class="hover:text-[#F8138D] transition-colors">Checkout Pesanan</a>
-          <span class="text-neutral-600">•</span>
-          <a href="/store" class="hover:text-[#F8138D] transition-colors">Official Merch Store</a>
-        </div>
-      </div>
-
-      <SectionHeading
-        subtitle="Alamat Pengiriman"
-        title="PENGISIAN ALAMAT & CHECKOUT"
-        align="left"
-      />
-      <p class="max-w-2xl text-neutral-400 text-sm leading-relaxed -mt-6">
-        Simpan alamat utama Anda untuk pengiriman otomatis saat berbelanja di official store TOMORROW X TOGETHER.
-      </p>
-    </div>
+  <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto bg-[#FCFAF5]">
+    <div class="w-full border-t border-[#DFC478]/80 mb-6"></div>
+    <h1 class="text-4xl sm:text-5xl font-['Playfair_Display',serif] text-[#1F1A12] mb-8 font-normal tracking-tight">
+      Checkout.
+    </h1>
 
     <div class="relative z-10">
-      <AddressIsland client:load showCheckoutSimulation={true} />
+      <AddressIsland client:load />
     </div>
   </div>
 </RootLayout>

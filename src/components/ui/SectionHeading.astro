@@ -11,18 +11,18 @@ const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
 const alignmentClass = align === 'center' ? 'text-center items-center' : 'text-left items-start';
 ---
 
-<div class={`flex flex-col mb-12 sm:mb-16 ${alignmentClass} ${className}`}>
+<div class={`flex flex-col mb-2 sm:mb-6 ${alignmentClass} ${className}`}>
   {
     subtitle && (
-      <span class="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[var(--color-accent-pink)] mb-2 flex items-center gap-2">
-        <span class="inline-block w-2 h-0.5 bg-[var(--color-accent-pink)]"></span>
+      <span class="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[var(--color-accent)] mb-2 flex items-center gap-2">
+        <span class="inline-block w-2 h-0.5 bg-[var(--color-accent)]"></span>
         {subtitle}
-        {align === 'center' && <span class="inline-block w-2 h-0.5 bg-[var(--color-accent-pink)]"></span>}
+        {align === 'center' && <span class="inline-block w-2 h-0.5 bg-[var(--color-accent)]"></span>}
       </span>
     )
   }
   <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold tracking-tight text-[var(--color-text-primary)]">
     {title}
   </h2>
-  <div class={`w-16 h-1 mt-4 bg-gradient-to-r from-[var(--color-accent-pink)] to-transparent ${align === 'center' ? 'mx-auto' : ''}`}></div>
+  <div class={`w-16 h-1 mt-4 bg-gradient-to-r from-[var(--color-accent)] to-transparent ${align === 'center' ? 'mx-auto' : ''}`}></div>
 </div>

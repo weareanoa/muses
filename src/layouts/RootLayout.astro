@@ -7,94 +7,109 @@ import UserNavIsland from '../components/islands/UserNavIsland';
 interface Props {
   title?: string;
   description?: string;
+  currentPath?: string;
   solidHeader?: boolean;
   hideNavbar?: boolean;
 }
 
 const {
-  title = 'TOMORROW X TOGETHER | Official Showcase & Store',
-  description = 'Experience the cinematic universe of Tomorrow X Together (TXT). Interactive vinyl turntable player, lore, tour dates, and official merchandise.',
+  title = 'MUSES | Official Idol Group Website',
+  description = 'Situs resmi idol grup MUSES (7 members: Aria, Clara, Stella, Luna, Maya, Reva, Zia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
+  currentPath = Astro.url.pathname,
   solidHeader = false,
   hideNavbar = false,
 } = Astro.props;
+
+const navItems = [
+  { name: 'HOME', href: '/' },
+  { name: 'MEMBER', href: '/member' },
+  { name: 'DISCOGRAPHY', href: '/discography' },
+  { name: 'SCHEDULE', href: '/schedule' },
+  { name: 'STORE', href: '/store' },
+  { name: 'GALLERY', href: '/gallery' },
+  { name: 'KONTAK', href: '/kontak' },
+];
+
+const isItemActive = (href: string) => {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#FCFAF5" />
 
     <title>{title}</title>
   </head>
-  <body class="bg-[#0a0a0a] text-white selection:bg-[#F8138D] selection:text-white">
+  <body class="bg-[#FCFAF5] text-[#1F1A12] selection:bg-[#C9971C] selection:text-[#1F1A12]">
     {!hideNavbar && (
     <header
       id="main-header"
-      class={`fixed top-0 inset-x-0 z-40 navbar-visible border-b ${solidHeader ? 'bg-[#0a0a0a] border-white/10' : 'navbar-transparent'}`}
+      class={`fixed top-0 inset-x-0 z-40 navbar-visible border-b border-[#C9971C]/25 bg-white/95 backdrop-blur-md shadow-xs`}
       data-solid-header={solidHeader ? 'true' : 'false'}
     >
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <a href="/" class="flex items-center group" aria-label="TXT Home">
-          <span class="text-2xl font-black text-[#F8138D] font-display tracking-wider transition-transform group-hover:scale-110">
-            + × +
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 group" aria-label="MUSES Home">
+          <span class="text-2xl sm:text-3xl font-display font-black tracking-widest gold-gradient-text transition-transform group-hover:scale-105">
+            MUSES
           </span>
         </a>
 
-        <nav class="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-widest text-neutral-400">
-          <a href="/#members-pinned-section" class="hover:text-[#F8138D] transition-colors">
-            Members
-          </a>
-          <a href="/#discography-section" class="hover:text-[#F8138D] transition-colors">
-            Discography
-          </a>
-          <a href="/#schedule-section" class="hover:text-[#F8138D] transition-colors">
-            Tour
-          </a>
-          <a href="/store" class="hover:text-[#F8138D] transition-colors text-white">
-            Store
-          </a>
+        <nav class="hidden lg:flex items-center gap-1.5 xl:gap-2 text-[11px] font-semibold tracking-wider uppercase text-[#6E6453]">
+          {navItems.map((item) => {
+            const active = isItemActive(item.href);
+            return (
+              <a
+                href={item.href}
+                class={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                  active
+                    ? 'pill-active'
+                    : 'hover:text-[#1F1A12] hover:bg-[#C9971C]/10 text-[#524838]'
+                }`}
+              >
+                {item.name}
+              </a>
+            );
+          })}
         </nav>
 
-        <div class="flex items-center gap-3 sm:gap-4">
-          <a
-            href="/store"
-            class="hidden lg:inline-flex text-xs font-mono px-3 py-1.5 rounded-full border border-white/10 hover:border-[#F8138D]/50 text-neutral-300 hover:text-white transition-all"
-          >
-            ACT : PROMISE MERCH
-          </a>
-
-          <UserNavIsland client:load />
-
+        <div class="flex items-center gap-2.5 sm:gap-3">
           <button
             id="nav-cart-btn"
-            class="relative p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all cursor-pointer flex items-center justify-center group"
-            aria-label="Open Shopping Bag"
+            class="relative p-2.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] transition-all cursor-pointer flex items-center justify-center group"
+            aria-label="Keranjang Belanja"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-neutral-300 group-hover:text-[#F8138D] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
             <span
               id="cart-badge-count"
-              class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#F8138D] text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(248,19,141,0.6)]"
+              class="absolute -top-1 -right-1 w-5 h-5 rounded-full gold-gradient-bg text-[#1F1A12] text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(201,151,28,0.6)]"
             >
               0
             </span>
           </button>
 
+          <span class="h-6 w-px bg-[#C9971C]/30 mx-0.5" aria-hidden="true"></span>
+
+          <UserNavIsland client:load />
+
           <button
             id="mobile-menu-btn"
-            class="md:hidden p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all cursor-pointer flex items-center justify-center group"
-            aria-label="Toggle Mobile Navigation"
+            class="lg:hidden p-2.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] transition-all cursor-pointer flex items-center justify-center group"
+            aria-label="Buka Menu Navigasi"
           >
-            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-neutral-300 group-hover:text-[#F8138D] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-neutral-300 group-hover:text-[#F8138D] transition-colors hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -104,42 +119,34 @@ const {
 
     <div
       id="mobile-nav-drawer"
-      class="fixed inset-x-0 top-20 z-30 bg-[#0a0a0a]/95 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 ease-in-out -translate-y-full opacity-0 pointer-events-none md:hidden"
+      class="fixed inset-x-0 top-20 z-30 bg-white/95 backdrop-blur-2xl border-b border-[#C9971C]/30 transition-all duration-300 ease-in-out -translate-y-full opacity-0 pointer-events-none lg:hidden shadow-xl"
     >
-      <div class="px-6 py-6 flex flex-col space-y-5">
-        <nav class="flex flex-col space-y-3 text-sm font-semibold uppercase tracking-widest text-neutral-300">
-          <a href="/#members-pinned-section" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors">
-            <span>Members</span>
-            <span class="text-xs font-mono text-[#F8138D]">01</span>
-          </a>
-          <a href="/#discography-section" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors">
-            <span>Discography</span>
-            <span class="text-xs font-mono text-[#F8138D]">02</span>
-          </a>
-          <a href="/#schedule-section" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors">
-            <span>Tour Schedule</span>
-            <span class="text-xs font-mono text-[#F8138D]">03</span>
-          </a>
-          <a href="/store" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors text-white">
-            <span>Official Store</span>
-            <span class="text-xs font-mono text-[#F8138D]">04</span>
-          </a>
-          <a href="/login" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors text-white">
-            <span>MOA Account / Sign In</span>
-            <span class="text-xs font-mono text-[#F8138D]">05</span>
-          </a>
-          <a href="/checkout" class="mobile-nav-link flex items-center justify-between py-2.5 border-b border-white/5 hover:text-[#F8138D] transition-colors text-white">
-            <span>Checkout & Pesanan</span>
-            <span class="text-xs font-mono text-[#F8138D]">06</span>
+      <div class="px-6 py-6 flex flex-col space-y-4">
+        <nav class="flex flex-col space-y-2 text-xs font-bold uppercase tracking-wider text-[#4B4335]">
+          {navItems.map((item, idx) => {
+            const active = isItemActive(item.href);
+            return (
+              <a
+                href={item.href}
+                class={`mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl border border-transparent transition-all ${
+                  active
+                    ? 'pill-active'
+                    : 'hover:bg-[#C9971C]/10 text-[#4B4335]'
+                }`}
+              >
+                <span>{item.name}</span>
+                <span class="text-[10px] font-mono text-[#C9971C]">0{idx + 1}</span>
+              </a>
+            );
+          })}
+          <a
+            href="/auth"
+            class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-[#C9971C]/10 text-[#1F1A12] border-t border-[#1F1A12]/10 mt-2 pt-3"
+          >
+            <span>AKUN SAYA / SIGN IN</span>
+            <span class="text-[10px] font-mono text-[#C9971C]">★</span>
           </a>
         </nav>
-
-        <a
-          href="/store"
-          class="mobile-nav-link text-center text-xs font-mono py-3 px-4 rounded-xl bg-gradient-to-r from-[#F8138D] to-[#f570b7] text-white font-bold tracking-wider uppercase shadow-[0_0_20px_rgba(248,19,141,0.4)]"
-        >
-          ACT : PROMISE MERCH
-        </a>
       </div>
     </div>
     )}
@@ -167,9 +174,7 @@ const {
       });
 
       (window as any).__lenis = lenis;
-
       lenis.on('scroll', ScrollTrigger.update);
-
       gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
       });
@@ -198,33 +203,14 @@ const {
 
         if (currentY <= 60) {
           header.classList.remove('navbar-hidden', 'navbar-scrolled');
-          const isSolid = header.getAttribute('data-solid-header') === 'true';
-          if (isSolid) {
-            header.classList.add('navbar-visible');
-            header.style.transform = 'translateY(0)';
-            header.style.backgroundColor = '#0a0a0a';
-            header.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
-            header.style.backdropFilter = 'none';
-            (header.style as any).webkitBackdropFilter = 'none';
-          } else {
-            header.classList.add('navbar-visible', 'navbar-transparent');
-            header.style.transform = 'translateY(0)';
-            header.style.backgroundColor = 'transparent';
-            header.style.borderBottomColor = 'transparent';
-            header.style.backdropFilter = 'none';
-            (header.style as any).webkitBackdropFilter = 'none';
-          }
+          header.classList.add('navbar-visible');
+          header.style.transform = 'translateY(0)';
           isHeaderHidden = false;
           lastScrollY = currentY;
           return;
         }
 
-        header.classList.remove('navbar-transparent');
         header.classList.add('navbar-scrolled');
-        header.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-        header.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
-        header.style.backdropFilter = 'blur(16px)';
-        (header.style as any).webkitBackdropFilter = 'blur(16px)';
 
         if (direction === 1 && !isHeaderHidden) {
           header.classList.remove('navbar-visible');
@@ -268,14 +254,8 @@ const {
       function toggleMobileMenu(open?: boolean) {
         isMobileMenuOpen = open !== undefined ? open : !isMobileMenuOpen;
         if (isMobileMenuOpen) {
-          header?.classList.remove('navbar-hidden', 'navbar-transparent');
-          header?.classList.add('navbar-visible', 'navbar-scrolled');
-          if (header) {
-            header.style.transform = 'translateY(0)';
-            header.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
-            header.style.backdropFilter = 'blur(16px)';
-            (header.style as any).webkitBackdropFilter = 'blur(16px)';
-          }
+          header?.classList.remove('navbar-hidden');
+          header?.classList.add('navbar-visible');
           mobileDrawer?.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
           mobileDrawer?.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
           hamburgerIcon?.classList.add('hidden');

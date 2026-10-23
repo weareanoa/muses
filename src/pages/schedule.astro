@@ -1,0 +1,25 @@
+---
+import RootLayout from '../layouts/RootLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ScheduleSplitGrid from '../components/islands/ScheduleSplitGrid';
+---
+
+<RootLayout
+  title="Tour Schedule | MUSES Official Portal"
+  description="Jadwal tur dan konser idol grup MUSES. Hitung mundur waktu acara dan dapatkan tiket resmi."
+  currentPath="/schedule"
+>
+  <div class="pt-28 pb-20 px-4 sm:px-8">
+    <div class="max-w-7xl mx-auto mb-10">
+      <SectionHeading
+        title="SCHEDULE & TICKETS"
+        align="center"
+      />
+      <p class="max-w-xl mx-auto text-center text-[#6E6453] text-xs sm:text-sm -mt-6">
+        Informasi panggung, waktu pertunjukan, dan ketersediaan tiket konser tur idol grup MUSES.
+      </p>
+    </div>
+
+    <ScheduleSplitGrid client:load />
+  </div>
+</RootLayout>

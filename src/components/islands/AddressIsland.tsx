@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import {
   currentUser,
@@ -6,65 +6,86 @@ import {
   updateUserAddress,
   deleteUserAddress,
   setSelectedAddress,
-  updateUserRecipient,
   type UserAddress
 } from '../../stores/authStore';
-import { cartItems, cartSubtotal, clearCart } from '../../stores/cartStore';
+import { cartItems, clearCart } from '../../stores/cartStore';
 import {
   MapPin,
-  Plus,
-  Edit2,
-  Trash2,
+  X,
+  QrCode,
   Check,
-  CheckCircle2,
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Package,
-  ShoppingBag,
-  ExternalLink,
-  Phone,
-  User,
-  X
+  Edit2,
+  Trash2
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 
-interface AddressIslandProps {
-  showCheckoutSimulation?: boolean;
+interface CheckoutItem {
+  id: string;
+  name: string;
+  subtitle: string;
+  price: number;
+  quantity: number;
+  image: string;
 }
 
-export default function AddressIsland({ showCheckoutSimulation = true }: AddressIslandProps) {
+const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
+  {
+    id: 'faril-cheki',
+    name: 'Faril',
+    subtitle: 'Muse of Melpomene',
+    price: 80000,
+    quantity: 1,
+    image: '/images/members/portrait_purple.png',
+  },
+  {
+    id: 'mine-cheki',
+    name: 'Mine',
+    subtitle: 'Muse of Terpsichore',
+    price: 80000,
+    quantity: 1,
+    image: '/images/members/portrait_yellow.png',
+  },
+];
+
+export default function AddressIsland() {
   const user = useStore(currentUser);
-  const items = useStore(cartItems);
-  const subtotal = useStore(cartSubtotal);
+  const cart = useStore(cartItems);
+
+  const [items, setItems] = useState<CheckoutItem[]>(() => {
+    if (cart && cart.length > 0) {
+      return cart.map((c, idx) => ({
+        id: `cart-${c.id}-${idx}`,
+        name: c.name,
+        subtitle: [c.size, c.color].filter(Boolean).join(' • ') || 'Official Merchandise',
+        price: Math.round(c.price * 16000),
+        quantity: c.quantity || 1,
+        image: c.image || '/images/members/portrait_purple.png',
+      }));
+    }
+    return DEFAULT_CHECKOUT_ITEMS;
+  });
+
+  const [notes, setNotes] = useState('');
+  const [shippingFee] = useState(5000);
+  const [platformFee] = useState(0);
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-
   const [modalLabel, setModalLabel] = useState('Rumah');
   const [modalRecipient, setModalRecipient] = useState(user?.name || 'Aulia Rahma');
   const [modalPhone, setModalPhone] = useState(user?.phone?.replace(/^\+62\s*/, '') || '812 3456 7890');
-  const [modalStreet, setModalStreet] = useState('Jl. Contoh No. 12');
+  const [modalStreet, setModalStreet] = useState('Jl. Melpomene No. 18');
   const [modalCity, setModalCity] = useState('Bandung');
   const [modalProvince, setModalProvince] = useState('Jawa Barat');
   const [modalPostalCode, setModalPostalCode] = useState('40123');
   const [modalIsDefault, setModalIsDefault] = useState(true);
 
-  const [isEditRecipientOpen, setIsEditRecipientOpen] = useState(false);
-  const [recipientName, setRecipientName] = useState(user?.name || 'Aulia Rahma');
-  const [recipientEmail, setRecipientEmail] = useState(user?.email || 'aulia@email.com');
-  const [recipientPhone, setRecipientPhone] = useState(user?.phone || '+62 812 3456 7890');
-
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [checkoutDone, setCheckoutDone] = useState(false);
-
   const addresses = user?.addresses || [
     {
-      id: 'addr_sample',
+      id: 'addr_default',
       label: 'Rumah',
       recipientName: user?.name || 'Aulia Rahma',
       phone: user?.phone || '+62 812 3456 7890',
-      street: 'Jl. Contoh No. 12',
+      street: 'Jl. Melpomene No. 18',
       city: 'Bandung',
       province: 'Jawa Barat',
       postalCode: '40123',
@@ -76,6 +97,35 @@ export default function AddressIsland({ showCheckoutSimulation = true }: Address
     addresses.find((a) => a.id === user?.selectedAddressId) ||
     addresses.find((a) => a.isDefault) ||
     addresses[0];
+
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal + shippingFee + platformFee;
+
+  const updateQuantity = (id: string, delta: number) => {
+    setItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            const nextQty = item.quantity + delta;
+            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean) as CheckoutItem[]
+    );
+  };
+
+  const handleAddItem = () => {
+    const nextItem: CheckoutItem = {
+      id: `item-${Date.now()}`,
+      name: 'Stella',
+      subtitle: 'Muse of Urania',
+      price: 80000,
+      quantity: 1,
+      image: '/images/members/portrait_blue.png',
+    };
+    setItems((prev) => [...prev, nextItem]);
+  };
 
   const openAddModal = () => {
     setEditingAddressId(null);
@@ -133,515 +183,446 @@ export default function AddressIsland({ showCheckoutSimulation = true }: Address
     setIsAddressModalOpen(false);
   };
 
-  const handleSaveRecipient = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateUserRecipient(recipientName, recipientEmail, recipientPhone);
-    setIsEditRecipientOpen(false);
-  };
+  const handlePlaceOrder = () => {
+    const orderNumber = 'INV-20261021-0042';
+    const orderData = {
+      orderId: orderNumber,
+      date: new Date().toLocaleString('id-ID'),
+      items: items.map((i) => ({
+        id: i.id,
+        name: i.name,
+        subtitle: i.subtitle,
+        quantity: i.quantity,
+        price: i.price,
+        image: i.image,
+      })),
+      subtotalRupiah: subtotal,
+      shippingFee: 10000,
+      platformFee: 5000,
+      totalRupiah: 175000,
+      notes,
+      address: selectedAddress,
+      paymentMethod: 'qris',
+    };
 
-  const handlePay = () => {
-    setIsCheckingOut(true);
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      setCheckoutDone(true);
-      try {
-        confetti({
-          particleCount: 90,
-          spread: 75,
-          origin: { y: 0.6 },
-          colors: ['#F8138D', '#f570b7', '#00f2fe', '#ffffff'],
-        });
-      } catch {}
+    try {
+      sessionStorage.setItem('muse_active_payment', JSON.stringify(orderData));
+      localStorage.setItem('muse_active_payment', JSON.stringify(orderData));
+
+      const existingOrdersRaw = localStorage.getItem('muses_user_orders');
+      const existingOrders = existingOrdersRaw ? JSON.parse(existingOrdersRaw) : [];
+      const newOrderEntry = {
+        id: `MSE-${orderNumber}`,
+        orderCode: `MSE-${orderNumber}`,
+        title: items.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+        pickupTime: '23:59:59',
+        price: 'Rp 175.000',
+        numericPrice: 175000,
+        status: 'unpaid',
+        statusLabel: 'Menunggu pembayaran',
+        badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
+        location: 'Pengiriman Kurir JNE Regular',
+        items: items.map((i) => ({
+          name: i.name,
+          role: i.subtitle,
+          qty: i.quantity,
+          price: `Rp ${(i.price * i.quantity).toLocaleString('id-ID')}`,
+        })),
+        pickupCode: 'MSE-INV42',
+      };
+      localStorage.setItem('muses_user_orders', JSON.stringify([newOrderEntry, ...existingOrders]));
       clearCart();
-    }, 1000);
-  };
+    } catch (e) {
+      console.error(e);
+    }
 
-  const hasCartItems = items.length > 0;
-  const shippingFee = 20000;
-  const itemsTotalRupiah = hasCartItems ? Math.round(subtotal * 16000) : 350000;
-  const grandTotalRupiah = itemsTotalRupiah + shippingFee;
+    window.location.href = '/payment';
+  };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-8 relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-neutral-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#F8138D]" />
-                <h3 className="text-base font-bold text-white uppercase tracking-wider font-display">
-                  Daftar Alamat Pengiriman
-                </h3>
-              </div>
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
+                Alamat pengiriman
+              </h2>
               <button
                 type="button"
                 onClick={openAddModal}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F8138D]/15 hover:bg-[#F8138D]/25 border border-[#F8138D]/30 text-[#f570b7] hover:text-white text-xs font-semibold transition-all cursor-pointer"
+                className="px-4 py-1 rounded-full border border-[#1F1A12]/40 hover:border-[#1F1A12] text-xs font-semibold text-[#1F1A12] transition-colors cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Alamat</span>
+                + Tambah
               </button>
             </div>
 
-            <p className="text-xs text-neutral-400 mb-4">
-              Pilih alamat tujuan utama untuk pengiriman merchandise dan album resmi TOMORROW X TOGETHER.
-            </p>
-
-            <div className="space-y-3">
-              {addresses.map((addr) => {
-                const isSelected = selectedAddress?.id === addr.id;
-                return (
-                  <div
-                    key={addr.id}
-                    onClick={() => setSelectedAddress(addr.id)}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer relative ${
-                      isSelected
-                        ? 'bg-neutral-800/80 border-[#F8138D] shadow-[0_0_15px_rgba(248,19,141,0.2)]'
-                        : 'bg-black/40 border-white/10 hover:border-white/20'
-                    }`}
+            {selectedAddress ? (
+              <div className="space-y-1 text-xs text-[#52493A]">
+                <div className="flex items-center gap-2 font-semibold text-[#1F1A12]">
+                  <span>{selectedAddress.recipientName}</span>
+                  <span className="text-[#8A7F6C]">({selectedAddress.phone})</span>
+                  <span className="text-[10px] bg-[#FAF2DA] text-[#8C6A1C] border border-[#DFC478]/50 px-2 py-0.5 rounded-full font-mono">
+                    {selectedAddress.label}
+                  </span>
+                </div>
+                <p className="text-[#6E6453]">
+                  {selectedAddress.street}, {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
+                </p>
+                <div className="pt-2 flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(selectedAddress)}
+                    className="text-[#9A7420] hover:underline font-medium text-[11px] cursor-pointer"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1">
-                          <MapPin
-                            className={`w-4 h-4 ${isSelected ? 'text-[#F8138D]' : 'text-neutral-500'}`}
-                          />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <span className="text-sm font-bold text-white">{addr.label}</span>
-                            {addr.isDefault && (
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#F8138D]/20 text-[#f570b7] border border-[#F8138D]/30 font-semibold">
-                                Utama
-                              </span>
-                            )}
-                            {isSelected && (
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                                Terpilih
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs font-medium text-neutral-200">
-                            {addr.recipientName} ({addr.phone})
-                          </div>
-                          <div className="text-xs text-neutral-400 mt-1 leading-relaxed">
-                            {addr.street}, {addr.city}, {addr.province} {addr.postalCode}
-                          </div>
-                        </div>
-                      </div>
+                    Ubah Alamat
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddressModalOpen(true)}
+                    className="text-[#6E6453] hover:text-[#1F1A12] font-medium text-[11px] cursor-pointer"
+                  >
+                    Pilih Alamat Lain ({addresses.length})
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-[#8A7F6C]">Tambah alamat pengiriman</p>
+            )}
+          </div>
 
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditModal(addr);
-                          }}
-                          className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
-                          title="Ubah Alamat"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        {addresses.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteUserAddress(addr.id);
-                            }}
-                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-500 hover:text-red-400 transition-colors"
-                            title="Hapus Alamat"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
+                Barang
+              </h2>
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="px-4 py-1 rounded-full border border-[#1F1A12]/40 hover:border-[#1F1A12] text-xs font-semibold text-[#1F1A12] transition-colors cursor-pointer"
+              >
+                + Tambah
+              </button>
+            </div>
+
+            <div className="space-y-3.5">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-[#FDF6E2] border border-[#E8D49E] rounded-2xl p-4 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-14 h-14 rounded-xl object-cover object-top border border-black/5 bg-[#F8EFD7]"
+                    />
+                    <div>
+                      <div className="text-sm sm:text-base font-bold text-[#1F1A12]">
+                        {item.name}
+                      </div>
+                      <div className="text-xs text-[#8A7F6C]">
+                        {item.subtitle}
+                      </div>
+                      <div className="text-xs sm:text-sm font-bold text-[#1F1A12] mt-0.5">
+                        Rp. {item.price.toLocaleString('id-ID')}
                       </div>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="bg-[#FCEBAE] border border-[#DFC377] rounded-full px-2.5 py-1 flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item.id, -1)}
+                      className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
+                      aria-label="Kurangi jumlah"
+                    >
+                      -
+                    </button>
+                    <span className="text-xs font-bold text-[#1F1A12] min-w-3 text-center">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item.id, 1)}
+                      className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
+                      aria-label="Tambah jumlah"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="bg-neutral-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-[#F8138D]" />
-                <h4 className="text-sm font-bold text-white uppercase tracking-wider font-display">
-                  Informasi Penerima Utama
-                </h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsEditRecipientOpen(true)}
-                className="text-xs text-[#F8138D] hover:underline cursor-pointer"
-              >
-                Ubah di profil
-              </button>
-            </div>
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
+            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
+              Metode pembayaran
+            </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-black/40 border border-white/5 rounded-xl p-4 text-xs">
-              <div>
-                <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-0.5">Nama</span>
-                <span className="text-white font-semibold">{user?.name || 'Aulia Rahma'}</span>
+            <div className="bg-[#FDF6E2] border border-[#E8D49E] rounded-2xl p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-white border border-[#E8D49E] flex items-center justify-center text-[#1F1A12] shrink-0">
+                  <QrCode className="w-6 h-6 text-[#1F1A12]" />
+                </div>
+                <div>
+                  <div className="text-sm sm:text-base font-bold text-[#1F1A12]">
+                    QRIS
+                  </div>
+                  <div className="text-xs text-[#8A7F6C]">
+                    Gopay, OVO, ShopeePay, DANA, BCA Mobile, Livin, dll
+                  </div>
+                </div>
               </div>
-              <div>
-                <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-0.5">Email</span>
-                <span className="text-neutral-300 truncate block">{user?.email || 'aulia@email.com'}</span>
-              </div>
-              <div>
-                <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-0.5">No. HP</span>
-                <span className="text-neutral-300 font-mono">{user?.phone || '+62 812 3456 7890'}</span>
+
+              <div className="bg-[#FCEBAE] border border-[#DFC377] rounded-full px-2.5 py-1 flex items-center gap-2.5">
+                <span className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] opacity-50">
+                  -
+                </span>
+                <span className="text-xs font-bold text-[#1F1A12] min-w-3 text-center">
+                  1
+                </span>
+                <span className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] opacity-50">
+                  +
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {showCheckoutSimulation && (
-          <div className="lg:col-span-5">
-            <div className="bg-neutral-900/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
-                <div className="flex items-center gap-2">
-                  <Package className="w-5 h-5 text-[#F8138D]" />
-                  <h3 className="text-base font-bold text-white uppercase tracking-wider font-display">
-                    Checkout
-                  </h3>
-                </div>
-                <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
-                  Preview Otomatis
+        <div className="lg:col-span-5">
+          <div className="bg-[#FDF3D6] border border-[#EBD6A2] rounded-3xl p-6 sm:p-7 shadow-sm sticky top-28 space-y-4">
+            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
+              Ringkasan
+            </h2>
+
+            <div className="space-y-2 text-xs sm:text-sm text-[#70644D]">
+              <div className="flex justify-between items-center">
+                <span>Subtotal Produk</span>
+                <span className="font-semibold text-[#1F1A12]">
+                  Rp. {subtotal.toLocaleString('id-ID')}
                 </span>
               </div>
-
-              {checkoutDone ? (
-                <div className="py-8 text-center space-y-3">
-                  <CheckCircle2 className="w-12 h-12 text-[#F8138D] mx-auto animate-bounce" />
-                  <h4 className="text-base font-bold text-white font-display">Pesanan Berhasil Dibuat!</h4>
-                  <p className="text-xs text-neutral-400 max-w-xs mx-auto">
-                    Terima kasih, MOA! Paket merchandise resmi TXT akan segera dikirimkan ke alamat Anda.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setCheckoutDone(false)}
-                    className="mt-4 px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold"
-                  >
-                    Beli Produk Lain
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-semibold text-neutral-300">Penerima</span>
-                      <button
-                        type="button"
-                        onClick={() => setIsEditRecipientOpen(true)}
-                        className="text-xs text-[#F8138D] hover:underline cursor-pointer"
-                      >
-                        Ubah di profil
-                      </button>
-                    </div>
-                    <div className="bg-black/50 border border-white/10 rounded-xl p-3 text-xs leading-relaxed">
-                      <div className="font-semibold text-white">{user?.name || 'Aulia Rahma'}</div>
-                      <div className="text-neutral-400">{user?.email || 'aulia@email.com'}</div>
-                      <div className="text-neutral-400 font-mono">{user?.phone || '+62 812 3456 7890'}</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-semibold text-neutral-300">Alamat pengiriman</span>
-                      <button
-                        type="button"
-                        onClick={openAddModal}
-                        className="text-xs text-[#F8138D] hover:underline cursor-pointer"
-                      >
-                        Tambah alamat
-                      </button>
-                    </div>
-                    {selectedAddress ? (
-                      <div className="border border-white/15 bg-black/50 rounded-xl p-3.5 text-xs flex gap-2.5">
-                        <MapPin className="w-4 h-4 text-[#F8138D] shrink-0 mt-0.5" />
-                        <div>
-                          <div className="font-semibold text-white flex items-center gap-1.5">
-                            <span>{selectedAddress.label}</span>
-                            {selectedAddress.isDefault && (
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#F8138D]/20 text-[#f570b7] border border-[#F8138D]/30 font-semibold">
-                                Utama
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-neutral-300 text-[11px] mt-1 leading-relaxed">
-                            {selectedAddress.street}, {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="border border-dashed border-white/20 rounded-xl p-4 text-center">
-                        <p className="text-xs text-neutral-400 mb-2">Belum ada alamat pengiriman.</p>
-                        <button
-                          type="button"
-                          onClick={openAddModal}
-                          className="px-3 py-1.5 rounded-lg bg-[#F8138D] text-white text-xs font-semibold"
-                        >
-                          Tambah Alamat Sekarang
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="border-t border-white/10 pt-3 space-y-2 text-xs">
-                    {hasCartItems ? (
-                      items.map((it) => (
-                        <div key={it.id} className="flex justify-between text-neutral-300">
-                          <span className="truncate max-w-[200px]">
-                            {it.name} x{it.quantity}
-                          </span>
-                          <span className="font-mono text-white">
-                            Rp {(Math.round(it.price * 16000) * it.quantity).toLocaleString('id-ID')}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex justify-between text-neutral-300">
-                        <span>Lightstick Official TXT v2 x1</span>
-                        <span className="font-mono text-white">Rp 350.000</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-neutral-400">
-                      <span>Ongkir (Pengiriman Cepat)</span>
-                      <span className="font-mono text-neutral-200">Rp {shippingFee.toLocaleString('id-ID')}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-sm text-white pt-2 border-t border-white/10">
-                      <span>Total Pembayaran</span>
-                      <span className="font-mono text-[#f570b7]">
-                        Rp {grandTotalRupiah.toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handlePay}
-                    disabled={isCheckingOut || !selectedAddress}
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#F8138D] via-[#f570b7] to-[#F8138D] text-white font-bold text-xs uppercase tracking-widest hover:brightness-110 shadow-[0_0_20px_rgba(248,19,141,0.4)] transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
-                  >
-                    {isCheckingOut ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Memproses Pembayaran...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Bayar sekarang</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-between items-center">
+                <span>Biaya Pengiriman</span>
+                <span className="font-semibold text-[#1F1A12]">
+                  Rp. {shippingFee.toLocaleString('id-ID')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Biaya Layanan & Asuransi</span>
+                <span className="font-semibold text-[#1F1A12]">-</span>
+              </div>
             </div>
+
+            <div>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Catatan"
+                className="w-full h-24 bg-white rounded-2xl p-3.5 text-xs text-[#1F1A12] placeholder-[#A3977F] border border-[#EBD6A2]/60 focus:outline-none focus:border-[#C9971C] resize-none"
+              />
+            </div>
+
+            <div className="pt-2 flex justify-between items-baseline">
+              <span className="text-base font-bold text-[#1F1A12]">
+                Total harga
+              </span>
+              <span className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
+                Rp. {total.toLocaleString('id-ID')}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handlePlaceOrder}
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer text-center"
+            >
+              Pesan
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {isAddressModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-neutral-900 border border-white/15 rounded-2xl p-6 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-              <h3 className="text-base font-bold text-white font-display">
-                {editingAddressId ? 'Ubah Alamat Pengiriman' : 'Tambah Alamat Baru'}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-[#FCFAF5] border border-[#DFC478]/50 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10 mb-4">
+              <h3 className="text-base font-bold text-[#1F1A12]">
+                {editingAddressId ? 'Ubah Alamat Pengiriman' : 'Kelola Alamat Pengiriman'}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsAddressModalOpen(false)}
-                className="text-neutral-400 hover:text-white p-1 rounded-lg"
+                className="text-[#6E6453] hover:text-[#1F1A12] p-1 rounded-lg cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveAddress} className="space-y-3.5 text-xs">
+            {!editingAddressId && addresses.length > 0 && (
+              <div className="mb-4 space-y-2 max-h-48 overflow-y-auto pr-1">
+                <span className="text-[11px] font-bold text-[#6E6453] uppercase tracking-wider block">
+                  Pilih Alamat Tersimpan
+                </span>
+                {addresses.map((addr) => (
+                  <div
+                    key={addr.id}
+                    onClick={() => {
+                      setSelectedAddress(addr.id);
+                      setIsAddressModalOpen(false);
+                    }}
+                    className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-start justify-between ${
+                      selectedAddress?.id === addr.id
+                        ? 'border-[#C9971C] bg-[#FDF9ED]'
+                        : 'border-[#1F1A12]/10 bg-white hover:bg-[#FAF6EC]'
+                    }`}
+                  >
+                    <div>
+                      <div className="font-bold text-[#1F1A12] flex items-center gap-1.5">
+                        <span>{addr.recipientName}</span>
+                        <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] px-2 py-0.5 rounded-full">
+                          {addr.label}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-[#6E6453] mt-0.5">
+                        {addr.street}, {addr.city}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(addr);
+                        }}
+                        className="p-1 hover:text-[#9A7420]"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      {addresses.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteUserAddress(addr.id);
+                          }}
+                          className="p-1 hover:text-red-500"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form onSubmit={handleSaveAddress} className="space-y-3 text-xs">
+              <span className="text-[11px] font-bold text-[#6E6453] uppercase tracking-wider block">
+                {editingAddressId ? 'Edit Data Alamat' : 'Atau Tambah Baru'}
+              </span>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-mono text-neutral-300 mb-1">Label Alamat</label>
+                  <label className="block text-[11px] text-[#6E6453] mb-1">Label Alamat</label>
                   <input
                     type="text"
                     value={modalLabel}
                     onChange={(e) => setModalLabel(e.target.value)}
-                    placeholder="Rumah / Kantor / Kos"
-                    className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none"
+                    placeholder="Rumah / Kantor"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-mono text-neutral-300 mb-1">Nama Penerima</label>
+                  <label className="block text-[11px] text-[#6E6453] mb-1">Nama Penerima</label>
                   <input
                     type="text"
                     value={modalRecipient}
                     onChange={(e) => setModalRecipient(e.target.value)}
                     placeholder="Nama Lengkap"
-                    className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono text-neutral-300 mb-1">No. Handphone</label>
-                <div className="flex gap-2">
-                  <div className="flex items-center px-3 bg-black/40 border border-white/15 rounded-xl text-neutral-300 font-mono text-xs">
+                <label className="block text-[11px] text-[#6E6453] mb-1">Nomor WhatsApp / HP</label>
+                <div className="flex items-center">
+                  <span className="bg-[#FAF2DA] border border-r-0 border-[#1F1A12]/15 rounded-l-xl px-2.5 py-2 text-xs font-mono text-[#8C6A1C]">
                     +62
-                  </div>
+                  </span>
                   <input
-                    type="text"
+                    type="tel"
                     value={modalPhone}
                     onChange={(e) => setModalPhone(e.target.value)}
                     placeholder="812 3456 7890"
-                    className="flex-1 bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none font-mono"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-r-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono text-neutral-300 mb-1">Alamat Lengkap</label>
+                <label className="block text-[11px] text-[#6E6453] mb-1">Alamat Lengkap</label>
                 <textarea
                   value={modalStreet}
                   onChange={(e) => setModalStreet(e.target.value)}
-                  placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan"
-                  rows={2}
-                  className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl p-3 text-white placeholder:text-neutral-600 focus:outline-none resize-none"
+                  placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan"
+                  className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl p-3 text-[#1F1A12] focus:outline-none resize-none h-18"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-[10px] font-mono text-neutral-300 mb-1">Kota/Kabupaten</label>
+                  <label className="block text-[11px] text-[#6E6453] mb-1">Kota</label>
                   <input
                     type="text"
                     value={modalCity}
                     onChange={(e) => setModalCity(e.target.value)}
-                    placeholder="Bandung"
-                    className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono text-neutral-300 mb-1">Provinsi</label>
+                  <label className="block text-[11px] text-[#6E6453] mb-1">Provinsi</label>
                   <input
                     type="text"
                     value={modalProvince}
                     onChange={(e) => setModalProvince(e.target.value)}
-                    placeholder="Jawa Barat"
-                    className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono text-neutral-300 mb-1">Kode Pos</label>
+                  <label className="block text-[11px] text-[#6E6453] mb-1">Kode Pos</label>
                   <input
                     type="text"
                     value={modalPostalCode}
                     onChange={(e) => setModalPostalCode(e.target.value)}
-                    placeholder="40123"
-                    className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white placeholder:text-neutral-600 focus:outline-none font-mono"
+                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={modalIsDefault}
-                  onChange={(e) => setModalIsDefault(e.target.checked)}
-                  className="accent-[#F8138D] w-3.5 h-3.5"
-                />
-                <span className="text-neutral-300 text-xs">Jadikan alamat pengiriman utama</span>
-              </label>
-
-              <div className="flex gap-2.5 pt-3 border-t border-white/10">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1F1A12]/10">
                 <button
                   type="button"
                   onClick={() => setIsAddressModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 font-semibold"
+                  className="px-4 py-2 rounded-xl text-xs text-[#6E6453] hover:text-[#1F1A12] cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#F8138D] to-[#f570b7] text-white font-bold shadow-lg"
+                  className="px-5 py-2 rounded-xl bg-[#C9971C] hover:bg-[#B08A36] text-[#FCFAF5] font-bold text-xs shadow-sm transition-all cursor-pointer"
                 >
                   Simpan Alamat
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {isEditRecipientOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-sm bg-neutral-900 border border-white/15 rounded-2xl p-6 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-              <h3 className="text-base font-bold text-white font-display">Ubah Data Penerima</h3>
-              <button
-                type="button"
-                onClick={() => setIsEditRecipientOpen(false)}
-                className="text-neutral-400 hover:text-white p-1 rounded-lg"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveRecipient} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block text-[11px] font-mono text-neutral-300 mb-1">Nama Lengkap</label>
-                <input
-                  type="text"
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono text-neutral-300 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono text-neutral-300 mb-1">No. Handphone (+62)</label>
-                <input
-                  type="text"
-                  value={recipientPhone}
-                  onChange={(e) => setRecipientPhone(e.target.value)}
-                  className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded-xl px-3 py-2 text-white focus:outline-none font-mono"
-                  required
-                />
-              </div>
-
-              <div className="flex gap-2.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditRecipientOpen(false)}
-                  className="flex-1 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 font-semibold"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2 rounded-xl bg-[#F8138D] hover:bg-[#f570b7] text-white font-bold"
-                >
-                  Simpan
                 </button>
               </div>
             </form>

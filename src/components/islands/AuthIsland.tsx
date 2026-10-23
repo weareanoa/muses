@@ -1,90 +1,87 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import {
   currentUser,
+  loginWithGoogle,
   loginUser,
   registerUser,
-  quickDemoLogin,
-  logoutUser,
+  requestOtp,
+  verifyOtp,
   type User
 } from '../../stores/authStore';
 import {
   Mail,
   Lock,
-  User as UserIcon,
-  Eye,
-  EyeOff,
-  AlertCircle,
-  Sparkles,
+  Phone,
   ArrowRight,
   ShieldCheck,
+  AlertCircle,
   CheckCircle2,
-  Phone,
-  MapPin,
-  Heart,
-  ChevronDown,
-  ChevronUp
+  RefreshCw,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface AuthIslandProps {
   initialMode?: 'login' | 'register';
   redirectPath?: string;
-  showCheckoutPreview?: boolean;
 }
-
-const MEMBERS = [
-  { id: 'soobin', name: 'Soobin', emoji: '🐰' },
-  { id: 'yeonjun', name: 'Yeonjun', emoji: '🦊' },
-  { id: 'beomgyu', name: 'Beomgyu', emoji: '🐻' },
-  { id: 'taehyun', name: 'Taehyun', emoji: '🐿️' },
-  { id: 'hueningkai', name: 'Hueningkai', emoji: '🐧' },
-  { id: 'ot5', name: 'OT5 All', emoji: '⭐' },
-];
 
 export default function AuthIsland({
   initialMode = 'login',
-  redirectPath = '/',
-  showCheckoutPreview = false
+  redirectPath = '/'
 }: AuthIslandProps) {
   const user = useStore(currentUser);
-  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
+  const [isRegisterMode, setIsRegisterMode] = useState<boolean>(initialMode === 'register');
+  const [isOtpFlow, setIsOtpFlow] = useState<boolean>(false);
+  const [otpStep, setOtpStep] = useState<'email' | 'code'>('email');
 
-  const [loginIdentifier, setLoginIdentifier] = useState('aulia@email.com');
-  const [loginPassword, setLoginPassword] = useState('password123');
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [email, setEmail] = useState<string>('aulia@email.com');
+  const [phone, setPhone] = useState<string>('081234567890');
+  const [password, setPassword] = useState<string>('muses2026');
+  const [confirmPassword, setConfirmPassword] = useState<string>('muses2026');
+  const [agreeTerms, setAgreeTerms] = useState<boolean>(true);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const [regName, setRegName] = useState('Aulia Rahma');
-  const [regEmail, setRegEmail] = useState('aulia@email.com');
-  const [regPhone, setRegPhone] = useState('812 3456 7890');
-  const [regPassword, setRegPassword] = useState('password123');
-  const [showRegPassword, setShowRegPassword] = useState(false);
-  const [selectedBias, setSelectedBias] = useState(MEMBERS[1]);
-  const [acceptTerms, setAcceptTerms] = useState(true);
-
-  const [includeAddressNow, setIncludeAddressNow] = useState(true);
-  const [addrLabel, setAddrLabel] = useState('Rumah');
-  const [addrStreet, setAddrStreet] = useState('Jl. Contoh No. 12');
-  const [addrCity, setAddrCity] = useState('Bandung');
-  const [addrProvince, setAddrProvince] = useState('Jawa Barat');
-  const [addrPostalCode, setAddrPostalCode] = useState('40123');
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
+  const [countdown, setCountdown] = useState<number>(60);
+  const [canResend, setCanResend] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
     if (user) {
       window.location.href = redirectPath || '/';
     }
   }, [user, redirectPath]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isOtpFlow && otpStep === 'code' && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setCanResend(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isOtpFlow, otpStep, countdown]);
+
   const triggerCelebration = () => {
     try {
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 90,
+        spread: 75,
         origin: { y: 0.6 },
-        colors: ['#F8138D', '#f570b7', '#ffffff', '#00f2fe'],
+        colors: ['#C9971C', '#E5BF55', '#F7E08F', '#1F1A12'],
       });
     } catch {}
   };
@@ -93,21 +90,25 @@ export default function AuthIsland({
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!loginIdentifier.trim() || !loginPassword) {
-      setErrorMessage('Silakan isi email/username/no. HP dan kata sandi.');
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setErrorMessage('Silakan masukkan format alamat email yang valid.');
+      return;
+    }
+    if (!password) {
+      setErrorMessage('Silakan masukkan kata sandi Anda.');
       return;
     }
 
     setIsLoading(true);
     setTimeout(() => {
-      const result = loginUser(loginIdentifier, loginPassword);
+      const res = loginUser(cleanEmail, password);
       setIsLoading(false);
-
-      if (result.success && result.user) {
+      if (res.success && res.user) {
         triggerCelebration();
         window.location.href = redirectPath || '/';
       } else {
-        setErrorMessage(result.error || 'Autentikasi gagal. Periksa kembali email dan kata sandi Anda.');
+        setErrorMessage(res.error || 'Email atau kata sandi tidak sesuai.');
       }
     }, 400);
   };
@@ -116,317 +117,649 @@ export default function AuthIsland({
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!regName.trim()) {
-      setErrorMessage('Silakan masukkan nama lengkap Anda.');
+    const cleanEmail = email.trim();
+    const cleanPhone = phone.trim();
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setErrorMessage('Silakan masukkan format alamat email yang valid.');
       return;
     }
-    if (!regEmail.trim() || !regEmail.includes('@')) {
-      setErrorMessage('Silakan masukkan email yang valid.');
+    if (!cleanPhone || cleanPhone.length < 8) {
+      setErrorMessage('Silakan masukkan nomor HP yang valid.');
       return;
     }
-    if (regPassword.length < 8) {
-      setErrorMessage('Kata sandi harus minimal 8 karakter.');
+    if (!password || password.length < 6) {
+      setErrorMessage('Kata sandi harus minimal 6 karakter.');
       return;
     }
-    if (!acceptTerms) {
-      setErrorMessage('Anda harus menyetujui syarat layanan dan kebijakan privasi.');
+    if (password !== confirmPassword) {
+      setErrorMessage('Konfirmasi kata sandi tidak cocok.');
+      return;
+    }
+    if (!agreeTerms) {
+      setErrorMessage('Anda harus menyetujui Syarat & Ketentuan serta Kebijakan Privasi.');
       return;
     }
 
     setIsLoading(true);
     setTimeout(() => {
-      const formattedPhone = regPhone.trim().startsWith('+62') ? regPhone.trim() : `+62 ${regPhone.trim()}`;
-
-      const initialAddress = includeAddressNow && addrStreet.trim() ? {
-        label: addrLabel,
-        recipientName: regName.trim(),
-        phone: formattedPhone,
-        street: addrStreet.trim(),
-        city: addrCity.trim(),
-        province: addrProvince.trim(),
-        postalCode: addrPostalCode.trim(),
-        isDefault: true,
-      } : undefined;
-
-      const result = registerUser({
-        name: regName,
-        email: regEmail,
-        phone: formattedPhone,
-        password: regPassword,
-        bias: selectedBias.name,
-        biasEmoji: selectedBias.emoji,
-        initialAddress,
+      const namePart = cleanEmail.split('@')[0];
+      const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+      const res = registerUser({
+        name: capitalized,
+        email: cleanEmail,
+        phone: cleanPhone,
+        password,
       });
-
       setIsLoading(false);
-
-      if (result.success && result.user) {
+      if (res.success && res.user) {
         triggerCelebration();
         window.location.href = redirectPath || '/';
       } else {
-        setErrorMessage(result.error || 'Gagal mendaftar akun.');
+        setErrorMessage(res.error || 'Gagal mendaftarkan akun. Silakan coba kembali.');
       }
     }, 500);
   };
 
-  const fillMockupData = () => {
-    setRegName('Aulia Rahma');
-    setRegEmail('aulia@email.com');
-    setRegPhone('812 3456 7890');
-    setRegPassword('password123');
-    setAddrStreet('Jl. Contoh No. 12');
-    setAddrCity('Bandung');
-    setAddrProvince('Jawa Barat');
-    setAddrPostalCode('40123');
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
     setErrorMessage(null);
+    setTimeout(() => {
+      const result = loginWithGoogle();
+      setIsLoading(false);
+      if (result.success) {
+        triggerCelebration();
+        window.location.href = redirectPath || '/';
+      }
+    }, 500);
   };
 
-  const fillLoginSample = () => {
-    setLoginIdentifier('aulia@email.com');
-    setLoginPassword('password123');
+  const handleStartEmailOtp = () => {
+    setIsOtpFlow(true);
     setErrorMessage(null);
+    const clean = email.trim();
+    if (clean && clean.includes('@')) {
+      setIsLoading(true);
+      setTimeout(() => {
+        const res = requestOtp(clean);
+        setIsLoading(false);
+        if (res.success) {
+          setOtpStep('code');
+          setCountdown(60);
+          setCanResend(false);
+          setOtpDigits(['', '', '', '', '', '']);
+          setSuccessNotice(`Kode verifikasi 6-digit dikirim ke ${clean} (Kode demo: ${res.testCode})`);
+          setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
+        }
+      }, 400);
+    } else {
+      setOtpStep('email');
+    }
+  };
+
+  const handleSendOtpForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    const clean = email.trim();
+    if (!clean || !clean.includes('@')) {
+      setErrorMessage('Silakan masukkan format alamat email yang valid.');
+      return;
+    }
+    setIsLoading(true);
+    setTimeout(() => {
+      const res = requestOtp(clean);
+      setIsLoading(false);
+      if (res.success) {
+        setOtpStep('code');
+        setCountdown(60);
+        setCanResend(false);
+        setOtpDigits(['', '', '', '', '', '']);
+        setSuccessNotice(`Kode verifikasi dikirim ke ${clean} (Kode demo: ${res.testCode})`);
+        setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
+      }
+    }, 400);
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) {
+      const pasted = value.replace(/\D/g, '').slice(0, 6).split('');
+      const newDigits = [...otpDigits];
+      pasted.forEach((char, i) => {
+        if (i < 6) newDigits[i] = char;
+      });
+      setOtpDigits(newDigits);
+      const nextFocus = Math.min(pasted.length, 5);
+      otpInputRefs.current[nextFocus]?.focus();
+      return;
+    }
+
+    const digit = value.replace(/\D/g, '');
+    const newDigits = [...otpDigits];
+    newDigits[index] = digit;
+    setOtpDigits(newDigits);
+
+    if (digit && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pasted.length > 0) {
+      const newDigits = [...otpDigits];
+      pasted.split('').forEach((char, idx) => {
+        newDigits[idx] = char;
+      });
+      setOtpDigits(newDigits);
+      const targetIdx = Math.min(pasted.length, 5);
+      otpInputRefs.current[targetIdx]?.focus();
+    }
+  };
+
+  const handleOtpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    const fullCode = otpDigits.join('');
+    if (fullCode.length !== 6) {
+      setErrorMessage('Harap masukkan 6 digit kode OTP secara lengkap.');
+      return;
+    }
+    setIsLoading(true);
+    setTimeout(() => {
+      const result = verifyOtp(email, fullCode);
+      setIsLoading(false);
+      if (result.success && result.user) {
+        triggerCelebration();
+        window.location.href = redirectPath || '/';
+      } else {
+        setErrorMessage(result.error || 'Kode verifikasi tidak valid.');
+      }
+    }, 500);
   };
 
   return (
-    <div className="w-full max-w-md mx-auto relative">
-      <div className="relative bg-neutral-900/90 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-44 h-44 bg-[#F8138D]/15 rounded-full blur-[80px] pointer-events-none" />
+    <div className="w-full max-w-md mx-auto relative select-none">
+      <div className="relative bg-white/95 backdrop-blur-2xl border border-[#C9971C]/30 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(201,151,28,0.14)] overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-48 h-48 bg-[#F7E08F]/25 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="mb-6">
-          <div className="flex items-center gap-2.5 mb-2">
-            <div className="w-7 h-7 rounded-full bg-[#F4C0D1] text-[#72243E] flex items-center justify-center shadow-md">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <span className="text-sm font-semibold text-white tracking-wide">TOMORROW X TOGETHER</span>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl font-display font-black tracking-widest gold-gradient-text">
+              MUSES
+            </span>
+            <span className="text-[11px] font-mono text-[#8C6A1C] uppercase tracking-wider">
+              • OFFICIAL PORTAL
+            </span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-            {mode === 'register' ? 'Buat akun' : 'Masuk ke akun'}
+          <h1 className="text-2xl font-bold text-[#1F1A12] tracking-tight">
+            {isOtpFlow
+              ? otpStep === 'code'
+                ? 'Verifikasi Kode OTP'
+                : 'Masuk dengan Email OTP'
+              : isRegisterMode
+              ? 'Daftar Akun MUSES'
+              : 'Masuk ke Akun'}
           </h1>
-          <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
-            {mode === 'register'
-              ? 'Cukup sekali. Data ini dipakai otomatis saat checkout.'
-              : 'Gunakan data akun terdaftar untuk melanjutkan belanja dan akses eksklusif MOA.'}
+          <p className="text-xs text-[#6E6453] mt-1 leading-relaxed">
+            {isOtpFlow
+              ? `Kode verifikasi 6 digit dikirim ke ${email}.`
+              : isRegisterMode
+              ? 'Lengkapi data diri Anda untuk membuat akun resmi fans MUSES.'
+              : 'Gunakan akun Anda untuk melanjutkan belanja dan menikmati akses eksklusif.'}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 p-1 bg-black/50 border border-white/10 rounded-xl mb-5">
-          <button
-            type="button"
-            onClick={() => {
-              setMode('register');
-              setErrorMessage(null);
-            }}
-            className={`py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              mode === 'register'
-                ? 'bg-gradient-to-r from-[#F8138D] to-[#f570b7] text-white shadow-md'
-                : 'text-neutral-400 hover:text-white'
-            }`}
-          >
-            Daftar Akun
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMode('login');
-              setErrorMessage(null);
-            }}
-            className={`py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              mode === 'login'
-                ? 'bg-gradient-to-r from-[#F8138D] to-[#f570b7] text-white shadow-md'
-                : 'text-neutral-400 hover:text-white'
-            }`}
-          >
-            Masuk
-          </button>
-        </div>
-
         {errorMessage && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs flex items-start gap-2 animate-in fade-in duration-200">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {mode === 'register' ? (
-          <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
-            <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                Nama lengkap
-              </label>
-              <input
-                type="text"
-                value={regName}
-                onChange={(e) => setRegName(e.target.value)}
-                placeholder="Aulia Rahma"
-                className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
-                required
-              />
-            </div>
+        {successNotice && isOtpFlow && (
+          <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 text-xs flex items-start gap-2 animate-in fade-in duration-200">
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-700" />
+            <span>{successNotice}</span>
+          </div>
+        )}
 
+        {!isOtpFlow && !isRegisterMode && (
+          <form onSubmit={handleLoginSubmit} className="space-y-4 animate-in fade-in duration-200">
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={regEmail}
-                onChange={(e) => setRegEmail(e.target.value)}
-                placeholder="aulia@email.com"
-                className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                No. HP
-              </label>
-              <div className="flex gap-2">
-                <div className="flex items-center px-3 bg-black/60 border border-white/15 rounded-xl text-neutral-300 text-xs font-mono">
-                  +62
-                </div>
-                <input
-                  type="text"
-                  value={regPhone}
-                  onChange={(e) => setRegPhone(e.target.value)}
-                  placeholder="812 3456 7890"
-                  className="flex-1 min-w-0 bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none transition-colors font-mono"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                Kata sandi
+              <label className="block text-xs font-semibold text-[#1F1A12] mb-1.5">
+                Alamat Email
               </label>
               <div className="relative">
                 <input
-                  type={showRegPassword ? 'text' : 'password'}
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="Minimal 8 karakter"
-                  className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com"
+                  className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowRegPassword(!showRegPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
-                >
-                  {showRegPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
+                <Mail className="w-4 h-4 text-[#8C6A1C] absolute left-3 top-1/2 -translate-y-1/2" />
               </div>
-              <p className="text-[11px] text-neutral-500 mt-1">Minimal 8 karakter.</p>
             </div>
 
-            <label className="flex gap-2 items-start text-xs text-neutral-300 pt-1 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={acceptTerms}
-                onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="accent-[#F8138D] mt-0.5 rounded w-3.5 h-3.5 cursor-pointer"
-              />
-              <span className="text-[11px] leading-relaxed text-neutral-400">
-                Saya setuju dengan syarat layanan dan kebijakan privasi.
+            <div>
+              <label className="block text-xs font-semibold text-[#1F1A12] mb-1.5">
+                Kata Sandi
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi"
+                  className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-9 pr-9 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                  required
+                />
+                <Lock className="w-4 h-4 text-[#8C6A1C] absolute left-3 top-1/2 -translate-y-1/2" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C6A1C] hover:text-[#1F1A12] cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl pill-active text-[#1F1A12] font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#1F1A12]/30 border-t-[#1F1A12] rounded-full animate-spin" />
+                  <span>Memproses...</span>
+                </>
+              ) : (
+                <>
+                  <span>Masuk ke Akun</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
+            <div className="relative flex items-center justify-center my-4">
+              <div className="w-full border-t border-[#1F1A12]/10" />
+              <span className="absolute px-3 bg-white text-[11px] font-mono text-[#8C6A1C] uppercase tracking-wider">
+                atau masuk dengan
               </span>
-            </label>
+            </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#F8138D] to-[#f570b7] hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(248,19,141,0.4)] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Mendaftarkan...</span>
-                </>
-              ) : (
-                <span>Daftar</span>
-              )}
-            </button>
-
-            <div className="flex items-center justify-center pt-2 text-[11px]">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setMode('login')}
-                className="text-neutral-400 hover:text-white"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+                className="py-2.5 px-3 rounded-xl bg-[#FCFAF5] hover:bg-[#FDF6E7] border border-[#C9971C]/35 text-[#1F1A12] font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer hover:border-[#C9971C]"
               >
-                Sudah punya akun? <span className="text-[#F8138D] font-semibold ml-1">Masuk</span>
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  />
+                </svg>
+                <span>Google</span>
               </button>
-            </div>
-          </form>
-        ) : (
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                Email / No. HP / Username
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={loginIdentifier}
-                  onChange={(e) => setLoginIdentifier(e.target.value)}
-                  placeholder="aulia@email.com atau 0812..."
-                  className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-9 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
-                  required
-                />
-                <Mail className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
-                Kata sandi
-              </label>
-              <div className="relative">
-                <input
-                  type={showLoginPassword ? 'text' : 'password'}
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-xl px-9 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
-                  required
-                />
-                <Lock className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <button
-                  type="button"
-                  onClick={() => setShowLoginPassword(!showLoginPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
-                >
-                  {showLoginPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#F8138D] to-[#f570b7] hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(248,19,141,0.4)] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Memverifikasi...</span>
-                </>
-              ) : (
-                <span>Masuk Sekarang</span>
-              )}
-            </button>
-
-            <div className="flex items-center justify-center pt-1 text-[11px]">
               <button
                 type="button"
-                onClick={() => setMode('register')}
-                className="text-neutral-400 hover:text-white"
+                onClick={handleStartEmailOtp}
+                className="py-2.5 px-3 rounded-xl bg-[#FCFAF5] hover:bg-[#FDF6E7] border border-[#C9971C]/35 text-[#1F1A12] font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer hover:border-[#C9971C]"
               >
-                Belum punya akun? <span className="text-[#F8138D] font-semibold ml-1">Daftar</span>
+                <Mail className="w-4 h-4 text-[#C9971C]" />
+                <span>Email OTP</span>
               </button>
             </div>
           </form>
         )}
+
+        {!isOtpFlow && isRegisterMode && (
+          <form onSubmit={handleRegisterSubmit} className="space-y-3.5 animate-in fade-in duration-200">
+            <div>
+              <label className="block text-xs font-semibold text-[#1F1A12] mb-1">
+                Alamat Email
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com"
+                  className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-9 pr-3.5 py-2 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                  required
+                />
+                <Mail className="w-4 h-4 text-[#8C6A1C] absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#1F1A12] mb-1">
+                Nomor Handphone
+              </label>
+              <div className="relative">
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="081234567890"
+                  className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-9 pr-3.5 py-2 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                  required
+                />
+                <Phone className="w-4 h-4 text-[#8C6A1C] absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#1F1A12] mb-1">
+                  Kata Sandi
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Min. 6 digit"
+                    className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                    required
+                  />
+                  <Lock className="w-3.5 h-3.5 text-[#8C6A1C] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1F1A12] mb-1">
+                  Ulangi Sandi
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Ulangi sandi"
+                    className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                    required
+                  />
+                  <Lock className="w-3.5 h-3.5 text-[#8C6A1C] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="agree-terms"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-[#C9971C] focus:ring-[#C9971C] border-[#C9971C]/50 cursor-pointer"
+                required
+              />
+              <label htmlFor="agree-terms" className="text-[11px] text-[#6E6453] leading-snug cursor-pointer">
+                Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi MUSES.
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl pill-active text-[#1F1A12] font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-xs mt-2"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#1F1A12]/30 border-t-[#1F1A12] rounded-full animate-spin" />
+                  <span>Mendaftarkan...</span>
+                </>
+              ) : (
+                <>
+                  <span>Daftar Akun</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
+            <div className="relative flex items-center justify-center my-3">
+              <div className="w-full border-t border-[#1F1A12]/10" />
+              <span className="absolute px-3 bg-white text-[11px] font-mono text-[#8C6A1C] uppercase tracking-wider">
+                atau daftar dengan
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+                className="py-2.5 px-3 rounded-xl bg-[#FCFAF5] hover:bg-[#FDF6E7] border border-[#C9971C]/35 text-[#1F1A12] font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer hover:border-[#C9971C]"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  />
+                </svg>
+                <span>Google</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleStartEmailOtp}
+                className="py-2.5 px-3 rounded-xl bg-[#FCFAF5] hover:bg-[#FDF6E7] border border-[#C9971C]/35 text-[#1F1A12] font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer hover:border-[#C9971C]"
+              >
+                <Mail className="w-4 h-4 text-[#C9971C]" />
+                <span>Email OTP</span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {isOtpFlow && otpStep === 'email' && (
+          <form onSubmit={handleSendOtpForm} className="space-y-4 animate-in fade-in duration-200">
+            <div>
+              <label className="block text-xs font-semibold text-[#1F1A12] mb-1.5">
+                Alamat Email untuk OTP
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com"
+                  className="w-full bg-[#FCFAF5] border border-[#C9971C]/35 focus:border-[#C9971C] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A3977F] focus:outline-none transition-colors"
+                  required
+                  autoFocus
+                />
+                <Mail className="w-4 h-4 text-[#8C6A1C] absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl pill-active text-[#1F1A12] font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#1F1A12]/30 border-t-[#1F1A12] rounded-full animate-spin" />
+                  <span>Mengirim Kode...</span>
+                </>
+              ) : (
+                <>
+                  <span>Kirim Kode OTP</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsOtpFlow(false);
+                setErrorMessage(null);
+              }}
+              className="w-full text-center text-xs text-[#6E6453] hover:text-[#1F1A12] pt-1 cursor-pointer"
+            >
+              ← Kembali ke form utama
+            </button>
+          </form>
+        )}
+
+        {isOtpFlow && otpStep === 'code' && (
+          <form onSubmit={handleOtpSubmit} className="space-y-5 animate-in fade-in duration-200">
+            <div className="flex justify-between items-center gap-2">
+              {otpDigits.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => (otpInputRefs.current[idx] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                  onPaste={handleOtpPaste}
+                  className="w-12 h-13 sm:w-13 sm:h-14 text-center font-mono text-xl font-bold bg-[#FCFAF5] border border-[#C9971C]/40 focus:border-[#C9971C] rounded-xl text-[#1F1A12] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/30 transition-all"
+                />
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-[#6E6453] pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setOtpStep('email');
+                  setErrorMessage(null);
+                  setSuccessNotice(null);
+                }}
+                className="text-[#8C6A1C] hover:text-[#C9971C] font-semibold underline cursor-pointer"
+              >
+                Ganti email
+              </button>
+
+              <div>
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!canResend) return;
+                      const res = requestOtp(email);
+                      setCountdown(60);
+                      setCanResend(false);
+                      setSuccessNotice(`Kode baru telah dikirim! (Gunakan: ${res.testCode})`);
+                    }}
+                    className="text-[#C9971C] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Kirim ulang</span>
+                  </button>
+                ) : (
+                  <span className="font-mono text-[#8A7F6C]">
+                    Kirim ulang ({countdown}s)
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading || otpDigits.join('').length !== 6}
+              className="w-full py-3 rounded-xl pill-active text-[#1F1A12] font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#1F1A12]/30 border-t-[#1F1A12] rounded-full animate-spin" />
+                  <span>Memverifikasi...</span>
+                </>
+              ) : (
+                <span>Verifikasi & Masuk</span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsOtpFlow(false);
+                setErrorMessage(null);
+              }}
+              className="w-full text-center text-xs text-[#6E6453] hover:text-[#1F1A12] pt-1 cursor-pointer"
+            >
+              ← Kembali ke form utama
+            </button>
+          </form>
+        )}
+
+        <div className="mt-6 pt-4 border-t border-[#1F1A12]/10 text-center text-xs text-[#6E6453]">
+          {isRegisterMode ? (
+            <p>
+              Sudah punya akun?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegisterMode(false);
+                  setIsOtpFlow(false);
+                  setErrorMessage(null);
+                  setSuccessNotice(null);
+                }}
+                className="text-[#8C6A1C] hover:text-[#C9971C] font-bold underline ml-1 cursor-pointer"
+              >
+                Masuk
+              </button>
+            </p>
+          ) : (
+            <p>
+              Belum punya akun?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegisterMode(true);
+                  setIsOtpFlow(false);
+                  setErrorMessage(null);
+                  setSuccessNotice(null);
+                }}
+                className="text-[#8C6A1C] hover:text-[#C9971C] font-bold underline ml-1 cursor-pointer"
+              >
+                Daftar
+              </button>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

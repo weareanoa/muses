@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <rect x="0" y="0" width="800" height="1000" fill="#fcfaf5"/>
+  <rect x="28" y="28" width="744" height="944" fill="none" stroke="#c9a227" stroke-opacity="0.45" stroke-width="2"/>
+
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e9d8a6"/>
+      <stop offset="45%" stop-color="#c9a227"/>
+      <stop offset="100%" stop-color="#8a6a1c"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="400" cy="430" r="230" fill="none" stroke="url(#g)" stroke-width="3" opacity="0.8"/>
+  <circle cx="400" cy="430" r="170" fill="none" stroke="#9a7420" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="400" cy="430" r="80" fill="url(#g)" opacity="0.55"/>
+  <path d="M120 700 Q400 560 680 700" fill="none" stroke="#9a7420" stroke-width="2" opacity="0.45"/>
+  
+  <text x="50%" y="88%" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="8" fill="#7d5c16">CITY 03</text>
+  <text x="50%" y="93%" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="6" fill="#9a7420" opacity="0.7">TOUR POSTER</text>
+
+  </svg>

@@ -79,7 +79,7 @@ export default function AuthShowcaseIsland() {
             particleCount: 80,
             spread: 70,
             origin: { y: 0.6 },
-            colors: ['#F8138D', '#f570b7', '#ffffff'],
+            colors: ['#9A7420', '#B08A36', '#ffffff'],
           });
         } catch {}
         setFeedbackMsg('Akun berhasil didaftarkan dan terhubung ke checkout!');
@@ -99,7 +99,7 @@ export default function AuthShowcaseIsland() {
           particleCount: 90,
           spread: 75,
           origin: { y: 0.6 },
-          colors: ['#F8138D', '#f570b7', '#00f2fe', '#ffffff'],
+          colors: ['#9A7420', '#B08A36', '#C9A227', '#ffffff'],
         });
       } catch {}
     }, 1000);
@@ -109,94 +109,94 @@ export default function AuthShowcaseIsland() {
     <div className="w-full max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <div>
-          <p className="text-xs text-neutral-400 mb-2 font-mono">1. Registrasi</p>
-          <div className="bg-neutral-900/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-xl relative">
+          <p className="text-xs text-[#6E6453] mb-2 font-mono">1. Registrasi</p>
+          <div className="bg-white/90 backdrop-blur-2xl border border-[#1F1A12]/10 rounded-2xl p-6 shadow-xl relative">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-full bg-[#F4C0D1] text-[#72243E] flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-[#EFE3C4] text-[#6B5214] flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
               </div>
-              <span className="text-sm font-semibold text-white">TOMORROW X TOGETHER</span>
+              <span className="text-sm font-semibold text-[#1F1A12]">MUSE</span>
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-1">Buat akun</h3>
-            <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
+            <h3 className="text-lg font-bold text-[#1F1A12] mb-1">Buat akun</h3>
+            <p className="text-xs text-[#6E6453] mb-4 leading-relaxed">
               Cukup sekali. Data ini dipakai otomatis saat checkout.
             </p>
 
             {feedbackMsg && (
-              <div className="mb-3 p-2.5 rounded-lg bg-[#F8138D]/15 border border-[#F8138D]/30 text-[#f570b7] text-xs">
+              <div className="mb-3 p-2.5 rounded-lg bg-[#9A7420]/15 border border-[#9A7420]/30 text-[#B08A36] text-xs">
                 {feedbackMsg}
               </div>
             )}
 
             <form onSubmit={handleRegister} className="space-y-3 text-xs">
               <div>
-                <label className="block text-neutral-300 mb-1">Nama lengkap</label>
+                <label className="block text-[#4B4335] mb-1">Nama lengkap</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-lg px-3 py-2 text-white focus:outline-none"
+                  className="w-full bg-[#FBF8F1] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded-lg px-3 py-2 text-[#1F1A12] focus:outline-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-neutral-300 mb-1">Email</label>
+                <label className="block text-[#4B4335] mb-1">Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-lg px-3 py-2 text-white focus:outline-none"
+                  className="w-full bg-[#FBF8F1] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded-lg px-3 py-2 text-[#1F1A12] focus:outline-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-neutral-300 mb-1">No. HP</label>
+                <label className="block text-[#4B4335] mb-1">No. HP</label>
                 <div className="flex gap-2">
-                  <div className="flex items-center px-3 bg-black/60 border border-white/15 rounded-lg text-neutral-300 font-mono text-xs">
+                  <div className="flex items-center px-3 bg-[#FBF8F1] border border-[#1F1A12]/15 rounded-lg text-[#4B4335] font-mono text-xs">
                     +62
                   </div>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="flex-1 bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-lg px-3 py-2 text-white focus:outline-none font-mono"
+                    className="flex-1 bg-[#FBF8F1] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded-lg px-3 py-2 text-[#1F1A12] focus:outline-none font-mono"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-neutral-300 mb-1">Kata sandi</label>
+                <label className="block text-[#4B4335] mb-1">Kata sandi</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-black/60 border border-white/15 focus:border-[#F8138D] rounded-lg px-3 py-2 text-white focus:outline-none"
+                    className="w-full bg-[#FBF8F1] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded-lg px-3 py-2 text-[#1F1A12] focus:outline-none"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8A7F6C] hover:text-[#4B4335]"
                   >
                     {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
                 </div>
-                <p className="text-[11px] text-neutral-500 mt-1">Minimal 8 karakter.</p>
+                <p className="text-[11px] text-[#8A7F6C] mt-1">Minimal 8 karakter.</p>
               </div>
 
-              <label className="flex gap-2 items-start text-neutral-300 pt-1 cursor-pointer select-none">
+              <label className="flex gap-2 items-start text-[#4B4335] pt-1 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
-                  className="accent-[#F8138D] mt-0.5 rounded w-3.5 h-3.5 cursor-pointer"
+                  className="accent-[#9A7420] mt-0.5 rounded w-3.5 h-3.5 cursor-pointer"
                 />
-                <span className="text-[11px] leading-relaxed text-neutral-400">
+                <span className="text-[11px] leading-relaxed text-[#6E6453]">
                   Saya setuju dengan syarat layanan dan kebijakan privasi.
                 </span>
               </label>
@@ -204,14 +204,14 @@ export default function AuthShowcaseIsland() {
               <button
                 type="submit"
                 disabled={isRegistering}
-                className="w-full py-2.5 rounded-lg bg-[#993556] hover:bg-[#b83e66] text-white font-semibold text-xs tracking-wide transition-all shadow-md cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 rounded-lg bg-[#9A7420] hover:bg-[#B08A36] text-[#FCFAF5] font-semibold text-xs tracking-wide transition-all shadow-md cursor-pointer disabled:opacity-50"
               >
                 {isRegistering ? 'Menyimpan Akun...' : 'Daftar'}
               </button>
 
-              <p className="text-center text-neutral-400 pt-1">
+              <p className="text-center text-[#6E6453] pt-1">
                 Sudah punya akun?{' '}
-                <a href="/login" className="text-[#F8138D] font-semibold hover:underline">
+                <a href="/login" className="text-[#9A7420] font-semibold hover:underline">
                   Masuk
                 </a>
               </p>
@@ -220,21 +220,21 @@ export default function AuthShowcaseIsland() {
         </div>
 
         <div>
-          <p className="text-xs text-neutral-400 mb-2 font-mono">2. Checkout</p>
-          <div className="bg-neutral-900/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-xl relative">
-            <h3 className="text-lg font-bold text-white mb-4">Checkout</h3>
+          <p className="text-xs text-[#6E6453] mb-2 font-mono">2. Checkout</p>
+          <div className="bg-white/90 backdrop-blur-2xl border border-[#1F1A12]/10 rounded-2xl p-6 shadow-xl relative">
+            <h3 className="text-lg font-bold text-[#1F1A12] mb-4">Checkout</h3>
 
             {paidDone ? (
               <div className="py-8 text-center space-y-3">
-                <CheckCircle2 className="w-12 h-12 text-[#F8138D] mx-auto animate-bounce" />
-                <h4 className="text-base font-bold text-white">Pembayaran Sukses!</h4>
-                <p className="text-xs text-neutral-400 max-w-xs mx-auto">
-                  Paket resmi TOMORROW X TOGETHER siap dikirimkan ke alamat Anda.
+                <CheckCircle2 className="w-12 h-12 text-[#9A7420] mx-auto animate-bounce" />
+                <h4 className="text-base font-bold text-[#1F1A12]">Pembayaran Sukses!</h4>
+                <p className="text-xs text-[#6E6453] max-w-xs mx-auto">
+                  Paket resmi MUSE siap dikirimkan ke alamat Anda.
                 </p>
                 <button
                   type="button"
                   onClick={() => setPaidDone(false)}
-                  className="mt-3 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs"
+                  className="mt-3 px-4 py-2 bg-[#1F1A12]/10 hover:bg-[#1F1A12]/20 text-[#1F1A12] rounded-lg text-xs"
                 >
                   Selesai
                 </button>
@@ -243,46 +243,46 @@ export default function AuthShowcaseIsland() {
               <div className="space-y-4 text-xs">
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-neutral-300 font-medium">Penerima</span>
-                    <a href="/profile" className="text-[#F8138D] hover:underline cursor-pointer">
+                    <span className="text-[#4B4335] font-medium">Penerima</span>
+                    <a href="/profile" className="text-[#9A7420] hover:underline cursor-pointer">
                       Ubah di profil
                     </a>
                   </div>
-                  <div className="bg-black/60 border border-white/5 rounded-lg p-3 space-y-1">
-                    <div className="font-semibold text-white">{name || 'Aulia Rahma'}</div>
-                    <div className="text-neutral-400">{email || 'aulia@email.com'}</div>
-                    <div className="text-neutral-400 font-mono">{fullPhone}</div>
+                  <div className="bg-[#FBF8F1] border border-[#1F1A12]/10 rounded-lg p-3 space-y-1">
+                    <div className="font-semibold text-[#1F1A12]">{name || 'Aulia Rahma'}</div>
+                    <div className="text-[#6E6453]">{email || 'aulia@email.com'}</div>
+                    <div className="text-[#6E6453] font-mono">{fullPhone}</div>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-neutral-300 font-medium">Alamat pengiriman</span>
+                    <span className="text-[#4B4335] font-medium">Alamat pengiriman</span>
                     <button
                       type="button"
                       onClick={() => setIsEditAddressOpen(!isEditAddressOpen)}
-                      className="text-[#F8138D] hover:underline cursor-pointer"
+                      className="text-[#9A7420] hover:underline cursor-pointer"
                     >
                       {isEditAddressOpen ? 'Tutup form' : 'Tambah alamat'}
                     </button>
                   </div>
 
                   {isEditAddressOpen && (
-                    <div className="p-3 mb-3 bg-black/60 border border-[#F8138D]/30 rounded-lg space-y-2 animate-in fade-in duration-150">
+                    <div className="p-3 mb-3 bg-[#FBF8F1] border border-[#9A7420]/30 rounded-lg space-y-2 animate-in fade-in duration-150">
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           type="text"
                           value={addressLabel}
                           onChange={(e) => setAddressLabel(e.target.value)}
                           placeholder="Label (e.g. Rumah)"
-                          className="bg-black/50 border border-white/15 focus:border-[#F8138D] rounded px-2.5 py-1.5 text-xs text-white"
+                          className="bg-[#F6F1E5] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded px-2.5 py-1.5 text-xs text-[#1F1A12]"
                         />
                         <input
                           type="text"
                           value={postalCode}
                           onChange={(e) => setPostalCode(e.target.value)}
                           placeholder="Kode Pos"
-                          className="bg-black/50 border border-white/15 focus:border-[#F8138D] rounded px-2.5 py-1.5 text-xs text-white font-mono"
+                          className="bg-[#F6F1E5] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded px-2.5 py-1.5 text-xs text-[#1F1A12] font-mono"
                         />
                       </div>
                       <input
@@ -290,7 +290,7 @@ export default function AuthShowcaseIsland() {
                         value={street}
                         onChange={(e) => setStreet(e.target.value)}
                         placeholder="Alamat jalan"
-                        className="w-full bg-black/50 border border-white/15 focus:border-[#F8138D] rounded px-2.5 py-1.5 text-xs text-white"
+                        className="w-full bg-[#F6F1E5] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded px-2.5 py-1.5 text-xs text-[#1F1A12]"
                       />
                       <div className="grid grid-cols-2 gap-2">
                         <input
@@ -298,47 +298,47 @@ export default function AuthShowcaseIsland() {
                           value={city}
                           onChange={(e) => setCity(e.target.value)}
                           placeholder="Kota"
-                          className="bg-black/50 border border-white/15 focus:border-[#F8138D] rounded px-2.5 py-1.5 text-xs text-white"
+                          className="bg-[#F6F1E5] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded px-2.5 py-1.5 text-xs text-[#1F1A12]"
                         />
                         <input
                           type="text"
                           value={province}
                           onChange={(e) => setProvince(e.target.value)}
                           placeholder="Provinsi"
-                          className="bg-black/50 border border-white/15 focus:border-[#F8138D] rounded px-2.5 py-1.5 text-xs text-white"
+                          className="bg-[#F6F1E5] border border-[#1F1A12]/15 focus:border-[#9A7420] rounded px-2.5 py-1.5 text-xs text-[#1F1A12]"
                         />
                       </div>
                     </div>
                   )}
 
-                  <div className="border border-white/15 rounded-lg p-3 flex gap-2.5 bg-black/40">
-                    <MapPin className="w-4 h-4 text-neutral-400 shrink-0 mt-0.5" />
+                  <div className="border border-[#1F1A12]/15 rounded-lg p-3 flex gap-2.5 bg-[#F8F4EA]">
+                    <MapPin className="w-4 h-4 text-[#6E6453] shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-semibold text-white flex items-center gap-1.5">
+                      <div className="font-semibold text-[#1F1A12] flex items-center gap-1.5">
                         <span>{addressLabel}</span>
-                        <span className="text-[10px] bg-[#F8138D]/20 text-[#f570b7] border border-[#F8138D]/30 px-2 py-0.5 rounded-full font-semibold">
+                        <span className="text-[10px] bg-[#9A7420]/20 text-[#B08A36] border border-[#9A7420]/30 px-2 py-0.5 rounded-full font-semibold">
                           Utama
                         </span>
                       </div>
-                      <div className="text-neutral-400 mt-1 leading-relaxed">
+                      <div className="text-[#6E6453] mt-1 leading-relaxed">
                         {fullAddress}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-white/10 pt-3 space-y-1.5">
-                  <div className="flex justify-between text-neutral-300">
+                <div className="border-t border-[#1F1A12]/10 pt-3 space-y-1.5">
+                  <div className="flex justify-between text-[#4B4335]">
                     <span>Lightstick x1</span>
                     <span className="font-mono">Rp 350.000</span>
                   </div>
-                  <div className="flex justify-between text-neutral-400">
+                  <div className="flex justify-between text-[#6E6453]">
                     <span>Ongkir</span>
                     <span className="font-mono">Rp 20.000</span>
                   </div>
-                  <div className="flex justify-between font-bold text-sm text-white pt-2 border-t border-white/10">
+                  <div className="flex justify-between font-bold text-sm text-[#1F1A12] pt-2 border-t border-[#1F1A12]/10">
                     <span>Total</span>
-                    <span className="font-mono text-[#f570b7]">Rp 370.000</span>
+                    <span className="font-mono text-[#B08A36]">Rp 370.000</span>
                   </div>
                 </div>
 
@@ -346,7 +346,7 @@ export default function AuthShowcaseIsland() {
                   type="button"
                   onClick={handlePay}
                   disabled={isPaying}
-                  className="w-full py-2.5 rounded-lg bg-[#993556] hover:bg-[#b83e66] text-white font-semibold text-xs tracking-wide transition-all shadow-md cursor-pointer disabled:opacity-50 mt-2"
+                  className="w-full py-2.5 rounded-lg bg-[#9A7420] hover:bg-[#B08A36] text-[#FCFAF5] font-semibold text-xs tracking-wide transition-all shadow-md cursor-pointer disabled:opacity-50 mt-2"
                 >
                   {isPaying ? 'Memproses...' : 'Bayar sekarang'}
                 </button>

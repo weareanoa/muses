@@ -114,40 +114,40 @@ export default function ScheduleHub() {
     switch (status) {
       case 'available':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[#962a64]/20 text-[#f570b7] border border-[#F8138D]/40 shadow-[0_0_12px_rgba(248,19,141,0.25)]">
-            <span className="w-2 h-2 rounded-full bg-[#F8138D] animate-pulse"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[#E9D9AE]/20 text-[#B08A36] border border-[#9A7420]/40 shadow-[0_0_12px_rgba(154,116,32,0.25)]">
+            <span className="w-2 h-2 rounded-full bg-[#9A7420] animate-pulse"></span>
             Tickets Available
           </span>
         );
       case 'selling_fast':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500/15 text-amber-400 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500/15 text-amber-700 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
             Selling Fast
           </span>
         );
       case 'sold_out':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-rose-500/15 text-rose-400 border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.25)]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-rose-500/15 text-rose-600 border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.25)]">
             Sold Out
           </span>
         );
       case 'free_stream':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-pink-500/15 text-pink-300 border border-pink-500/40 shadow-[0_0_12px_rgba(248,19,141,0.25)]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-pink-500/15 text-[#9A7420] border border-pink-500/40 shadow-[0_0_12px_rgba(154,116,32,0.25)]">
             <Radio className="w-3 h-3 animate-pulse" />
             Free Global Stream
           </span>
         );
       case 'lottery_closed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-neutral-800 text-neutral-400 border border-neutral-700">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[#EDE6D6] text-[#6E6453] border border-neutral-700">
             Lottery Closed
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-neutral-800 text-neutral-300 border border-neutral-700">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[#EDE6D6] text-[#4B4335] border border-neutral-700">
             {status}
           </span>
         );
@@ -159,7 +159,7 @@ export default function ScheduleHub() {
     const title = encodeURIComponent(currentEvent.title);
     const location = encodeURIComponent(`${currentEvent.venue}, ${currentEvent.city}`);
     const details = encodeURIComponent(
-      `Tomorrow X Together Official Schedule\nShow Time: ${currentEvent.showTime}\nMore info: https://weverse.io/txt`
+      `MUSE Official Schedule\nShow Time: ${currentEvent.showTime}\nMore info: https://example.com/muse`
     );
     const dateFormatted = currentEvent.date.replace(/-/g, '');
     const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateFormatted}T100000Z/${dateFormatted}T130000Z&details=${details}&location=${location}`;
@@ -171,9 +171,9 @@ export default function ScheduleHub() {
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8 select-none">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-white/10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-[#1F1A12]/10">
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-1 bg-[#121215] border border-white/10 rounded-full shadow-inner">
+          <div className="flex items-center p-1 bg-[#FFFFFF] border border-[#1F1A12]/10 rounded-full shadow-inner">
             {months.map((m) => {
               const isSelected = selectedMonth === m;
               return (
@@ -182,8 +182,8 @@ export default function ScheduleHub() {
                   onClick={() => setSelectedMonth(m)}
                   className={`px-4 sm:px-5 py-2 rounded-full text-xs font-mono font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
                     isSelected
-                      ? 'bg-[#F8138D] text-white shadow-[0_0_15px_rgba(248,19,141,0.4)]'
-                      : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#9A7420] text-[#FCFAF5] shadow-[0_0_15px_rgba(154,116,32,0.4)]'
+                      : 'text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5'
                   }`}
                 >
                   {m}
@@ -202,8 +202,8 @@ export default function ScheduleHub() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 cursor-pointer border ${
                   isSelected
-                    ? 'border-[#F8138D] text-white bg-[#F8138D]/15 shadow-[0_0_15px_rgba(248,19,141,0.2)]'
-                    : 'border-white/10 text-neutral-400 hover:text-white hover:border-white/30 bg-transparent'
+                    ? 'border-[#9A7420] text-[#1F1A12] bg-[#9A7420]/15 shadow-[0_0_15px_rgba(154,116,32,0.2)]'
+                    : 'border-[#1F1A12]/10 text-[#6E6453] hover:text-[#1F1A12] hover:border-[#1F1A12]/30 bg-transparent'
                 }`}
               >
                 {cat.label}
@@ -216,7 +216,7 @@ export default function ScheduleHub() {
       <div className="relative group">
         <button
           onClick={() => scrollStrip('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center hover:border-[#F8138D] hover:text-[#F8138D] transition-all opacity-0 group-hover:opacity-100 shadow-xl cursor-pointer"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#1F1A12] border border-[#9A7420]/40 text-[#FCFAF5] flex items-center justify-center hover:border-[#9A7420] hover:text-[#C9A227] transition-all opacity-0 group-hover:opacity-100 shadow-xl cursor-pointer"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -238,15 +238,15 @@ export default function ScheduleHub() {
                 onClick={() => setSelectedDate(dayObj.isoDate)}
                 className={`relative shrink-0 w-20 sm:w-24 h-24 sm:h-28 rounded-xl flex flex-col items-center justify-between p-3 border transition-all duration-300 cursor-pointer ${
                   isSelected
-                    ? 'bg-[#18181d] border-[#F8138D] shadow-[0_0_20px_rgba(248,19,141,0.35)] -translate-y-1'
+                    ? 'bg-[#F8F5EC] border-[#9A7420] shadow-[0_0_20px_rgba(154,116,32,0.35)] -translate-y-1'
                     : hasEvent
-                    ? 'bg-[#131317] border-white/20 hover:border-[#F8138D]/70 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(248,19,141,0.15)]'
-                    : 'bg-[#0f0f12]/60 border-white/5 opacity-55 hover:opacity-100 hover:border-white/20 hover:-translate-y-0.5'
+                    ? 'bg-[#FFFFFF] border-[#1F1A12]/20 hover:border-[#9A7420]/70 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(154,116,32,0.15)]'
+                    : 'bg-[#FCFAF5]/60 border-[#1F1A12]/10 opacity-55 hover:opacity-100 hover:border-[#1F1A12]/20 hover:-translate-y-0.5'
                 }`}
               >
                 <span
                   className={`text-[11px] font-mono font-bold tracking-widest uppercase ${
-                    isSelected ? 'text-[#f570b7]' : 'text-neutral-400'
+                    isSelected ? 'text-[#B08A36]' : 'text-[#6E6453]'
                   }`}
                 >
                   {dayObj.dayName}
@@ -254,7 +254,7 @@ export default function ScheduleHub() {
 
                 <span
                   className={`text-2xl sm:text-3xl font-display font-black tracking-tight ${
-                    isSelected ? 'text-white scale-105' : 'text-neutral-200'
+                    isSelected ? 'text-[#1F1A12] scale-105' : 'text-[#2E281E]'
                   }`}
                 >
                   {dayObj.dayNumber}
@@ -265,12 +265,12 @@ export default function ScheduleHub() {
                     <span
                       className={`w-2 h-2 rounded-full ${
                         eventInfo?.category === 'tour'
-                          ? 'bg-[#F8138D] shadow-[0_0_8px_#F8138D] animate-pulse'
-                          : 'bg-[#f570b7] shadow-[0_0_8px_#f570b7]'
+                          ? 'bg-[#9A7420] shadow-[0_0_8px_#9A7420] animate-pulse'
+                          : 'bg-[#B08A36] shadow-[0_0_8px_#B08A36]'
                       }`}
                     />
                   ) : (
-                    <span className="w-1 h-1 rounded-full bg-neutral-800" />
+                    <span className="w-1 h-1 rounded-full bg-[#EDE6D6]" />
                   )}
                 </div>
               </button>
@@ -280,53 +280,53 @@ export default function ScheduleHub() {
 
         <button
           onClick={() => scrollStrip('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center hover:border-[#F8138D] hover:text-[#F8138D] transition-all opacity-0 group-hover:opacity-100 shadow-xl cursor-pointer"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#1F1A12] border border-[#9A7420]/40 text-[#FCFAF5] flex items-center justify-center hover:border-[#9A7420] hover:text-[#C9A227] transition-all opacity-0 group-hover:opacity-100 shadow-xl cursor-pointer"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="relative rounded-2xl bg-gradient-to-b from-[#141418] to-[#0c0c0f] border border-white/10 p-6 sm:p-10 shadow-2xl overflow-hidden transition-all duration-500">
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#962a64]/15 blur-[100px] pointer-events-none" />
+      <div className="relative rounded-2xl bg-gradient-to-b from-[#FFFFFF] to-[#FAF7EF] border border-[#1F1A12]/10 p-6 sm:p-10 shadow-2xl overflow-hidden transition-all duration-500">
+        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#E9D9AE]/15 blur-[100px] pointer-events-none" />
 
         {currentEvent ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-7 flex flex-col space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 rounded-md text-[10px] font-mono font-bold tracking-widest uppercase bg-white/10 text-white border border-white/15">
+                <span className="px-3 py-1 rounded-md text-[10px] font-mono font-bold tracking-widest uppercase bg-[#1F1A12]/10 text-[#1F1A12] border border-[#1F1A12]/15">
                   {currentEvent.eventType}
                 </span>
-                <span className="text-xs font-mono text-neutral-400">
+                <span className="text-xs font-mono text-[#6E6453]">
                   {currentEvent.date} ({currentEvent.dayName})
                 </span>
                 {currentEvent.highlight && (
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-[#f570b7] uppercase tracking-wider">
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-[#B08A36] uppercase tracking-wider">
                     <Sparkles className="w-3 h-3" /> Headline Act
                   </span>
                 )}
               </div>
 
               <div>
-                <h3 className="text-4xl sm:text-6xl md:text-7xl font-display font-black tracking-tight text-white uppercase drop-shadow-md">
+                <h3 className="text-4xl sm:text-6xl md:text-7xl font-display font-black tracking-tight text-[#1F1A12] uppercase drop-shadow-md">
                   {currentEvent.city}
-                  <span className="text-[#F8138D] ml-2">.{currentEvent.country}</span>
+                  <span className="text-[#9A7420] ml-2">.{currentEvent.country}</span>
                 </h3>
-                <h4 className="text-xl sm:text-2xl font-display font-semibold text-neutral-200 mt-1">
+                <h4 className="text-xl sm:text-2xl font-display font-semibold text-[#2E281E] mt-1">
                   {currentEvent.title}
                 </h4>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-neutral-400 pt-2">
-                <MapPin className="w-4 h-4 text-[#F8138D] shrink-0" />
-                <span className="font-medium text-neutral-300">{currentEvent.venue}</span>
+              <div className="flex items-center gap-2 text-sm text-[#6E6453] pt-2">
+                <MapPin className="w-4 h-4 text-[#9A7420] shrink-0" />
+                <span className="font-medium text-[#4B4335]">{currentEvent.venue}</span>
               </div>
             </div>
 
-            <div className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 rounded-xl bg-black/50 border border-white/10 space-y-6">
+            <div className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 rounded-xl bg-[#F6F1E5] border border-[#1F1A12]/10 space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider">
+                <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10">
+                  <span className="text-xs font-mono text-[#6E6453] uppercase tracking-wider">
                     Ticket Status
                   </span>
                   {getStatusBadge(currentEvent.ticketStatus)}
@@ -335,21 +335,21 @@ export default function ScheduleHub() {
                 <div className="grid grid-cols-2 gap-4">
                   {currentEvent.doorOpen && (
                     <div>
-                      <span className="text-[11px] font-mono text-neutral-500 uppercase block">
+                      <span className="text-[11px] font-mono text-[#8A7F6C] uppercase block">
                         Gate Open
                       </span>
-                      <span className="text-sm font-bold text-white font-mono flex items-center gap-1.5 mt-0.5">
-                        <Clock className="w-3.5 h-3.5 text-neutral-400" />
+                      <span className="text-sm font-bold text-[#1F1A12] font-mono flex items-center gap-1.5 mt-0.5">
+                        <Clock className="w-3.5 h-3.5 text-[#6E6453]" />
                         {currentEvent.doorOpen}
                       </span>
                     </div>
                   )}
                   <div>
-                    <span className="text-[11px] font-mono text-neutral-500 uppercase block">
+                    <span className="text-[11px] font-mono text-[#8A7F6C] uppercase block">
                       Show Time
                     </span>
-                    <span className="text-sm font-bold text-[#f570b7] font-mono flex items-center gap-1.5 mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-[#f570b7]" />
+                    <span className="text-sm font-bold text-[#B08A36] font-mono flex items-center gap-1.5 mt-0.5">
+                      <Clock className="w-3.5 h-3.5 text-[#B08A36]" />
                       {currentEvent.showTime}
                     </span>
                   </div>
@@ -360,7 +360,7 @@ export default function ScheduleHub() {
                 {currentEvent.ticketStatus === 'sold_out' ? (
                   <button
                     disabled
-                    className="w-full py-3.5 bg-neutral-800 text-neutral-500 font-bold uppercase text-xs tracking-wider rounded-lg cursor-not-allowed border border-white/5"
+                    className="w-full py-3.5 bg-[#EDE6D6] text-[#8A7F6C] font-bold uppercase text-xs tracking-wider rounded-lg cursor-not-allowed border border-[#1F1A12]/10"
                   >
                     Official Tickets Sold Out
                   </button>
@@ -369,7 +369,7 @@ export default function ScheduleHub() {
                     href={currentEvent.ticketUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-[#F8138D] hover:bg-[#f570b7] text-white font-bold uppercase text-xs tracking-wider rounded-lg shadow-[0_0_20px_rgba(248,19,141,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 bg-[#9A7420] hover:bg-[#B08A36] text-[#FCFAF5] font-bold uppercase text-xs tracking-wider rounded-lg shadow-[0_0_20px_rgba(154,116,32,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Ticket className="w-4 h-4" />
                     {currentEvent.ticketStatus === 'free_stream'
@@ -381,16 +381,16 @@ export default function ScheduleHub() {
 
                 <button
                   onClick={handleAddToCalendar}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white font-medium text-xs tracking-wider rounded-lg border border-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-2.5 bg-[#1F1A12]/5 hover:bg-[#1F1A12]/10 text-[#1F1A12] font-medium text-xs tracking-wider rounded-lg border border-[#1F1A12]/10 hover:border-[#1F1A12]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {calendarAdded ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-[#f570b7]" />
-                      <span className="text-[#f570b7]">Added to Calendar</span>
+                      <Check className="w-3.5 h-3.5 text-[#B08A36]" />
+                      <span className="text-[#B08A36]">Added to Calendar</span>
                     </>
                   ) : (
                     <>
-                      <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                      <Calendar className="w-3.5 h-3.5 text-[#6E6453]" />
                       <span>Add to Google / Apple Calendar</span>
                     </>
                   )}
@@ -401,34 +401,34 @@ export default function ScheduleHub() {
         ) : (
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-4 relative z-10">
             <div className="max-w-xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-[#f570b7] uppercase tracking-widest">
-                <Compass className="w-3 h-3 text-[#f570b7]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1F1A12]/5 border border-[#1F1A12]/10 text-[10px] font-mono text-[#B08A36] uppercase tracking-widest">
+                <Compass className="w-3 h-3 text-[#B08A36]" />
                 Rest Day / Studio Rehearsal
               </div>
-              <h3 className="text-3xl sm:text-4xl font-display font-black text-white uppercase tracking-tight">
+              <h3 className="text-3xl sm:text-4xl font-display font-black text-[#1F1A12] uppercase tracking-tight">
                 PREPARATION & VOCAL PRACTICE
               </h3>
-              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#6E6453] leading-relaxed">
                 No official public concert scheduled on {selectedDate}. The five members are undergoing intensive choreography rehearsal and studio recording for the upcoming tour stages.
               </p>
-              <div className="pt-2 text-xs text-neutral-500 font-mono">
-                Exclusive behind-the-scenes logs and practice footage will be released on Weverse.
+              <div className="pt-2 text-xs text-[#8A7F6C] font-mono">
+                Exclusive behind-the-scenes logs and practice footage will be released on MUSE Hub.
               </div>
             </div>
 
-            <div className="shrink-0 w-64 p-3 bg-neutral-900 border border-white/15 rounded-xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-300">
-              <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-black/60">
+            <div className="shrink-0 w-64 p-3 bg-[#F8F4EA] border border-[#1F1A12]/15 rounded-xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-300">
+              <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#FBF8F1]">
                 <img
-                  src="/images/group-photo.png"
-                  alt="Tomorrow X Together in studio rehearsal"
+                  src="/images/group-photo.svg"
+                  alt="MUSE in studio rehearsal"
                   className="w-full h-full object-cover filter contrast-110 brightness-90"
                 />
-                <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur-xs rounded text-[9px] font-mono text-[#f570b7]">
+                <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur-xs rounded text-[9px] font-mono text-[#E9D9AE]">
                   PRACTICE LOG // {selectedDate}
                 </div>
               </div>
-              <div className="mt-2 text-center text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
-                TXT OFFICIAL STUDIO ARCHIVE
+              <div className="mt-2 text-center text-[10px] font-mono text-[#6E6453] uppercase tracking-widest">
+                MUSE OFFICIAL STUDIO ARCHIVE
               </div>
             </div>
           </div>

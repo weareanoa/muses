@@ -1,235 +1,121 @@
 [
   {
-    "id": "the-dream-chapter-star",
-    "albumTitle": "The Dream Chapter: STAR",
-    "releaseDate": "2019-03-04",
+    "id": "chapter-01-first-light",
+    "albumTitle": "Chapter 01: First Light",
+    "releaseDate": "2024-03-01",
     "type": "Debut Mini Album",
-    "coverImage": "/images/albums/star.webp",
-    "themeColor": "#00b2fe",
+    "coverImage": "/images/albums/album-1.svg",
+    "themeColor": "#D4AF37",
+    "description": "Langkah perdana MUSES merajut melodi keemasan ke dalam kanvas musik pop modern. Mini album debut ini menceritakan kisah awal keberanian tujuh gadis mengejar impian mereka di bawah fajar pertama.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "CROWN",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/d1/2b/9b/d12b9be2-4467-5ea0-5d55-8d5918ca1ef1/mzaf_10091398501258667520.plus.aac.p.m4a",
-      "startAtSecond": 30,
+      "title": "First Light",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20CROWN",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+CROWN+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
       }
     }
   },
   {
-    "id": "the-dream-chapter-magic",
-    "albumTitle": "The Dream Chapter: MAGIC",
-    "releaseDate": "2019-10-21",
+    "id": "chapter-02-golden-hour",
+    "albumTitle": "Chapter 02: Golden Hour",
+    "releaseDate": "2024-09-15",
+    "type": "Mini Album",
+    "coverImage": "/images/albums/album-2.svg",
+    "themeColor": "#C9971C",
+    "description": "Menangkap kilau senja yang magis di mana mimpi dan kenyataan bersatu. Dipenuhi aransemen string orchestra yang megah berpadu dengan ritme pop elektronik kontemporer.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    "titleTrack": {
+      "title": "Golden Hour",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
+      "links": {
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
+      }
+    }
+  },
+  {
+    "id": "chapter-03-afterglow",
+    "albumTitle": "Chapter 03: Afterglow",
+    "releaseDate": "2025-04-08",
     "type": "Studio Album",
-    "coverImage": "/images/albums/magic.webp",
-    "themeColor": "#22c55e",
+    "coverImage": "/images/albums/album-3.svg",
+    "themeColor": "#B8860B",
+    "description": "Album studio penuh pertama yang mengeksplorasi kedewasaan vokal dan kedalaman emosional MUSES. Merekam jejak hangat yang tertinggal setelah euforia panggung mereda.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "9 and Three Quarters (Run Away)",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/07/04/b5/0704b506-696c-b9b2-3be9-ce3615eef150/mzaf_16480749005910606995.plus.aac.p.m4a",
-      "startAtSecond": 40,
+      "title": "Afterglow",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Run%20Away",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Run+Away+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
       }
     }
   },
   {
-    "id": "the-dream-chapter-eternity",
-    "albumTitle": "The Dream Chapter: ETERNITY",
-    "releaseDate": "2020-05-18",
+    "id": "chapter-04-reverie",
+    "albumTitle": "Chapter 04: Reverie",
+    "releaseDate": "2025-11-21",
     "type": "Mini Album",
-    "coverImage": "/images/albums/eternity.webp",
-    "themeColor": "#9333ea",
+    "coverImage": "/images/albums/album-4.svg",
+    "themeColor": "#DFB76C",
+    "description": "Sebuah lamunan musikal yang memikat dengan sentuhan city pop dan vokal harmonis berlapis. Menampilkan kemampuan songwriting dan komposisi orisinal dari para member.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "Can't You See Me?",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/4e/d8/d5/4ed8d56b-4ca0-9886-c309-84724497e682/mzaf_782419515902030066.plus.aac.p.m4a",
-      "startAtSecond": 35,
+      "title": "Reverie",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Cant%20You%20See%20Me",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Cant+You+See+Me+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
       }
     }
   },
   {
-    "id": "minisode1-blue-hour",
-    "albumTitle": "minisode1 : Blue Hour",
-    "releaseDate": "2020-10-26",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/blue-hour.webp",
-    "themeColor": "#38bdf8",
-    "titleTrack": {
-      "title": "Blue Hour",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/4e/d8/d5/4ed8d56b-4ca0-9886-c309-84724497e682/mzaf_782419515902030066.plus.aac.p.m4a",
-      "startAtSecond": 40,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Blue%20Hour",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Blue+Hour+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "the-chaos-chapter-freeze",
-    "albumTitle": "The Chaos Chapter: FREEZE",
-    "releaseDate": "2021-05-31",
+    "id": "chapter-05-nocturne",
+    "albumTitle": "Chapter 05: Nocturne",
+    "releaseDate": "2026-06-02",
     "type": "Studio Album",
-    "coverImage": "/images/albums/freeze.webp",
-    "themeColor": "#06b6d4",
+    "coverImage": "/images/albums/album-5.svg",
+    "themeColor": "#9A7420",
+    "description": "Refleksi mendalam tentang malam yang sunyi dan harapan yang menyala dalam kegelapan. Melodi piano yang dramatis dan vokal power ballad yang menyentuh kalbu.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "0X1=LOVESONG (I Know I Love You) feat. Seori",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/29/62/47296220-5303-e482-7072-7be59f6fe949/mzaf_9276633097456402519.plus.aac.p.m4a",
-      "startAtSecond": 40,
+      "title": "Nocturne",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com/search/TXT%200X1%3DLOVESONG",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+0X1+LOVESONG+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
       }
     }
   },
   {
-    "id": "the-chaos-chapter-fight-or-escape",
-    "albumTitle": "The Chaos Chapter: FIGHT OR ESCAPE",
-    "releaseDate": "2021-08-17",
-    "type": "Repackage Album",
-    "coverImage": "/images/albums/fight-or-escape.webp",
-    "themeColor": "#ec4899",
+    "id": "chapter-06-aurora",
+    "albumTitle": "Chapter 06: Aurora",
+    "releaseDate": "2026-10-18",
+    "type": "Special Repackage Album",
+    "coverImage": "/images/albums/album-6.svg",
+    "themeColor": "#CC9933",
+    "description": "Kompilasi spesial dengan aransemen orkestra baru dan lagu eksklusif perayaan tur dunia. Menjadi simbol cahaya persaudaraan yang tak akan pernah pudar.",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "LO$ER=LO♡ER",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/44/2c/83/442c83ff-a128-d8bb-e794-399b244d0337/mzaf_1041938555260580796.plus.aac.p.m4a",
-      "startAtSecond": 35,
+      "title": "Aurora",
+      "previewAudioUrl": "/audio/preview.wav",
+      "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20LOSER%20LOVER",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+LOSER+LOVER+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "minisode2-thursdays-child",
-    "albumTitle": "minisode 2: Thursday's Child",
-    "releaseDate": "2022-05-09",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/thursdays-child.webp",
-    "themeColor": "#ef4444",
-    "titleTrack": {
-      "title": "Good Boy Gone Bad",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/44/2c/83/442c83ff-a128-d8bb-e794-399b244d0337/mzaf_1041938555260580796.plus.aac.p.m4a",
-      "startAtSecond": 35,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Good%20Boy%20Gone%20Bad",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Good+Boy+Gone+Bad+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "the-name-chapter-temptation",
-    "albumTitle": "The Name Chapter: TEMPTATION",
-    "releaseDate": "2023-01-27",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/temptation.webp",
-    "themeColor": "#10b981",
-    "titleTrack": {
-      "title": "Sugar Rush Ride",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/1b/5f/41/1b5f41a2-ca62-45f4-073a-f4159ca38998/mzaf_10714123989841007440.plus.aac.p.m4a",
-      "startAtSecond": 35,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Sugar%20Rush%20Ride",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Sugar+Rush+Ride+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "the-name-chapter-freefall",
-    "albumTitle": "The Name Chapter: FREEFALL",
-    "releaseDate": "2023-10-13",
-    "type": "Studio Album",
-    "coverImage": "/images/albums/freefall.webp",
-    "themeColor": "#3b82f6",
-    "titleTrack": {
-      "title": "Chasing That Feeling",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/66/fb/02/66fb022c-d0fe-7a28-bbed-c8745787176c/mzaf_958011410830014452.plus.aac.p.m4a",
-      "startAtSecond": 20,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Chasing%20That%20Feeling",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Chasing+That+Feeling+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "minisode3-tomorrow",
-    "albumTitle": "minisode 3: TOMORROW",
-    "releaseDate": "2024-04-01",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/minisode3-tomorrow.webp",
-    "themeColor": "#e5a93c",
-    "titleTrack": {
-      "title": "Deja Vu",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f7/e5/01/f7e50193-e4c1-7a2f-735f-91706d1615ea/mzaf_190274425751903517.plus.aac.p.m4a",
-      "startAtSecond": 45,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Deja%20Vu",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Deja+Vu+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "the-star-chapter-sanctuary",
-    "albumTitle": "The Star Chapter: SANCTUARY",
-    "releaseDate": "2024-11-04",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/sanctuary.webp",
-    "themeColor": "#0ea5e9",
-    "titleTrack": {
-      "title": "Over The Moon",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/44/2c/83/442c83ff-a128-d8bb-e794-399b244d0337/mzaf_1041938555260580796.plus.aac.p.m4a",
-      "startAtSecond": 35,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Over%20The%20Moon",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Over+The+Moon+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "the-star-chapter-together",
-    "albumTitle": "The Star Chapter: TOGETHER",
-    "releaseDate": "2025-07-21",
-    "type": "Studio Album",
-    "coverImage": "/images/albums/together.webp",
-    "themeColor": "#6366f1",
-    "titleTrack": {
-      "title": "Beautiful Strangers",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/05/cf/d6/05cfd6eb-950c-04c2-9014-a95781a8b948/mzaf_17443194593457997931.plus.aac.p.m4a",
-      "startAtSecond": 35,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Beautiful%20Strangers",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Beautiful+Strangers+MV",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
-      }
-    }
-  },
-  {
-    "id": "7th-year-a-moment-of-stillness-in-the-thorns",
-    "albumTitle": "7TH YEAR: A Moment of Stillness in the Thorns",
-    "releaseDate": "2026-04-13",
-    "type": "Special Mini Album",
-    "coverImage": "/images/albums/stillness-in-the-thorns.webp",
-    "themeColor": "#a855f7",
-    "titleTrack": {
-      "title": "Bed of Thorns",
-      "previewAudioUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/44/2c/83/442c83ff-a128-d8bb-e794-399b244d0337/mzaf_1041938555260580796.plus.aac.p.m4a",
-      "startAtSecond": 25,
-      "links": {
-        "spotify": "https://open.spotify.com/search/TXT%20Bed%20of%20Thorns",
-        "youtube": "https://www.youtube.com/results?search_query=TXT+Bed+of+Thorns",
-        "appleMusic": "https://music.apple.com/artist/tomorrow-x-together/1454642552"
+        "spotify": "https://open.spotify.com",
+        "youtube": "https://music.youtube.com",
+        "appleMusic": "https://music.apple.com"
       }
     }
   }

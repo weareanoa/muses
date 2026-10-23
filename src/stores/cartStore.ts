@@ -14,7 +14,7 @@ export interface CartItem {
 const loadInitialCart = (): CartItem[] => {
   if (typeof window !== 'undefined') {
     try {
-      const saved = localStorage.getItem('txt_cart');
+      const saved = localStorage.getItem('muse_cart');
       if (saved) return JSON.parse(saved);
     } catch (e) {
       console.error('Failed to load cart from storage', e);
@@ -29,7 +29,7 @@ export const isCartOpen = atom<boolean>(false);
 if (typeof window !== 'undefined') {
   cartItems.subscribe((items) => {
     try {
-      localStorage.setItem('txt_cart', JSON.stringify(items));
+      localStorage.setItem('muse_cart', JSON.stringify(items));
     } catch (e) {
     }
   });

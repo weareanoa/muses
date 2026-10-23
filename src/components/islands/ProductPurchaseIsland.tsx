@@ -61,7 +61,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
   const [activeSection, setActiveSection] = useState<'details' | 'notes'>('details');
 
   const maxOrderLimit = Math.min(product.stock || 2, 2);
-  const weverseCash = (product.price * 0.01).toFixed(2);
+  const storeCash = (product.price * 0.01).toFixed(2);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,7 +147,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
       ? product.packageContents.join(', ')
       : 'See product details';
 
-  const manufacturerInfo = product.manufacturer || 'HYBE 360 / BIGHIT MUSIC';
+  const manufacturerInfo = product.manufacturer || 'AUREUM 360 / AUREUM RECORDS';
   const countryInfo = product.origin || 'REPUBLIC OF KOREA';
   const powerInfo =
     product.specifications?.['Battery Type'] ||
@@ -164,10 +164,10 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
   );
 
   return (
-    <div className="w-full text-white font-sans">
+    <div className="w-full text-[#1F1A12] font-sans">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="w-full aspect-square bg-[#131317] border border-white/10 rounded-2xl flex items-center justify-center p-6 sm:p-12 overflow-hidden shadow-xl">
+          <div className="w-full aspect-square bg-[#FFFFFF] border border-[#1F1A12]/10 rounded-2xl flex items-center justify-center p-6 sm:p-12 overflow-hidden shadow-xl">
             <img
               src={images[activeImageIndex]}
               alt={product.name}
@@ -181,10 +181,10 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-xl bg-[#131317] border-2 p-2 flex items-center justify-center cursor-pointer transition-all ${
+                  className={`w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-xl bg-[#FFFFFF] border-2 p-2 flex items-center justify-center cursor-pointer transition-all ${
                     activeImageIndex === idx
-                      ? 'border-[#00c5c8] shadow-[0_0_12px_rgba(0,197,200,0.3)]'
-                      : 'border-white/10 hover:border-white/30 opacity-70 hover:opacity-100'
+                      ? 'border-[#9A7420] shadow-[0_0_12px_rgba(154,116,32,0.3)]'
+                      : 'border-[#1F1A12]/10 hover:border-[#1F1A12]/30 opacity-70 hover:opacity-100'
                   }`}
                 >
                   <img
@@ -202,9 +202,9 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           <div className="flex items-center justify-between gap-4">
             <a
               href="/store"
-              className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#4B4335] hover:text-[#1F1A12] transition-colors"
             >
-              <span>TOMORROW X TOGETHER</span>
+              <span>MUSE</span>
               <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
 
@@ -212,46 +212,46 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               <button
                 onClick={handleShare}
                 aria-label="Share product"
-                className="w-9 h-9 rounded-full border border-white/10 hover:bg-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 flex items-center justify-center text-[#4B4335] hover:text-[#1F1A12] transition-colors cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
               </button>
               {copiedLink && (
-                <div className="absolute right-0 top-11 z-20 whitespace-nowrap bg-neutral-800 border border-white/10 text-white text-[11px] font-medium px-2.5 py-1 rounded shadow-md flex items-center gap-1.5">
-                  <Check className="w-3 h-3 text-[#00c5c8]" />
+                <div className="absolute right-0 top-11 z-20 whitespace-nowrap bg-[#EDE6D6] border border-[#1F1A12]/10 text-[#1F1A12] text-[11px] font-medium px-2.5 py-1 rounded shadow-md flex items-center gap-1.5">
+                  <Check className="w-3 h-3 text-[#9A7420]" />
                   <span>Link copied</span>
                 </div>
               )}
             </div>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-white mt-2 leading-snug">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#1F1A12] mt-2 leading-snug">
             {product.name}
           </h1>
 
           <div className="mt-2">
-            <span className="inline-block px-1.5 py-0.5 border border-[#00c5c8] text-[#00c5c8] text-[10px] font-bold uppercase tracking-wider rounded">
+            <span className="inline-block px-1.5 py-0.5 border border-[#9A7420] text-[#9A7420] text-[10px] font-bold uppercase tracking-wider rounded">
               EXCLUSIVE
             </span>
           </div>
 
           <div className="mt-4">
-            <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-bold text-white">
-              <span className="text-sm font-semibold tracking-wide text-neutral-400">USD</span>
+            <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-bold text-[#1F1A12]">
+              <span className="text-sm font-semibold tracking-wide text-[#6E6453]">USD</span>
               <span>${product.price.toFixed(2)}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-neutral-400 mt-1">
+            <div className="flex items-center gap-1 text-xs text-[#6E6453] mt-1">
               <span>Excl. tax</span>
-              <Info className="w-3.5 h-3.5 text-neutral-400 stroke-[2]" />
+              <Info className="w-3.5 h-3.5 text-[#6E6453] stroke-[2]" />
             </div>
-            <div className="text-xs text-[#00c5c8] font-medium mt-1">
-              Up to USD ${weverseCash} Weverse Shop Cash
+            <div className="text-xs text-[#9A7420] font-medium mt-1">
+              Up to USD ${storeCash} MUSE Hub Store Cash
             </div>
           </div>
 
           {product.colors && product.colors.length > 1 && (
             <div className="mt-5 space-y-2">
-              <span className="text-xs text-neutral-400 block">Color</span>
+              <span className="text-xs text-[#6E6453] block">Color</span>
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((c) => (
                   <button
@@ -259,8 +259,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                     onClick={() => setSelectedColor(c)}
                     className={`px-3 py-1.5 text-xs rounded border transition-colors cursor-pointer ${
                       selectedColor === c
-                        ? 'border-[#00c5c8] bg-[#00c5c8]/15 text-white font-medium'
-                        : 'border-white/10 text-neutral-300 hover:border-white/30 bg-[#131317]'
+                        ? 'border-[#9A7420] bg-[#9A7420]/15 text-[#1F1A12] font-medium'
+                        : 'border-[#1F1A12]/10 text-[#4B4335] hover:border-[#1F1A12]/30 bg-[#FFFFFF]'
                     }`}
                   >
                     {c}
@@ -272,7 +272,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
           {product.sizes && product.sizes.length > 1 && (
             <div className="mt-4 space-y-2">
-              <span className="text-xs text-neutral-400 block">Size</span>
+              <span className="text-xs text-[#6E6453] block">Size</span>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s) => (
                   <button
@@ -280,8 +280,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                     onClick={() => setSelectedSize(s)}
                     className={`px-3 py-1.5 text-xs rounded border transition-colors cursor-pointer ${
                       selectedSize === s
-                        ? 'border-[#00c5c8] bg-[#00c5c8]/15 text-white font-medium'
-                        : 'border-white/10 text-neutral-300 hover:border-white/30 bg-[#131317]'
+                        ? 'border-[#9A7420] bg-[#9A7420]/15 text-[#1F1A12] font-medium'
+                        : 'border-[#1F1A12]/10 text-[#4B4335] hover:border-[#1F1A12]/30 bg-[#FFFFFF]'
                     }`}
                   >
                     {s}
@@ -291,37 +291,37 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
             </div>
           )}
 
-          <div className="mt-5 border border-white/10 rounded-xl p-4 bg-[#131317] shadow-sm">
-            <div className="text-xs sm:text-sm font-medium text-neutral-200 mb-3">
+          <div className="mt-5 border border-[#1F1A12]/10 rounded-xl p-4 bg-[#FFFFFF] shadow-sm">
+            <div className="text-xs sm:text-sm font-medium text-[#2E281E] mb-3">
               {product.name}
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="inline-flex items-center border border-white/10 rounded-md overflow-hidden bg-[#18181f]">
+              <div className="inline-flex items-center border border-[#1F1A12]/10 rounded-md overflow-hidden bg-[#F8F5EC]">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
-                  className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/5 disabled:opacity-30 cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 disabled:opacity-30 cursor-pointer"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3 h-3 stroke-[2.5]" />
                 </button>
-                <span className="w-10 text-center text-xs font-semibold text-white">
+                <span className="w-10 text-center text-xs font-semibold text-[#1F1A12]">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                   disabled={quantity >= product.stock}
-                  className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/5 disabled:opacity-30 cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 disabled:opacity-30 cursor-pointer"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-3 h-3 stroke-[2.5]" />
                 </button>
               </div>
 
-              <div className="text-sm font-bold text-white">
+              <div className="text-sm font-bold text-[#1F1A12]">
                 USD ${(product.price * quantity).toFixed(2)}
               </div>
             </div>
@@ -329,19 +329,19 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
           <div className="flex items-center justify-between mt-4 text-xs">
             <div>
-              <div className="font-semibold text-white">
+              <div className="font-semibold text-[#1F1A12]">
                 {quantity} selected
               </div>
-              <div className="text-neutral-400 text-[11px] mt-0.5">
+              <div className="text-[#6E6453] text-[11px] mt-0.5">
                 You can order up to {maxOrderLimit} items.
               </div>
             </div>
 
             <div className="text-right">
-              <div className="text-base sm:text-lg font-bold text-white">
+              <div className="text-base sm:text-lg font-bold text-[#1F1A12]">
                 USD ${(product.price * quantity).toFixed(2)}
               </div>
-              <div className="text-[11px] text-neutral-400">
+              <div className="text-[11px] text-[#6E6453]">
                 Excl. tax
               </div>
             </div>
@@ -351,11 +351,11 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
             <button
               type="button"
               onClick={() => handleAddToCart(false)}
-              className="py-3 px-4 rounded-lg border-2 border-[#00c5c8] text-[#00c5c8] bg-transparent hover:bg-[#00c5c8]/10 font-bold text-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              className="py-3 px-4 rounded-lg border-2 border-[#9A7420] text-[#9A7420] bg-transparent hover:bg-[#9A7420]/10 font-bold text-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
               {addedNotice ? (
                 <>
-                  <Check className="w-4 h-4 text-[#00c5c8]" />
+                  <Check className="w-4 h-4 text-[#9A7420]" />
                   <span>Added</span>
                 </>
               ) : (
@@ -366,27 +366,27 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
             <button
               type="button"
               onClick={() => handleAddToCart(true)}
-              className="py-3 px-4 rounded-lg bg-[#00c5c8] hover:bg-[#00b4b7] text-black font-bold text-sm transition-colors shadow-sm cursor-pointer flex items-center justify-center"
+              className="py-3 px-4 rounded-lg bg-[#9A7420] hover:bg-[#7D5C16] text-[#FCFAF5] font-bold text-sm transition-colors shadow-sm cursor-pointer flex items-center justify-center"
             >
               Purchase
             </button>
           </div>
 
-          <div className="flex items-center gap-2 mt-5 pt-4 border-t border-white/10 text-xs text-neutral-400">
-            <MapPin className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+          <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[#1F1A12]/10 text-xs text-[#6E6453]">
+            <MapPin className="w-3.5 h-3.5 text-[#8A7F6C] shrink-0" />
             <span>Add a shipping address to check shipping fee.</span>
           </div>
         </div>
       </div>
 
-      <div className="sticky top-20 z-30 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10 flex justify-center gap-16 text-sm mt-16 sm:mt-24">
+      <div className="sticky top-20 z-30 bg-[#FCFAF5]/95 backdrop-blur-md border-b border-[#1F1A12]/10 flex justify-center gap-16 text-sm mt-16 sm:mt-24">
         <button
           type="button"
           onClick={() => scrollToSection('section-details')}
           className={`pb-3 font-semibold transition-colors cursor-pointer ${
             activeSection === 'details'
-              ? 'text-white border-b-2 border-[#00c5c8] -mb-px'
-              : 'text-neutral-400 hover:text-white'
+              ? 'text-[#1F1A12] border-b-2 border-[#9A7420] -mb-px'
+              : 'text-[#6E6453] hover:text-[#1F1A12]'
           }`}
         >
           Details
@@ -396,8 +396,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           onClick={() => scrollToSection('section-notes')}
           className={`pb-3 font-semibold transition-colors cursor-pointer ${
             activeSection === 'notes'
-              ? 'text-white border-b-2 border-[#00c5c8] -mb-px'
-              : 'text-neutral-400 hover:text-white'
+              ? 'text-[#1F1A12] border-b-2 border-[#9A7420] -mb-px'
+              : 'text-[#6E6453] hover:text-[#1F1A12]'
           }`}
         >
           Notes
@@ -406,68 +406,68 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
       <div className="max-w-4xl mx-auto">
         <div id="section-details" className="pt-10 scroll-mt-28">
-          <div className="border-b border-white/10 pb-3">
+          <div className="border-b border-[#1F1A12]/10 pb-3">
             <button
               type="button"
               onClick={() => setIsInfoOpen(!isInfoOpen)}
-              className="w-full flex items-center justify-between text-left py-2 font-bold text-sm sm:text-base text-white cursor-pointer"
+              className="w-full flex items-center justify-between text-left py-2 font-bold text-sm sm:text-base text-[#1F1A12] cursor-pointer"
             >
               <span>Information</span>
               {isInfoOpen ? (
-                <ChevronUp className="w-4 h-4 text-neutral-400" />
+                <ChevronUp className="w-4 h-4 text-[#6E6453]" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-neutral-400" />
+                <ChevronDown className="w-4 h-4 text-[#6E6453]" />
               )}
             </button>
           </div>
 
           {isInfoOpen && (
-            <div className="divide-y divide-white/5 text-xs">
+            <div className="divide-y divide-[#1F1A12]/10 text-xs">
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Product Name</span>
-                <span className="sm:col-span-3 text-white">{product.name}</span>
+                <span className="text-[#6E6453] font-medium">Product Name</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{product.name}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Product material</span>
-                <span className="sm:col-span-3 text-white">{materialInfo}</span>
+                <span className="text-[#6E6453] font-medium">Product material</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{materialInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Size(cm)</span>
-                <span className="sm:col-span-3 text-white">{dimensionsInfo}</span>
+                <span className="text-[#6E6453] font-medium">Size(cm)</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{dimensionsInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Contents</span>
-                <span className="sm:col-span-3 text-white">{contentsInfo}</span>
+                <span className="text-[#6E6453] font-medium">Contents</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{contentsInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Manufacturer</span>
-                <span className="sm:col-span-3 text-white">{manufacturerInfo}</span>
+                <span className="text-[#6E6453] font-medium">Manufacturer</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{manufacturerInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Country of manufacture</span>
-                <span className="sm:col-span-3 text-white">{countryInfo}</span>
+                <span className="text-[#6E6453] font-medium">Country of manufacture</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{countryInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Power</span>
-                <span className="sm:col-span-3 text-white">{powerInfo}</span>
+                <span className="text-[#6E6453] font-medium">Power</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{powerInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Operation time</span>
-                <span className="sm:col-span-3 text-white whitespace-pre-line leading-relaxed">
+                <span className="text-[#6E6453] font-medium">Operation time</span>
+                <span className="sm:col-span-3 text-[#1F1A12] whitespace-pre-line leading-relaxed">
                   {operationTimeInfo}
                 </span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">KC Mark</span>
-                <span className="sm:col-span-3 text-neutral-300 leading-relaxed font-mono text-[11px]">
+                <span className="text-[#6E6453] font-medium">KC Mark</span>
+                <span className="sm:col-span-3 text-[#4B4335] leading-relaxed font-mono text-[11px]">
                   한국 KC : R-R-1EL-TTNN23JO<br />
                   일본 JMIC : 020-230349<br />
                   미국 FCC : 2A9BA-TTNN23JO
@@ -475,8 +475,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-neutral-400 font-medium">Year and month of manufacture</span>
-                <span className="sm:col-span-3 text-white">{releaseYear}</span>
+                <span className="text-[#6E6453] font-medium">Year and month of manufacture</span>
+                <span className="sm:col-span-3 text-[#1F1A12]">{releaseYear}</span>
               </div>
 
               {product.specifications &&
@@ -487,23 +487,23 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                   )
                   .map(([key, val]) => (
                     <div key={key} className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                      <span className="text-neutral-400 font-medium">{key}</span>
-                      <span className="sm:col-span-3 text-white">{String(val)}</span>
+                      <span className="text-[#6E6453] font-medium">{key}</span>
+                      <span className="sm:col-span-3 text-[#1F1A12]">{String(val)}</span>
                     </div>
                   ))}
             </div>
           )}
 
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <h3 className="text-sm font-bold text-white mb-3">Product Overview</h3>
-            <p className="text-xs text-neutral-300 leading-relaxed font-normal">
+          <div className="mt-12 pt-8 border-t border-[#1F1A12]/10">
+            <h3 className="text-sm font-bold text-[#1F1A12] mb-3">Product Overview</h3>
+            <p className="text-xs text-[#4B4335] leading-relaxed font-normal">
               {product.description}
             </p>
 
             {product.features && product.features.length > 0 && (
               <div className="mt-6 space-y-2">
-                <h4 className="text-xs font-bold text-white">Key Features</h4>
-                <ul className="list-disc list-inside text-xs text-neutral-300 space-y-1">
+                <h4 className="text-xs font-bold text-[#1F1A12]">Key Features</h4>
+                <ul className="list-disc list-inside text-xs text-[#4B4335] space-y-1">
                   {product.features.map((feat, i) => (
                     <li key={i}>{feat}</li>
                   ))}
@@ -513,36 +513,36 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           </div>
         </div>
 
-        <div id="section-notes" className="mt-16 pt-12 border-t border-white/10 space-y-8 text-xs text-neutral-300 leading-relaxed font-normal scroll-mt-28">
-          <h2 className="text-base sm:text-lg font-bold text-white mb-4">
+        <div id="section-notes" className="mt-16 pt-12 border-t border-[#1F1A12]/10 space-y-8 text-xs text-[#4B4335] leading-relaxed font-normal scroll-mt-28">
+          <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
             Notes & Notice
           </h2>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-white text-sm">Returns & Exchanges</h3>
-            <ul className="space-y-1.5 list-disc list-inside pl-1 text-neutral-400">
+            <h3 className="font-bold text-[#1F1A12] text-sm">Returns & Exchanges</h3>
+            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>
                 Go to [MY or More &rarr; My Orders &rarr; Order Details] to request a(n) exchange/return.
               </li>
-              <li>Please refer to the FAQ available from Help on Weverse for more information.</li>
+              <li>Please refer to the FAQ available from Help on MUSE Hub for more information.</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-white text-sm">Return & Exchange Period</h3>
-            <ul className="space-y-1.5 list-disc list-inside pl-1 text-neutral-400">
+            <h3 className="font-bold text-[#1F1A12] text-sm">Return & Exchange Period</h3>
+            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>
-                Customers can request a(n) exchange/return through the My Orders page or by going to Help on Weverse [Contact us] within 7 days of receiving the product. (In the case of a simple change of mind, only returns are possible and exchanges will not be allowed.)
+                Customers can request a(n) exchange/return through the My Orders page or by going to Help on MUSE Hub [Contact us] within 7 days of receiving the product. (In the case of a simple change of mind, only returns are possible and exchanges will not be allowed.)
               </li>
               <li>
-                In case the product is different from its advertisement or the stipulations outlined in its contract, including defects, the customer may contact us through Help on Weverse [Contact us] to withdraw the purchase order within 3 months of receiving the product and within 30 days from the date the customer discovers or could have discovered such fact.
+                In case the product is different from its advertisement or the stipulations outlined in its contract, including defects, the customer may contact us through Help on MUSE Hub [Contact us] to withdraw the purchase order within 3 months of receiving the product and within 30 days from the date the customer discovers or could have discovered such fact.
               </li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-white text-sm">Return & Exchange Fees</h3>
-            <ul className="space-y-1.5 list-disc list-inside pl-1 text-neutral-400">
+            <h3 className="font-bold text-[#1F1A12] text-sm">Return & Exchange Fees</h3>
+            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>
                 If the customer wishes to exchange/return the product due to a simple change of mind, the customer will bear the shipping costs.
               </li>
@@ -553,8 +553,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-white text-sm">Exchange & Return Notes</h3>
-            <ul className="space-y-1.5 list-disc list-inside pl-1 text-neutral-400">
+            <h3 className="font-bold text-[#1F1A12] text-sm">Exchange & Return Notes</h3>
+            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>Exchange/refund may not be available in the following cases:</li>
               <li>
                 Where the product is destroyed or damaged due to a cause attributable to the customer (except in cases where the package is opened for checking the content);
@@ -587,8 +587,8 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
       </div>
 
       {relatedProducts && relatedProducts.length > 0 && (
-        <div className="mt-20 pt-16 border-t border-white/10">
-          <h2 className="text-base sm:text-lg font-bold text-white mb-6">
+        <div className="mt-20 pt-16 border-t border-[#1F1A12]/10">
+          <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-6">
             Related Products
           </h2>
 
@@ -599,7 +599,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 href={`/store/${rel.id}`}
                 className="group flex flex-col cursor-pointer"
               >
-                <div className="w-full aspect-square bg-[#131317] border border-white/10 rounded-xl p-4 flex items-center justify-center overflow-hidden transition-all group-hover:border-[#00c5c8]/50 group-hover:bg-[#18181f]">
+                <div className="w-full aspect-square bg-[#FFFFFF] border border-[#1F1A12]/10 rounded-xl p-4 flex items-center justify-center overflow-hidden transition-all group-hover:border-[#9A7420]/50 group-hover:bg-[#F8F5EC]">
                   <img
                     src={rel.image}
                     alt={rel.name}
@@ -608,26 +608,26 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 </div>
 
                 <div className="mt-3 flex flex-col flex-1">
-                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
-                    TOMORROW X TOGETHER
+                  <span className="text-[10px] font-bold text-[#6E6453] uppercase tracking-wider block">
+                    MUSE
                   </span>
-                  <h3 className="text-xs sm:text-sm font-medium text-white mt-1 line-clamp-1 group-hover:text-[#00c5c8] transition-colors">
+                  <h3 className="text-xs sm:text-sm font-medium text-[#1F1A12] mt-1 line-clamp-1 group-hover:text-[#9A7420] transition-colors">
                     {rel.name}
                   </h3>
                   <div className="mt-1">
-                    <span className="text-xs sm:text-sm font-bold text-white">
+                    <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
                       USD ${rel.price.toFixed(2)}
                     </span>
-                    <span className="text-[10px] text-neutral-500 block">
+                    <span className="text-[10px] text-[#8A7F6C] block">
                       Excl. tax
                     </span>
                   </div>
 
                   <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                    <span className="px-1.5 py-0.5 border border-[#00c5c8] text-[#00c5c8] text-[9px] font-bold uppercase rounded">
+                    <span className="px-1.5 py-0.5 border border-[#9A7420] text-[#9A7420] text-[9px] font-bold uppercase rounded">
                       EXCLUSIVE
                     </span>
-                    <span className="px-1.5 py-0.5 border border-white/10 text-neutral-400 text-[9px] font-medium rounded flex items-center gap-1">
+                    <span className="px-1.5 py-0.5 border border-[#1F1A12]/10 text-[#6E6453] text-[9px] font-medium rounded flex items-center gap-1">
                       <span>✈</span>
                       <span>Shipped from KR</span>
                     </span>
@@ -638,12 +638,12 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-3 mt-8 text-xs font-mono text-neutral-400">
+            <div className="flex items-center justify-center gap-3 mt-8 text-xs font-mono text-[#6E6453]">
               <button
                 type="button"
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage <= 1}
-                className="p-1.5 rounded-full border border-white/10 hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer transition-colors"
+                className="p-1.5 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 hover:text-[#1F1A12] disabled:opacity-30 cursor-pointer transition-colors"
                 aria-label="Previous page"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
@@ -655,7 +655,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 type="button"
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage >= totalPages}
-                className="p-1.5 rounded-full border border-white/10 hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer transition-colors"
+                className="p-1.5 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 hover:text-[#1F1A12] disabled:opacity-30 cursor-pointer transition-colors"
                 aria-label="Next page"
               >
                 <ChevronRight className="w-3.5 h-3.5" />

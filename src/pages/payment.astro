@@ -4,9 +4,18 @@ import PaymentIsland from '../components/islands/PaymentIsland';
 ---
 
 <RootLayout
-  title="Pembayaran QRIS & Gateway | TOMORROW X TOGETHER"
-  description="Halaman pembayaran resmi untuk pesanan merchandise dan tiket TOMORROW X TOGETHER."
-  hideNavbar={true}
+  title="Pembayaran QRIS | MUSES Official"
+  description="Halaman pembayaran resmi untuk pesanan merchandise dan tiket idol grup MUSES."
+  solidHeader={true}
 >
-  <PaymentIsland client:load />
+  <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto bg-[#FCFAF5]">
+    <div class="w-full border-t border-[#DFC478]/80 mb-6"></div>
+    <h1 class="text-4xl sm:text-5xl font-['Playfair_Display',serif] text-[#1F1A12] mb-8 font-normal tracking-tight">
+      Checkout.
+    </h1>
+
+    <div class="relative z-10">
+      <PaymentIsland client:load />
+    </div>
+  </div>
 </RootLayout>
