@@ -1,3 +1,4 @@
+import { withBase } from '../../lib/paths';
 import React, { useState, useEffect } from 'react';
 import { addToCart, openCart } from '../../stores/cartStore';
 import {
@@ -596,7 +597,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
             {currentRelated.map((rel) => (
               <a
                 key={rel.id}
-                href={`/store/${rel.id}`}
+                href={withBase(`/store/${rel.id}`)}
                 className="group flex flex-col cursor-pointer"
               >
                 <div className="w-full aspect-square bg-[#FFFFFF] border border-[#1F1A12]/10 rounded-xl p-4 flex items-center justify-center overflow-hidden transition-all group-hover:border-[#9A7420]/50 group-hover:bg-[#F8F5EC]">

@@ -1,3 +1,4 @@
+import { withBase } from '../../lib/paths';
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import {
@@ -138,7 +139,7 @@ export default function CartDrawer() {
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
                       <a
-                        href={`/store/${item.id}`}
+                        href={withBase(`/store/${item.id}`)}
                         onClick={closeCart}
                         className="text-sm font-semibold truncate text-[#1F1A12] hover:text-[#9A7420] transition-colors block"
                       >

@@ -1,0 +1,30 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches: [staging, develop, main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install & Build
+        env:
+          BASE_PATH: /staging
+        run: |
+          npm ci
+          npm run build
+
+      - name: Restart Application on Port 3000
+        run: |
+          pm2 restart staging-app || PORT=3000 pm2 start npm --name "staging-app" -- start -- -p 3000
+
+      - name: Verify Live Staging URL
+        run: |
+          sleep 2
+          curl -I --fail http://100.79.27.69/staging/

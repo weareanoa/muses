@@ -1,3 +1,4 @@
+import { withBase } from '../../lib/paths';
 import React, { useState, useEffect } from 'react';
 import {
   Package,
@@ -375,7 +376,7 @@ export default function CheckoutIsland() {
                         </p>
                       </div>
                       <a
-                        href={`/payment?orderId=${order.id}&amount=${order.totalPrice}`}
+                        href={withBase(`/payment?orderId=${order.id}&amount=${order.totalPrice}`)}
                         className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A328] via-[#B8871B] to-[#996B10] text-[#FCFAF5] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                       >
                         Bayar dengan QR

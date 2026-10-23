@@ -1,4 +1,5 @@
 ---
+import { withBase } from "../lib/paths";
 import '../styles/global.css';
 import CartDrawer from '../components/islands/CartDrawer';
 import MemberModal from '../components/islands/MemberModal';
@@ -31,8 +32,9 @@ const navItems = [
 ];
 
 const isItemActive = (href: string) => {
-  if (href === '/') return currentPath === '/';
-  return currentPath.startsWith(href);
+  const bHref = withBase(href);
+  if (href === '/') return currentPath === bHref || currentPath === bHref.replace(/\/$/, '');
+  return currentPath.startsWith(bHref);
 };
 ---
 
@@ -41,7 +43,7 @@ const isItemActive = (href: string) => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#FCFAF5" />
@@ -56,7 +58,7 @@ const isItemActive = (href: string) => {
       data-solid-header={solidHeader ? 'true' : 'false'}
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2 group" aria-label="MUSES Home">
+        <a href={withBase("/")} class="flex items-center gap-2 group" aria-label="MUSES Home">
           <span class="text-2xl sm:text-3xl font-display font-black tracking-widest gold-gradient-text transition-transform group-hover:scale-105">
             MUSES
           </span>
@@ -67,7 +69,7 @@ const isItemActive = (href: string) => {
             const active = isItemActive(item.href);
             return (
               <a
-                href={item.href}
+                href={withBase(item.href)}
                 class={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
                   active
                     ? 'pill-active'
@@ -127,7 +129,7 @@ const isItemActive = (href: string) => {
             const active = isItemActive(item.href);
             return (
               <a
-                href={item.href}
+                href={withBase(item.href)}
                 class={`mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl border border-transparent transition-all ${
                   active
                     ? 'pill-active'
@@ -140,7 +142,7 @@ const isItemActive = (href: string) => {
             );
           })}
           <a
-            href="/auth"
+            href={withBase("/auth")}
             class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-[#C9971C]/10 text-[#1F1A12] border-t border-[#1F1A12]/10 mt-2 pt-3"
           >
             <span>AKUN SAYA / SIGN IN</span>

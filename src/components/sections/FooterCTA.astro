@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/paths';
 ---
 
 <footer class="relative bg-[#F8F4EA] border-t border-[#C9971C]/25 text-[#1F1A12] overflow-hidden pt-20 pb-12">
@@ -55,42 +56,42 @@
         </h4>
         <ul class="space-y-2 text-xs text-[#6E6453] font-medium">
           <li>
-            <a href="/" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/")} class="hover:text-[#C9971C] transition-colors">
               Beranda (Dashboard)
             </a>
           </li>
           <li>
-            <a href="/member" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/member")} class="hover:text-[#C9971C] transition-colors">
               Profil 7 Member
             </a>
           </li>
           <li>
-            <a href="/discography" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/discography")} class="hover:text-[#C9971C] transition-colors">
               Discography & Vinyl
             </a>
           </li>
           <li>
-            <a href="/schedule" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/schedule")} class="hover:text-[#C9971C] transition-colors">
               Jadwal Tur & Konser
             </a>
           </li>
           <li>
-            <a href="/gallery" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/gallery")} class="hover:text-[#C9971C] transition-colors">
               Gallery & Memories
             </a>
           </li>
           <li>
-            <a href="/store" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/store")} class="hover:text-[#C9971C] transition-colors">
               Official Store
             </a>
           </li>
           <li>
-            <a href="/kontak" class="hover:text-[#C9971C] transition-colors">
+            <a href={withBase("/kontak")} class="hover:text-[#C9971C] transition-colors">
               Kontak Manajemen
             </a>
           </li>
           <li>
-            <a href="/auth" class="hover:text-[#C9971C] transition-colors font-bold text-[#1F1A12]">
+            <a href={withBase("/auth")} class="hover:text-[#C9971C] transition-colors font-bold text-[#1F1A12]">
               Masuk / Daftar Akun
             </a>
           </li>
@@ -103,7 +104,7 @@
       <div class="flex items-center gap-4">
         <a href="#" class="hover:text-[#1F1A12] transition-colors">Privacy Policy</a>
         <a href="#" class="hover:text-[#1F1A12] transition-colors">Terms of Service</a>
-        <a href="/kontak" class="hover:text-[#1F1A12] transition-colors">Kontak Resmi</a>
+        <a href={withBase("/kontak")} class="hover:text-[#1F1A12] transition-colors">Kontak Resmi</a>
       </div>
     </div>
   </div>

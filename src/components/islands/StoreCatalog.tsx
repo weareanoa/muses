@@ -1,3 +1,4 @@
+import { withBase } from '../../lib/paths';
 import React, { useState } from 'react';
 import { addToCart, openCart } from '../../stores/cartStore';
 import productsData from '../../data/products.json';
@@ -115,7 +116,7 @@ export default function StoreCatalog() {
             return (
               <a
                 key={product.id}
-                href={`/store/${product.id}`}
+                href={withBase(`/store/${product.id}`)}
                 className="group relative bg-[#FFFFFF] border border-[#1F1A12]/10 rounded-2xl overflow-hidden hover:border-[#9A7420]/50 transition-all duration-300 hover:shadow-[0_15px_40px_rgba(90,70,30,0.18)] flex flex-col"
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-[#FBF8F1]">

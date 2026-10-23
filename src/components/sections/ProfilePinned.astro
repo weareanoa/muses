@@ -1,5 +1,7 @@
 ---
-import membersData from '../../data/members.json';
+import { withBaseDeep } from '../../lib/paths';
+import membersDataRaw from '../../data/members.json';
+const membersData = withBaseDeep(membersDataRaw);
 ---
 
 <section id="members-showcase-section" class="relative bg-[#FDF6E7]/60 py-20 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">

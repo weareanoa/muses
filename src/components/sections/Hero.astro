@@ -1,5 +1,7 @@
 ---
-import membersData from '../../data/members.json';
+import { withBase, withBaseDeep } from '../../lib/paths';
+import membersDataRaw from '../../data/members.json';
+const membersData = withBaseDeep(membersDataRaw);
 
 const arcCardConfigs = [
   { rot: -10, y: 22, scale: 0.76, z: 10 },
@@ -37,7 +39,7 @@ const arcCardConfigs = [
           <div class="relative flex items-center justify-center">
             <img
               id="active-butterfly-left"
-              src="/images/butterfly_purple.svg"
+              src={withBase("/images/butterfly_purple.svg")}
               alt="butterfly"
               class="w-6 h-6 sm:w-8 sm:h-8 object-contain mr-3 sm:mr-4 -rotate-12 animate-pulse"
             />
@@ -49,7 +51,7 @@ const arcCardConfigs = [
             </h2>
             <img
               id="active-butterfly-right"
-              src="/images/butterfly_purple.svg"
+              src={withBase("/images/butterfly_purple.svg")}
               alt="butterfly"
               class="w-6 h-6 sm:w-8 sm:h-8 object-contain ml-3 sm:mr-4 rotate-12 animate-pulse"
             />

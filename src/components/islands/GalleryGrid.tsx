@@ -1,6 +1,8 @@
+import { withBaseDeep } from '../../lib/paths';
 import React, { useState, useEffect } from 'react';
-import galleryData from '../../data/gallery.json';
+import galleryDataRaw from '../../data/gallery.json';
 import { Play, X, ChevronLeft, ChevronRight, Calendar, Sparkles, Image as ImageIcon } from 'lucide-react';
+const galleryData = withBaseDeep(galleryDataRaw);
 
 interface GalleryItem {
   id: string;

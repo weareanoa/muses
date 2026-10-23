@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { withBase } from '../../lib/paths';
 
 export default function AuthShowcaseIsland() {
   const user = useStore(currentUser);
@@ -211,7 +212,7 @@ export default function AuthShowcaseIsland() {
 
               <p className="text-center text-[#6E6453] pt-1">
                 Sudah punya akun?{' '}
-                <a href="/login" className="text-[#9A7420] font-semibold hover:underline">
+                <a href={withBase("/login")} className="text-[#9A7420] font-semibold hover:underline">
                   Masuk
                 </a>
               </p>
@@ -244,7 +245,7 @@ export default function AuthShowcaseIsland() {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-[#4B4335] font-medium">Penerima</span>
-                    <a href="/profile" className="text-[#9A7420] hover:underline cursor-pointer">
+                    <a href={withBase("/profile")} className="text-[#9A7420] hover:underline cursor-pointer">
                       Ubah di profil
                     </a>
                   </div>

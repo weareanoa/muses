@@ -1,5 +1,6 @@
+import { withBaseDeep } from '../../lib/paths';
 import React, { useState, useEffect, useMemo } from 'react';
-import schedulesData from '../../data/schedules.json';
+import schedulesDataRaw from '../../data/schedules.json';
 import {
   Calendar,
   Clock,
@@ -11,6 +12,7 @@ import {
   Radio,
   AlertCircle
 } from 'lucide-react';
+const schedulesData = withBaseDeep(schedulesDataRaw);
 
 export interface ScheduleItem {
   id: string;

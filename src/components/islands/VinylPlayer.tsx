@@ -1,3 +1,4 @@
+import { withBaseDeep } from '../../lib/paths';
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import {
@@ -8,7 +9,7 @@ import {
   toggleAudio,
   type PlayingTrack,
 } from '../../stores/audioStore';
-import discographyData from '../../data/discography.json';
+import discographyDataRaw from '../../data/discography.json';
 import VinylRecord from '../ui/VinylRecord';
 import StreamingLinks from '../ui/StreamingLinks';
 import {
@@ -21,6 +22,7 @@ import {
   ExternalLink,
   Tv
 } from 'lucide-react';
+const discographyData = withBaseDeep(discographyDataRaw);
 
 export default function VinylPlayer() {
   const activeTrack = useStore(currentTrack);

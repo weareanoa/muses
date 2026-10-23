@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withBase } from '../../lib/paths';
 
 export interface VinylRecordProps {
   coverImage: string;
@@ -48,7 +49,7 @@ export default function VinylRecord({
           }}
         >
           <img
-            src="/images/vinyl-master.svg"
+            src={withBase("/images/vinyl-master.svg")}
             alt="Vinyl Disc"
             className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(90,70,30,0.20)]"
             loading="lazy"

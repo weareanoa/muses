@@ -8,6 +8,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { withBase } from '../../lib/paths';
 
 interface PaymentItem {
   id: string;
@@ -354,7 +355,7 @@ export default function PaymentIsland() {
 
             <div className="pt-2 flex flex-col gap-2">
               <a
-                href="/checkout"
+                href={withBase("/checkout")}
                 className="w-full py-3 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2"
               >
                 <span>Lihat History Pesanan</span>
@@ -362,7 +363,7 @@ export default function PaymentIsland() {
               </a>
 
               <a
-                href="/store"
+                href={withBase("/store")}
                 className="w-full py-2.5 rounded-full border border-[#1F1A12]/15 text-[#6E6453] hover:text-[#1F1A12] font-semibold text-xs transition-colors"
               >
                 Kembali ke Store

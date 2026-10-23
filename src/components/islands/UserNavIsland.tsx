@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { currentUser, logoutUser } from '../../stores/authStore';
 import { User, LogOut, Sparkles, ExternalLink, ShieldCheck, MapPin } from 'lucide-react';
+import { withBase } from '../../lib/paths';
 
 export default function UserNavIsland() {
   const user = useStore(currentUser);
@@ -25,7 +26,7 @@ export default function UserNavIsland() {
   if (!user) {
     return (
       <a
-        href="/auth"
+        href={withBase("/auth")}
         className="inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/35 text-[#1F1A12] text-xs font-semibold tracking-wider transition-all duration-200 group cursor-pointer"
         aria-label="Masuk ke Akun"
       >
@@ -67,7 +68,7 @@ export default function UserNavIsland() {
 
           <div className="py-2 space-y-1">
             <a
-              href="/profile"
+              href={withBase("/profile")}
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >
@@ -77,7 +78,7 @@ export default function UserNavIsland() {
               </div>
             </a>
             <a
-              href="/checkout"
+              href={withBase("/checkout")}
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >
@@ -87,7 +88,7 @@ export default function UserNavIsland() {
               </div>
             </a>
             <a
-              href="/store"
+              href={withBase("/store")}
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >

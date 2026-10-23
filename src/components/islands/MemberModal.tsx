@@ -1,9 +1,11 @@
+import { withBaseDeep } from '../../lib/paths';
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
-import membersData from '../../data/members.json';
+import membersDataRaw from '../../data/members.json';
 import { X, ChevronLeft, ChevronRight, Sparkles, ExternalLink, Calendar, Compass, Ruler, Heart } from 'lucide-react';
 import gsap from 'gsap';
+const membersData = withBaseDeep(membersDataRaw);
 
 export default function MemberModal() {
   const currentId = useStore(activeMemberId);

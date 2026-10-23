@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/paths';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import productsData from '../../data/products.json';
@@ -24,7 +25,7 @@ import productsData from '../../data/products.json';
       {
         productsData.slice(0, 3).map((product) => (
           <a
-            href={`/store/${product.id}`}
+            href={withBase(`/store/${product.id}`)}
             class="group relative bg-white border border-[#C9971C]/25 rounded-3xl overflow-hidden hover:border-[#C9971C] transition-all duration-300 hover:shadow-[0_15px_35px_rgba(201,151,28,0.18)] hover:-translate-y-1 flex flex-col"
           >
             <div class="relative aspect-square w-full bg-[#FDF6E7] overflow-hidden">

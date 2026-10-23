@@ -15,6 +15,7 @@ import {
   Heart
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { withBase } from '../../lib/paths';
 
 const MEMBERS = [
   { id: 'aria', name: 'Aria', role: 'Leader & Lead Vocalist', emoji: '✦' },
@@ -44,13 +45,13 @@ export default function ProfileIsland() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
-            href="/login"
+            href={withBase("/login")}
             className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7420] to-[#B08A36] text-[#FCFAF5] text-xs font-bold uppercase tracking-wider hover:brightness-110 shadow-lg"
           >
             Sign In
           </a>
           <a
-            href="/register"
+            href={withBase("/register")}
             className="px-6 py-2.5 rounded-xl bg-[#1F1A12]/5 hover:bg-[#1F1A12]/10 border border-[#1F1A12]/10 text-[#4B4335] text-xs font-semibold uppercase tracking-wider"
           >
             Create Account
@@ -201,7 +202,7 @@ export default function ProfileIsland() {
               Fan Actions
             </h4>
             <a
-              href="/address"
+              href={withBase("/address")}
               className="w-full flex items-center justify-between p-3 rounded-xl bg-[#1F1A12]/5 hover:bg-[#1F1A12]/10 border border-[#1F1A12]/10 text-xs font-semibold text-[#2E281E] hover:text-[#1F1A12] transition-all group"
             >
               <div className="flex items-center gap-2.5">
@@ -212,7 +213,7 @@ export default function ProfileIsland() {
             </a>
 
             <a
-              href="/store"
+              href={withBase("/store")}
               className="w-full flex items-center justify-between p-3 rounded-xl bg-[#1F1A12]/5 hover:bg-[#1F1A12]/10 border border-[#1F1A12]/10 text-xs font-semibold text-[#2E281E] hover:text-[#1F1A12] transition-all group"
             >
               <div className="flex items-center gap-2.5">
@@ -223,7 +224,7 @@ export default function ProfileIsland() {
             </a>
 
             <a
-              href="/#discography-section"
+              href={withBase("/#discography-section")}
               className="w-full flex items-center justify-between p-3 rounded-xl bg-[#1F1A12]/5 hover:bg-[#1F1A12]/10 border border-[#1F1A12]/10 text-xs font-semibold text-[#2E281E] hover:text-[#1F1A12] transition-all group"
             >
               <div className="flex items-center gap-2.5">
