@@ -1,21 +1,9 @@
 ---
-import SectionHeading from '../ui/SectionHeading.astro';
 import ScheduleSplitGrid from '../islands/ScheduleSplitGrid';
 ---
 
-<section id="schedule-section" class="relative bg-[#FCFAF5] py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
-  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-[#F7E08F]/15 rounded-full blur-[160px] pointer-events-none"></div>
-
+<section id="schedule-section" class="relative bg-[#FCFAF5] py-16 sm:py-20 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
   <div class="max-w-7xl mx-auto relative z-10">
-    <SectionHeading
-      subtitle="GOLDEN HOUR World Tour"
-      title="JADWAL KONSER & ACARA"
-      align="center"
-    />
-    <p class="max-w-2xl mx-auto text-center text-[#6E6453] text-xs sm:text-sm -mt-6 mb-12">
-      Saksikan penampilan live idol grup MUSES di panggung stadion dan arena megah. Hitung mundur menuju konser dan dapatkan tiket resmi Anda.
-    </p>
-
     <ScheduleSplitGrid client:visible />
   </div>
 </section>

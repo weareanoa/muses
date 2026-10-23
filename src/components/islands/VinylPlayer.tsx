@@ -121,8 +121,8 @@ export default function VinylPlayer() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#FCFAF5]/80 via-white/85 to-[#FCFAF5]/95 pointer-events-none" />
 
       <div className="relative z-10 p-5 sm:p-8 lg:p-12 space-y-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          <div className="lg:col-span-6 flex flex-col items-center justify-center relative py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-center">
+          <div className="lg:col-span-3 flex flex-col items-center justify-center relative py-6">
             <VinylRecord
               coverImage={currentAlbum.coverImage}
               albumTitle={currentAlbum.albumTitle}
@@ -153,7 +153,7 @@ export default function VinylPlayer() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 flex flex-col space-y-5">
+          <div className="lg:col-span-2 flex flex-col space-y-4">
             <div>
               <div className="flex items-center gap-2.5 mb-2">
                 <span
@@ -166,26 +166,22 @@ export default function VinylPlayer() {
                 >
                   {currentAlbum.type}
                 </span>
-                <span className="text-xs font-mono text-[#6E6453]">
+                <span className="text-[11px] font-mono text-[#6E6453]">
                   Rilis {currentAlbum.releaseDate}
                 </span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-[#1F1A12] uppercase tracking-tight">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-black text-[#1F1A12] uppercase tracking-tight">
                 {currentAlbum.albumTitle}
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#4B4335] leading-relaxed mt-2.5">
+              <p className="text-xs text-[#4B4335] leading-relaxed mt-2">
                 {currentAlbum.description}
               </p>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#8C6A1C] font-semibold">
-                <Tv className="w-4 h-4 text-[#C9971C]" />
-                <span>Official Music Video Preview</span>
-              </div>
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black/5 border border-[#C9971C]/25 shadow-md">
+            <div className="w-full">
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/5 border border-[#C9971C]/25 shadow-md">
                 <iframe
                   src={currentAlbum.iframeUrl}
                   title={`${currentAlbum.albumTitle} Music Video`}
@@ -197,16 +193,11 @@ export default function VinylPlayer() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FCFAF5] border border-[#C9971C]/25 space-y-2.5">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-[#8C6A1C] font-bold block">
-                Dengarkan di Platform Musik Resmi:
-              </span>
-              <StreamingLinks
-                spotify={titleTrack.links.spotify}
-                youtube={titleTrack.links.youtube}
-                appleMusic={titleTrack.links.appleMusic}
-              />
-            </div>
+            <StreamingLinks
+              spotify={titleTrack.links.spotify}
+              youtube={titleTrack.links.youtube}
+              appleMusic={titleTrack.links.appleMusic}
+            />
           </div>
         </div>
 
@@ -244,7 +235,7 @@ export default function VinylPlayer() {
           <div
             ref={albumTabsRef}
             data-lenis-prevent
-            className="flex items-center overflow-x-auto gap-3.5 pb-2 scrollbar-none overscroll-contain select-none scroll-smooth"
+            className="flex items-center overflow-x-auto gap-3.5 p-4 scrollbar-none overscroll-contain select-none scroll-smooth"
           >
             {discographyData.map((album, idx) => {
               const isSelected = selectedAlbumIndex === idx;
@@ -252,7 +243,7 @@ export default function VinylPlayer() {
                 <button
                   key={album.id}
                   onClick={(e) => handleAlbumSelect(idx, e)}
-                  className={`shrink-0 w-28 sm:w-32 lg:w-36 rounded-2xl overflow-hidden border transition-all duration-300 p-1.5 bg-white cursor-pointer group text-left ${
+                  className={`shrink-0 w-36 sm:w-40 lg:w-46 rounded-2xl overflow-hidden border transition-all duration-300 p-1.5 bg-white cursor-pointer group text-left ${
                     isSelected
                       ? 'border-[#C9971C] ring-2 ring-[#C9971C] shadow-[0_0_20px_rgba(201,151,28,0.35)] scale-105'
                       : 'border-[#C9971C]/20 hover:border-[#C9971C]/60 hover:scale-102 opacity-75 hover:opacity-100'

@@ -22,6 +22,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { withBase } from '../../lib/paths';
 
 interface AuthIslandProps {
   initialMode?: 'login' | 'register';
@@ -290,13 +291,18 @@ export default function AuthIsland({
         <div className="absolute top-0 right-1/4 w-48 h-48 bg-[#F7E08F]/25 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl font-display font-black tracking-widest gold-gradient-text">
-              MUSES
-            </span>
-            <span className="text-[11px] font-mono text-[#8C6A1C] uppercase tracking-wider">
-              • OFFICIAL PORTAL
-            </span>
+          <div className="flex items-center justify-between mb-2">
+            <a href={withBase('/')} className="inline-flex items-center gap-2 group" aria-label="MUSES Home">
+              <span className="text-xl font-display font-black tracking-widest gold-gradient-text transition-transform group-hover:scale-105">
+                MUSES
+              </span>
+            </a>
+            <a
+              href={withBase('/')}
+              className="text-xs text-[#8C6A1C] hover:text-[#C9971C] transition-colors flex items-center gap-1 font-medium"
+            >
+              <span>← Beranda</span>
+            </a>
           </div>
 
           <h1 className="text-2xl font-bold text-[#1F1A12] tracking-tight">

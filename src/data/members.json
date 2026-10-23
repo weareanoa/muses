@@ -84,7 +84,15 @@
       "Suka membawa boneka kelinci kecil saat bepergian tur.",
       "Paling suka es krim stroberi dan minuman matcha manis.",
       "Sering merekam video keseharian di belakang panggung."
-    ]
+    ],
+    "museCategory": "MUSE OF ERATO",
+    "tagline": "The Lyric Heart / Sweet Maknae",
+    "summary": "Energi manis dan pesona termuda yang selalu mencerahkan suasana MUSES.",
+    "birthFormatted": "18 September 2004",
+    "colorName": "Pink",
+    "iconName": "Crystal",
+    "photoPortrait": "/images/members/portrait_pink.png",
+    "accentColor": "#EC407A"
   },
   {
     "id": "member-02",
@@ -171,7 +179,15 @@
       "Gemar menyeduh teh melati sebelum setiap latihan vokal.",
       "Selalu membawa jurnal kecil berisi sketsa ide lagu baru.",
       "Kolektor piringan hitam klasik dan menyukai aroma buku tua."
-    ]
+    ],
+    "museCategory": "MUSE OF POLYHYMNIA",
+    "tagline": "The Serene Voice / Leader",
+    "summary": "Pemimpin karismatik dengan vokal jernih dan kehangatan yang merangkul seluruh member.",
+    "birthFormatted": "12 April 2001",
+    "colorName": "Blue",
+    "iconName": "Star",
+    "photoPortrait": "/images/members/portrait_blue.png",
+    "accentColor": "#0288D1"
   },
   {
     "id": "member-03",
@@ -258,7 +274,15 @@
       "Paling suka camilan rasa vanila dan madu.",
       "Bisa memainkan piano klasik tanpa partitur.",
       "Pencinta kucing dan suka mengeringkan bunga liar."
-    ]
+    ],
+    "museCategory": "MUSE OF EUTERPE",
+    "tagline": "The Melody Weaver / Golden Voice",
+    "summary": "Vokal emas yang memukau dengan jangkauan emosi mendalam di setiap nada.",
+    "birthFormatted": "20 Agustus 2002",
+    "colorName": "Yellow",
+    "iconName": "Blossom",
+    "photoPortrait": "/images/members/portrait_yellow.png",
+    "accentColor": "#E5A912"
   },
   {
     "id": "member-04",
@@ -267,9 +291,9 @@
     "role": "Center, Lead Vocalist",
     "museTitle": "Muse of Melpomene · The Dramatic Artist",
     "birthDate": "2003-05-15",
-    "zodiac": "Taurus",
+    "zodiac": "Aries",
     "bloodType": "B",
-    "height": "166 cm",
+    "height": "158 cm",
     "mbti": "INFJ",
     "emoticon": "☾",
     "gradientStart": "#CE93D8",
@@ -345,7 +369,15 @@
       "Menyukai seni teater klasik dan sastra drama.",
       "Sangat menyukai warna lilac dan motif kupu-kupu.",
       "Paling teliti saat menata konsep visual panggung grup."
-    ]
+    ],
+    "museCategory": "MUSE OF MELPOMENE",
+    "tagline": "The Dramatic Artist / Deep Soul",
+    "summary": "Jiwa yang mendalam, emosional, tangguh, dan penuh ekspresi.",
+    "birthFormatted": "17 April 2004",
+    "colorName": "Purple",
+    "iconName": "Butterfly",
+    "photoPortrait": "/images/members/portrait_purple.png",
+    "accentColor": "#9B5DE5"
   },
   {
     "id": "member-05",
@@ -432,7 +464,15 @@
       "Pernah menjuarai kompetisi tari modern nasional.",
       "Suka musik perkusi dinamis dan funk kontemporer.",
       "Penggemar jaket oversized dan street fashion."
-    ]
+    ],
+    "museCategory": "MUSE OF TERPSICHORE",
+    "tagline": "The Dynamic Dancer / Fierce Rhythm",
+    "summary": "Gerakan tari yang presisi, energik, dan penuh ketajaman ritme panggung.",
+    "birthFormatted": "05 November 2002",
+    "colorName": "Green",
+    "iconName": "Radiance",
+    "photoPortrait": "/images/members/portrait_green.png",
+    "accentColor": "#388E3C"
   },
   {
     "id": "member-06",
@@ -519,7 +559,15 @@
       "Suka membuat aksesori pita rambut buatan tangan.",
       "Paling cepat menghafal koreografi baru di grup.",
       "Suka buah beri segar dan kue tart stroberi."
-    ]
+    ],
+    "museCategory": "MUSE OF THALIA",
+    "tagline": "The Radiance Blossom / Crimson Spark",
+    "summary": "Penuh semangat merah merona, menghadirkan tarian lincah dan pesona memikat.",
+    "birthFormatted": "19 Maret 2004",
+    "colorName": "Red",
+    "iconName": "Spark",
+    "photoPortrait": "/images/members/portrait_red.png",
+    "accentColor": "#E53935"
   },
   {
     "id": "member-07",
@@ -606,6 +654,14 @@
       "Menulis lirik sejak masa sekolah menengah.",
       "Suka kopi arabika hangat dan musik folk jazz.",
       "Kolektor topi baret dan kacamata vintage."
-    ]
+    ],
+    "museCategory": "MUSE OF CALLIOPE",
+    "tagline": "The Epic Cadence / Bronze Poet",
+    "summary": "Rapper berkarakter kuat dengan lirik naratif puitis dan intonasi nada rendah khas.",
+    "birthFormatted": "28 Juli 2003",
+    "colorName": "Brown",
+    "iconName": "Crest",
+    "photoPortrait": "/images/members/portrait_brown.png",
+    "accentColor": "#8D6E63"
   }
 ]
