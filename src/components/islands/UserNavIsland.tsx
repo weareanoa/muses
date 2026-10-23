@@ -67,6 +67,16 @@ export default function UserNavIsland() {
 
           <div className="py-2 space-y-1">
             <a
+              href="/profile"
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#C9971C]" />
+                <span>Profil & Membership Pass</span>
+              </div>
+            </a>
+            <a
               href="/checkout"
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
@@ -82,7 +92,7 @@ export default function UserNavIsland() {
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#C9971C]" />
+                <ShieldCheck className="w-4 h-4 text-[#C9971C]" />
                 <span>Official Merch Store</span>
               </div>
               <ExternalLink className="w-3 h-3 text-[#8A7F6C]" />

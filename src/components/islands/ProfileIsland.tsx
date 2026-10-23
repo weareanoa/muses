@@ -20,7 +20,7 @@ const MEMBERS = [
   { id: 'aria', name: 'Aria', role: 'Leader & Lead Vocalist', emoji: '✦' },
   { id: 'clara', name: 'Clara', role: 'Main Vocalist', emoji: '✿' },
   { id: 'stella', name: 'Stella', role: 'Main Dancer & Lead Rapper', emoji: '✧' },
-  { id: 'luna', name: 'Luna', role: 'Lead Vocalist & Visual', emoji: '☾' },
+  { id: 'faril', name: 'Faril', role: 'Center & Lead Vocalist', emoji: '☾' },
   { id: 'maya', name: 'Maya', role: 'Main Rapper', emoji: '❖' },
   { id: 'reva', name: 'Reva', role: 'Lead Dancer & Sub-Vocalist', emoji: '✺' },
   { id: 'zia', name: 'Zia', role: 'Sub-Vocalist & Maknae', emoji: '◈' },

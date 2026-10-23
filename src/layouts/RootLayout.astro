@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title = 'MUSES | Official Idol Group Website',
-  description = 'Situs resmi idol grup MUSES (7 members: Aria, Clara, Stella, Luna, Maya, Reva, Zia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
+  description = 'Situs resmi idol grup MUSES (7 member: Aria, Clara, Stella, Faril, Maya, Reva, Zia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
   currentPath = Astro.url.pathname,
   solidHeader = false,
   hideNavbar = false,
@@ -52,7 +52,7 @@ const isItemActive = (href: string) => {
     {!hideNavbar && (
     <header
       id="main-header"
-      class={`fixed top-0 inset-x-0 z-40 navbar-visible border-b border-[#C9971C]/25 bg-white/95 backdrop-blur-md shadow-xs`}
+      class="fixed top-0 inset-x-0 z-40 navbar-visible border-b border-[#C9971C]/25 bg-white/95 backdrop-blur-md shadow-xs"
       data-solid-header={solidHeader ? 'true' : 'false'}
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
@@ -155,123 +155,23 @@ const isItemActive = (href: string) => {
       <slot />
     </main>
 
-    <CartDrawer client:load />
-    <MemberModal client:load />
+    <CartDrawer client:idle />
+    <MemberModal client:idle />
 
     <script>
-      import Lenis from 'lenis';
-      import gsap from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-      import { totalCartCount, openCart } from '../stores/cartStore';
+      import { initSmoothScroll } from '../animations/scroll';
+      import { initNavbar } from '../animations/navbar';
+      import { totalCartCount } from '../stores/cartStore';
 
-      gsap.registerPlugin(ScrollTrigger);
+      initSmoothScroll();
+      initNavbar();
 
-      const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: 'vertical',
-        smoothWheel: true,
-      });
-
-      (window as any).__lenis = lenis;
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
-      gsap.ticker.lagSmoothing(0);
-
-      const header = document.getElementById('main-header');
-      const mobileBtn = document.getElementById('mobile-menu-btn');
-      const mobileDrawer = document.getElementById('mobile-nav-drawer');
-      const hamburgerIcon = document.getElementById('hamburger-icon');
-      const closeIcon = document.getElementById('close-icon');
-      const mobileLinks = document.querySelectorAll('.mobile-nav-link');
       const badge = document.getElementById('cart-badge-count');
-      const cartBtn = document.getElementById('nav-cart-btn');
-
-      let isMobileMenuOpen = false;
-      let lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
-      let isHeaderHidden = false;
-
-      function updateNavbar(scrollY: number, forceDirection?: number) {
-        if (!header) return;
-        if (isMobileMenuOpen) return;
-
-        const currentY = Math.max(0, scrollY);
-        const delta = currentY - lastScrollY;
-        const direction = forceDirection !== undefined ? forceDirection : delta > 2 ? 1 : delta < -2 ? -1 : 0;
-
-        if (currentY <= 60) {
-          header.classList.remove('navbar-hidden', 'navbar-scrolled');
-          header.classList.add('navbar-visible');
-          header.style.transform = 'translateY(0)';
-          isHeaderHidden = false;
-          lastScrollY = currentY;
-          return;
-        }
-
-        header.classList.add('navbar-scrolled');
-
-        if (direction === 1 && !isHeaderHidden) {
-          header.classList.remove('navbar-visible');
-          header.classList.add('navbar-hidden');
-          header.style.transform = 'translateY(-100%)';
-          isHeaderHidden = true;
-        } else if (direction === -1 && isHeaderHidden) {
-          header.classList.remove('navbar-hidden');
-          header.classList.add('navbar-visible');
-          header.style.transform = 'translateY(0)';
-          isHeaderHidden = false;
-        }
-
-        lastScrollY = currentY;
-      }
-
-      lenis.on('scroll', (e: any) => {
-        updateNavbar(e.scroll, e.direction);
-      });
-
-      window.addEventListener('scroll', () => {
-        if (window.scrollX !== 0) {
-          window.scrollTo({ left: 0 });
-        }
-        updateNavbar(window.scrollY);
-      }, { passive: true });
-
-      updateNavbar(window.scrollY);
-
       totalCartCount.subscribe((count) => {
         if (badge) {
           badge.textContent = count.toString();
           badge.style.display = count > 0 ? 'flex' : 'none';
         }
-      });
-
-      cartBtn?.addEventListener('click', () => {
-        openCart();
-      });
-
-      function toggleMobileMenu(open?: boolean) {
-        isMobileMenuOpen = open !== undefined ? open : !isMobileMenuOpen;
-        if (isMobileMenuOpen) {
-          header?.classList.remove('navbar-hidden');
-          header?.classList.add('navbar-visible');
-          mobileDrawer?.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
-          mobileDrawer?.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
-          hamburgerIcon?.classList.add('hidden');
-          closeIcon?.classList.remove('hidden');
-        } else {
-          mobileDrawer?.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
-          mobileDrawer?.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
-          hamburgerIcon?.classList.remove('hidden');
-          closeIcon?.classList.add('hidden');
-          updateNavbar(window.scrollY);
-        }
-      }
-
-      mobileBtn?.addEventListener('click', () => toggleMobileMenu());
-      mobileLinks.forEach((link) => {
-        link.addEventListener('click', () => toggleMobileMenu(false));
       });
     </script>
   </body>

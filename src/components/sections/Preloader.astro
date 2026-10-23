@@ -62,101 +62,10 @@
 </div>
 
 <script>
-  import gsap from 'gsap';
-
-  function initPreloader() {
-    const preloader = document.getElementById('brand-preloader');
-    const logoContainer = document.getElementById('preloader-logo-container');
-    const groupContainer = document.getElementById('preloader-group-container');
-    const progressBar = document.getElementById('preloader-progress-bar');
-    const skipBtn = document.getElementById('skip-preloader');
-
-    if (!preloader || !logoContainer) return;
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      preloader.style.display = 'none';
-      window.dispatchEvent(new CustomEvent('preloader-complete'));
-      return;
-    }
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        gsap.to(preloader, {
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.inOut',
-          onComplete: () => {
-            preloader.style.display = 'none';
-            window.dispatchEvent(new CustomEvent('preloader-complete'));
-          },
-        });
-      },
-    });
-
-    tl.to(progressBar, {
-      width: '100%',
-      duration: 3.2,
-      ease: 'none',
-    }, 0);
-
-    tl.fromTo(
-      logoContainer,
-      { scale: 0.9, opacity: 0, y: 15 },
-      { scale: 1, opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
-      0.1
-    );
-
-    tl.fromTo(
-      groupContainer,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' },
-      0.3
-    );
-
-    tl.to({}, { duration: 1.5 });
-
-    tl.to(
-      logoContainer,
-      {
-        scale: 0.44,
-        y: -130,
-        duration: 1.2,
-        ease: 'power2.inOut',
-      }
-    );
-
-    tl.to(
-      groupContainer,
-      {
-        opacity: 0,
-        scale: 0.96,
-        y: 15,
-        duration: 0.8,
-        ease: 'power2.in',
-      },
-      '<+=0.1'
-    );
-
-    const handleSkip = () => {
-      tl.kill();
-      gsap.to(preloader, {
-        opacity: 0,
-        duration: 0.25,
-        onComplete: () => {
-          preloader.style.display = 'none';
-          window.dispatchEvent(new CustomEvent('preloader-complete'));
-        },
-      });
-    };
-
-    skipBtn?.addEventListener('click', handleSkip);
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') handleSkip();
-    });
-  }
+  import { initPreloader } from '../../animations/preloader';
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPreloader);
+    document.addEventListener('DOMContentLoaded', () => initPreloader());
   } else {
     initPreloader();
   }
