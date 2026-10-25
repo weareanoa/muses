@@ -109,7 +109,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
       quantity,
     });
     if (instantPurchase) {
-      window.location.href = '/checkout';
+      window.location.href = withBase('/address');
       return;
     }
     setAddedNotice(true);

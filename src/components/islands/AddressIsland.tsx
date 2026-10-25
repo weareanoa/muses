@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { withBase } from '../../lib/paths';
 import { useStore } from '@nanostores/react';
 import {
   currentUser,
@@ -217,19 +218,39 @@ export default function AddressIsland() {
         title: items.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
         date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
         pickupTime: '23:59:59',
-        price: 'Rp 175.000',
-        numericPrice: 175000,
+        price: `Rp ${total.toLocaleString('id-ID')}`,
+        numericPrice: total,
+        totalPrice: total,
         status: 'unpaid',
         statusLabel: 'Menunggu pembayaran',
         badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-        location: 'Pengiriman Kurir JNE Regular',
+        eventTag: 'OFFICIAL STORE • MERCH',
+        deliveryInfo: `${selectedAddress?.city || 'Bandung'} • Kurir JNE Regular`,
+        location: `${selectedAddress?.city || 'Bandung'} • Kurir JNE Regular`,
+        actionType: 'unpaid',
+        initialCountdownSeconds: 180,
+        pickupLocation: 'Ambil cheki di venue event',
         items: items.map((i) => ({
+          id: i.id,
           name: i.name,
           role: i.subtitle,
+          variant: i.subtitle || 'Official Merchandise',
           qty: i.quantity,
-          price: `Rp ${(i.price * i.quantity).toLocaleString('id-ID')}`,
+          quantity: i.quantity,
+          price: i.price,
+          image: i.image || '/images/members/portrait_purple.png',
         })),
-        pickupCode: 'MSE-INV42',
+        pickupCode: `MSE-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+        shippingCourier: 'JNE Regular',
+        trackingNumber: `JNE${Math.floor(1000000000 + Math.random() * 9000000000)}`,
+        estimatedArrival: '2 - 3 hari kerja',
+        stepper: [
+          { label: 'Dibayar', completed: false },
+          { label: 'Disiapkan Management', completed: false },
+          { label: 'Dalam Pengiriman (JNE)', completed: false },
+          { label: 'Selesai', completed: false },
+        ],
+        isStepperExpanded: false,
       };
       localStorage.setItem('muses_user_orders', JSON.stringify([newOrderEntry, ...existingOrders]));
       clearCart();
@@ -237,7 +258,7 @@ export default function AddressIsland() {
       console.error(e);
     }
 
-    window.location.href = '/payment';
+    window.location.href = withBase('/payment');
   };
 
   return (

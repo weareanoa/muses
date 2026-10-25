@@ -158,12 +158,24 @@ export default function PaymentIsland() {
         if (storedOrders) {
           const parsed = JSON.parse(storedOrders);
           const updated = parsed.map((o: any) => {
-            if (o.id === `MSE-${order.orderId}` || o.orderCode?.includes(order.orderId)) {
+            if (
+              o.id === `MSE-${order.orderId}` ||
+              o.id === order.orderId ||
+              String(o.id).includes(order.orderId) ||
+              o.orderCode?.includes(order.orderId)
+            ) {
               return {
                 ...o,
-                status: 'paid',
-                statusLabel: 'Diambil di event',
+                status: 'processing',
+                statusLabel: 'Sedang diproses',
+                actionType: o.actionType === 'pickup' ? 'pickup' : 'shipping',
                 badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
+                stepper: [
+                  { label: 'Dibayar', completed: true },
+                  { label: 'Disiapkan Management', completed: true },
+                  { label: 'Dalam Pengiriman (JNE)', completed: false },
+                  { label: 'Selesai', completed: false },
+                ],
               };
             }
             return o;

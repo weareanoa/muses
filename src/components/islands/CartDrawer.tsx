@@ -63,7 +63,7 @@ export default function CartDrawer() {
 
   const handleCheckout = () => {
     closeCart();
-    window.location.href = '/address';
+    window.location.href = withBase('/address');
   };
 
   if (!isOpen) return null;

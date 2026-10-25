@@ -165,6 +165,88 @@ const FILTER_TABS = [
 
 type FilterTabId = typeof FILTER_TABS[number]['id'];
 
+function normalizeOrder(raw: any): OrderTransaction {
+  const numericTotal =
+    typeof raw.totalPrice === 'number'
+      ? raw.totalPrice
+      : typeof raw.numericPrice === 'number'
+      ? raw.numericPrice
+      : typeof raw.total === 'number'
+      ? raw.total
+      : parseInt(String(raw.price || raw.totalPrice || raw.numericPrice || '0').replace(/\D/g, ''), 10) || 0;
+
+  const rawStatus = String(raw.status || 'unpaid').toLowerCase();
+  let status: OrderTransaction['status'] = 'unpaid';
+  if (rawStatus === 'paid' || rawStatus === 'processing') {
+    status = 'processing';
+  } else if (rawStatus === 'completed') {
+    status = 'completed';
+  } else if (rawStatus === 'cancelled') {
+    status = 'cancelled';
+  }
+
+  const rawActionType = raw.actionType || (
+    status === 'unpaid'
+      ? 'unpaid'
+      : status === 'completed'
+      ? 'completed'
+      : raw.pickupCode
+      ? 'pickup'
+      : 'shipping'
+  );
+
+  const rawItems: OrderItem[] = Array.isArray(raw.items)
+    ? raw.items.map((it: any, idx: number) => {
+        const itemPrice =
+          typeof it.price === 'number'
+            ? it.price
+            : parseInt(String(it.price || '0').replace(/\D/g, ''), 10) || 0;
+        return {
+          id: it.id || `item-${idx}`,
+          name: it.name || 'Official Merchandise',
+          variant: it.variant || it.role || it.subtitle || 'Official Merchandise',
+          image: it.image || '/images/members/card4_clean_faril.png',
+          quantity: it.quantity || it.qty || 1,
+          price: itemPrice,
+        };
+      })
+    : [];
+
+  return {
+    id: String(raw.id || raw.orderCode || `MSE-${Date.now().toString().slice(-6)}`),
+    date: raw.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+    status,
+    statusLabel: raw.statusLabel || (status === 'unpaid' ? 'Menunggu pembayaran' : status === 'completed' ? 'Selesai' : 'Sedang diproses'),
+    eventTag: raw.eventTag || 'OFFICIAL STORE',
+    items: rawItems.length > 0 ? rawItems : [
+      {
+        name: raw.title || 'Official Merchandise',
+        variant: 'Standard',
+        image: '/images/members/card4_clean_faril.png',
+        quantity: 1,
+        price: numericTotal,
+      }
+    ],
+    deliveryInfo: raw.deliveryInfo || raw.location || 'Pengiriman Kurir JNE Regular',
+    totalPrice: numericTotal,
+    actionType: rawActionType,
+    initialCountdownSeconds: typeof raw.initialCountdownSeconds === 'number' ? raw.initialCountdownSeconds : 180,
+    pickupLocation: raw.pickupLocation || raw.location,
+    pickupDate: raw.pickupDate,
+    pickupCode: raw.pickupCode,
+    shippingCourier: raw.shippingCourier || 'JNE Regular',
+    trackingNumber: raw.trackingNumber || 'JNE8829104829',
+    estimatedArrival: raw.estimatedArrival || '2 - 3 hari kerja',
+    stepper: Array.isArray(raw.stepper) && raw.stepper.length > 0 ? raw.stepper : [
+      { label: 'Dibayar', completed: status !== 'unpaid' },
+      { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
+      { label: 'Dalam Pengiriman (JNE)', completed: status === 'processing' || status === 'completed' },
+      { label: 'Selesai', completed: status === 'completed' },
+    ],
+    isStepperExpanded: Boolean(raw.isStepperExpanded),
+  };
+}
+
 export default function CheckoutIsland() {
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
   const [orders, setOrders] = useState<OrderTransaction[]>(INITIAL_ORDERS);
@@ -177,7 +259,16 @@ export default function CheckoutIsland() {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setOrders([...parsed, ...INITIAL_ORDERS]);
+          const normalized = parsed
+            .map((item) => {
+              try {
+                return normalizeOrder(item);
+              } catch {
+                return null;
+              }
+            })
+            .filter(Boolean) as OrderTransaction[];
+          setOrders([...normalized, ...INITIAL_ORDERS]);
         }
       }
     } catch {}
@@ -207,10 +298,10 @@ export default function CheckoutIsland() {
     }
   };
 
-  const toggleStepper = (index: number) => {
+  const toggleStepper = (orderId: string) => {
     setOrders((prev) =>
-      prev.map((order, i) =>
-        i === index ? { ...order, isStepperExpanded: !order.isStepperExpanded } : order
+      prev.map((order) =>
+        order.id === orderId ? { ...order, isStepperExpanded: !order.isStepperExpanded } : order
       )
     );
   };
@@ -270,7 +361,7 @@ export default function CheckoutIsland() {
                 Jelajahi jadwal event, tiket cheki, atau merchandise resmi MUSES.
               </p>
               <a
-                href="/store"
+                href={withBase("/store")}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#C9971C] to-[#9A7420] text-white text-xs font-bold uppercase tracking-wider hover:brightness-110 shadow-md"
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -330,8 +421,11 @@ export default function CheckoutIsland() {
                       >
                         <div className="flex items-center gap-3">
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={withBase(item.image || '/images/members/card4_clean_faril.png')}
+                            alt={item.name || 'Produk MUSES'}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = withBase('/images/members/card4_clean_faril.png');
+                            }}
                             className="w-12 h-12 rounded-xl object-cover bg-[#F7F2E4] border border-[#1F1A12]/8 shrink-0"
                           />
                           <div>
@@ -358,7 +452,7 @@ export default function CheckoutIsland() {
                       {order.deliveryInfo}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                      Rp{order.totalPrice.toLocaleString('id-ID')}
+                      Rp{(order.totalPrice ?? 0).toLocaleString('id-ID')}
                     </span>
                   </div>
 
@@ -376,7 +470,7 @@ export default function CheckoutIsland() {
                         </p>
                       </div>
                       <a
-                        href={withBase(`/payment?orderId=${order.id}&amount=${order.totalPrice}`)}
+                        href={withBase(`/payment?orderId=${order.id}&amount=${order.totalPrice ?? 0}`)}
                         className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A328] via-[#B8871B] to-[#996B10] text-[#FCFAF5] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                       >
                         Bayar dengan QR
@@ -443,7 +537,7 @@ export default function CheckoutIsland() {
                         </p>
                       </div>
                       <a
-                        href="/store"
+                        href={withBase("/store")}
                         className="w-full sm:w-auto px-5 py-2 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-300 transition-colors text-center cursor-pointer"
                       >
                         Beli Cheki Lagi
@@ -455,7 +549,7 @@ export default function CheckoutIsland() {
                     <div className="mt-4 pt-3 border-t border-[#1F1A12]/8">
                       <button
                         type="button"
-                        onClick={() => toggleStepper(orderIdx)}
+                        onClick={() => toggleStepper(order.id)}
                         className="flex items-center justify-between w-full text-xs font-semibold text-[#8C6A1C] hover:text-[#C9971C] transition-colors cursor-pointer py-1"
                       >
                         <span>Lihat alur pesanan</span>
@@ -475,7 +569,7 @@ export default function CheckoutIsland() {
                                 style={{
                                   width: `${
                                     (order.stepper.filter((s) => s.completed).length - 1) *
-                                    (100 / (order.stepper.length - 1))
+                                    (100 / Math.max(1, order.stepper.length - 1))
                                   }%`,
                                 }}
                               ></div>
@@ -485,7 +579,7 @@ export default function CheckoutIsland() {
                               <div
                                 key={stepIdx}
                                 className="relative z-10 flex flex-col items-center text-center"
-                                style={{ width: `${100 / order.stepper!.length}%` }}
+                                style={{ width: `${100 / Math.max(1, order.stepper!.length)}%` }}
                               >
                                 <div
                                   className={`w-4 h-4 rounded-full flex items-center justify-center transition-all ${
