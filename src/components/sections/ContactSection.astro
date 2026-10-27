@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../../lib/paths';
+import SocialCard from '../ui/SocialCard.astro';
 ---
 
 <section id="kontak-section" class="relative bg-[#FCFAF5] py-20 px-4 sm:px-8 overflow-hidden">
@@ -84,71 +85,23 @@ import { withBase } from '../../lib/paths';
           </h4>
 
           <div class="space-y-3.5">
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-between p-3.5 rounded-xl bg-white border border-[#C9971C]/25 hover:border-[#C9971C] hover:bg-[#FDF6E7] transition-all group"
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg gold-gradient-bg flex items-center justify-center text-[#1F1A12]">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                  </svg>
-                </div>
-                <div>
-                  <span class="text-xs font-bold text-[#1F1A12] block">Instagram</span>
-                  <span class="text-[11px] text-[#6E6453] font-mono">@muses.official</span>
-                </div>
-              </div>
-              <svg class="w-4 h-4 text-[#8C6A1C] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            <SocialCard href="https://instagram.com" name="Instagram" handle="@muses.official">
+              <svg slot="icon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
               </svg>
-            </a>
+            </SocialCard>
 
-            <a
-              href="https://tiktok.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-between p-3.5 rounded-xl bg-white border border-[#C9971C]/25 hover:border-[#C9971C] hover:bg-[#FDF6E7] transition-all group"
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg gold-gradient-bg flex items-center justify-center text-[#1F1A12]">
-                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.11v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V9.08a8.28 8.28 0 0 0 4.91 1.58v-3.46a4.88 4.88 0 0 1-1-.51Z"/>
-                  </svg>
-                </div>
-                <div>
-                  <span class="text-xs font-bold text-[#1F1A12] block">TikTok</span>
-                  <span class="text-[11px] text-[#6E6453] font-mono">@muses.official</span>
-                </div>
-              </div>
-              <svg class="w-4 h-4 text-[#8C6A1C] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            <SocialCard href="https://tiktok.com" name="TikTok" handle="@muses.official">
+              <svg slot="icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.11v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V9.08a8.28 8.28 0 0 0 4.91 1.58v-3.46a4.88 4.88 0 0 1-1-.51Z"/>
               </svg>
-            </a>
+            </SocialCard>
 
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-between p-3.5 rounded-xl bg-white border border-[#C9971C]/25 hover:border-[#C9971C] hover:bg-[#FDF6E7] transition-all group"
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg gold-gradient-bg flex items-center justify-center text-[#1F1A12]">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><polygon points="10 15 15 12 10 9 10 15"/>
-                  </svg>
-                </div>
-                <div>
-                  <span class="text-xs font-bold text-[#1F1A12] block">YouTube</span>
-                  <span class="text-[11px] text-[#6E6453] font-mono">MUSES Official</span>
-                </div>
-              </div>
-              <svg class="w-4 h-4 text-[#8C6A1C] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            <SocialCard href="https://youtube.com" name="YouTube" handle="MUSES Official">
+              <svg slot="icon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><polygon points="10 15 15 12 10 9 10 15"/>
               </svg>
-            </a>
+            </SocialCard>
           </div>
         </div>
 

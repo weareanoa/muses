@@ -1,22 +1,13 @@
 ---
 import { withBase, withBaseDeep } from '../../lib/paths';
 import membersRaw from '../../data/members.json';
-import type { Member } from '../../data/members';
+import { type Member, MEMBER_ORDER, MEMBER_AMBIENT_PALETTE } from '../../data/members';
 
-const memberOrder = ['vira', 'vely', 'mine', 'faril', 'ndah', 'liz', 'lia'];
 const members = [...(withBaseDeep(membersRaw) as readonly Member[])].sort(
-  (a, b) => memberOrder.indexOf(a.id) - memberOrder.indexOf(b.id)
+  (a, b) => MEMBER_ORDER.indexOf(a.id as any) - MEMBER_ORDER.indexOf(b.id as any)
 );
 
-const ambientPalette: Record<string, { primary: string; mid: string; soft: string }> = {
-  vira: { primary: '#FFA7D6', mid: '#FFB8DF', soft: '#FFD4EC' },
-  vely: { primary: '#1E88E5', mid: '#42A5F5', soft: '#BBDEFB' },
-  mine: { primary: '#F59E0B', mid: '#FBC02D', soft: '#FEF08A' },
-  faril: { primary: '#8E24AA', mid: '#AB47BC', soft: '#E1BEE7' },
-  ndah: { primary: '#2E7D32', mid: '#66BB6A', soft: '#C8E6C9' },
-  liz: { primary: '#E53935', mid: '#EF5350', soft: '#FFCDD2' },
-  lia: { primary: '#795548', mid: '#A1887F', soft: '#D7CCC8' },
-};
+const ambientPalette = MEMBER_AMBIENT_PALETTE;
 ---
 
 <div id="hero-scroll-container" class="relative w-full bg-[#FCFAF5] overflow-visible">

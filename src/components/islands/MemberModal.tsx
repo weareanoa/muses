@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react';
 import { withBase, withBaseDeep } from '../../lib/paths';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
 import { members as membersDataRaw, type Member } from '../../data/members';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { X } from 'lucide-react';
 import gsap from 'gsap';
 
@@ -13,6 +14,8 @@ export default function MemberModal() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useScrollLock(Boolean(currentId));
 
   useEffect(() => {
     const handleCustomOpen = (e: any) => {
@@ -30,19 +33,6 @@ export default function MemberModal() {
   useEffect(() => {
     if (!currentId) return;
 
-    const lenisInstance = (window as any).__lenis;
-    if (lenisInstance) {
-      try {
-        lenisInstance.stop();
-      } catch (err) {}
-    }
-
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         handleClose();
@@ -54,17 +44,7 @@ export default function MemberModal() {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      if (lenisInstance) {
-        try {
-          lenisInstance.start();
-        } catch (err) {}
-      }
-      document.documentElement.style.overflow = originalHtmlOverflow;
-      document.body.style.overflow = originalBodyOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentId, currentIndex]);
 
   useEffect(() => {

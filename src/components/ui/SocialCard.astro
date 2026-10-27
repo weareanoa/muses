@@ -1,0 +1,30 @@
+---
+interface Props {
+  href: string;
+  name: string;
+  handle: string;
+}
+
+const { href, name, handle } = Astro.props;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="flex items-center justify-between p-3.5 rounded-xl bg-white border border-[#C9971C]/25 hover:border-[#C9971C] hover:bg-[#FDF6E7] transition-all group"
+>
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg gold-gradient-bg flex items-center justify-center text-[#1F1A12]">
+      <slot name="icon" />
+    </div>
+    <div>
+      <span class="text-xs font-bold text-[#1F1A12] block">{name}</span>
+      <span class="text-[11px] text-[#6E6453] font-mono">{handle}</span>
+    </div>
+  </div>
+  <svg class="w-4 h-4 text-[#8C6A1C] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+  </svg>
+</a>
+

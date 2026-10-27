@@ -10,6 +10,7 @@ import {
   removeFromCart,
   clearCart
 } from '../../stores/cartStore';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { X, Trash2, ShoppingBag, Plus, Minus, ArrowRight, CheckCircle2, MapPin } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { currentUser } from '../../stores/authStore';
@@ -27,38 +28,12 @@ export default function CartDrawer() {
     user?.addresses?.find((a) => a.isDefault) ||
     user?.addresses?.[0];
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
-    const lenisInstance = (window as any).__lenis;
-    if (isOpen) {
-      if (lenisInstance) {
-        try {
-          lenisInstance.stop();
-        } catch (err) {}
-      }
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    } else {
-      if (lenisInstance) {
-        try {
-          lenisInstance.start();
-        } catch (err) {}
-      }
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
+    if (!isOpen) {
       setCheckoutComplete(false);
     }
-    return () => {
-      if (lenisInstance) {
-        try {
-          lenisInstance.start();
-        } catch (err) {}
-      }
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    };
   }, [isOpen]);
 
   const handleCheckout = () => {

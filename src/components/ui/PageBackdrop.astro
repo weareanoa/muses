@@ -1,0 +1,17 @@
+---
+interface Props {
+  variant?: 'gold' | 'dots' | 'simple';
+  className?: string;
+}
+
+const { variant = 'gold', className = '' } = Astro.props;
+---
+
+<div class={`absolute inset-0 pointer-events-none overflow-hidden ${className}`} aria-hidden="true">
+  {variant === 'dots' || variant === 'gold' ? (
+    <div class="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+  ) : null}
+  <div class="absolute top-20 right-1/4 w-[500px] h-[350px] bg-[#9A7420]/10 rounded-full blur-[140px] pointer-events-none"></div>
+  <div class="absolute bottom-20 left-10 w-[400px] h-[300px] bg-[#9A7420]/5 rounded-full blur-[120px] pointer-events-none"></div>
+</div>
+

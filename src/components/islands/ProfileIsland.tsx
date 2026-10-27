@@ -23,6 +23,17 @@ import { withBase } from '../../lib/paths';
 type TabType = 'profile' | 'alamat' | 'orders';
 type OrderFilter = 'all' | 'unpaid' | 'processing' | 'completed';
 
+import {
+  INITIAL_ORDERS,
+  type OrderTransaction,
+  type OrderItem,
+  type StepperItem,
+} from '../../data/orders';
+import { formatCountdown, formatRupiah } from '../../lib/format';
+
+type TabType = 'profile' | 'alamat' | 'orders';
+type OrderFilter = 'all' | 'unpaid' | 'processing' | 'completed';
+
 interface OrderItem {
   name: string;
   variant: string;
@@ -250,12 +261,7 @@ export default function ProfileIsland() {
     return () => clearInterval(timer);
   }, []);
 
-  const formatCountdown = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  };
-
+  
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
