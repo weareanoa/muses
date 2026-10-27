@@ -8,200 +8,173 @@ export interface HeroAnimationController {
   revert: () => void;
 }
 
-/**
- * Encapsulated GSAP animation controller for the hero arc cards.
- * Uses gsap.context() for clean scoping and lifecycle unmounting.
- */
-export function initHeroAnimation(rootContainer: HTMLElement | null): HeroAnimationController {
+export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): HeroAnimationController {
   if (!rootContainer || typeof window === 'undefined') {
     return { destroy: () => {}, revert: () => {} };
   }
 
-  const cards = rootContainer.querySelectorAll<HTMLElement>('.muses-hero-card');
-  const activeNameEl = rootContainer.querySelector<HTMLElement>('#active-member-name');
-  const activeSubtitleTextEl = rootContainer.querySelector<HTMLElement>('#active-subtitle-text');
-  const activeBulletEl = rootContainer.querySelector<HTMLElement>('#active-bullet');
-  const infoHoverState = rootContainer.querySelector<HTMLElement>('#info-hover-state');
-  const infoSection = rootContainer.querySelector<HTMLElement>('#active-member-info');
-  const arcTrack = rootContainer.querySelector<HTMLElement>('#arc-cards-track');
-  const targetSlot = rootContainer.querySelector<HTMLElement>('#settled-cards-slot');
-  const bottomGlow = rootContainer.querySelector<HTMLElement>('#hero-bottom-glow');
+  const logoAnchor = rootContainer.querySelector<HTMLElement>('#hero-logo-anchor');
+  const frame1 = rootContainer.querySelector<HTMLElement>('#hero-frame-1');
+  const frame1Img = rootContainer.querySelector<HTMLElement>('#frame1-group-img');
+  const sparkles = rootContainer.querySelector<HTMLElement>('#frame1-sparkles');
+  const frame2 = rootContainer.querySelector<HTMLElement>('#hero-frame-2');
+  const cardsTrack = rootContainer.querySelector<HTMLElement>('#arc-cards-track');
+  const cards = rootContainer.querySelectorAll<HTMLButtonElement>('.muses-hero-card');
 
-  if (!cards.length) {
-    return { destroy: () => {}, revert: () => {} };
-  }
+  const activeName = rootContainer.querySelector<HTMLElement>('#active-member-name');
+  const activeSubtitle = rootContainer.querySelector<HTMLElement>('#active-subtitle-text');
+  const activeBullet = rootContainer.querySelector<HTMLElement>('#active-bullet');
 
-  let currentScrollProgress = 0;
-
-  function getDocTop(el: HTMLElement): number {
-    let top = 0;
-    let curr: HTMLElement | null = el;
-    while (curr) {
-      top += curr.offsetTop;
-      curr = curr.offsetParent as HTMLElement | null;
+  function resetToDefaultState() {
+    if (frame2) {
+      frame2.setAttribute('data-active', 'faril');
     }
-    return top;
-  }
-
-  function calculateDeltaY(): number {
-    if (!arcTrack || !targetSlot) return 680;
-    const trackTop = getDocTop(arcTrack);
-    const slotTop = getDocTop(targetSlot);
-    return Math.max(580, slotTop - trackTop);
-  }
-
-  let deltaY = calculateDeltaY();
-
-  const handleResize = () => {
-    deltaY = calculateDeltaY();
-    ScrollTrigger.refresh();
-  };
-
-  window.addEventListener('resize', handleResize);
-
-  function hoverIn(card: HTMLElement) {
-    const defaultRot = parseFloat(card.dataset.defaultRot || '0');
-    const defaultY = parseFloat(card.dataset.defaultY || '0');
-    const defaultScale = parseFloat(card.dataset.defaultScale || '1');
-    const themeColor = card.dataset.themeColor || '#8E24AA';
-    const gradStart = card.dataset.gradientStart || '#CE93D8';
-    const gradEnd = card.dataset.gradientEnd || '#8E24AA';
-    const bgTint = card.dataset.bgTint || '#FFF';
-
-    const currentBaseRot = defaultRot * (1 - currentScrollProgress);
-    const currentBaseY = defaultY * (1 - currentScrollProgress) + currentScrollProgress * deltaY;
-    const currentBaseScale = defaultScale + (1.0 - defaultScale) * currentScrollProgress;
-    const hoverScale = currentBaseScale * 1.08;
-
-    card.style.zIndex = '50';
-    card.style.transform = `translateY(${currentBaseY - 16}px) rotate(${currentBaseRot}deg) scale(${hoverScale})`;
-    card.style.background = `linear-gradient(155deg, ${bgTint}, ${gradStart}, ${gradEnd})`;
-    card.classList.remove('bg-white/90', 'border-[#C9971C]/30', 'shadow-[0_8px_24px_rgba(201,151,28,0.1)]');
-    card.classList.add('border-white', 'shadow-[0_20px_45px_rgba(0,0,0,0.25)]');
-
-    const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
-    const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
-    const hoverView = card.querySelector<HTMLElement>('.card-hover-view');
-    if (neutralView) neutralView.style.opacity = '0';
-    if (settledView) settledView.style.opacity = '0';
-    if (hoverView) hoverView.style.opacity = '1';
-
-    if (activeNameEl) activeNameEl.textContent = card.dataset.memberName || 'MUSE';
-    if (activeSubtitleTextEl) activeSubtitleTextEl.textContent = card.dataset.museTitle || 'Official Artist';
-    if (activeBulletEl) activeBulletEl.style.backgroundColor = themeColor;
-
-    if (infoHoverState) {
-      infoHoverState.classList.remove('hidden');
-      infoHoverState.classList.add('flex');
-    }
-  }
-
-  function hoverOut(card: HTMLElement) {
-    const defaultRot = parseFloat(card.dataset.defaultRot || '0');
-    const defaultY = parseFloat(card.dataset.defaultY || '0');
-    const defaultScale = parseFloat(card.dataset.defaultScale || '1');
-    const defaultZ = card.dataset.defaultZ || '10';
-
-    const currentBaseRot = defaultRot * (1 - currentScrollProgress);
-    const currentBaseY = defaultY * (1 - currentScrollProgress) + currentScrollProgress * deltaY;
-    const currentBaseScale = defaultScale + (1.0 - defaultScale) * currentScrollProgress;
-
-    card.style.zIndex = defaultZ;
-    card.style.transform = `translateY(${currentBaseY}px) rotate(${currentBaseRot}deg) scale(${currentBaseScale})`;
-    card.style.background = '';
-    card.classList.add('bg-white/90', 'border-[#C9971C]/30', 'shadow-[0_8px_24px_rgba(201,151,28,0.1)]');
-    card.classList.remove('border-white', 'shadow-[0_20px_45px_rgba(0,0,0,0.25)]');
-
-    const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
-    const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
-    const hoverView = card.querySelector<HTMLElement>('.card-hover-view');
-    const settledFade = Math.min(1, Math.max(0, (currentScrollProgress - 0.2) / 0.5));
-    if (neutralView) neutralView.style.opacity = `${1 - settledFade}`;
-    if (settledView) settledView.style.opacity = `${settledFade}`;
-    if (hoverView) hoverView.style.opacity = '0';
-
-    if (infoHoverState) {
-      infoHoverState.classList.add('hidden');
-      infoHoverState.classList.remove('flex');
-    }
+    if (activeName) activeName.textContent = 'Faril';
+    if (activeSubtitle) activeSubtitle.textContent = 'Muse of Melpomene · The Dramatic Artist';
+    if (activeBullet) activeBullet.style.backgroundColor = '#8E24AA';
   }
 
   cards.forEach((card) => {
-    card.addEventListener('mouseenter', () => hoverIn(card));
-    card.addEventListener('mouseleave', () => hoverOut(card));
+    const memberId = card.getAttribute('data-member-id');
+    const memberName = card.getAttribute('data-member-name');
+    const museTitle = card.getAttribute('data-muse-title');
+    const themeColor = card.getAttribute('data-theme-color') || '#8E24AA';
+
+    card.addEventListener('mouseenter', () => {
+      if (frame2 && memberId) {
+        frame2.setAttribute('data-active', memberId);
+      }
+      if (activeName && memberName) activeName.textContent = memberName;
+      if (activeSubtitle && museTitle) activeSubtitle.textContent = museTitle;
+      if (activeBullet) activeBullet.style.backgroundColor = themeColor;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      resetToDefaultState();
+    });
+
     card.addEventListener('click', () => {
-      const memberId = card.dataset.memberId;
       if (memberId) {
         window.dispatchEvent(new CustomEvent('open-member-modal', { detail: memberId }));
       }
     });
   });
 
-  function runEntrance() {
-    gsap.from(cards, {
-      opacity: 0,
-      y: '+=50',
-      stagger: 0.04,
-      duration: 0.7,
-      ease: 'power2.out',
-      clearProps: 'opacity,y',
+  if (cardsTrack) {
+    cardsTrack.addEventListener('mouseleave', () => {
+      resetToDefaultState();
     });
   }
 
-  const preloaderEl = document.getElementById('brand-preloader');
-  if (preloaderEl && preloaderEl.style.display !== 'none') {
-    window.addEventListener('preloader-complete', runEntrance, { once: true });
-  } else {
-    runEntrance();
-  }
-
   const ctx = gsap.context(() => {
-    if (window.innerWidth >= 640 && arcTrack) {
-      ScrollTrigger.create({
+    if (!frame1 || !frame2) return;
+
+    gsap.set(frame1, { opacity: 1, scale: 1, y: 0 });
+    gsap.set(frame2, { opacity: 0 });
+    if (cardsTrack) gsap.set(cardsTrack, { opacity: 0, scale: 0.84, y: 35 });
+    if (logoAnchor) gsap.set(logoAnchor, { scale: 1, y: 0 });
+    if (frame1Img) gsap.set(frame1Img, { scale: 1, y: 0 });
+
+    const isMobile = window.innerWidth < 640;
+    const targetLogoScale = isMobile ? 0.66 : 0.56;
+    const targetLogoY = isMobile ? -10 : -18;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
         trigger: rootContainer,
         start: 'top top',
-        end: () => `+=${deltaY}`,
-        scrub: 1,
+        end: '+=1000',
+        pin: true,
+        scrub: 0.8,
+        anticipatePin: 1,
         onUpdate: (self) => {
-          currentScrollProgress = self.progress;
-          const progress = self.progress;
-          const settledFade = Math.min(1, Math.max(0, (progress - 0.2) / 0.5));
-
-          cards.forEach((card) => {
-            const rot = parseFloat(card.dataset.defaultRot || '0');
-            const y = parseFloat(card.dataset.defaultY || '0');
-            const scale = parseFloat(card.dataset.defaultScale || '1');
-
-            const currentRot = rot * (1 - progress);
-            const currentY = y * (1 - progress) + progress * deltaY;
-            const currentScale = scale + (1.0 - scale) * progress;
-
-            card.style.transform = `translateY(${currentY}px) rotate(${currentRot}deg) scale(${currentScale})`;
-
-            const neutralView = card.querySelector<HTMLElement>('.hero-neutral-view');
-            const settledView = card.querySelector<HTMLElement>('.settled-txt-view');
-            if (neutralView) neutralView.style.opacity = `${1 - settledFade}`;
-            if (settledView) settledView.style.opacity = `${settledFade}`;
-          });
-
-          if (infoSection) {
-            infoSection.style.opacity = `${Math.max(0, 1 - progress * 2.8)}`;
-            infoSection.style.transform = `translateY(${progress * 30}px)`;
-          }
-
-          if (bottomGlow) {
-            bottomGlow.style.opacity = `${Math.max(0, 1 - progress * 2)}`;
+          if (self.progress > 0.52) {
+            frame2.style.pointerEvents = 'auto';
+            if (frame1) frame1.style.pointerEvents = 'none';
+          } else {
+            frame2.style.pointerEvents = 'none';
+            if (frame1) frame1.style.pointerEvents = 'auto';
           }
         },
-      });
+      },
+    });
+
+    if (sparkles) {
+      tl.to(
+        sparkles,
+        {
+          opacity: 0,
+          scale: 0.7,
+          duration: 0.35,
+          ease: 'power2.in',
+        },
+        0
+      );
+    }
+
+    if (logoAnchor) {
+      tl.to(
+        logoAnchor,
+        {
+          scale: targetLogoScale,
+          y: targetLogoY,
+          duration: 0.75,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+    }
+
+    if (frame1Img) {
+      tl.to(
+        frame1Img,
+        {
+          scale: 0.86,
+          y: 22,
+          duration: 0.5,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+    }
+
+    tl.to(
+      frame1,
+      {
+        opacity: 0,
+        duration: 0.45,
+        ease: 'power2.inOut',
+      },
+      0.15
+    );
+
+    tl.to(
+      frame2,
+      {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power2.out',
+      },
+      0.28
+    );
+
+    if (cardsTrack) {
+      tl.to(
+        cardsTrack,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power2.out',
+        },
+        0.28
+      );
     }
   }, rootContainer);
 
   return {
-    destroy: () => {
-      window.removeEventListener('resize', handleResize);
-      ctx.revert();
-    },
+    destroy: () => ctx.revert(),
     revert: () => ctx.revert(),
   };
 }

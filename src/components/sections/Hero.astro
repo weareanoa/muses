@@ -1,257 +1,301 @@
 ---
 import { withBase, withBaseDeep } from '../../lib/paths';
-import membersDataRaw from '../../data/members.json';
-const membersData = withBaseDeep(membersDataRaw);
+import membersRaw from '../../data/members.json';
+import type { Member } from '../../data/members';
 
-const arcCardConfigs = [
-  { rot: -10, y: 22, scale: 0.76, z: 10 },
-  { rot: -6, y: 11, scale: 0.78, z: 20 },
-  { rot: -2, y: 3, scale: 0.80, z: 30 },
-  { rot: 0, y: 0, scale: 0.82, z: 40 },
-  { rot: 2, y: 3, scale: 0.80, z: 30 },
-  { rot: 6, y: 11, scale: 0.78, z: 20 },
-  { rot: 10, y: 22, scale: 0.76, z: 10 },
-];
+const memberOrder = ['vira', 'vely', 'mine', 'faril', 'ndah', 'liz', 'lia'];
+const members = [...(withBaseDeep(membersRaw) as readonly Member[])].sort(
+  (a, b) => memberOrder.indexOf(a.id) - memberOrder.indexOf(b.id)
+);
+
+const ambientPalette: Record<string, { primary: string; mid: string; soft: string }> = {
+  vira: { primary: '#FFA7D6', mid: '#FFB8DF', soft: '#FFD4EC' },
+  vely: { primary: '#1E88E5', mid: '#42A5F5', soft: '#BBDEFB' },
+  mine: { primary: '#F59E0B', mid: '#FBC02D', soft: '#FEF08A' },
+  faril: { primary: '#8E24AA', mid: '#AB47BC', soft: '#E1BEE7' },
+  ndah: { primary: '#2E7D32', mid: '#66BB6A', soft: '#C8E6C9' },
+  liz: { primary: '#E53935', mid: '#EF5350', soft: '#FFCDD2' },
+  lia: { primary: '#795548', mid: '#A1887F', soft: '#D7CCC8' },
+};
 ---
 
 <div id="hero-scroll-container" class="relative w-full bg-[#FCFAF5] overflow-visible">
   <section
-    id="hero-arc-section"
-    class="relative w-full min-h-[92vh] sm:min-h-[96vh] flex flex-col items-center justify-between overflow-visible pt-20 sm:pt-24 pb-4 sm:pb-6 select-none"
+    id="hero-pinned-viewport"
+    class="relative w-full h-screen min-h-[620px] max-h-[1080px] pt-20 flex items-center justify-center overflow-hidden select-none"
   >
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-gradient-to-b from-[#F7E08F]/20 via-[#C9971C]/8 to-transparent rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#FCFAF5] via-[#FBF5E8] to-[#FCFAF5] pointer-events-none z-0"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="absolute bottom-0 inset-x-0 h-[48%] bg-gradient-to-t from-[#D4A017]/65 via-[#D4A017]/25 to-transparent pointer-events-none z-0"></div>
 
-    <div class="relative z-10 w-full flex flex-col items-center justify-center pt-2 sm:pt-4 mb-2">
-      <span
-        id="hero-muses-title"
-        class="text-[72px] sm:text-[100px] md:text-[120px] font-display font-black tracking-widest gold-gradient-text leading-none select-none text-center"
-      >
-        MUSES
-      </span>
+    <div
+      id="hero-logo-anchor"
+      class="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-center pointer-events-none"
+    >
+      <img
+        id="hero-muses-logo"
+        src={withBase("/images/muses_logo_3d_clean.svg")}
+        alt="MUSES"
+        class="w-[280px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
+      />
     </div>
 
     <div
-      id="cards-viewport-wrap"
-      class="relative z-20 w-full max-w-[1380px] mx-auto px-2 sm:px-4 flex flex-col items-center justify-end mt-auto pb-0 overflow-visible"
+      id="hero-frame-1"
+      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform"
+    >
+      <div class="relative w-full max-w-[1550px] 2xl:max-w-[1750px] h-full max-h-[85vh] sm:max-h-[92vh] flex items-end justify-center">
+        <img
+          id="frame1-group-img"
+          src={withBase("/images/muses_group_frame1.svg")}
+          alt="MUSES Idol Group"
+          class="w-full h-full max-h-[80vh] sm:max-h-[88vh] 2xl:max-h-[92vh] object-contain object-center drop-shadow-[0_20px_50px_rgba(201,151,28,0.3)] will-change-transform"
+        />
+
+        <div id="frame1-sparkles" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          <span class="absolute top-[6%] left-[10%] text-amber-400 text-2xl sm:text-3xl animate-pulse">✦</span>
+          <span class="absolute top-[28%] left-[6%] text-amber-400 text-3xl sm:text-4xl animate-pulse" style="animation-delay: 400ms">✦</span>
+          <span class="absolute top-[8%] right-[10%] text-amber-400 text-xl sm:text-2xl animate-pulse" style="animation-delay: 200ms">✦</span>
+          <span class="absolute top-[32%] right-[6%] text-amber-400 text-3xl sm:text-4xl animate-pulse" style="animation-delay: 600ms">✦</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="hero-frame-2"
+      data-active="faril"
+      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-2 sm:pb-4 z-10 opacity-0 pointer-events-none will-change-transform"
     >
       <div
-        id="active-member-info"
-        class="relative z-30 mb-4 sm:mb-6 flex flex-col items-center justify-center text-center select-none transition-all duration-300 min-h-[50px]"
+        id="frame2-ambient-glow"
+        class="absolute inset-0 pointer-events-none z-0 overflow-hidden"
       >
-        <div id="info-hover-state" class="hidden flex-col items-center justify-center transition-opacity duration-300">
-          <div class="relative flex items-center justify-center">
-            <img
-              id="active-butterfly-left"
-              src={withBase("/images/butterfly_purple.svg")}
-              alt="butterfly"
-              class="w-6 h-6 sm:w-8 sm:h-8 object-contain mr-3 sm:mr-4 -rotate-12 animate-pulse"
-            />
-            <h2
-              id="active-member-name"
-              class="text-2xl sm:text-3xl md:text-4xl font-display font-black tracking-tight text-[#1F1A12] uppercase drop-shadow-xs"
+        <div class="absolute bottom-0 inset-x-0 h-[55%] bg-gradient-to-t from-[#FCFAF5] via-[#FCFAF5]/85 to-transparent pointer-events-none"></div>
+
+        <div
+          data-bg="default"
+          class="bg-layer absolute inset-0 transition-opacity duration-500 pointer-events-none"
+        >
+          <div class="absolute bottom-0 inset-x-0 h-[55%] to-transparent"></div>
+        </div>
+
+        {members.map((m) => {
+          const palette = ambientPalette[m.id] || {
+            primary: m.themeColor || m.to,
+            mid: m.to,
+            soft: m.gradientStart || m.from,
+          };
+          const isFigmaFade = m.to.toUpperCase() === '#D4A017';
+          const bottomColor = isFigmaFade ? m.from : palette.primary;
+          const topFadeColor = isFigmaFade ? m.to : '#D4A017';
+
+          return (
+            <div
+              data-bg={m.id}
+              class="bg-layer absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none"
             >
-              Member
-            </h2>
-            <img
-              id="active-butterfly-right"
-              src={withBase("/images/butterfly_purple.svg")}
-              alt="butterfly"
-              class="w-6 h-6 sm:w-8 sm:h-8 object-contain ml-3 sm:mr-4 rotate-12 animate-pulse"
-            />
+              {isFigmaFade ? (
+                <div
+                  class="absolute inset-0 pointer-events-none opacity-80"
+                  style={{
+                    background: `linear-gradient(to top, ${bottomColor} 0%, color-mix(in srgb, color-mix(in srgb, ${bottomColor} 75%, ${topFadeColor} 25%) 75%, transparent) 22%, color-mix(in srgb, color-mix(in srgb, ${bottomColor} 50%, ${topFadeColor} 50%) 50%, transparent) 44%, color-mix(in srgb, color-mix(in srgb, ${bottomColor} 25%, ${topFadeColor} 75%) 25%, transparent) 65%, transparent 87%)`
+                  }}
+                ></div>
+              ) : (
+                <>
+                  <div
+                    class="absolute bottom-0 inset-x-0 h-[54%] pointer-events-none"
+                    style={{
+                      background: `linear-gradient(to top, ${palette.primary}85 0%, ${palette.mid}4D 40%, ${palette.soft}24 74%, transparent 100%)`
+                    }}
+                  ></div>
+                  <div
+                    class="absolute left-1/2 -translate-x-1/2 bottom-[-140px] sm:bottom-[-180px] w-[1100px] sm:w-[1560px] md:w-[1920px] h-[520px] sm:h-[660px] pointer-events-none opacity-95"
+                    style={{
+                      background: `radial-gradient(ellipse 58% 54% at 50% 62%, ${palette.primary}D9 0%, ${palette.mid}8C 36%, ${palette.soft}3D 64%, transparent 86%)`
+                    }}
+                  ></div>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div id="frame2-decor-layer" class="absolute inset-0 pointer-events-none overflow-hidden">
+        {members.map((m) => (
+          <div data-decor={m.id} class="decor-group absolute inset-x-0 -top-[24px] sm:-top-[28px] md:-top-[32px] bottom-[24px] sm:bottom-[28px] md:bottom-[32px] pointer-events-none">
+            {m.decor.map((d, i) => (
+              <img
+                src={withBase(d.src)}
+                alt=""
+                loading={m.id === 'faril' ? 'eager' : 'lazy'}
+                decoding="async"
+                class="decor-item absolute opacity-0 transition-[opacity,transform] duration-500 ease-out pointer-events-none"
+                style={{
+                  left: d.x,
+                  ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
+                  width: `${d.size}px`,
+                  zIndex: d.behind ? 5 : (d.zIndex ?? 20),
+                  '--d-rot': `${d.rotate ?? 0}deg`,
+                  '--d-flip-x': d.flipX ? -1 : 1,
+                  '--d-flip-y': d.flipY ? -1 : 1,
+                  transitionDelay: `${i * 50}ms`
+                }}
+              />
+            ))}
           </div>
+        ))}
+      </div>
+
+      <div class="relative w-full max-w-[1440px] flex flex-col items-center justify-center z-10 mb-7 sm:mb-9 md:mb-10">
+        <div
+          id="arc-cards-track"
+          class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 py-6 w-full will-change-transform overflow-visible"
+        >
+          {members.map((member, index) => {
+            const offset = index - 3;
+            const palette = ambientPalette[member.id] || {
+              primary: member.themeColor || member.to,
+              mid: member.to,
+              soft: member.gradientStart || member.from,
+            };
+            const themeColor = member.themeColor || palette.primary;
+            return (
+              <button
+                type="button"
+                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform text-left focus:outline-none w-[94px] sm:w-[116px] md:w-[132px] lg:w-[148px] xl:w-[162px] 2xl:w-[174px] h-[132px] sm:h-[164px] md:h-[188px] lg:h-[210px] xl:h-[228px] 2xl:h-[246px] rounded-2xl sm:rounded-[20px] overflow-hidden border-[2.5px] sm:border-[3px] border-white shadow-[0_12px_28px_rgba(0,0,0,0.16)]"
+                style={{
+                  '--offset': offset,
+                  '--theme-color': themeColor,
+                  background: `linear-gradient(180deg, ${member.from} 0%, ${palette.soft} 32%, ${palette.mid} 76%, ${themeColor} 100%)`
+                }}
+                data-member-id={member.id}
+                data-member-name={member.name}
+                data-muse-title={member.heroSubtitle || member.role}
+                data-theme-color={themeColor}
+                aria-label={`Buka Profil ${member.name}`}
+              >
+                <img
+                  src={member.card}
+                  alt={member.name}
+                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300 pointer-events-none"
+                  loading="eager"
+                  decoding="async"
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        <div
+          id="active-member-info"
+          class="relative z-30 mt-3 sm:mt-4 flex flex-col items-center justify-start text-center select-none transition-opacity duration-300 h-[76px] sm:h-[84px]"
+        >
+          <h3
+            id="active-member-name"
+            class="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold tracking-tight text-[#18121E]"
+          >
+            Faril
+          </h3>
 
           <p
             id="active-member-subtitle"
-            class="text-xs sm:text-sm font-sans font-medium text-[#4A154B] mt-1 flex items-center justify-center gap-2"
+            class="text-xs sm:text-sm md:text-[15px] font-sans font-medium text-[#2A1836] mt-1 flex items-center justify-center gap-2.5"
           >
-            <span id="active-bullet" class="w-2 h-2 rounded-full bg-[#C9971C]"></span>
-            <span id="active-subtitle-text">Muse Title</span>
+            <span id="active-bullet" class="w-3 h-3 rounded-full bg-[#8E24AA] shrink-0"></span>
+            <span id="active-subtitle-text">Muse of Melpomene · The Dramatic Artist</span>
           </p>
         </div>
-      </div>
-
-      <div
-        id="arc-cards-track"
-        class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-2 lg:gap-2 xl:gap-2.5 2xl:gap-3 py-1 w-full will-change-transform overflow-visible"
-      >
-        {
-          membersData.map((member, index) => {
-            const cfg = arcCardConfigs[index] || { rot: 0, y: 0, scale: 1, z: 10 };
-            return (
-              <div
-                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform transition-all duration-300
-                  w-[110px] sm:w-[130px] md:w-[145px] lg:w-[155px] xl:w-[170px] 2xl:w-[195px]
-                  h-[165px] sm:h-[195px] md:h-[218px] lg:h-[235px] xl:h-[255px] 2xl:h-[292px]
-                  rounded-2xl sm:rounded-3xl overflow-hidden
-                  bg-white/90 backdrop-blur-xs border-2 border-[#C9971C]/30 shadow-[0_8px_24px_rgba(201,151,28,0.1)]
-                "
-                style={{
-                  transform: `translateY(${cfg.y}px) rotate(${cfg.rot}deg) scale(${cfg.scale})`,
-                  zIndex: cfg.z,
-                }}
-                data-member-id={member.id}
-                data-member-index={index}
-                data-member-name={member.stageName}
-                data-muse-title={member.museTitle || member.role}
-                data-theme-color={member.themeColor}
-                data-gradient-start={member.gradientStart}
-                data-gradient-end={member.gradientEnd || member.themeColor}
-                data-bg-tint={member.bgTint || '#FFF'}
-                data-icon={member.icon || member.emoticon}
-                data-default-rot={cfg.rot}
-                data-default-y={cfg.y}
-                data-default-scale={cfg.scale}
-                data-default-z={cfg.z}
-              >
-                <div class="hero-neutral-view absolute inset-0 p-3 sm:p-4 flex flex-col justify-between items-center text-center transition-opacity duration-300 group-hover:opacity-0">
-                  <div class="w-full flex items-center justify-between text-[#8C6A1C]/60">
-                    <span class="text-[9px] sm:text-[10px] font-mono font-bold tracking-widest">
-                      0{index + 1}
-                    </span>
-                    <span class="text-[11px] sm:text-xs font-serif text-[#C9971C]">
-                      ✦
-                    </span>
-                  </div>
-
-                  <div class="my-auto flex flex-col items-center">
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#FAF6EC] border border-[#C9971C]/25 shadow-xs flex items-center justify-center text-[#8C6A1C] mb-2">
-                      <span class="text-sm sm:text-base font-bold">✦</span>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase text-[#8C6A1C]/75">
-                      MUSE
-                    </span>
-                  </div>
-
-                  <div class="w-full flex justify-center">
-                    <span class="w-5 h-0.5 bg-[#C9971C]/30 rounded-full"></span>
-                  </div>
-                </div>
-
-                <div class="settled-txt-view absolute inset-0 p-3.5 sm:p-4 flex flex-col justify-between text-left opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-0 bg-gradient-to-b from-white/95 via-white/85 to-[#FAF6EC]/95">
-                  <div class="w-full flex items-center justify-between">
-                    <span class="text-[9px] sm:text-[10px] font-mono font-black tracking-widest text-[#8C6A1C]/70">
-                      0{index + 1}
-                    </span>
-                    <span class="text-xs font-bold" style={{ color: member.themeColor }}>
-                      {member.icon || member.emoticon}
-                    </span>
-                  </div>
-
-                  <div class="my-auto flex flex-col items-center justify-center">
-                    <div
-                      class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-lg sm:text-xl font-bold shadow-xs border"
-                      style={{
-                        backgroundColor: `${member.themeColor}12`,
-                        borderColor: `${member.themeColor}25`,
-                        color: member.themeColor,
-                      }}
-                    >
-                      <span>{member.icon || '✦'}</span>
-                    </div>
-                  </div>
-
-                  <div class="w-full pt-2 border-t border-[#1F1A12]/8">
-                    <span
-                      class="text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black tracking-widest uppercase block line-clamp-1"
-                      style={{ color: member.themeColor }}
-                    >
-                      {member.role.split(',')[0]}
-                    </span>
-                    <h3 class="text-base sm:text-lg md:text-xl font-display font-black tracking-wider uppercase text-[#1F1A12] leading-tight mt-0.5">
-                      {member.stageName}
-                    </h3>
-                    <p class="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium text-[#6E6453] mt-0.5 line-clamp-1">
-                      {member.fullName}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  class="card-hover-view absolute inset-0 p-3.5 sm:p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(155deg, ${member.bgTint || '#FFF'}, ${member.gradientStart}, ${member.gradientEnd || member.themeColor})`,
-                  }}
-                >
-                  <div class="w-full flex items-center justify-between text-[#1F1A12]/80">
-                    <span class="text-[9px] sm:text-[10px] font-mono font-black tracking-widest">
-                      0{index + 1}
-                    </span>
-                    <span class="text-xs sm:text-sm font-bold">
-                      {member.icon || member.emoticon}
-                    </span>
-                  </div>
-
-                  <div class="my-auto flex flex-col items-center justify-center">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/90 shadow-sm flex items-center justify-center text-lg sm:text-xl font-bold text-[#1F1A12] border border-white">
-                      <span>{member.icon || '✦'}</span>
-                    </div>
-                  </div>
-
-                  <div class="w-full pt-2 border-t border-[#1F1A12]/15">
-                    <span class="text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black tracking-widest uppercase text-[#1F1A12]/85 block line-clamp-1">
-                      {member.role.split(',')[0]}
-                    </span>
-                    <h3 class="text-base sm:text-lg md:text-xl font-display font-black tracking-wider uppercase text-[#1F1A12] leading-tight drop-shadow-xs mt-0.5">
-                      {member.stageName}
-                    </h3>
-                    <p class="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium text-[#1F1A12]/80 mt-0.5 line-clamp-1">
-                      {member.fullName}
-                    </p>
-                    <span class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#8C6A1C] mt-2 block">
-                      Buka Profil →
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        }
-      </div>
-    </div>
-
-    <div
-      id="hero-bottom-glow"
-      class="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#D1C4E9]/50 via-[#EDE7F6]/30 to-transparent pointer-events-none z-10"
-    ></div>
-  </section>
-
-  <section
-    id="members-settled-section"
-    class="relative w-full bg-[#FCFAF5] pt-14 pb-28 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-visible"
-  >
-    <div id="members-heading-wrap" class="max-w-7xl mx-auto w-full mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-      <div>
-        <div class="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-[#C9971C] mb-1.5">
-          <span class="w-2.5 h-0.5 bg-[#C9971C]"></span>
-          <span>MEET THE MEMBERS</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-[#1F1A12] uppercase">
-          7 Karakter, Satu Harmoni
-        </h2>
-        <p class="max-w-2xl text-[#6E6453] text-xs sm:text-sm md:text-base leading-relaxed mt-2">
-          Kartu hero kini sejajar dalam harmoni penuh. Klik kartu member mana saja untuk membuka profil, karakteristik panggung, dan kisah mendalam mereka.
-        </p>
-      </div>
-    </div>
-
-    <div
-      id="settled-target-container"
-      class="relative w-full min-h-[275px] 2xl:min-h-[310px] flex items-center justify-center overflow-x-auto scrollbar-none overscroll-x-contain pb-4"
-    >
-      <div
-        id="settled-cards-slot"
-        class="w-full max-w-7xl mx-auto flex items-center justify-center min-w-max h-[265px] 2xl:h-[300px]"
-      >
       </div>
     </div>
   </section>
 </div>
 
+<style>
+  #frame2-decor-layer {
+    --decor-scale: 1;
+  }
+
+  .muses-hero-card {
+    --base-y: calc(var(--offset) * var(--offset) * 7px);
+    --base-rot: calc(var(--offset) * 4.4deg);
+    transform: translateY(var(--base-y)) rotate(var(--base-rot)) scale(0.96);
+    z-index: calc(30 - var(--offset) * var(--offset));
+    transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.28s ease;
+  }
+
+  #hero-frame-2[data-active="faril"] .muses-hero-card[data-member-id="faril"],
+  #hero-frame-2[data-active="farli"] .muses-hero-card[data-member-id="faril"],
+  #hero-frame-2:not([data-active]) .muses-hero-card[data-member-id="faril"],
+  #hero-frame-2[data-active="default"] .muses-hero-card[data-member-id="faril"],
+  #hero-frame-2[data-active="faril"] .muses-hero-card[data-member-id="farli"],
+  #hero-frame-2[data-active="farli"] .muses-hero-card[data-member-id="farli"],
+  #hero-frame-2:not([data-active]) .muses-hero-card[data-member-id="farli"],
+  #hero-frame-2[data-active="default"] .muses-hero-card[data-member-id="farli"] {
+    transform: translateY(calc(var(--base-y) - 18px)) rotate(0deg) scale(1.14);
+    box-shadow: 0 0 0 2.5px #A855F7, 0 22px 48px rgba(142, 36, 170, 0.35);
+    z-index: 50;
+  }
+
+  .muses-hero-card:hover {
+    transform: translateY(calc(var(--base-y) - 18px)) rotate(calc(var(--base-rot) * 0.25)) scale(1.14) !important;
+    box-shadow: 0 0 0 3px var(--theme-color), 0 22px 48px color-mix(in srgb, var(--theme-color) 42%, rgba(0, 0, 0, 0.22)) !important;
+    z-index: 55 !important;
+  }
+
+  .decor-item {
+    transform: translateY(20px) scale(0.5) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+  }
+
+  #hero-frame-2:not([data-active]) [data-bg="faril"],
+  #hero-frame-2[data-active="default"] [data-bg="faril"],
+  #hero-frame-2[data-active="faril"] [data-bg="faril"],
+  #hero-frame-2[data-active="farli"] [data-bg="faril"],
+  #hero-frame-2:not([data-active]) [data-bg="farli"],
+  #hero-frame-2[data-active="default"] [data-bg="farli"],
+  #hero-frame-2[data-active="farli"] [data-bg="farli"],
+  #hero-frame-2[data-active="faril"] [data-bg="farli"] {
+    opacity: 1;
+  }
+
+  #hero-frame-2[data-active="vira"] [data-bg="vira"],
+  #hero-frame-2[data-active="vely"] [data-bg="vely"],
+  #hero-frame-2[data-active="mine"] [data-bg="mine"],
+  #hero-frame-2[data-active="ndah"] [data-bg="ndah"],
+  #hero-frame-2[data-active="liz"] [data-bg="liz"],
+  #hero-frame-2[data-active="lia"] [data-bg="lia"] {
+    opacity: 1;
+  }
+
+  #hero-frame-2:not([data-active]) [data-decor="faril"] .decor-item,
+  #hero-frame-2[data-active="default"] [data-decor="faril"] .decor-item,
+  #hero-frame-2[data-active="faril"] [data-decor="faril"] .decor-item,
+  #hero-frame-2[data-active="farli"] [data-decor="faril"] .decor-item,
+  #hero-frame-2:not([data-active]) [data-decor="farli"] .decor-item,
+  #hero-frame-2[data-active="default"] [data-decor="farli"] .decor-item,
+  #hero-frame-2[data-active="farli"] [data-decor="farli"] .decor-item,
+  #hero-frame-2[data-active="faril"] [data-decor="farli"] .decor-item {
+    opacity: 1;
+    transform: translateY(0) scale(var(--decor-scale, 1)) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+  }
+
+  #hero-frame-2[data-active="vira"] [data-decor="vira"] .decor-item,
+  #hero-frame-2[data-active="vely"] [data-decor="vely"] .decor-item,
+  #hero-frame-2[data-active="mine"] [data-decor="mine"] .decor-item,
+  #hero-frame-2[data-active="ndah"] [data-decor="ndah"] .decor-item,
+  #hero-frame-2[data-active="liz"] [data-decor="liz"] .decor-item,
+  #hero-frame-2[data-active="lia"] [data-decor="lia"] .decor-item {
+    opacity: 1;
+    transform: translateY(0) scale(var(--decor-scale, 1)) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+  }
+</style>
+
 <script>
-  import { initHeroAnimation } from '../../animations/hero';
+  import { initHeroParallaxAnimation } from '../../animations/hero';
 
   const container = document.getElementById('hero-scroll-container');
   if (container) {
-    initHeroAnimation(container);
+    initHeroParallaxAnimation(container);
   }
 </script>

@@ -421,7 +421,7 @@ export default function ScheduleHub() {
             <div className="shrink-0 w-64 p-3 bg-[#F8F4EA] border border-[#1F1A12]/15 rounded-xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-300">
               <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-[#FBF8F1]">
                 <img
-                  src={withBase("/images/group-photo.svg")}
+                  src={withBase("/images/muses_group_frame1.svg")}
                   alt="MUSE in studio rehearsal"
                   className="w-full h-full object-cover filter contrast-110 brightness-90"
                 />

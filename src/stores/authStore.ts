@@ -8,7 +8,9 @@ export interface UserAddress {
   street: string;
   city: string;
   province: string;
+  district?: string;
   postalCode: string;
+  detail?: string;
   isDefault: boolean;
 }
 
@@ -50,26 +52,28 @@ interface StoredOtp {
 const DEFAULT_USERS: (User & { password?: string })[] = [
   {
     id: 'user_muses_default',
-    name: 'Aulia Rahma',
-    email: 'aulia@email.com',
-    phone: '+62 812 3456 7890',
-    username: 'aulia_muses',
+    name: 'Winaa',
+    email: 'winarahmaliaxx@gmail.com',
+    phone: '08xxxxxxxxx',
+    username: 'winaa',
     authProvider: 'email',
-    bias: 'Aria',
-    biasEmoji: '✦',
+    bias: 'Faril',
+    biasEmoji: '☾',
     membershipTier: 'Official MUSES CIRCLE',
-    membershipNumber: 'MUSES-771404',
-    joinedAt: '23 Oktober 2026',
+    membershipNumber: 'MSE-261022',
+    joinedAt: '22 Oktober 2026',
     addresses: [
       {
         id: 'addr_default_1',
         label: 'Rumah',
-        recipientName: 'Aulia Rahma',
-        phone: '+62 812 3456 7890',
-        street: 'Jl. Melati No. 12',
-        city: 'Bandung',
-        province: 'Jawa Barat',
-        postalCode: '40123',
+        recipientName: 'Wina',
+        phone: '(+62) 8131111111111',
+        street: 'Perumahan hantu, Jalan dengan sepatu rodaku Blok A1 No. 3, RT.0/RW.1, Bekasi Timur',
+        district: 'TAMBUN SELATAN',
+        city: 'KAB. BEKASI',
+        province: 'JAWA BARAT',
+        postalCode: '17510',
+        detail: '',
         isDefault: true,
       },
     ],
@@ -101,12 +105,12 @@ function saveUsers(users: (User & { password?: string })[]) {
 }
 
 function loadInitialUser(): User | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined') return DEFAULT_USERS[0];
   try {
     const saved = localStorage.getItem('muses_current_user');
-    return saved ? JSON.parse(saved) : null;
+    return saved ? JSON.parse(saved) : DEFAULT_USERS[0];
   } catch {
-    return null;
+    return DEFAULT_USERS[0];
   }
 }
 

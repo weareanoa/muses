@@ -152,7 +152,7 @@ export default function ScheduleSplitGrid() {
           <div className="relative rounded-3xl bg-white border border-[#C9971C]/40 p-4 sm:p-5 shadow-[0_15px_40px_rgba(201,151,28,0.12)]">
             <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-4 border border-[#C9971C]/25 bg-[#FAF6EC]">
               <img
-                src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.png')}
+                src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.svg')}
                 alt="MUSES 7 Members"
                 className="w-full h-full object-cover"
               />

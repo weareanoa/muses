@@ -1,667 +1,474 @@
 [
   {
-    "id": "member-01",
-    "stageName": "Zia",
-    "fullName": "Zia Azzahra",
-    "role": "Sub-Vocalist, Maknae",
-    "museTitle": "Muse of Erato · The Lyric Heart",
-    "birthDate": "2004-09-18",
-    "zodiac": "Virgo",
-    "bloodType": "AB",
-    "height": "164 cm",
-    "mbti": "ENFP",
-    "emoticon": "◈",
-    "gradientStart": "#F8BBD0",
-    "gradientEnd": "#EC407A",
-    "themeColor": "#EC407A",
+    "id": "vira",
+    "name": "Vira",
+    "stageName": "Vira",
+    "fullName": "Vira Calista",
+    "role": "Main Rapper, Sub-Vocalist",
+    "card": "/images/members/vira.webp",
+    "from": "#FFA7D6",
+    "to": "#D4A017",
+    "themeColor": "#FFA7D6",
+    "gradientStart": "#FFA7D6",
+    "gradientEnd": "#D4A017",
     "bgTint": "#FCE4EC",
-    "icon": "◈",
-    "nicknames": [
-      "Baby Zia",
-      "Sunshine Maknae"
-    ],
-    "photoThumb": "/images/members/portrait_pink.png",
-    "photoFull": "/images/members/portrait_pink.png",
-    "photoFrame": "/images/members/portrait_pink.png",
-    "photoStory1": "/images/members/portrait_pink.png",
-    "photoCloseup": "/images/members/portrait_pink.png",
-    "editorialDate": "SEP 18",
-    "editorialSubtitle": "Energi manis dan pesona termuda yang selalu mencerahkan suasana MUSES.",
-    "codeNumber": "01 09 04",
-    "quotePart1": "Joyful beginnings...",
-    "quotePart2": "Every melody brings a smile.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Zia"
-      },
-      {
-        "label": "Full Name",
-        "value": "Zia Azzahra"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Erato · The Lyric Heart"
-      },
-      {
-        "label": "Birthday",
-        "value": "18 September 2004"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Virgo"
-      },
-      {
-        "label": "Height",
-        "value": "164 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "AB"
-      },
-      {
-        "label": "MBTI",
-        "value": "ENFP"
-      },
-      {
-        "label": "Position",
-        "value": "Sub-Vocalist, Maknae"
-      },
-      {
-        "label": "Instagram",
-        "value": "@zia.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "◈ Pink Crystal"
-      }
-    ],
-    "story01": "Member termuda MUSES dengan aura ceria yang menular. Zia selalu membawa tawa di ruang latihan dan menghadirkan vokal manis penuh kehangatan.",
-    "story02": "Dikenal dengan gaya panggung yang menggemaskan dan interaksi tulus bersama para penggemar.",
-    "vocalRole": "Sweet lyric tone with expressive bright dynamics",
-    "tmi": [
-      "Suka membawa boneka kelinci kecil saat bepergian tur.",
-      "Paling suka es krim stroberi dan minuman matcha manis.",
-      "Sering merekam video keseharian di belakang panggung."
-    ],
-    "museCategory": "MUSE OF ERATO",
-    "tagline": "The Lyric Heart / Sweet Maknae",
-    "summary": "Energi manis dan pesona termuda yang selalu mencerahkan suasana MUSES.",
-    "birthFormatted": "18 September 2004",
+    "icon": "🎀",
+    "iconName": "Pita",
     "colorName": "Pink",
-    "iconName": "Crystal",
-    "photoPortrait": "/images/members/portrait_pink.png",
-    "accentColor": "#EC407A"
+    "height": "166 cm",
+    "zodiac": "Sagittarius",
+    "birthFormatted": "9 Desember 2003",
+    "museCategory": "MUSE OF ERATO",
+    "tagline": "The Romantic / Charisma Rap",
+    "heroSubtitle": "Muse of Erato · The Romantic",
+    "summary": "Rima tegas dan karisma tajam yang memberikan warna berani pada musik MUSES.",
+    "story01": "Dikenal dengan gaya rap bertenaga dan kehadiran panggung yang menyala-nyala.",
+    "decor": [
+      {
+        "src": "/decor/pita.svg",
+        "x": "8%",
+        "y": "82%",
+        "size": 160
+      },
+      {
+        "src": "/decor/pita.svg",
+        "x": "24%",
+        "y": "84%",
+        "size": 60,
+        "rotate": 15 
+      },
+      {
+        "src": "/decor/pita.svg",
+        "x": "38%",
+        "y": "93%",
+        "size": 120
+      },
+      {
+        "src": "/decor/pita.svg",
+        "x": "52%",
+        "y": "85%",
+        "size": 50
+      },
+      {
+        "src": "/decor/pita.svg",
+        "x": "64%",
+        "y": "86%",
+        "size": 90
+      },
+      {
+        "src": "/decor/pita.svg",
+        "x": "94%",
+        "y": "85%",
+        "size": 125,
+        "rotate": 18
+      }
+    ]
   },
   {
-    "id": "member-02",
-    "stageName": "Aria",
-    "fullName": "Aria Kirana",
-    "role": "Leader, Lead Vocalist",
-    "museTitle": "Muse of Polyhymnia · The Serene Voice",
-    "birthDate": "2001-04-12",
-    "zodiac": "Aries",
-    "bloodType": "A",
-    "height": "168 cm",
-    "mbti": "ENFJ",
-    "emoticon": "✦",
-    "gradientStart": "#B3E5FC",
-    "gradientEnd": "#29B6F6",
-    "themeColor": "#0288D1",
-    "bgTint": "#E1F5FE",
-    "icon": "✦",
-    "nicknames": [
-      "Kirana",
-      "Captain Aria"
-    ],
-    "photoThumb": "/images/members/portrait_blue.png",
-    "photoFull": "/images/members/portrait_blue.png",
-    "photoFrame": "/images/members/portrait_blue.png",
-    "photoStory1": "/images/members/portrait_blue.png",
-    "photoCloseup": "/images/members/portrait_blue.png",
-    "editorialDate": "APR 12",
-    "editorialSubtitle": "The charismatic anchor and steadfast heart of MUSES.",
-    "codeNumber": "02 04 01",
-    "quotePart1": "Together we ignite...",
-    "quotePart2": "Every stage is our dawn.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Aria"
-      },
-      {
-        "label": "Full Name",
-        "value": "Aria Kirana"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Polyhymnia · The Serene Voice"
-      },
-      {
-        "label": "Birthday",
-        "value": "12 April 2001"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Aries"
-      },
-      {
-        "label": "Height",
-        "value": "168 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "A"
-      },
-      {
-        "label": "MBTI",
-        "value": "ENFJ"
-      },
-      {
-        "label": "Position",
-        "value": "Leader, Lead Vocalist"
-      },
-      {
-        "label": "Instagram",
-        "value": "@aria.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "✦ Sparkle Star"
-      }
-    ],
-    "story01": "Memimpin MUSES dengan visi hangat dan dedikasi penuh. Aria memastikan energi dan harmoni setiap member terjaga sebelum melangkah ke panggung.",
-    "story02": "Dikenal dengan vokal melodis yang jernih dan kemampuan improvisasi panggung yang memukau penonton.",
-    "vocalRole": "Warm lyric soprano with commanding stage presence",
-    "tmi": [
-      "Gemar menyeduh teh melati sebelum setiap latihan vokal.",
-      "Selalu membawa jurnal kecil berisi sketsa ide lagu baru.",
-      "Kolektor piringan hitam klasik dan menyukai aroma buku tua."
-    ],
-    "museCategory": "MUSE OF POLYHYMNIA",
-    "tagline": "The Serene Voice / Leader",
-    "summary": "Pemimpin karismatik dengan vokal jernih dan kehangatan yang merangkul seluruh member.",
-    "birthFormatted": "12 April 2001",
+    "id": "vely",
+    "name": "Vely",
+    "stageName": "Vely",
+    "fullName": "Vely Maheswari",
+    "role": "Main Dancer, Sub-Vocalist",
+    "card": "/images/members/vely.webp",
+    "from": "#e1f5fe",
+    "to": "#81d4fa",
+    "themeColor": "#1E88E5",
+    "gradientStart": "#BBDEFB",
+    "gradientEnd": "#1E88E5",
+    "bgTint": "#E3F2FD",
+    "icon": "🐋",
+    "iconName": "Whale",
     "colorName": "Blue",
-    "iconName": "Star",
-    "photoPortrait": "/images/members/portrait_blue.png",
-    "accentColor": "#0288D1"
-  },
-  {
-    "id": "member-03",
-    "stageName": "Clara",
-    "fullName": "Clara Renata",
-    "role": "Main Vocalist",
-    "museTitle": "Muse of Euterpe · The Melody Weaver",
-    "birthDate": "2002-08-20",
-    "zodiac": "Leo",
-    "bloodType": "O",
-    "height": "165 cm",
-    "mbti": "ISFP",
-    "emoticon": "✿",
-    "gradientStart": "#FFF59D",
-    "gradientEnd": "#FBC02D",
-    "themeColor": "#F57F17",
-    "bgTint": "#FFFDE7",
-    "icon": "✿",
-    "nicknames": [
-      "Renata",
-      "Golden Voice"
-    ],
-    "photoThumb": "/images/members/portrait_yellow.png",
-    "photoFull": "/images/members/portrait_yellow.png",
-    "photoFrame": "/images/members/portrait_yellow.png",
-    "photoStory1": "/images/members/portrait_yellow.png",
-    "photoCloseup": "/images/members/portrait_yellow.png",
-    "editorialDate": "AUG 20",
-    "editorialSubtitle": "A powerhouse vocal resonance that reaches the soul.",
-    "codeNumber": "03 08 02",
-    "quotePart1": "Sing through the wind...",
-    "quotePart2": "Echoing every heartbeat.",
-    "biodata": [
+    "height": "170 cm",
+    "zodiac": "Aries",
+    "birthFormatted": "1 April 2003",
+    "museCategory": "MUSE OF TERPSICHORE",
+    "tagline": "The Dancing Flame / Dynamic Energy",
+    "heroSubtitle": "Muse of Terpsichore · The Dancing Flame",
+    "summary": "Energi gerak yang memukau dengan presisi tari tingkat tinggi.",
+    "story01": "Mengalirkan ritme dinamis dalam setiap langkah dan memikat audiens dengan senyum enerjik.",
+    "decor": [
       {
-        "label": "Stage Name",
-        "value": "Clara"
+        "src": "/decor/whale.svg",
+        "x": "-1%",
+        "y": "90%",
+        "size": 135,
+        "rotate": 20
       },
       {
-        "label": "Full Name",
-        "value": "Clara Renata"
+        "src": "/decor/whale-1.svg",
+        "x": "20%",
+        "y": "75%",
+        "size": 155,
+        "rotate": 5
       },
       {
-        "label": "Role",
-        "value": "Muse of Euterpe · The Melody Weaver"
+        "src": "/decor/whale.svg",
+        "x": "40%",
+        "y": "91%",
+        "size": 100,
+        "rotate": -15,
+        "flipX": true
       },
       {
-        "label": "Birthday",
-        "value": "20 Agustus 2002"
+        "src": "/decor/whale.svg",
+        "x": "62%",
+        "y": "80%",
+        "size": 120,
+        "rotate": 20
       },
       {
-        "label": "Zodiac Sign",
-        "value": "Leo"
-      },
-      {
-        "label": "Height",
-        "value": "165 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "O"
-      },
-      {
-        "label": "MBTI",
-        "value": "ISFP"
-      },
-      {
-        "label": "Position",
-        "value": "Main Vocalist"
-      },
-      {
-        "label": "Instagram",
-        "value": "@clara.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "✿ Golden Blossom"
+        "src": "/decor/whale.svg",
+        "x": "91%",
+        "y": "82%",
+        "size": 155,
+        "rotate": 5
       }
-    ],
-    "story01": "Dianugerahi jangkauan vokal luas dan timbre emosional. Bagi Clara, setiap notasi dalam lagu adalah pesan rahasia yang menghangatkan jiwa.",
-    "story02": "Sering membawakan bagian klimaks emosional lagu-lagu utama MUSES dengan teknik vokal yang sangat stabil.",
-    "vocalRole": "Rich dramatic mezzo-soprano with soaring high registers",
-    "tmi": [
-      "Paling suka camilan rasa vanila dan madu.",
-      "Bisa memainkan piano klasik tanpa partitur.",
-      "Pencinta kucing dan suka mengeringkan bunga liar."
-    ],
-    "museCategory": "MUSE OF EUTERPE",
-    "tagline": "The Melody Weaver / Golden Voice",
-    "summary": "Vokal emas yang memukau dengan jangkauan emosi mendalam di setiap nada.",
-    "birthFormatted": "20 Agustus 2002",
-    "colorName": "Yellow",
-    "iconName": "Blossom",
-    "photoPortrait": "/images/members/portrait_yellow.png",
-    "accentColor": "#E5A912"
+    ]
   },
   {
-    "id": "member-04",
+    "id": "mine",
+    "name": "Mine",
+    "stageName": "Mine",
+    "fullName": "Mine Danastri",
+    "role": "Lead Dancer, Sub-Vocalist",
+    "card": "/images/members/mine.webp",
+    "from": "#fffde7",
+    "to": "#fdd835",
+    "themeColor": "#FBC02D",
+    "gradientStart": "#FFF9C4",
+    "gradientEnd": "#FBC02D",
+    "bgTint": "#FFFDE7",
+    "icon": "☀️",
+    "iconName": "Sun",
+    "colorName": "Yellow",
+    "height": "167 cm",
+    "zodiac": "Capricorn",
+    "birthFormatted": "30 Desember 2002",
+    "museCategory": "MUSE OF CLIO",
+    "tagline": "The Wise Chronicler / Graceful Pace",
+    "heroSubtitle": "Muse of Clio · The Wise Chronicler",
+    "summary": "Keanggunan klasik dan pembawaan tenang yang menjadi pondasi harmoni tim.",
+    "story01": "Pemberi nuansa artistik yang dalam dengan kelembutan gerak dan vokal bersahaja.",
+    "decor": [
+      {
+        "src": "/decor/sun.svg",
+        "x": "0",
+        "y": "80%",
+        "size": 125,
+        "rotate": -12
+      },
+      {
+        "src": "/decor/sun.svg",
+        "x": "32%",
+        "y": "90%",
+        "size": 100,
+        "rotate": -12
+      },
+      {
+        "src": "/decor/sun.svg",
+        "x": "33%",
+        "y": "33%",
+        "size": 185,
+        "rotate": -12,
+        "zIndex": 5
+      },
+      {
+        "src": "/decor/sun.svg",
+        "x": "66%",
+        "y": "80%",
+        "size": 100,
+        "rotate": -12
+      },
+      {
+        "src": "/decor/sun.svg",
+        "x": "94%",
+        "y": "84%",
+        "size": 125,
+        "rotate": -12
+      }
+    ]
+  },
+  {
+    "id": "faril",
+    "name": "Faril",
     "stageName": "Faril",
     "fullName": "Faril Melpomene",
-    "role": "Center, Lead Vocalist",
-    "museTitle": "Muse of Melpomene · The Dramatic Artist",
-    "birthDate": "2003-05-15",
-    "zodiac": "Aries",
-    "bloodType": "B",
-    "height": "158 cm",
-    "mbti": "INFJ",
-    "emoticon": "☾",
-    "gradientStart": "#CE93D8",
-    "gradientEnd": "#8E24AA",
+    "role": "Main Performer, Visual",
+    "card": "/images/members/faril.webp",
+    "from": "#f3e8ff",
+    "to": "#b794f6",
     "themeColor": "#8E24AA",
+    "gradientStart": "#E1BEE7",
+    "gradientEnd": "#8E24AA",
     "bgTint": "#F3E5F5",
-    "icon": "☾",
-    "nicknames": [
-      "Faril",
-      "The Muse"
-    ],
-    "photoThumb": "/images/members/card4_clean_faril.png",
-    "photoFull": "/images/members/card4_clean_faril.png",
-    "photoFrame": "/images/members/card4_clean_faril.png",
-    "photoStory1": "/images/members/card4_clean_faril.png",
-    "photoCloseup": "/images/members/card4_clean_faril.png",
-    "editorialDate": "MAY 15",
-    "editorialSubtitle": "Center karismatik dengan ekspresi panggung teater yang mendalam.",
-    "codeNumber": "04 05 03",
-    "quotePart1": "Drama and passion...",
-    "quotePart2": "Every heartbeat tells a story.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Faril"
-      },
-      {
-        "label": "Full Name",
-        "value": "Faril Melpomene"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Melpomene · The Dramatic Artist"
-      },
-      {
-        "label": "Birthday",
-        "value": "15 Mei 2003"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Taurus"
-      },
-      {
-        "label": "Height",
-        "value": "166 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "B"
-      },
-      {
-        "label": "MBTI",
-        "value": "INFJ"
-      },
-      {
-        "label": "Position",
-        "value": "Center, Lead Vocalist"
-      },
-      {
-        "label": "Instagram",
-        "value": "@faril.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "☾ Lilac Butterfly"
-      }
-    ],
-    "story01": "Sebagai center MUSES, Faril memadukan kekuatan vokal teater dengan penghayatan emosi yang sangat memukau di atas panggung.",
-    "story02": "Sosok anggun dengan simbol kupu-kupu ungu yang merepresentasikan metamorfosis dan keindahan seni pertunjukan.",
-    "vocalRole": "Deep expressive tone with soulful resonance and theatrical flair",
-    "tmi": [
-      "Menyukai seni teater klasik dan sastra drama.",
-      "Sangat menyukai warna lilac dan motif kupu-kupu.",
-      "Paling teliti saat menata konsep visual panggung grup."
-    ],
-    "museCategory": "MUSE OF MELPOMENE",
-    "tagline": "The Dramatic Artist / Deep Soul",
-    "summary": "Jiwa yang mendalam, emosional, tangguh, dan penuh ekspresi.",
-    "birthFormatted": "17 April 2004",
-    "colorName": "Purple",
+    "icon": "🦋",
     "iconName": "Butterfly",
-    "photoPortrait": "/images/members/portrait_purple.png",
-    "accentColor": "#9B5DE5"
-  },
-  {
-    "id": "member-05",
-    "stageName": "Stella",
-    "fullName": "Stella Maheswari",
-    "role": "Main Dancer, Lead Rapper",
-    "museTitle": "Muse of Terpsichore · The Dynamic Dancer",
-    "birthDate": "2002-11-05",
-    "zodiac": "Scorpio",
-    "bloodType": "B",
-    "height": "170 cm",
-    "mbti": "ENTP",
-    "emoticon": "✧",
-    "gradientStart": "#A5D6A7",
-    "gradientEnd": "#43A047",
-    "themeColor": "#2E7D32",
-    "bgTint": "#E8F5E9",
-    "icon": "✧",
-    "nicknames": [
-      "Mahes",
-      "Dancing Flame"
-    ],
-    "photoThumb": "/images/members/portrait_green.png",
-    "photoFull": "/images/members/portrait_green.png",
-    "photoFrame": "/images/members/portrait_green.png",
-    "photoStory1": "/images/members/portrait_green.png",
-    "photoCloseup": "/images/members/portrait_green.png",
-    "editorialDate": "NOV 05",
-    "editorialSubtitle": "Precision in motion, fierce cadence in rhythm.",
-    "codeNumber": "05 11 02",
-    "quotePart1": "Electric movements...",
-    "quotePart2": "Redefining every beat.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Stella"
-      },
-      {
-        "label": "Full Name",
-        "value": "Stella Maheswari"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Terpsichore · The Dynamic Dancer"
-      },
-      {
-        "label": "Birthday",
-        "value": "05 November 2002"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Scorpio"
-      },
-      {
-        "label": "Height",
-        "value": "170 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "B"
-      },
-      {
-        "label": "MBTI",
-        "value": "ENTP"
-      },
-      {
-        "label": "Position",
-        "value": "Main Dancer, Lead Rapper"
-      },
-      {
-        "label": "Instagram",
-        "value": "@stella.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "✧ Emerald Radiance"
-      }
-    ],
-    "story01": "Setiap gerakan tarinya penuh ketajaman dan daya pikat. Stella sering menyusun koreografi utama untuk nomor panggung MUSES.",
-    "story02": "Kombinasi kemampuan rap ritmis dan kelenturan tubuh menjadikannya magnet panggung setiap pertunjukan dimulai.",
-    "vocalRole": "Rhythmic flow with sharp articulation and dynamic delivery",
-    "tmi": [
-      "Pernah menjuarai kompetisi tari modern nasional.",
-      "Suka musik perkusi dinamis dan funk kontemporer.",
-      "Penggemar jaket oversized dan street fashion."
-    ],
-    "museCategory": "MUSE OF TERPSICHORE",
-    "tagline": "The Dynamic Dancer / Fierce Rhythm",
-    "summary": "Gerakan tari yang presisi, energik, dan penuh ketajaman ritme panggung.",
-    "birthFormatted": "05 November 2002",
-    "colorName": "Green",
-    "iconName": "Radiance",
-    "photoPortrait": "/images/members/portrait_green.png",
-    "accentColor": "#388E3C"
-  },
-  {
-    "id": "member-06",
-    "stageName": "Reva",
-    "fullName": "Reva Calista",
-    "role": "Lead Dancer, Sub-Vocalist",
-    "museTitle": "Muse of Thalia · The Radiance Blossom",
-    "birthDate": "2004-03-19",
-    "zodiac": "Pisces",
-    "bloodType": "O",
+    "colorName": "Purple",
     "height": "169 cm",
-    "mbti": "ESFP",
-    "emoticon": "✺",
+    "zodiac": "Scorpio",
+    "birthFormatted": "27 Oktober 2002",
+    "museCategory": "MUSE OF MELPOMENE",
+    "tagline": "The Dramatic Artist / Center",
+    "heroSubtitle": "Muse of Melpomene · The Dramatic Artist",
+    "summary": "Ekspresi panggung dramatis yang memikat dengan aura misterius elegan.",
+    "story01": "Pusat gravitasi artistik MUSES yang selalu menghidupkan setiap narasi koreografi.",
+    "decor": [
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "1%",
+        "bottom": "35px",
+        "size": 200,
+        "rotate": -10,
+        "flipX": true
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "21%",
+        "bottom": "-45px",
+        "size": 200,
+        "rotate": -20,
+        "flipX": false
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "calc(50% - 200px)",
+        "bottom": "120px",
+        "size": 200,
+        "rotate": -16,
+        "flipX": false
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "calc(50% + 125px)",
+        "bottom": "65px",
+        "size": 180,
+        "rotate": 22,
+        "flipX": true
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "70%",
+        "bottom": "-42px",
+        "size": 200,
+        "rotate": 0,
+        "flipX": false
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "93%",
+        "bottom": "-8px",
+        "size": 180,
+        "rotate": 26,
+        "flipX": true
+      }
+    ]
+  },
+  {
+    "id": "ndah",
+    "name": "Ndah",
+    "stageName": "Ndah",
+    "fullName": "Ndah Renata",
+    "role": "Lead Vocalist",
+    "card": "/images/members/ndah.webp",
+    "from": "#fdf6e3",
+    "to": "#8fbf9f",
+    "themeColor": "#43A047",
+    "gradientStart": "#C8E6C9",
+    "gradientEnd": "#43A047",
+    "bgTint": "#E8F5E9",
+    "icon": "🌷",
+    "iconName": "Tulip",
+    "colorName": "Green",
+    "height": "167 cm",
+    "zodiac": "Taurus",
+    "birthFormatted": "5 Mei 2003",
+    "museCategory": "MUSE OF POLYHYMNIA",
+    "tagline": "The Sacred Hymn / Pure Tone",
+    "heroSubtitle": "Muse of Polyhymnia · The Sacred Hymn",
+    "summary": "Suara hangat dan menenangkan yang selalu menyentuh hati pendengar.",
+    "story01": "Dikenal dengan artikulasi vokal yang jernih dan keanggunan natural di atas panggung.",
+    "decor": [
+      {
+        "src": "/decor/tulip-1.svg",
+        "x": "-6%",
+        "y": "65%",
+        "size": 350,
+        "rotate": 5,
+        "flipX": false
+      },
+      {
+        "src": "/decor/tulip.svg",
+        "x": "30%",
+        "y": "83%",
+        "size": 95,
+        "rotate": 0
+      },
+      {
+        "src": "/decor/tulip.svg",
+        "x": "52%",
+        "y": "32%",
+        "size": 95,
+        "rotate": -30,
+        "zIndex": 5
+      },
+      {
+        "src": "/decor/tulip.svg",
+        "x": "63%",
+        "y": "83%",
+        "size": 95,
+        "rotate": 0
+      },
+      {
+        "src": "/decor/tulip-1.svg",
+        "x": "86%",
+        "y": "65%",
+        "size": 350,
+        "rotate": 5,
+        "flipX": true
+      }
+    ]
+  },
+  {
+    "id": "liz",
+    "name": "Liz",
+    "stageName": "Liz",
+    "fullName": "Liz Kirana",
+    "role": "Main Vocalist, Leader",
+    "card": "/images/members/liz.webp",
+    "from": "#ffebee",
+    "to": "#ef9a9a",
+    "themeColor": "#E53935",
     "gradientStart": "#FFCDD2",
     "gradientEnd": "#E53935",
-    "themeColor": "#C62828",
     "bgTint": "#FFEBEE",
-    "icon": "✺",
-    "nicknames": [
-      "Calista",
-      "Crimson Spark"
-    ],
-    "photoThumb": "/images/members/portrait_red.png",
-    "photoFull": "/images/members/portrait_red.png",
-    "photoFrame": "/images/members/portrait_red.png",
-    "photoStory1": "/images/members/portrait_red.png",
-    "photoCloseup": "/images/members/portrait_red.png",
-    "editorialDate": "MAR 19",
-    "editorialSubtitle": "Langkah penuh semangat yang memancarkan kilau panggung merah merona.",
-    "codeNumber": "06 03 04",
-    "quotePart1": "Spark in the dark...",
-    "quotePart2": "Dancing under the red spotlight.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Reva"
-      },
-      {
-        "label": "Full Name",
-        "value": "Reva Calista"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Thalia · The Radiance Blossom"
-      },
-      {
-        "label": "Birthday",
-        "value": "19 Maret 2004"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Pisces"
-      },
-      {
-        "label": "Height",
-        "value": "169 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "O"
-      },
-      {
-        "label": "MBTI",
-        "value": "ESFP"
-      },
-      {
-        "label": "Position",
-        "value": "Lead Dancer, Sub-Vocalist"
-      },
-      {
-        "label": "Instagram",
-        "value": "@reva.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "✺ Crimson Spark"
-      }
-    ],
-    "story01": "Membawa energi ceria dan keanggunan gerakan dalam satu tarikan napas. Reva selalu tampil penuh percaya diri dengan senyum memikat.",
-    "story02": "Sangat mahir dalam sinkronisasi tarian grup dan menjaga tempo penampilan panggung tetap bersemangat.",
-    "vocalRole": "Lively melodic vocal with cheerful stage charisma",
-    "tmi": [
-      "Suka membuat aksesori pita rambut buatan tangan.",
-      "Paling cepat menghafal koreografi baru di grup.",
-      "Suka buah beri segar dan kue tart stroberi."
-    ],
-    "museCategory": "MUSE OF THALIA",
-    "tagline": "The Radiance Blossom / Crimson Spark",
-    "summary": "Penuh semangat merah merona, menghadirkan tarian lincah dan pesona memikat.",
-    "birthFormatted": "19 Maret 2004",
+    "icon": "🌹",
+    "iconName": "Rose",
     "colorName": "Red",
-    "iconName": "Spark",
-    "photoPortrait": "/images/members/portrait_red.png",
-    "accentColor": "#E53935"
+    "height": "168 cm",
+    "zodiac": "Leo",
+    "birthFormatted": "12 Agustus 2002",
+    "museCategory": "MUSE OF CALLIOPE",
+    "tagline": "The Epic Voice / Inspiring Leader",
+    "heroSubtitle": "Muse of Calliope · The Epic Voice",
+    "summary": "Pemimpin berwibawa dengan vokal emosional yang memandu keharmonisan MUSES.",
+    "story01": "Memimpin MUSES dengan ketenangan dan dedikasi penuh di setiap panggung.",
+    "decor": [
+      {
+        "src": "/decor/rose-1.svg",
+        "x": "-6%",
+        "y": "30%",
+        "size": 800,
+        "rotate": -10,
+        "zIndex": 5
+      },
+      {
+        "src": "/decor/rose.svg",
+        "x": "9%",
+        "y": "55%",
+        "size": 140,
+        "flipX": true
+      },
+      {
+        "src": "/decor/rose.svg",
+        "x": "33%",
+        "y": "80%",
+        "size": 140,
+        "flipX": true
+      },
+      {
+        "src": "/decor/rose.svg",
+        "x": "45%",
+        "y": "92%",
+        "size": 140
+      },
+      {
+        "src": "/decor/rose.svg",
+        "x": "60%",
+        "y": "85%",
+        "size": 140
+      },
+      {
+        "src": "/decor/rose.svg",
+        "x": "83%",
+        "y": "74%",
+        "size": 140,
+        "rotate": 40,
+        "zIndex": 5
+      },
+      {
+        "src": "/decor/rose-1.svg",
+        "x": "64%",
+        "y": "30%",
+        "size": 800,
+        "rotate": -10,
+        "zIndex": 5
+      }
+    ]
   },
   {
-    "id": "member-07",
-    "stageName": "Maya",
-    "fullName": "Maya Danastri",
-    "role": "Main Rapper, Sub-Vocalist",
-    "museTitle": "Muse of Calliope · The Epic Cadence",
-    "birthDate": "2003-07-28",
-    "zodiac": "Leo",
-    "bloodType": "A",
-    "height": "166 cm",
-    "mbti": "ESTP",
-    "emoticon": "❖",
+    "id": "lia",
+    "name": "Lia",
+    "stageName": "Lia",
+    "fullName": "Lia Azzahra",
+    "role": "Sub-Vocalist, Maknae",
+    "card": "/images/members/lia.webp",
+    "from": "#efebe9",
+    "to": "#bcaaa4",
+    "themeColor": "#523C05",
     "gradientStart": "#D7CCC8",
     "gradientEnd": "#8D6E63",
-    "themeColor": "#5D4037",
     "bgTint": "#EFEBE9",
-    "icon": "❖",
-    "nicknames": [
-      "Dana",
-      "Bronze Poet"
-    ],
-    "photoThumb": "/images/members/portrait_brown.png",
-    "photoFull": "/images/members/portrait_brown.png",
-    "photoFrame": "/images/members/portrait_brown.png",
-    "photoStory1": "/images/members/portrait_brown.png",
-    "photoCloseup": "/images/members/portrait_brown.png",
-    "editorialDate": "JUL 28",
-    "editorialSubtitle": "Bold lyricism sculpted with deep bronze cadence.",
-    "codeNumber": "07 07 03",
-    "quotePart1": "Words into power...",
-    "quotePart2": "Resonating across every stage.",
-    "biodata": [
-      {
-        "label": "Stage Name",
-        "value": "Maya"
-      },
-      {
-        "label": "Full Name",
-        "value": "Maya Danastri"
-      },
-      {
-        "label": "Role",
-        "value": "Muse of Calliope · The Epic Cadence"
-      },
-      {
-        "label": "Birthday",
-        "value": "28 Juli 2003"
-      },
-      {
-        "label": "Zodiac Sign",
-        "value": "Leo"
-      },
-      {
-        "label": "Height",
-        "value": "166 cm"
-      },
-      {
-        "label": "Blood Type",
-        "value": "A"
-      },
-      {
-        "label": "MBTI",
-        "value": "ESTP"
-      },
-      {
-        "label": "Position",
-        "value": "Main Rapper, Sub-Vocalist"
-      },
-      {
-        "label": "Instagram",
-        "value": "@maya.muses",
-        "link": "https://instagram.com"
-      },
-      {
-        "label": "Signature Icon",
-        "value": "❖ Bronze Crest"
-      }
-    ],
-    "story01": "Penulis bait rap dan lirik naratif di lagu-lagu MUSES. Maya memiliki intonasi vokal khas bernada hangat yang kuat.",
-    "story02": "Energi panggungnya tak pernah padam, mampu menyulut riuh penonton hanya dengan satu seruan bait lagu.",
-    "vocalRole": "Warm low-register cadence with sharp poetic rhythm",
-    "tmi": [
-      "Menulis lirik sejak masa sekolah menengah.",
-      "Suka kopi arabika hangat dan musik folk jazz.",
-      "Kolektor topi baret dan kacamata vintage."
-    ],
-    "museCategory": "MUSE OF CALLIOPE",
-    "tagline": "The Epic Cadence / Bronze Poet",
-    "summary": "Rapper berkarakter kuat dengan lirik naratif puitis dan intonasi nada rendah khas.",
-    "birthFormatted": "28 Juli 2003",
+    "icon": "🦉",
+    "iconName": "Owl",
     "colorName": "Brown",
-    "iconName": "Crest",
-    "photoPortrait": "/images/members/portrait_brown.png",
-    "accentColor": "#8D6E63"
+    "height": "164 cm",
+    "zodiac": "Virgo",
+    "birthFormatted": "18 September 2004",
+    "museCategory": "MUSE OF ERATO",
+    "tagline": "The Lyric Heart / Sweet Maknae",
+    "heroSubtitle": "Muse of Erato · The Lyric Heart",
+    "summary": "Energi manis dan pesona termuda yang selalu mencerahkan suasana MUSES.",
+    "story01": "Member termuda MUSES dengan aura ceria yang menular dan vokal manis penuh kehangatan.",
+    "decor": [
+      {
+        "src": "/decor/owl.svg",
+        "x": "12%",
+        "y": "82%",
+        "size": 100
+      },
+      {
+        "src": "/decor/owl-1.svg",
+        "x": "40%",
+        "y": "83%",
+        "size": 70,
+        "rotate": -25
+      },
+      {
+        "src": "/decor/owl-1.svg",
+        "x": "45%",
+        "y": "92%",
+        "size": 170
+      },
+      {
+        "src": "/decor/owl.svg",
+        "x": "59%",
+        "y": "78%",
+        "size": 100,
+        "flipY": true,
+        "flipX": true,
+        "zIndex": 5
+      },
+      {
+        "src": "/decor/owl.svg",
+        "x": "75%",
+        "y": "44%",
+        "size": 100,
+        "rotate": 15,
+        "flipX": true,
+        "zIndex": 5
+      }
+    ]
   }
 ]

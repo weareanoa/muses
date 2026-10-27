@@ -88,18 +88,15 @@ export function initNavbar(): NavbarController {
     updateNavbar(e.scroll, e.direction);
   };
 
-  if (lenis) {
-    lenis.on('scroll', lenisScrollHandler);
-  }
-
   const windowScrollHandler = () => {
-    if (window.scrollX !== 0) {
-      window.scrollTo({ left: 0 });
-    }
     updateNavbar(window.scrollY);
   };
 
-  window.addEventListener('scroll', windowScrollHandler, { passive: true });
+  if (lenis) {
+    lenis.on('scroll', lenisScrollHandler);
+  } else {
+    window.addEventListener('scroll', windowScrollHandler, { passive: true });
+  }
 
   return {
     destroy: () => {

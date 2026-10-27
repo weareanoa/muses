@@ -35,7 +35,7 @@ const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
     subtitle: 'Muse of Melpomene',
     price: 80000,
     quantity: 1,
-    image: '/images/members/portrait_purple.png',
+    image: '/images/members/faril.webp',
   },
   {
     id: 'mine-cheki',
@@ -43,7 +43,7 @@ const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
     subtitle: 'Muse of Terpsichore',
     price: 80000,
     quantity: 1,
-    image: '/images/members/portrait_yellow.png',
+    image: '/images/members/mine.webp',
   },
 ];
 
@@ -59,7 +59,7 @@ export default function AddressIsland() {
         subtitle: [c.size, c.color].filter(Boolean).join(' • ') || 'Official Merchandise',
         price: Math.round(c.price * 16000),
         quantity: c.quantity || 1,
-        image: c.image || '/images/members/portrait_purple.png',
+        image: c.image || '/images/members/faril.webp',
       }));
     }
     return DEFAULT_CHECKOUT_ITEMS;
@@ -123,7 +123,7 @@ export default function AddressIsland() {
       subtitle: 'Muse of Urania',
       price: 80000,
       quantity: 1,
-      image: '/images/members/portrait_blue.png',
+      image: '/images/members/vely.webp',
     };
     setItems((prev) => [...prev, nextItem]);
   };
@@ -238,7 +238,7 @@ export default function AddressIsland() {
           qty: i.quantity,
           quantity: i.quantity,
           price: i.price,
-          image: i.image || '/images/members/portrait_purple.png',
+          image: i.image || '/images/members/faril.webp',
         })),
         pickupCode: `MSE-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
         shippingCourier: 'JNE Regular',

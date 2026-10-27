@@ -40,51 +40,59 @@ export default function UserNavIsland() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-2 p-1 pl-2.5 pr-2 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/35 transition-all cursor-pointer group"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-[#C9971C]/15 transition-all cursor-pointer group"
         aria-label="User Account Menu"
       >
+        <User className="w-4 h-4 text-[#1F1A12]" />
         <span className="text-xs font-semibold text-[#1F1A12] hidden sm:inline max-w-[90px] truncate">
-          {user.name.split(' ')[0]}
+          {user.name}
         </span>
-        <div className="w-6 h-6 rounded-full gold-gradient-bg flex items-center justify-center text-[10px] font-bold text-[#1F1A12] shadow-[0_0_8px_rgba(201,151,28,0.4)]">
-          {(user.name || 'M').charAt(0).toUpperCase()}
-        </div>
       </button>
 
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 backdrop-blur-2xl border border-[#C9971C]/30 shadow-[0_15px_40px_rgba(90,70,30,0.18)] p-3 text-left z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="p-2 pb-3 border-b border-[#1F1A12]/10">
-            <div className="flex items-center justify-between mb-1">
+            {/* <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] font-mono tracking-widest uppercase text-[#C9971C] font-bold">
                 MUSES CIRCLE
               </span>
               <span className="text-[10px] font-mono text-[#6E6453]">
                 {user.membershipNumber || 'MEMBER'}
               </span>
-            </div>
+            </div> */}
             <div className="text-sm font-bold text-[#1F1A12] truncate">{user.name}</div>
             <div className="text-xs text-[#6E6453] font-mono truncate">{user.email}</div>
           </div>
 
           <div className="py-2 space-y-1">
             <a
-              href={withBase("/profile")}
+              href={withBase("/profile?tab=profile")}
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#C9971C]" />
-                <span>Profil & Membership Pass</span>
+                <span>Profil Saya</span>
               </div>
             </a>
             <a
-              href={withBase("/checkout")}
+              href={withBase("/profile?tab=alamat")}
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#C9971C]" />
+                <span>Alamat Saya</span>
+              </div>
+            </a>
+            <a
+              href={withBase("/profile?tab=orders")}
               onClick={() => setDropdownOpen(false)}
               className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors"
             >
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#C9971C]" />
-                <span>History Pesanan</span>
+                <span>Pesanan Saya</span>
               </div>
             </a>
             <a

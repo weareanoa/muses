@@ -56,7 +56,7 @@ const INITIAL_ORDERS: OrderTransaction[] = [
       {
         name: 'Faril',
         variant: 'Cheki Two Shoot',
-        image: '/images/members/card4_clean_faril.png',
+        image: '/images/members/faril.webp',
         quantity: 2,
         price: 40000,
       },
@@ -76,7 +76,7 @@ const INITIAL_ORDERS: OrderTransaction[] = [
       {
         name: 'Faril',
         variant: 'Cheki Two Shoot',
-        image: '/images/members/card4_clean_faril.png',
+        image: '/images/members/faril.webp',
         price: 40000,
       },
     ],
@@ -104,13 +104,13 @@ const INITIAL_ORDERS: OrderTransaction[] = [
       {
         name: 'Faril',
         variant: 'Cheki Two Shoot',
-        image: '/images/members/card4_clean_faril.png',
+        image: '/images/members/faril.webp',
         price: 40000,
       },
       {
         name: 'Mine',
         variant: 'Cheki Two Shoot',
-        image: '/images/members/muses_card_3_yellow.png',
+        image: '/images/members/mine.webp',
         price: 40000,
       },
     ],
@@ -138,7 +138,7 @@ const INITIAL_ORDERS: OrderTransaction[] = [
       {
         name: 'Faril',
         variant: 'Cheki Two Shoot & Special Photocard',
-        image: '/images/members/card4_clean_faril.png',
+        image: '/images/members/faril.webp',
         quantity: 1,
         price: 50000,
       },
@@ -205,7 +205,7 @@ function normalizeOrder(raw: any): OrderTransaction {
           id: it.id || `item-${idx}`,
           name: it.name || 'Official Merchandise',
           variant: it.variant || it.role || it.subtitle || 'Official Merchandise',
-          image: it.image || '/images/members/card4_clean_faril.png',
+          image: it.image || '/images/members/faril.webp',
           quantity: it.quantity || it.qty || 1,
           price: itemPrice,
         };
@@ -222,7 +222,7 @@ function normalizeOrder(raw: any): OrderTransaction {
       {
         name: raw.title || 'Official Merchandise',
         variant: 'Standard',
-        image: '/images/members/card4_clean_faril.png',
+        image: '/images/members/faril.webp',
         quantity: 1,
         price: numericTotal,
       }
@@ -421,10 +421,10 @@ export default function CheckoutIsland() {
                       >
                         <div className="flex items-center gap-3">
                           <img
-                            src={withBase(item.image || '/images/members/card4_clean_faril.png')}
+                            src={withBase(item.image || '/images/members/faril.webp')}
                             alt={item.name || 'Produk MUSES'}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = withBase('/images/members/card4_clean_faril.png');
+                              (e.target as HTMLImageElement).src = withBase('/images/members/faril.webp');
                             }}
                             className="w-12 h-12 rounded-xl object-cover bg-[#F7F2E4] border border-[#1F1A12]/8 shrink-0"
                           />

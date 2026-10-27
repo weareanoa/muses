@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { withBase, withBaseDeep } from '../../lib/paths';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
-import membersDataRaw from '../../data/members.json';
+import { members as membersDataRaw, type Member } from '../../data/members';
 import { X } from 'lucide-react';
 import gsap from 'gsap';
 
-const membersData = withBaseDeep(membersDataRaw);
+const membersData = withBaseDeep(membersDataRaw) as readonly Member[];
 
 export default function MemberModal() {
   const currentId = useStore(activeMemberId);
@@ -135,19 +135,19 @@ export default function MemberModal() {
 
   const getPastelBg = (stageName: string) => {
     switch (stageName.toLowerCase()) {
+      case 'vira':
+        return 'bg-gradient-to-br from-[#FDE9F1] via-[#FFF3F8] to-[#FCE6EF]';
+      case 'vely':
+        return 'bg-gradient-to-br from-[#E1F3FD] via-[#EEF8FE] to-[#E0F1FC]';
+      case 'mine':
+        return 'bg-gradient-to-br from-[#FFF8E1] via-[#FFFDF5] to-[#FFF6D6]';
       case 'faril':
         return 'bg-gradient-to-br from-[#EDE4F8] via-[#F4EFFC] to-[#EAE0F9]';
-      case 'aria':
-        return 'bg-gradient-to-br from-[#E1F3FD] via-[#EEF8FE] to-[#E0F1FC]';
-      case 'clara':
-        return 'bg-gradient-to-br from-[#FFF8E1] via-[#FFFDF5] to-[#FFF6D6]';
-      case 'stella':
+      case 'ndah':
         return 'bg-gradient-to-br from-[#E8F6EA] via-[#F3FAF4] to-[#E6F4E8]';
-      case 'zia':
-        return 'bg-gradient-to-br from-[#FDE9F1] via-[#FFF3F8] to-[#FCE6EF]';
-      case 'reva':
+      case 'liz':
         return 'bg-gradient-to-br from-[#FDEAEA] via-[#FFF3F3] to-[#FCE7E7]';
-      case 'maya':
+      case 'lia':
         return 'bg-gradient-to-br from-[#F2ECE9] via-[#FAF6F4] to-[#EFE7E4]';
       default:
         return 'bg-gradient-to-br from-[#EDE4F8] via-[#F4EFFC] to-[#EAE0F9]';
@@ -205,7 +205,7 @@ export default function MemberModal() {
         >
           <div
             className="absolute top-1/2 right-4 lg:right-10 -translate-y-1/2 text-[100px] sm:text-[140px] md:text-[180px] lg:text-[230px] font-serif font-bold pointer-events-none select-none leading-none opacity-8 tracking-tighter"
-            style={{ color: member.accentColor || member.themeColor }}
+            style={{ color: member.themeColor }}
           >
             {member.stageName}
           </div>
@@ -213,15 +213,15 @@ export default function MemberModal() {
           <div className="relative shrink-0 w-[240px] sm:w-[280px] lg:w-[310px] aspect-[4/5] mx-auto md:mx-0">
             <div
               className="absolute -bottom-2.5 -right-2.5 sm:-bottom-3 sm:-right-3 w-full h-full rounded-[28px] border-2 pointer-events-none z-0"
-              style={{ borderColor: member.accentColor || member.themeColor }}
+              style={{ borderColor: member.themeColor }}
             />
 
             <div className="relative z-10 w-full h-full rounded-[26px] overflow-hidden bg-white border-2 border-white shadow-xl">
-              {/* <img
-                src={withBase(member.photoPortrait || member.photoFull || member.photoThumb)}
+              <img
+                src={member.card}
                 alt={member.stageName}
                 className="w-full h-full object-cover object-top"
-              /> */}
+              />
             </div>
 
             <div className="absolute -right-3 sm:-right-4 top-1/3 translate-y-1 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-md border border-white flex items-center justify-center p-1.5">
@@ -232,7 +232,7 @@ export default function MemberModal() {
           <div className="relative z-10 flex-1 min-w-0 text-left w-full pt-1">
             <div
               className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] uppercase mb-1.5"
-              style={{ color: member.accentColor || member.themeColor }}
+              style={{ color: member.themeColor }}
             >
               {member.museCategory || 'MUSE OF MELPOMENE'}
             </div>
@@ -259,7 +259,7 @@ export default function MemberModal() {
                     LAHIR
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                    {member.birthFormatted || member.birthDate}
+                    {member.birthFormatted}
                   </span>
                 </div>
                 <div>
@@ -288,7 +288,7 @@ export default function MemberModal() {
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12] inline-flex items-center gap-1.5">
                     <span
                       className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
-                      style={{ backgroundColor: member.accentColor || member.themeColor }}
+                      style={{ backgroundColor: member.themeColor }}
                     />
                     <span>{member.colorName || 'Purple'}</span>
                   </span>
@@ -308,7 +308,7 @@ export default function MemberModal() {
       </div>
 
       <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 mt-5 sm:mt-7 overflow-x-auto py-2 px-4 max-w-full">
-        {membersData.map((m: any) => {
+        {membersData.map((m) => {
           const isSelected = m.id === member.id;
           return (
             <button
@@ -320,16 +320,16 @@ export default function MemberModal() {
                   : 'w-9 h-9 sm:w-11 sm:h-11 opacity-70 hover:opacity-100 hover:scale-105'
               }`}
               style={{
-                boxShadow: isSelected ? `0 0 0 3px ${m.accentColor || m.themeColor}` : undefined,
+                boxShadow: isSelected ? `0 0 0 3px ${m.themeColor}` : undefined,
               }}
               aria-label={`Pilih ${m.stageName}`}
             >
               <div className="w-full h-full rounded-full overflow-hidden bg-white border border-white/80">
-                {/* <img
-                  src={withBase(m.photoPortrait || m.photoThumb)}
+                <img
+                  src={m.card}
                   alt={m.stageName}
                   className="w-full h-full object-cover object-top"
-                /> */}
+                />
               </div>
             </button>
           );

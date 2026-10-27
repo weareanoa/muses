@@ -14,7 +14,7 @@
     "doorOpen": "13:00 WIB",
     "showTime": "14:00 WIB",
     "ticketUrl": "https://example.com/tickets-jakarta",
-    "posterImage": "/images/muses_group_frame1.png",
+    "posterImage": "/images/muses_group_frame1.svg",
     "targetDate": "2026-10-25T14:00:00+07:00"
   },
   {
@@ -32,7 +32,7 @@
     "doorOpen": "13:00 WIB",
     "showTime": "14:00 WIB",
     "ticketUrl": "https://example.com/tickets-jakarta",
-    "posterImage": "/images/muses_group_frame1.png",
+    "posterImage": "/images/muses_group_frame1.svg",
     "targetDate": "2026-10-25T14:00:00+07:00"
   },
   {
@@ -50,7 +50,7 @@
     "doorOpen": "13:00 WIB",
     "showTime": "14:00 WIB",
     "ticketUrl": "https://example.com/tickets-jakarta",
-    "posterImage": "/images/muses_group_frame1.png",
+    "posterImage": "/images/muses_group_frame1.svg",
     "targetDate": "2026-10-25T14:00:00+07:00"
   },
   {
@@ -68,7 +68,7 @@
     "doorOpen": "13:00 WIB",
     "showTime": "14:00 WIB",
     "ticketUrl": "https://example.com/tickets-jakarta",
-    "posterImage": "/images/muses_group_frame1.png",
+    "posterImage": "/images/muses_group_frame1.svg",
     "targetDate": "2026-10-25T14:00:00+07:00"
   }
 ]
