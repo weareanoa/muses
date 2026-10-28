@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import AddressModal, { type AddressFormData } from './AddressModal';
 import { formatRupiah, usdToIdr } from '../../lib/format';
+import { transactionService } from '../../services/transactionService';
 
 interface CheckoutItem {
   id: string;
@@ -159,11 +160,9 @@ export default function AddressIsland() {
     setIsAddressModalOpen(false);
   };
 
-  const handlePlaceOrder = () => {
-    const orderNumber = 'INV-20261021-0042';
-    const orderData = {
-      orderId: orderNumber,
-      date: new Date().toLocaleString('id-ID'),
+  const handlePlaceOrder = async () => {
+    await transactionService.createTransaction({
+      userId: user?.id,
       items: items.map((i) => ({
         id: i.id,
         name: i.name,
@@ -172,66 +171,16 @@ export default function AddressIsland() {
         price: i.price,
         image: i.image,
       })),
-      subtotalRupiah: subtotal,
+      subtotal,
       shippingFee,
       platformFee,
-      totalRupiah: total,
+      total,
       notes,
       address: selectedAddress,
       paymentMethod: 'qris',
-    };
+    });
 
-    try {
-      sessionStorage.setItem('muse_active_payment', JSON.stringify(orderData));
-      localStorage.setItem('muse_active_payment', JSON.stringify(orderData));
-
-      const existingOrdersRaw = localStorage.getItem('muses_user_orders');
-      const existingOrders = existingOrdersRaw ? JSON.parse(existingOrdersRaw) : [];
-      const newOrderEntry = {
-        id: `MSE-${orderNumber}`,
-        orderCode: `MSE-${orderNumber}`,
-        title: items.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
-        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-        pickupTime: '23:59:59',
-        price: formatRupiah(total),
-        numericPrice: total,
-        totalPrice: total,
-        status: 'unpaid',
-        statusLabel: 'Menunggu pembayaran',
-        badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-        eventTag: 'OFFICIAL STORE • MERCH',
-        deliveryInfo: `${selectedAddress?.city || 'Bandung'} • Kurir JNE Regular`,
-        location: `${selectedAddress?.city || 'Bandung'} • Kurir JNE Regular`,
-        actionType: 'unpaid',
-        initialCountdownSeconds: 180,
-        pickupLocation: 'Ambil cheki di venue event',
-        items: items.map((i) => ({
-          id: i.id,
-          name: i.name,
-          role: i.subtitle,
-          variant: i.subtitle || 'Official Merchandise',
-          qty: i.quantity,
-          quantity: i.quantity,
-          price: i.price,
-          image: i.image || '/images/members/faril.webp',
-        })),
-        stepper: [
-          { label: 'Menunggu Pembayaran', completed: false },
-          { label: 'Dibayar', completed: false },
-          { label: 'Disiapkan Management', completed: false },
-          { label: 'Dalam Pengiriman (JNE)', completed: false },
-          { label: 'Selesai', completed: false },
-        ],
-        isStepperExpanded: true,
-      };
-
-      existingOrders.unshift(newOrderEntry);
-      localStorage.setItem('muses_user_orders', JSON.stringify(existingOrders));
-      clearCart();
-    } catch (e) {
-      console.error('Failed to store order in local storage', e);
-    }
-
+    clearCart();
     window.location.href = withBase('/payment');
   };
 

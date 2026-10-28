@@ -4,55 +4,14 @@ import {
   RefreshCw,
   CheckCircle2,
   ArrowRight,
-  Receipt,
-  Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { withBase } from '../../lib/paths';
 import { formatRupiah } from '../../lib/format';
+import { transactionService } from '../../services/transactionService';
+import type { PaymentOrderSummary } from '../../types/database';
 
-interface PaymentItem {
-  id: string;
-  name: string;
-  subtitle: string;
-  quantity: number;
-  price: number;
-}
-
-interface PaymentOrder {
-  orderId: string;
-  items: PaymentItem[];
-  subtotal: number;
-  shippingFee: number;
-  platformFee: number;
-  total: number;
-  deadline: string;
-}
-
-const DEFAULT_PAYMENT_ORDER: PaymentOrder = {
-  orderId: 'INV-20261021-0042',
-  items: [
-    {
-      id: 'item-faril',
-      name: 'Faril',
-      subtitle: 'Muse of Melpomene',
-      quantity: 1,
-      price: 80000,
-    },
-    {
-      id: 'item-mine',
-      name: 'Mine',
-      subtitle: 'Muse of Terpsichore',
-      quantity: 1,
-      price: 80000,
-    },
-  ],
-  subtotal: 160000,
-  shippingFee: 10000,
-  platformFee: 5000,
-  total: 175000,
-  deadline: '23:59:59',
-};
+type PaymentOrder = PaymentOrderSummary;
 
 const QR_MATRIX = [
   [1,1,1,1,1,1,1,0,1,0,1,1,0,0,1,1,1,1,1,1,1],
@@ -79,39 +38,15 @@ const QR_MATRIX = [
 ];
 
 export default function PaymentIsland() {
-  const [order, setOrder] = useState<PaymentOrder>(DEFAULT_PAYMENT_ORDER);
+  const [order, setOrder] = useState<PaymentOrder>(() =>
+    transactionService.getDefaultPaymentOrder()
+  );
   const [isPaid, setIsPaid] = useState<boolean>(false);
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const qrSvgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem('muse_active_payment') || localStorage.getItem('muse_active_payment');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed) {
-          setOrder({
-            orderId: parsed.orderId || 'INV-20261021-0042',
-            items: parsed.items && parsed.items.length > 0
-              ? parsed.items.map((i: any, idx: number) => ({
-                  id: i.id || `item-${idx}`,
-                  name: i.name || 'Member Cheki',
-                  subtitle: i.subtitle || 'Official Merch',
-                  quantity: i.quantity || 1,
-                  price: i.price || 80000,
-                }))
-              : DEFAULT_PAYMENT_ORDER.items,
-            subtotal: parsed.subtotalRupiah || DEFAULT_PAYMENT_ORDER.subtotal,
-            shippingFee: parsed.shippingFee || DEFAULT_PAYMENT_ORDER.shippingFee,
-            platformFee: parsed.platformFee || DEFAULT_PAYMENT_ORDER.platformFee,
-            total: parsed.totalRupiah || DEFAULT_PAYMENT_ORDER.total,
-            deadline: '23:59:59',
-          });
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    setOrder(transactionService.getActivePaymentOrder());
   }, []);
 
   const handleDownloadQR = () => {
@@ -150,42 +85,10 @@ export default function PaymentIsland() {
 
   const handleCheckStatus = () => {
     setIsChecking(true);
-    setTimeout(() => {
+    setTimeout(async () => {
+      await transactionService.verifyPayment(order.orderId);
       setIsChecking(false);
       setIsPaid(true);
-
-      try {
-        const storedOrders = localStorage.getItem('muses_user_orders');
-        if (storedOrders) {
-          const parsed = JSON.parse(storedOrders);
-          const updated = parsed.map((o: any) => {
-            if (
-              o.id === `MSE-${order.orderId}` ||
-              o.id === order.orderId ||
-              String(o.id).includes(order.orderId) ||
-              o.orderCode?.includes(order.orderId)
-            ) {
-              return {
-                ...o,
-                status: 'processing',
-                statusLabel: 'Sedang diproses',
-                actionType: o.actionType === 'pickup' ? 'pickup' : 'shipping',
-                badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-                stepper: [
-                  { label: 'Dibayar', completed: true },
-                  { label: 'Disiapkan Management', completed: true },
-                  { label: 'Dalam Pengiriman (JNE)', completed: false },
-                  { label: 'Selesai', completed: false },
-                ],
-              };
-            }
-            return o;
-          });
-          localStorage.setItem('muses_user_orders', JSON.stringify(updated));
-        }
-      } catch (e) {
-        console.error(e);
-      }
 
       try {
         confetti({

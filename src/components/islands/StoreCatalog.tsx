@@ -1,170 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { withBase } from '../../lib/paths';
 import { addToCart } from '../../stores/cartStore';
 import { formatRupiah } from '../../lib/format';
+import { productService } from '../../services/productService';
+import type { CatalogItemDTO } from '../../types/database';
 
-export interface CatalogItem {
-  id: string;
-  name: string;
-  category: 'CHEKI' | 'MERCHANDISE' | 'VIDEOCALL';
-  subtitle: string;
-  color?: string;
-  image: string;
-  options: string[];
-  price: number;
-  stock: number;
-}
-
-const MEMBERS = [
-  {
-    id: 'faril',
-    name: 'Faril',
-    muse: 'Muse of Melpomene',
-    color: '#8E24AA',
-    image: '/images/members/faril.webp',
-  },
-  {
-    id: 'mine',
-    name: 'Mine',
-    muse: 'Muse of Clio',
-    color: '#FBC02D',
-    image: '/images/members/mine.webp',
-  },
-  {
-    id: 'ndah',
-    name: 'Ndah',
-    muse: 'Muse of Polyhymnia',
-    color: '#43A047',
-    image: '/images/members/ndah.webp',
-  },
-  {
-    id: 'vira',
-    name: 'Vira',
-    muse: 'Muse of Erato',
-    color: '#FFA7D6',
-    image: '/images/members/vira.webp',
-  },
-  {
-    id: 'vely',
-    name: 'Vely',
-    muse: 'Muse of Terpsichore',
-    color: '#1E88E5',
-    image: '/images/members/vely.webp',
-  },
-  {
-    id: 'liz',
-    name: 'Liz',
-    muse: 'Muse of Calliope',
-    color: '#E53935',
-    image: '/images/members/liz.webp',
-  },
-  {
-    id: 'lia',
-    name: 'Lia',
-    muse: 'Muse of Erato',
-    color: '#523C05',
-    image: '/images/members/lia.webp',
-  },
-];
-
-const CHEKI_ITEMS: CatalogItem[] = MEMBERS.map((m) => ({
-  id: `cheki-${m.id}`,
-  name: m.name,
-  category: 'CHEKI',
-  subtitle: m.muse,
-  color: m.color,
-  image: m.image,
-  options: ['Two shot', 'Solo'],
-  price: 40000,
-  stock: 16,
-}));
-
-const MERCHANDISE_ITEMS: CatalogItem[] = [
-  {
-    id: 'official-light-stick',
-    name: 'Light Stick',
-    category: 'MERCHANDISE',
-    subtitle: 'Rechargeable Concert Light Device',
-    color: '#C9971C',
-    image: '/images/store/product-1.svg',
-    options: ['Box Set', 'Standard'],
-    price: 880000,
-    stock: 40,
-  },
-  {
-    id: 'tour-hoodie',
-    name: 'Tour Hoodie',
-    category: 'MERCHANDISE',
-    subtitle: 'Heavyweight Oversized Apparel',
-    color: '#C9971C',
-    image: '/images/store/product-2.svg',
-    options: ['Size L', 'Size XL'],
-    price: 1360000,
-    stock: 25,
-  },
-  {
-    id: 'limited-vinyl',
-    name: 'Limited Vinyl',
-    category: 'MERCHANDISE',
-    subtitle: 'Chapter 02 Limited 180g LP',
-    color: '#C9971C',
-    image: '/images/store/product-3.svg',
-    options: ['Gatefold', 'Standard'],
-    price: 672000,
-    stock: 15,
-  },
-  {
-    id: 'slogan-towel',
-    name: 'Slogan Towel',
-    category: 'MERCHANDISE',
-    subtitle: 'Official Microfiber Concert Towel',
-    color: '#C9971C',
-    image: '/images/store/product-1.svg',
-    options: ['Gold Edition', 'Black Edition'],
-    price: 448000,
-    stock: 50,
-  },
-  {
-    id: 'album-standard',
-    name: 'Afterglow CD',
-    category: 'MERCHANDISE',
-    subtitle: 'Chapter 03 Photobook Edition',
-    color: '#C9971C',
-    image: '/images/store/product-2.svg',
-    options: ['Version A', 'Version B'],
-    price: 416000,
-    stock: 30,
-  },
-  {
-    id: 'knit-beanie',
-    name: 'Knit Beanie',
-    category: 'MERCHANDISE',
-    subtitle: 'Embroidered Acrylic Knit',
-    color: '#C9971C',
-    image: '/images/store/product-3.svg',
-    options: ['Ivory', 'Black'],
-    price: 608000,
-    stock: 20,
-  },
-];
-
-const VIDEOCALL_ITEMS: CatalogItem[] = MEMBERS.map((m) => ({
-  id: `videocall-${m.id}`,
-  name: m.name,
-  category: 'VIDEOCALL',
-  subtitle: '1-on-1 Online Fansign',
-  color: m.color,
-  image: m.image,
-  options: ['60 Detik', '120 Detik'],
-  price: 150000,
-  stock: 8,
-}));
-
-const ALL_CATALOG_ITEMS: CatalogItem[] = [
-  ...CHEKI_ITEMS,
-  ...MERCHANDISE_ITEMS,
-  ...VIDEOCALL_ITEMS,
-];
+export type CatalogItem = CatalogItemDTO;
 
 function StoreCard({
   item,
@@ -255,26 +96,39 @@ function StoreCard({
 }
 
 export default function StoreCatalog() {
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(() =>
+    productService.getInitialCatalogItems()
+  );
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [addedIds, setAddedIds] = useState<Record<string, boolean>>({});
 
   const categories = ['Semua', 'Cheki', 'Merchandise', 'Videocall'];
 
-  const filteredItems = ALL_CATALOG_ITEMS.filter((item) => {
-    const matchesCategory =
-      activeCategory === 'Semua' ||
-      item.category.toLowerCase() === activeCategory.toLowerCase();
+  useEffect(() => {
+    productService.getCatalogItems().then((res) => {
+      if (res.success && res.data && res.data.length > 0) {
+        setCatalogItems(res.data);
+      }
+    });
+  }, []);
 
-    const q = searchQuery.trim().toLowerCase();
-    const matchesSearch =
-      !q ||
-      item.name.toLowerCase().includes(q) ||
-      item.subtitle.toLowerCase().includes(q) ||
-      item.category.toLowerCase().includes(q);
+  const filteredItems = useMemo(() => {
+    return catalogItems.filter((item) => {
+      const matchesCategory =
+        activeCategory === 'Semua' ||
+        item.category.toLowerCase() === activeCategory.toLowerCase();
 
-    return matchesCategory && matchesSearch;
-  });
+      const q = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        item.name.toLowerCase().includes(q) ||
+        item.subtitle.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [catalogItems, activeCategory, searchQuery]);
 
   const handleAddToCart = (item: CatalogItem, variant: string) => {
     addToCart({

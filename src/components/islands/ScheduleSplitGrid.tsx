@@ -1,28 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { withBase, withBaseDeep } from '../../lib/paths';
-import schedulesDataRaw from '../../data/schedules.json';
+import { withBase } from '../../lib/paths';
+import { scheduleService } from '../../services/scheduleService';
+import type { ScheduleDTO } from '../../types/database';
 import { MapPin, Clock, Ticket } from 'lucide-react';
 
-const schedulesData = withBaseDeep(schedulesDataRaw);
-
-export interface ScheduleItem {
-  id: string;
-  tourName: string;
-  title?: string;
-  day: string;
-  dayName: string;
-  month: string;
-  year: string;
-  city: string;
-  country: string;
-  venue: string;
-  status: 'Available' | 'Selling Fast' | 'Sold Out' | 'Coming Soon' | string;
-  doorOpen?: string;
-  showTime: string;
-  ticketUrl: string;
-  posterImage: string;
-  targetDate?: string;
-}
+export type ScheduleItem = ScheduleDTO;
 
 function GoldenSparkle({ className = 'w-6 h-6' }: { className?: string }) {
   return (
@@ -47,9 +29,19 @@ function GoldenSparkle({ className = 'w-6 h-6' }: { className?: string }) {
 }
 
 export default function ScheduleSplitGrid() {
-  const schedules = schedulesData as ScheduleItem[];
+  const [schedules, setSchedules] = useState<ScheduleItem[]>(() =>
+    scheduleService.getInitialSchedules()
+  );
   const [selectedId, setSelectedId] = useState<string>(schedules[0]?.id || '');
   const [countdown, setCountdown] = useState({ days: 8, hours: 11, mins: 36, secs: 6 });
+
+  useEffect(() => {
+    scheduleService.getSchedules().then((res) => {
+      if (res.success && res.data && res.data.length > 0) {
+        setSchedules(res.data);
+      }
+    });
+  }, []);
 
   const activeItem = useMemo(() => {
     return schedules.find((s) => s.id === selectedId) || schedules[0];

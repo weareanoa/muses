@@ -1,7 +1,9 @@
 ---
 import { withBase } from '../../lib/paths';
-import productsData from '../../data/products.json';
+import { productService } from '../../services/productService';
 import { formatRupiah, usdToIdr } from '../../lib/format';
+
+const { data: featuredProducts = [] } = await productService.getProducts({ limit: 3 });
 ---
 
 <section id="store" data-section="store" class="relative bg-[#FCFAF5] py-20 sm:py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
@@ -34,7 +36,7 @@ import { formatRupiah, usdToIdr } from '../../lib/format';
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
         {
-          productsData.slice(0, 3).map((product) => (
+          featuredProducts.map((product) => (
             <a
               href={withBase(`/store/${product.id}`)}
               class="group relative bg-white border border-[#EADBBD] rounded-3xl overflow-hidden hover:border-[#C9971C] hover:shadow-[0_14px_30px_rgba(201,151,28,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col"

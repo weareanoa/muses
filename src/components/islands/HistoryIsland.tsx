@@ -9,13 +9,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-
-import {
-  INITIAL_ORDERS,
-  type OrderTransaction,
-  type OrderItem,
-  type StepperItem,
-} from '../../data/orders';
+import { type OrderTransaction } from '../../data/orders';
+import { transactionService } from '../../services/transactionService';
+import { currentUser } from '../../stores/authStore';
 import { formatCountdown, formatRupiah } from '../../lib/format';
 import StatusBadge from '../ui/StatusBadge';
 
@@ -28,113 +24,21 @@ const FILTER_TABS = [
 
 type FilterTabId = typeof FILTER_TABS[number]['id'];
 
-function normalizeOrder(raw: any): OrderTransaction {
-  const numericTotal =
-    typeof raw.totalPrice === 'number'
-      ? raw.totalPrice
-      : typeof raw.numericPrice === 'number'
-      ? raw.numericPrice
-      : typeof raw.total === 'number'
-      ? raw.total
-      : parseInt(String(raw.price || raw.totalPrice || raw.numericPrice || '0').replace(/\D/g, ''), 10) || 0;
-
-  const rawStatus = String(raw.status || 'unpaid').toLowerCase();
-  let status: OrderTransaction['status'] = 'unpaid';
-  if (rawStatus === 'paid' || rawStatus === 'processing') {
-    status = 'processing';
-  } else if (rawStatus === 'completed') {
-    status = 'completed';
-  } else if (rawStatus === 'cancelled') {
-    status = 'cancelled';
-  }
-
-  const rawActionType = raw.actionType || (
-    status === 'unpaid'
-      ? 'unpaid'
-      : status === 'completed'
-      ? 'completed'
-      : raw.pickupCode
-      ? 'pickup'
-      : 'shipping'
-  );
-
-  const rawItems: OrderItem[] = Array.isArray(raw.items)
-    ? raw.items.map((it: any, idx: number) => {
-        const itemPrice =
-          typeof it.price === 'number'
-            ? it.price
-            : parseInt(String(it.price || '0').replace(/\D/g, ''), 10) || 0;
-        return {
-          id: it.id || `item-${idx}`,
-          name: it.name || 'Official Merchandise',
-          variant: it.variant || it.role || it.subtitle || 'Official Merchandise',
-          image: it.image || '/images/members/faril.webp',
-          quantity: it.quantity || it.qty || 1,
-          price: itemPrice,
-        };
-      })
-    : [];
-
-  return {
-    id: String(raw.id || raw.orderCode || `MSE-${Date.now().toString().slice(-6)}`),
-    date: raw.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-    status,
-    statusLabel: raw.statusLabel || (status === 'unpaid' ? 'Menunggu pembayaran' : status === 'completed' ? 'Selesai' : 'Sedang diproses'),
-    eventTag: raw.eventTag || 'OFFICIAL STORE',
-    items: rawItems.length > 0 ? rawItems : [
-      {
-        name: raw.title || 'Official Merchandise',
-        variant: 'Standard',
-        image: '/images/members/faril.webp',
-        quantity: 1,
-        price: numericTotal,
-      }
-    ],
-    deliveryInfo: raw.deliveryInfo || raw.location || 'Pengiriman Kurir JNE Regular',
-    totalPrice: numericTotal,
-    actionType: rawActionType,
-    initialCountdownSeconds: typeof raw.initialCountdownSeconds === 'number' ? raw.initialCountdownSeconds : 180,
-    pickupLocation: raw.pickupLocation || raw.location,
-    pickupDate: raw.pickupDate,
-    pickupCode: raw.pickupCode,
-    shippingCourier: raw.shippingCourier || 'JNE Regular',
-    trackingNumber: raw.trackingNumber || 'JNE8829104829',
-    estimatedArrival: raw.estimatedArrival || '2 - 3 hari kerja',
-    stepper: Array.isArray(raw.stepper) && raw.stepper.length > 0 ? raw.stepper : [
-      { label: 'Dibayar', completed: status !== 'unpaid' },
-      { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
-      { label: 'Dalam Pengiriman (JNE)', completed: status === 'processing' || status === 'completed' },
-      { label: 'Selesai', completed: status === 'completed' },
-    ],
-    isStepperExpanded: Boolean(raw.isStepperExpanded),
-  };
-}
-
 export default function HistoryIsland() {
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
-  const [orders, setOrders] = useState<OrderTransaction[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<OrderTransaction[]>(() =>
+    transactionService.getInitialTransactions()
+  );
   const [countdown, setCountdown] = useState<number>(178);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('muses_user_orders');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const normalized = parsed
-            .map((item) => {
-              try {
-                return normalizeOrder(item);
-              } catch {
-                return null;
-              }
-            })
-            .filter(Boolean) as OrderTransaction[];
-          setOrders([...normalized, ...INITIAL_ORDERS]);
-        }
+    const userId = currentUser.get()?.id;
+    transactionService.getTransactions(userId).then((res) => {
+      if (res.success && res.data) {
+        setOrders(res.data);
       }
-    } catch {}
+    });
   }, []);
 
   useEffect(() => {
@@ -144,7 +48,6 @@ export default function HistoryIsland() {
     return () => clearInterval(timer);
   }, []);
 
-  
   const handleCopyCode = (code: string) => {
     try {
       navigator.clipboard.writeText(code);

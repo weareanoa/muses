@@ -3,18 +3,19 @@ import { withBase } from '../../lib/paths';
 import RootLayout from '../../layouts/RootLayout.astro';
 import ProductPurchaseIsland from '../../components/islands/ProductPurchaseIsland';
 import FooterCTA from '../../components/sections/FooterCTA.astro';
-import productsData from '../../data/products.json';
+import { productService } from '../../services/productService';
 
 export async function getStaticPaths() {
-  return productsData.map((product) => ({
+  const { data: products = [] } = await productService.getProducts();
+  return products.map((product) => ({
     params: { id: product.id },
-    props: { product },
+    props: { product, allProducts: products },
   }));
 }
 
-const { product } = Astro.props;
+const { product, allProducts = [] } = Astro.props;
 
-const relatedProducts = productsData.filter((p) => p.id !== product.id);
+const relatedProducts = allProducts.filter((p) => p.id !== product.id);
 ---
 
 <RootLayout
