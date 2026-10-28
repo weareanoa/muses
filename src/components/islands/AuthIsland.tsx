@@ -56,12 +56,12 @@ export default function AuthIsland({
 
   useEffect(() => {
     if (user) {
-      window.location.href = redirectPath || '/';
+      window.location.href = withBase(redirectPath || '/');
     }
   }, [user, redirectPath]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
     if (isOtpFlow && otpStep === 'code' && countdown > 0) {
       timer = setInterval(() => {
         setCountdown((prev) => {
@@ -107,7 +107,7 @@ export default function AuthIsland({
       setIsLoading(false);
       if (res.success && res.user) {
         triggerCelebration();
-        window.location.href = redirectPath || '/';
+        window.location.href = withBase(redirectPath || '/');
       } else {
         setErrorMessage(res.error || 'Email atau kata sandi tidak sesuai.');
       }
@@ -155,7 +155,7 @@ export default function AuthIsland({
       setIsLoading(false);
       if (res.success && res.user) {
         triggerCelebration();
-        window.location.href = redirectPath || '/';
+        window.location.href = withBase(redirectPath || '/');
       } else {
         setErrorMessage(res.error || 'Gagal mendaftarkan akun. Silakan coba kembali.');
       }
@@ -170,7 +170,7 @@ export default function AuthIsland({
       setIsLoading(false);
       if (result.success) {
         triggerCelebration();
-        window.location.href = redirectPath || '/';
+        window.location.href = withBase(redirectPath || '/');
       }
     }, 500);
   };
@@ -278,7 +278,7 @@ export default function AuthIsland({
       setIsLoading(false);
       if (result.success && result.user) {
         triggerCelebration();
-        window.location.href = redirectPath || '/';
+        window.location.href = withBase(redirectPath || '/');
       } else {
         setErrorMessage(result.error || 'Kode verifikasi tidak valid.');
       }
@@ -296,12 +296,6 @@ export default function AuthIsland({
               <span className="text-xl font-display font-black tracking-widest gold-gradient-text transition-transform group-hover:scale-105">
                 MUSES
               </span>
-            </a>
-            <a
-              href={withBase('/')}
-              className="text-xs text-[#8C6A1C] hover:text-[#C9971C] transition-colors flex items-center gap-1 font-medium"
-            >
-              <span>← Beranda</span>
             </a>
           </div>
 
@@ -653,7 +647,9 @@ export default function AuthIsland({
               {otpDigits.map((digit, idx) => (
                 <input
                   key={idx}
-                  ref={(el) => (otpInputRefs.current[idx] = el)}
+                  ref={(el) => {
+                    otpInputRefs.current[idx] = el;
+                  }}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}

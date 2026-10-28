@@ -14,6 +14,7 @@ import { useScrollLock } from '../../hooks/useScrollLock';
 import { X, Trash2, ShoppingBag, Plus, Minus, ArrowRight, CheckCircle2, MapPin } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { currentUser } from '../../stores/authStore';
+import { formatRupiah } from '../../lib/format';
 
 export default function CartDrawer() {
   const isOpen = useStore(isCartOpen);
@@ -50,51 +51,55 @@ export default function CartDrawer() {
         onClick={closeCart}
       />
 
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
-        <div className="w-screen max-w-md bg-[#FFFFFF] border-l border-[#1F1A12]/10 text-[#1F1A12] shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div className="w-screen max-w-md bg-[#FCFAF5] border-l border-[#1F1A12]/15 shadow-2xl flex flex-col justify-between">
           <div className="p-6 border-b border-[#1F1A12]/10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#9A7420]" />
-              <h2 className="text-lg font-display font-bold tracking-wider">YOUR BAG</h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#1F1A12]/10 text-[#9A7420] font-semibold">
-                {items.reduce((s, i) => s + i.quantity, 0)}
-              </span>
+              <h2 className="text-lg font-bold font-display text-[#1F1A12] uppercase tracking-wider">
+                Shopping Cart ({items.length})
+              </h2>
             </div>
             <button
               onClick={closeCart}
-              className="p-2 text-[#6E6453] hover:text-[#1F1A12] rounded-full hover:bg-[#1F1A12]/5 transition-colors cursor-pointer"
-              aria-label="Close cart"
+              className="p-1 rounded-md text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain touch-pan-y p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {checkoutComplete ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
-                <CheckCircle2 className="w-16 h-16 text-[#9A7420] animate-bounce" />
-                <h3 className="text-xl font-display font-bold">ORDER CONFIRMED!</h3>
-                <p className="text-sm text-[#6E6453] max-w-xs">
-                  Thank you for supporting MUSE! Your simulated order has been processed successfully.
+              <div className="text-center py-12 space-y-4">
+                <div className="w-16 h-16 bg-[#9A7420]/15 rounded-full flex items-center justify-center mx-auto text-[#9A7420]">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold font-display text-[#1F1A12]">Order Received!</h3>
+                <p className="text-xs text-[#6E6453] max-w-xs mx-auto">
+                  Thank you for supporting MUSES. Your order confirmation and receipt will be processed shortly.
                 </p>
-                <button
-                  onClick={closeCart}
-                  className="mt-4 px-6 py-2.5 bg-[#9A7420] text-[#FCFAF5] font-semibold rounded-md text-xs uppercase tracking-widest hover:bg-[#B08A36] transition-all cursor-pointer"
-                >
-                  Back to Showcase
-                </button>
+                <div className="pt-4">
+                  <button
+                    onClick={closeCart}
+                    className="px-6 py-2 border border-[#9A7420] text-[#9A7420] hover:bg-[#9A7420]/10 text-xs font-semibold rounded-md transition-colors cursor-pointer"
+                  >
+                    Continue Browsing
+                  </button>
+                </div>
               </div>
             ) : items.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4 text-[#6E6453]">
-                <ShoppingBag className="w-12 h-12 stroke-[1.5] text-[#A3977F]" />
-                <p className="text-base font-medium">Your shopping bag is empty</p>
-                <p className="text-xs text-[#8A7F6C] max-w-xs">
-                  Explore official MUSE merchandise, tour essentials, and exclusive album pressings.
-                </p>
+              <div className="text-center py-16 space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#1F1A12]/5 flex items-center justify-center mx-auto text-[#6E6453]">
+                  <ShoppingBag className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#1F1A12]">Your cart is empty</h3>
+                  <p className="text-xs text-[#6E6453] mt-1">Discover official albums, lightsticks, and tour apparel.</p>
+                </div>
                 <a
-                  href="/store"
+                  href={withBase("/#store")}
                   onClick={closeCart}
-                  className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1F1A12]/10 hover:bg-[#1F1A12]/20 text-[#1F1A12] rounded-md text-xs uppercase font-semibold tracking-wider transition-all"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-[#9A7420] hover:underline pt-2 cursor-pointer"
                 >
                   Explore Store
                   <ArrowRight className="w-4 h-4" />
@@ -127,7 +132,9 @@ export default function CartDrawer() {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm font-bold text-[#9A7420]">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {item.price >= 1000
+                          ? formatRupiah(item.price * item.quantity)
+                          : `$${(item.price * item.quantity).toFixed(2)}`}
                       </span>
                       <div className="flex items-center gap-2 bg-[#F6F1E5] border border-[#1F1A12]/10 rounded-md px-1.5 py-0.5">
                         <button
@@ -136,7 +143,9 @@ export default function CartDrawer() {
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="text-xs font-semibold px-1">{item.quantity}</span>
+                        <span className="text-xs font-semibold text-[#1F1A12] w-4 text-center">
+                          {item.quantity}
+                        </span>
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1, item.size, item.color)}
                           className="p-1 hover:text-[#9A7420] text-[#6E6453] transition-colors cursor-pointer"
@@ -144,44 +153,44 @@ export default function CartDrawer() {
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
-                      <button
-                        onClick={() => removeFromCart(item.id, item.size, item.color)}
-                        className="text-[#8A7F6C] hover:text-rose-600 p-1 transition-colors cursor-pointer"
-                        aria-label="Remove item"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
+                  <button
+                    onClick={() => removeFromCart(item.id, item.size, item.color)}
+                    className="text-[#6E6453] hover:text-red-500 p-1 self-start transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               ))
             )}
           </div>
 
-          {!checkoutComplete && items.length > 0 && (
-            <div className="p-6 border-t border-[#1F1A12]/10 bg-[#FBF8F1] space-y-3.5">
+          {items.length > 0 && !checkoutComplete && (
+            <div className="p-6 border-t border-[#1F1A12]/10 bg-[#F8F4EA]/80 space-y-4">
+              <div className="flex items-center justify-between text-xs pb-1">
+                <span className="text-[#6E6453] flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#9A7420]" />
+                  Alamat Pengiriman
+                </span>
+                <span className="text-[#9A7420] font-semibold">{user ? user.name : 'Tamu'}</span>
+              </div>
               {selectedAddress ? (
-                <div className="bg-[#F6F1E5] border border-[#1F1A12]/10 rounded-xl p-3 text-xs">
-                  <div className="flex items-center justify-between text-[#6E6453] mb-1">
-                    <span className="flex items-center gap-1.5 text-[#2E281E] font-semibold">
-                      <MapPin className="w-3.5 h-3.5 text-[#9A7420]" />
-                      <span>Kirim ke: {selectedAddress.label}</span>
+                <div className="p-2.5 rounded-xl bg-white/80 border border-[#1F1A12]/10 text-xs text-[#524838]">
+                  <div className="font-semibold text-[#1F1A12] flex items-center gap-1.5">
+                    <span>{selectedAddress.recipientName}</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#9A7420]/15 text-[#9A7420] font-mono">
+                      {selectedAddress.label}
                     </span>
-                    <a
-                      href={withBase("/profile?tab=alamat")}
-                      onClick={closeCart}
-                      className="text-[#9A7420] text-[11px] hover:underline"
-                    >
-                      Ubah Alamat
-                    </a>
                   </div>
-                  <p className="text-[11px] text-[#6E6453] truncate">
-                    {selectedAddress.street}, {selectedAddress.city}
-                  </p>
+                  <div className="truncate mt-0.5 text-[11px] text-[#6E6453]">{selectedAddress.street}</div>
+                  <div className="text-[10px] text-[#8A7F6C]">
+                    {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
+                  </div>
                 </div>
               ) : (
-                <div className="bg-[#F8F4EA] border border-[#1F1A12]/10 rounded-xl p-3 text-xs flex items-center justify-between">
-                  <span className="text-[#6E6453] text-[11px]">Belum ada alamat pengiriman</span>
+                <div className="p-2 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-center justify-between">
+                  <span>Belum ada alamat tersimpan</span>
                   <a
                     href={withBase("/profile?tab=alamat")}
                     onClick={closeCart}
@@ -195,7 +204,9 @@ export default function CartDrawer() {
               <div className="flex justify-between items-center text-sm">
                 <span className="text-[#6E6453]">Subtotal</span>
                 <span className="text-xl font-bold font-display text-[#1F1A12]">
-                  ${subtotal.toFixed(2)} USD
+                  {subtotal >= 1000
+                    ? formatRupiah(subtotal)
+                    : `$${subtotal.toFixed(2)} USD`}
                 </span>
               </div>
               <p className="text-[11px] text-[#8A7F6C] leading-tight">

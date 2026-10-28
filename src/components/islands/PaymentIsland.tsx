@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { withBase } from '../../lib/paths';
+import { formatRupiah } from '../../lib/format';
 
 interface PaymentItem {
   id: string;
@@ -239,7 +240,7 @@ export default function PaymentIsland() {
                 Total Pembayaran
               </p>
               <p className="text-2xl sm:text-3xl font-bold text-[#1F1A12]">
-                Rp. {order.total.toLocaleString('id-ID')}
+                {formatRupiah(order.total)}
               </p>
               <p className="text-[11px] text-[#8A7F6C]">
                 Bayar sebelum <span className="font-mono font-medium text-[#1F1A12]">{order.deadline}</span>
@@ -320,7 +321,7 @@ export default function PaymentIsland() {
                     </div>
                   </div>
                   <div className="font-bold text-[#1F1A12]">
-                    Rp. {(item.price * item.quantity).toLocaleString('id-ID')}
+                    {formatRupiah(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
@@ -328,14 +329,14 @@ export default function PaymentIsland() {
               <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
                 <span>Ongkos kirim</span>
                 <span className="font-bold text-[#1F1A12]">
-                  Rp. {order.shippingFee.toLocaleString('id-ID')}
+                  {formatRupiah(order.shippingFee)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
                 <span>Biaya layanan & asuransi</span>
                 <span className="font-bold text-[#1F1A12]">
-                  Rp. {order.platformFee.toLocaleString('id-ID')}
+                  {formatRupiah(order.platformFee)}
                 </span>
               </div>
             </div>
@@ -344,7 +345,7 @@ export default function PaymentIsland() {
 
             <div className="flex justify-between items-center text-sm sm:text-base font-bold text-[#1F1A12]">
               <span>Total</span>
-              <span>Rp. {order.total.toLocaleString('id-ID')}</span>
+              <span>{formatRupiah(order.total)}</span>
             </div>
           </div>
         </div>
@@ -362,7 +363,7 @@ export default function PaymentIsland() {
             </h3>
 
             <p className="text-xs text-[#6E6453] leading-relaxed">
-              Terima kasih! Pembayaran untuk pesanan #{order.orderId} senilai Rp. {order.total.toLocaleString('id-ID')} telah berhasil diverifikasi.
+              Terima kasih! Pembayaran untuk pesanan #{order.orderId} senilai {formatRupiah(order.total)} telah berhasil diverifikasi.
             </p>
 
             <div className="pt-2 flex flex-col gap-2">

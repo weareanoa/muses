@@ -7,34 +7,36 @@ export interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, label, className = '' }: StatusBadgeProps) {
-  let colorClasses = 'bg-stone-50 text-stone-700 border border-stone-200';
+  let colorClasses = 'bg-neutral-100 text-[#1F1A12] border border-neutral-200';
   let defaultLabel = label;
 
-  switch (status) {
+  switch (status.toLowerCase()) {
     case 'completed':
-      colorClasses = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+      colorClasses = 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold';
       defaultLabel = defaultLabel || 'Selesai';
       break;
     case 'processing':
-      colorClasses = 'bg-amber-50 text-amber-700 border border-amber-200';
+    case 'paid':
+      colorClasses = 'bg-[#FCEBAE] text-[#7A5B15] border border-[#EED07C] font-semibold';
       defaultLabel = defaultLabel || 'Sedang Diproses';
       break;
     case 'unpaid':
-      colorClasses = 'bg-rose-50 text-rose-700 border border-rose-200';
+      colorClasses = 'bg-[#FDF4D9] text-[#9A7420] border border-[#F3DE9D] font-semibold';
       defaultLabel = defaultLabel || 'Menunggu Pembayaran';
       break;
     case 'cancelled':
-      colorClasses = 'bg-rose-50 text-rose-600 border border-rose-200';
+      colorClasses = 'bg-rose-100 text-rose-700 border border-rose-200 font-semibold';
       defaultLabel = defaultLabel || 'Dibatalkan';
       break;
   }
 
   return (
     <span
-      className={`inline-flex items-center text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${colorClasses} ${className}`}
+      className={`inline-block px-3.5 py-1 rounded-full text-xs ${colorClasses} ${className}`}
     >
       {label || defaultLabel}
     </span>
   );
 }
 
+export default StatusBadge;

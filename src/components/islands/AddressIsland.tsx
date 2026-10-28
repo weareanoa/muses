@@ -18,6 +18,8 @@ import {
   Edit2,
   Trash2
 } from 'lucide-react';
+import AddressModal, { type AddressFormData } from './AddressModal';
+import { formatRupiah, usdToIdr } from '../../lib/format';
 
 interface CheckoutItem {
   id: string;
@@ -57,7 +59,7 @@ export default function AddressIsland() {
         id: `cart-${c.id}-${idx}`,
         name: c.name,
         subtitle: [c.size, c.color].filter(Boolean).join(' • ') || 'Official Merchandise',
-        price: Math.round(c.price * 16000),
+        price: c.currency === 'USD' || c.price < 1000 ? usdToIdr(c.price) : c.price,
         quantity: c.quantity || 1,
         image: c.image || '/images/members/faril.webp',
       }));
@@ -71,18 +73,7 @@ export default function AddressIsland() {
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isPickerModalOpen, setIsPickerModalOpen] = useState(false);
-  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-  const [addressForm, setAddressForm] = useState({
-    recipientName: '',
-    phone: '',
-    province: '',
-    city: '',
-    district: '',
-    postalCode: '',
-    street: '',
-    detail: '',
-    label: 'Rumah',
-  });
+  const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
 
   const addresses = user?.addresses || [
     {
@@ -133,57 +124,32 @@ export default function AddressIsland() {
   };
 
   const openAddModal = () => {
-    setEditingAddressId(null);
-    setAddressForm({
-      recipientName: user?.name || '',
-      phone: user?.phone || '',
-      province: '',
-      city: '',
-      district: '',
-      postalCode: '',
-      street: '',
-      detail: '',
-      label: 'Rumah',
-    });
+    setEditingAddress(null);
     setIsAddressModalOpen(true);
   };
 
   const openEditModal = (addr: UserAddress) => {
-    setEditingAddressId(addr.id);
-    setAddressForm({
-      recipientName: addr.recipientName || '',
-      phone: addr.phone || '',
-      province: addr.province || '',
-      city: addr.city || '',
-      district: addr.district || '',
-      postalCode: addr.postalCode || '',
-      street: addr.street || '',
-      detail: addr.detail || '',
-      label: addr.label || 'Rumah',
-    });
+    setEditingAddress(addr);
     setIsAddressModalOpen(true);
   };
 
-  const handleSaveAddress = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!addressForm.recipientName.trim() || !addressForm.phone.trim()) return;
-
+  const handleSaveAddress = (data: AddressFormData) => {
     const addressData = {
-      recipientName: addressForm.recipientName.trim(),
-      phone: addressForm.phone.trim(),
-      province: addressForm.province.trim(),
-      city: addressForm.city.trim(),
-      district: addressForm.district.trim(),
-      postalCode: addressForm.postalCode.trim(),
-      street: addressForm.street.trim(),
-      detail: addressForm.detail.trim(),
-      label: addressForm.label,
+      recipientName: data.recipientName.trim(),
+      phone: data.phone.trim(),
+      province: data.province.trim(),
+      city: data.city.trim(),
+      district: data.district.trim(),
+      postalCode: data.postalCode.trim(),
+      street: data.street.trim(),
+      detail: data.detail.trim(),
+      label: data.label,
       isDefault: !user?.addresses || user.addresses.length === 0,
     };
 
-    if (editingAddressId) {
-      updateUserAddress(editingAddressId, addressData);
-      setSelectedAddress(editingAddressId);
+    if (editingAddress) {
+      updateUserAddress(editingAddress.id, addressData);
+      setSelectedAddress(editingAddress.id);
     } else {
       const created = addUserAddress(addressData);
       if (created && created.id) {
@@ -207,9 +173,9 @@ export default function AddressIsland() {
         image: i.image,
       })),
       subtotalRupiah: subtotal,
-      shippingFee: 10000,
-      platformFee: 5000,
-      totalRupiah: 175000,
+      shippingFee,
+      platformFee,
+      totalRupiah: total,
       notes,
       address: selectedAddress,
       paymentMethod: 'qris',
@@ -227,7 +193,7 @@ export default function AddressIsland() {
         title: items.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
         date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
         pickupTime: '23:59:59',
-        price: `Rp ${total.toLocaleString('id-ID')}`,
+        price: formatRupiah(total),
         numericPrice: total,
         totalPrice: total,
         status: 'unpaid',
@@ -249,22 +215,21 @@ export default function AddressIsland() {
           price: i.price,
           image: i.image || '/images/members/faril.webp',
         })),
-        pickupCode: `MSE-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
-        shippingCourier: 'JNE Regular',
-        trackingNumber: `JNE${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-        estimatedArrival: '2 - 3 hari kerja',
         stepper: [
+          { label: 'Menunggu Pembayaran', completed: false },
           { label: 'Dibayar', completed: false },
           { label: 'Disiapkan Management', completed: false },
           { label: 'Dalam Pengiriman (JNE)', completed: false },
           { label: 'Selesai', completed: false },
         ],
-        isStepperExpanded: false,
+        isStepperExpanded: true,
       };
-      localStorage.setItem('muses_user_orders', JSON.stringify([newOrderEntry, ...existingOrders]));
+
+      existingOrders.unshift(newOrderEntry);
+      localStorage.setItem('muses_user_orders', JSON.stringify(existingOrders));
       clearCart();
     } catch (e) {
-      console.error(e);
+      console.error('Failed to store order in local storage', e);
     }
 
     window.location.href = withBase('/payment');
@@ -277,65 +242,89 @@ export default function AddressIsland() {
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                Alamat pengiriman
+                Alamat
               </h2>
-              <button
-                type="button"
-                onClick={openAddModal}
-                className="px-4 py-1 rounded-full border border-[#1F1A12]/40 hover:border-[#1F1A12] text-xs font-semibold text-[#1F1A12] transition-colors cursor-pointer"
-              >
-                + Tambah
-              </button>
+              {addresses.length === 0 ? (
+                <button
+                  type="button"
+                  onClick={openAddModal}
+                  className="px-4 py-1.5 rounded-full border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  + Tambah Alamat
+                </button>
+              ) : null}
             </div>
 
             {selectedAddress ? (
-              <div className="space-y-1 text-xs text-[#52493A]">
-                <div className="flex items-center gap-2 font-semibold text-[#1F1A12]">
-                  <span>{selectedAddress.recipientName}</span>
-                  <span className="text-[#8A7F6C]">({selectedAddress.phone})</span>
-                  <span className="text-[10px] bg-[#FAF2DA] text-[#8C6A1C] border border-[#DFC478]/50 px-2 py-0.5 rounded-full font-mono">
-                    {selectedAddress.label}
-                  </span>
-                </div>
-                <p className="text-[#6E6453]">
-                  {selectedAddress.street}
-                  {selectedAddress.detail ? `, ${selectedAddress.detail}` : ''}
-                  {selectedAddress.district ? `, Kec. ${selectedAddress.district}` : ''}
-                  , {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
-                </p>
-                <div className="pt-2 flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => openEditModal(selectedAddress)}
-                    className="text-[#9A7420] hover:underline font-medium text-[11px] cursor-pointer"
-                  >
-                    Ubah Alamat
-                  </button>
-                  {addresses.length > 1 && (
+              <div className="bg-[#FAF2DA] border border-[#E8D49E] rounded-2xl p-5 relative">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-[#1F1A12]">
+                        {selectedAddress.recipientName}
+                      </span>
+                      <span className="text-xs text-[#8A7F6C]">
+                        ({selectedAddress.phone})
+                      </span>
+                      <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
+                        {selectedAddress.label}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[#6E6453] leading-relaxed">
+                      {selectedAddress.street}
+                      {selectedAddress.detail ? `, ${selectedAddress.detail}` : ''}
+                      {selectedAddress.district ? `, Kec. ${selectedAddress.district}` : ''}
+                      , {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
-                      onClick={() => setIsPickerModalOpen(true)}
-                      className="text-[#6E6453] hover:text-[#1F1A12] font-medium text-[11px] cursor-pointer"
+                      onClick={() => openEditModal(selectedAddress)}
+                      className="px-4 py-1.5 rounded-xl border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
                     >
-                      Pilih Alamat Lain ({addresses.length})
+                      Ubah
                     </button>
-                  )}
+                    {addresses.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setIsPickerModalOpen(true)}
+                        className="px-4 py-1.5 rounded-xl bg-[#E5DFD5]/60 hover:bg-[#E5DFD5] text-[#1F1A12] text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Pilih Lain
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-[#8A7F6C]">Tambah alamat pengiriman</p>
+              <div className="text-center py-8 border-2 border-dashed border-[#DFC478]/50 rounded-2xl bg-[#FFFDF7]">
+                <MapPin className="w-8 h-8 text-[#8C6A1C] mx-auto mb-2 opacity-60" />
+                <p className="text-xs text-[#6E6453] mb-3">
+                  Kamu belum memiliki alamat pengiriman tersimpan.
+                </p>
+                <button
+                  type="button"
+                  onClick={openAddModal}
+                  className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs transition-colors cursor-pointer shadow-2xs"
+                >
+                  Tambah Alamat Baru
+                </button>
+              </div>
             )}
           </div>
 
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                Barang
+                Pesanan
               </h2>
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="px-4 py-1 rounded-full border border-[#1F1A12]/40 hover:border-[#1F1A12] text-xs font-semibold text-[#1F1A12] transition-colors cursor-pointer"
+                className="text-xs text-[#8C6A1C] hover:underline font-semibold cursor-pointer"
               >
                 + Tambah
               </button>
@@ -361,7 +350,7 @@ export default function AddressIsland() {
                         {item.subtitle}
                       </div>
                       <div className="text-xs sm:text-sm font-bold text-[#1F1A12] mt-0.5">
-                        Rp. {item.price.toLocaleString('id-ID')}
+                        {formatRupiah(item.price)}
                       </div>
                     </div>
                   </div>
@@ -411,7 +400,6 @@ export default function AddressIsland() {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -426,13 +414,13 @@ export default function AddressIsland() {
               <div className="flex justify-between items-center">
                 <span>Subtotal Produk</span>
                 <span className="font-semibold text-[#1F1A12]">
-                  Rp. {subtotal.toLocaleString('id-ID')}
+                  {formatRupiah(subtotal)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Biaya Pengiriman</span>
                 <span className="font-semibold text-[#1F1A12]">
-                  Rp. {shippingFee.toLocaleString('id-ID')}
+                  {formatRupiah(shippingFee)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -455,7 +443,7 @@ export default function AddressIsland() {
                 Total harga
               </span>
               <span className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
-                Rp. {total.toLocaleString('id-ID')}
+                {formatRupiah(total)}
               </span>
             </div>
 
@@ -470,171 +458,12 @@ export default function AddressIsland() {
         </div>
       </div>
 
-      {isAddressModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-[#1F1A12]">
-                {editingAddressId ? 'Ubah Alamat' : 'Tambah Alamat'}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsAddressModalOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveAddress} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Nama"
-                    value={addressForm.recipientName}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, recipientName: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    placeholder="No. Telepon"
-                    value={addressForm.phone}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, phone: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Provinsi"
-                    value={addressForm.province}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, province: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kota/Kabupaten"
-                    value={addressForm.city}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, city: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kecamatan"
-                    value={addressForm.district}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, district: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kode Pos"
-                    value={addressForm.postalCode}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, postalCode: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <textarea
-                  rows={2}
-                  placeholder="Nama Jalan, Gedung, No. Rumah"
-                  value={addressForm.street}
-                  onChange={(e) =>
-                    setAddressForm((p) => ({ ...p, street: e.target.value }))
-                  }
-                  required
-                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C] resize-none"
-                />
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Detail lainnya (cont: Blok / Unit / Patokan)"
-                  value={addressForm.detail}
-                  onChange={(e) =>
-                    setAddressForm((p) => ({ ...p, detail: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                />
-              </div>
-
-              <div>
-                <div className="text-xs text-[#7A6E58] mb-2 font-medium">
-                  Tandai sebagai:
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Rumah' }))}
-                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
-                      addressForm.label === 'Rumah'
-                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
-                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
-                    }`}
-                  >
-                    Rumah
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Kantor' }))}
-                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
-                      addressForm.label === 'Kantor'
-                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
-                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
-                    }`}
-                  >
-                    Kantor
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <button
-                  type="submit"
-                  className="px-8 py-2.5 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-2xs"
-                >
-                  Simpan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        onSave={handleSaveAddress}
+        initialData={editingAddress}
+      />
 
       {isPickerModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">

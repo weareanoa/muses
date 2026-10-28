@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { withBase } from '../../lib/paths';
 import { addToCart } from '../../stores/cartStore';
+import { formatRupiah } from '../../lib/format';
 
 export interface CatalogItem {
   id: string;
@@ -230,7 +231,7 @@ function StoreCard({
         <div className="space-y-3">
           <div className="flex items-center justify-between pt-1">
             <span className="text-base sm:text-lg font-bold text-[#1F1A12]">
-              Rp{item.price.toLocaleString('id-ID')}
+              {formatRupiah(item.price)}
             </span>
             <span className="text-xs text-[#8C7A58]">
               Sisa {item.stock}

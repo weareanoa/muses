@@ -111,7 +111,7 @@ export default function UserNavIsland() {
           <div className="pt-2 border-t border-[#1F1A12]/10">
             <button
               onClick={() => {
-                logoutUser();
+                logoutUser(true);
                 setDropdownOpen(false);
               }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-500/10 text-xs text-[#6E6453] hover:text-red-600 transition-colors cursor-pointer"

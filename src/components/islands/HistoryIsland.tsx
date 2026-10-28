@@ -17,6 +17,7 @@ import {
   type StepperItem,
 } from '../../data/orders';
 import { formatCountdown, formatRupiah } from '../../lib/format';
+import StatusBadge from '../ui/StatusBadge';
 
 const FILTER_TABS = [
   { id: 'all', label: 'Semua' },
@@ -109,7 +110,7 @@ function normalizeOrder(raw: any): OrderTransaction {
   };
 }
 
-export default function CheckoutIsland() {
+export default function HistoryIsland() {
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
   const [orders, setOrders] = useState<OrderTransaction[]>(INITIAL_ORDERS);
   const [countdown, setCountdown] = useState<number>(178);
@@ -242,17 +243,7 @@ export default function CheckoutIsland() {
                     </div>
 
                     <div className="shrink-0">
-                      <span
-                        className={`inline-block px-3.5 py-1 rounded-full text-xs font-semibold ${
-                          isUnpaid
-                            ? 'bg-[#FDF4D9] text-[#9A7420] border border-[#F3DE9D]'
-                            : isCompleted
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                            : 'bg-[#FCEBAE] text-[#7A5B15] border border-[#EED07C]'
-                        }`}
-                      >
-                        {order.statusLabel}
-                      </span>
+                      <StatusBadge status={order.status} label={order.statusLabel} />
                     </div>
                   </div>
 
@@ -303,7 +294,7 @@ export default function CheckoutIsland() {
                       {order.deliveryInfo}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                      Rp{(order.totalPrice ?? 0).toLocaleString('id-ID')}
+                      {formatRupiah(order.totalPrice ?? 0)}
                     </span>
                   </div>
 

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
+import AddressModal, { type AddressFormData } from './AddressModal';
+import StatusBadge from '../ui/StatusBadge';
 import {
   currentUser,
+  logoutUser,
   updateUserProfile,
   addUserAddress,
   updateUserAddress,
@@ -16,7 +19,8 @@ import {
   X,
   Check,
   ArrowRight,
-  Camera
+  Camera,
+  LogOut
 } from 'lucide-react';
 import { withBase } from '../../lib/paths';
 
@@ -206,18 +210,7 @@ export default function ProfileIsland() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-  const [addressForm, setAddressForm] = useState({
-    recipientName: '',
-    phone: '',
-    province: '',
-    city: '',
-    district: '',
-    postalCode: '',
-    street: '',
-    detail: '',
-    label: 'Rumah',
-  });
+  const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
 
   const [countdown, setCountdown] = useState(178);
 
@@ -287,64 +280,33 @@ export default function ProfileIsland() {
   };
 
   const openAddAddressModal = () => {
-    setEditingAddressId(null);
-    setAddressForm({
-      recipientName: name || 'Wina',
-      phone: phone || '(+62) 8131111111111',
-      province: 'JAWA BARAT',
-      city: 'KAB. BEKASI',
-      district: 'TAMBUN SELATAN',
-      postalCode: '17510',
-      street: '',
-      detail: '',
-      label: 'Rumah',
-    });
+    setEditingAddress(null);
     setIsAddressModalOpen(true);
   };
 
   const openEditAddressModal = (addr: UserAddress) => {
-    setEditingAddressId(addr.id);
-    setAddressForm({
-      recipientName: addr.recipientName || '',
-      phone: addr.phone || '',
-      province: addr.province || '',
-      city: addr.city || '',
-      district: addr.district || '',
-      postalCode: addr.postalCode || '',
-      street: addr.street || '',
-      detail: addr.detail || '',
-      label: addr.label || 'Rumah',
-    });
+    setEditingAddress(addr);
     setIsAddressModalOpen(true);
   };
 
-  const handleSaveAddress = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingAddressId) {
-      updateUserAddress(editingAddressId, {
-        recipientName: addressForm.recipientName.trim(),
-        phone: addressForm.phone.trim(),
-        province: addressForm.province.trim(),
-        city: addressForm.city.trim(),
-        district: addressForm.district.trim(),
-        postalCode: addressForm.postalCode.trim(),
-        street: addressForm.street.trim(),
-        detail: addressForm.detail.trim(),
-        label: addressForm.label,
-      });
+  const handleSaveAddress = (data: AddressFormData) => {
+    const addressData = {
+      recipientName: data.recipientName.trim(),
+      phone: data.phone.trim(),
+      province: data.province.trim(),
+      city: data.city.trim(),
+      district: data.district.trim(),
+      postalCode: data.postalCode.trim(),
+      street: data.street.trim(),
+      detail: data.detail.trim(),
+      label: data.label,
+      isDefault: !user?.addresses || user.addresses.length === 0,
+    };
+
+    if (editingAddress) {
+      updateUserAddress(editingAddress.id, addressData);
     } else {
-      addUserAddress({
-        recipientName: addressForm.recipientName.trim(),
-        phone: addressForm.phone.trim(),
-        province: addressForm.province.trim(),
-        city: addressForm.city.trim(),
-        district: addressForm.district.trim(),
-        postalCode: addressForm.postalCode.trim(),
-        street: addressForm.street.trim(),
-        detail: addressForm.detail.trim(),
-        label: addressForm.label,
-        isDefault: !user?.addresses || user.addresses.length === 0,
-      });
+      addUserAddress(addressData);
     }
     setIsAddressModalOpen(false);
   };
@@ -449,6 +411,17 @@ export default function ProfileIsland() {
                 }`}
               >
                 Pesanan Saya
+              </button>
+            </div>
+
+            <div className="pt-4 border-t border-[#ECDCAE]">
+              <button
+                type="button"
+                onClick={() => logoutUser(true)}
+                className="flex items-center gap-2 text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Keluar Akun</span>
               </button>
             </div>
           </div>
@@ -666,23 +639,7 @@ export default function ProfileIsland() {
                             </span>
                           </div>
 
-                          <div>
-                            {ord.status === 'unpaid' && (
-                              <span className="px-3.5 py-1 rounded-full text-[11px] font-medium bg-[#F5E6BF] text-[#7A5F1E]">
-                                {ord.statusLabel}
-                              </span>
-                            )}
-                            {ord.status === 'processing' && (
-                              <span className="px-3.5 py-1 rounded-full text-[11px] font-medium bg-[#F9E2A8] text-[#8C6A1C]">
-                                {ord.statusLabel}
-                              </span>
-                            )}
-                            {ord.status === 'completed' && (
-                              <span className="px-3.5 py-1 rounded-full text-[11px] font-bold bg-[#CFE5CE] text-[#2F6B33]">
-                                {ord.statusLabel}
-                              </span>
-                            )}
-                          </div>
+                          <div><StatusBadge status={ord.status} label={ord.statusLabel} /></div>
                         </div>
 
                         <div>
@@ -723,7 +680,7 @@ export default function ProfileIsland() {
                             {ord.deliverySummary}
                           </span>
                           <span className="font-bold text-sm sm:text-base text-[#1F1A12]">
-                            Rp{ord.totalPrice.toLocaleString('id-ID')}
+                            {formatRupiah(ord.totalPrice)}
                           </span>
                         </div>
 
@@ -867,171 +824,12 @@ export default function ProfileIsland() {
         </main>
       </div>
 
-      {isAddressModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-[#1F1A12]">
-                {editingAddressId ? 'Ubah Alamat' : 'Tambah Alamat'}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsAddressModalOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveAddress} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Nama"
-                    value={addressForm.recipientName}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, recipientName: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    placeholder="No. Telepon"
-                    value={addressForm.phone}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, phone: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Provinsi"
-                    value={addressForm.province}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, province: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kota/Kabupaten"
-                    value={addressForm.city}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, city: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kecamatan"
-                    value={addressForm.district}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, district: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Kode Pos"
-                    value={addressForm.postalCode}
-                    onChange={(e) =>
-                      setAddressForm((p) => ({ ...p, postalCode: e.target.value }))
-                    }
-                    required
-                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <textarea
-                  rows={2}
-                  placeholder="Nama Jalan, Gedung, No. Rumah"
-                  value={addressForm.street}
-                  onChange={(e) =>
-                    setAddressForm((p) => ({ ...p, street: e.target.value }))
-                  }
-                  required
-                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C] resize-none"
-                />
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Detail lainnya (cont: Blok / Unit / Patokan)"
-                  value={addressForm.detail}
-                  onChange={(e) =>
-                    setAddressForm((p) => ({ ...p, detail: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
-                />
-              </div>
-
-              <div>
-                <div className="text-xs text-[#7A6E58] mb-2 font-medium">
-                  Tandai sebagai:
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Rumah' }))}
-                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
-                      addressForm.label === 'Rumah'
-                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
-                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
-                    }`}
-                  >
-                    Rumah
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Kantor' }))}
-                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
-                      addressForm.label === 'Kantor'
-                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
-                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
-                    }`}
-                  >
-                    Kantor
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <button
-                  type="submit"
-                  className="px-8 py-2.5 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-2xs"
-                >
-                  Simpan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        onSave={handleSaveAddress}
+        initialData={editingAddress}
+      />
     </div>
   );
 }

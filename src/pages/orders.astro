@@ -2,7 +2,7 @@
 import { withBase } from '../lib/paths';
 import RootLayout from '../layouts/RootLayout.astro';
 import PageBackdrop from '../components/ui/PageBackdrop.astro';
-import CheckoutIsland from '../components/islands/HistoryIsland';
+import HistoryIsland from '../components/islands/HistoryIsland';
 ---
 
 <RootLayout
@@ -28,7 +28,7 @@ import CheckoutIsland from '../components/islands/HistoryIsland';
     </div>
 
     <div class="relative z-10">
-      <CheckoutIsland client:load />
+      <HistoryIsland client:load />
     </div>
   </div>
 </RootLayout>

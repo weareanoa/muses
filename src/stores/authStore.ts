@@ -1,4 +1,5 @@
 import { atom, computed } from 'nanostores';
+import { withBase } from '../lib/paths';
 
 export interface UserAddress {
   id: string;
@@ -54,7 +55,8 @@ const DEFAULT_USERS: (User & { password?: string })[] = [
     id: 'user_muses_default',
     name: 'Winaa',
     email: 'winarahmaliaxx@gmail.com',
-    phone: '08xxxxxxxxx',
+    password: 'muses2026',
+    phone: '0813111111111',
     username: 'winaa',
     authProvider: 'email',
     bias: 'Faril',
@@ -78,6 +80,36 @@ const DEFAULT_USERS: (User & { password?: string })[] = [
       },
     ],
     selectedAddressId: 'addr_default_1',
+  },
+  {
+    id: 'user_muses_aulia',
+    name: 'Aulia Rahma',
+    email: 'aulia@email.com',
+    password: 'muses2026',
+    phone: '081234567890',
+    username: 'aulia',
+    authProvider: 'email',
+    bias: 'Faril',
+    biasEmoji: '☾',
+    membershipTier: 'Official MUSES CIRCLE',
+    membershipNumber: 'MSE-261023',
+    joinedAt: '22 Oktober 2026',
+    addresses: [
+      {
+        id: 'addr_aulia_1',
+        label: 'Rumah',
+        recipientName: 'Aulia Rahma',
+        phone: '081234567890',
+        street: 'Jl. Melpomene No. 18',
+        district: 'Coblong',
+        city: 'Bandung',
+        province: 'Jawa Barat',
+        postalCode: '40123',
+        detail: '',
+        isDefault: true,
+      },
+    ],
+    selectedAddressId: 'addr_aulia_1',
   },
 ];
 
@@ -105,12 +137,20 @@ function saveUsers(users: (User & { password?: string })[]) {
 }
 
 function loadInitialUser(): User | null {
-  if (typeof window === 'undefined') return DEFAULT_USERS[0];
+  if (typeof window === 'undefined') return null;
   try {
+    const isLoggedOut = localStorage.getItem('muses_is_logged_out');
+    if (isLoggedOut === 'true') {
+      return null;
+    }
     const saved = localStorage.getItem('muses_current_user');
-    return saved ? JSON.parse(saved) : DEFAULT_USERS[0];
-  } catch {
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    localStorage.setItem('muses_current_user', JSON.stringify(DEFAULT_USERS[0]));
     return DEFAULT_USERS[0];
+  } catch {
+    return null;
   }
 }
 
@@ -122,6 +162,7 @@ if (typeof window !== 'undefined') {
   currentUser.subscribe((user) => {
     try {
       if (user) {
+        localStorage.removeItem('muses_is_logged_out');
         localStorage.setItem('muses_current_user', JSON.stringify(user));
         const users = getStoredUsers();
         const idx = users.findIndex((u) => u.id === user.id || u.email === user.email);
@@ -130,6 +171,7 @@ if (typeof window !== 'undefined') {
           saveUsers(users);
         }
       } else {
+        localStorage.setItem('muses_is_logged_out', 'true');
         localStorage.removeItem('muses_current_user');
       }
     } catch (err) {
@@ -287,8 +329,15 @@ export function loginWithGoogle(): { success: boolean; user: User } {
   return { success: true, user: found };
 }
 
-export function logoutUser() {
+export function logoutUser(redirectToAuth = false) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('muses_is_logged_out', 'true');
+    localStorage.removeItem('muses_current_user');
+  }
   currentUser.set(null);
+  if (redirectToAuth && typeof window !== 'undefined') {
+    window.location.href = withBase('/auth');
+  }
 }
 
 export function updateUserProfile(updates: Partial<User>) {

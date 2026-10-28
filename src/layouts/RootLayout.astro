@@ -2,7 +2,7 @@
 import { withBase } from "../lib/paths";
 import '../styles/global.css';
 import PreloaderBuffer from '../components/ui/PreloaderBuffer.astro';
-import CartDrawer from '../components/islands/CheckoutDrawer';
+import CartDrawer from '../components/islands/CartDrawer';
 import MemberModal from '../components/islands/MemberModal';
 import UserNavIsland from '../components/islands/UserNavIsland';
 
@@ -16,7 +16,7 @@ interface Props {
 
 const {
   title = 'MUSES | Official Idol Group',
-  description = 'Situs resmi idol grup MUSES (7 member: Aria, Clara, Stella, Faril, Maya, Reva, Zia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
+  description = 'Situs resmi idol grup MUSES (7 member: Vira, Vely, Mine, Faril, Ndah, Liz, Lia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
   currentPath = Astro.url.pathname,
   solidHeader = false,
   hideNavbar = false,
