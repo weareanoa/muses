@@ -193,31 +193,53 @@ export default function MemberModal() {
 
   const getPastelBg = (stageName: string) => {
     switch (stageName.toLowerCase()) {
-      case 'vira':
-        return 'bg-gradient-to-br from-[#FDE9F1] via-[#FFF3F8] to-[#FCE6EF]';
-      case 'vely':
-        return 'bg-gradient-to-br from-[#E1F3FD] via-[#EEF8FE] to-[#E0F1FC]';
-      case 'mine':
-        return 'bg-gradient-to-br from-[#FFF8E1] via-[#FFFDF5] to-[#FFF6D6]';
       case 'faril':
-        return 'bg-gradient-to-br from-[#EDE4F8] via-[#F4EFFC] to-[#EAE0F9]';
+        return 'bg-gradient-to-r from-[#ECDEE8] via-[#F4EBF2] to-white';
+      case 'mine':
+        return 'bg-gradient-to-r from-[#FCF2D4] via-[#FDF7E5] to-white';
       case 'ndah':
-        return 'bg-gradient-to-br from-[#E8F6EA] via-[#F3FAF4] to-[#E6F4E8]';
+        return 'bg-gradient-to-r from-[#BFD7CF] via-[#D8E8E3] to-white';
+      case 'vira':
+        return 'bg-gradient-to-r from-[#ECD4D4] via-[#F5E2E2] to-white';
+      case 'vely':
+        return 'bg-gradient-to-r from-[#BAD7F2] via-[#D5E6F8] to-white';
       case 'liz':
-        return 'bg-gradient-to-br from-[#FDEAEA] via-[#FFF3F3] to-[#FCE7E7]';
+        return 'bg-gradient-to-r from-[#FCD8D8] via-[#FDE8E8] to-white';
       case 'lia':
-        return 'bg-gradient-to-br from-[#F2ECE9] via-[#FAF6F4] to-[#EFE7E4]';
+        return 'bg-gradient-to-r from-[#EBE8E5] via-[#F4F2F0] to-white';
       default:
-        return 'bg-gradient-to-br from-[#EDE4F8] via-[#F4EFFC] to-[#EAE0F9]';
+        return 'bg-gradient-to-r from-[#ECDEE8] via-[#F4EBF2] to-white';
+    }
+  };
+
+  const getBadgeIconSrc = (id: string) => {
+    switch (id.toLowerCase()) {
+      case 'faril':
+        return withBase('/images/butterfly_purple.svg');
+      case 'mine':
+        return withBase('/decor/sun.svg');
+      case 'ndah':
+        return withBase('/decor/tulip.svg');
+      case 'vira':
+        return withBase('/decor/pita.svg');
+      case 'vely':
+        return withBase('/decor/whale.svg');
+      case 'liz':
+        return withBase('/decor/rose.svg');
+      case 'lia':
+        return withBase('/decor/owl.svg');
+      default:
+        return null;
     }
   };
 
   const renderBadgeIcon = (m: any) => {
-    if (m.stageName.toLowerCase() === 'faril') {
+    const iconSrc = getBadgeIconSrc(m.id || m.stageName);
+    if (iconSrc) {
       return (
         <img
-          src={withBase('/images/butterfly_purple.svg')}
-          alt="Butterfly"
+          src={iconSrc}
+          alt={m.iconName || m.stageName}
           className="w-full h-full object-contain drop-shadow-xs"
         />
       );
@@ -257,33 +279,37 @@ export default function MemberModal() {
           <X className="w-4 h-4" />
         </button>
 
-        <div
-          ref={contentRef}
-          className="relative p-6 sm:p-8 lg:p-12 flex flex-col md:flex-row items-center md:items-start gap-8 lg:gap-12 overflow-hidden"
-        >
-          <div
-            className="absolute top-1/2 right-4 lg:right-10 -translate-y-1/2 text-[100px] sm:text-[140px] md:text-[180px] lg:text-[230px] font-serif font-bold pointer-events-none select-none leading-none opacity-8 tracking-tighter"
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
+          <span
+            className="font-balbes text-[130px] sm:text-[180px] md:text-[230px] lg:text-[280px] tracking-normal leading-none select-none opacity-20 whitespace-nowrap transition-all duration-300"
             style={{ color: member.themeColor }}
           >
-            {member.stageName}
-          </div>
+            {member.id === 'faril' ? 'Faril' : member.stageName.toUpperCase()}
+          </span>
+        </div>
 
+        <div
+          ref={contentRef}
+          className="relative p-6 sm:p-8 lg:p-12 flex flex-col md:flex-row items-center md:items-start gap-8 lg:gap-12 overflow-hidden z-10"
+        >
           <div className="relative shrink-0 w-[240px] sm:w-[280px] lg:w-[310px] aspect-[4/5] mx-auto md:mx-0">
             <div
-              className="absolute -bottom-2.5 -right-2.5 sm:-bottom-3 sm:-right-3 w-full h-full rounded-[28px] border-2 pointer-events-none z-0"
+              className="absolute inset-0 translate-x-3.5 translate-y-3.5 sm:translate-x-4 sm:translate-y-4 rounded-[26px] sm:rounded-[30px] border-2 pointer-events-none z-0"
               style={{ borderColor: member.themeColor }}
             />
 
-            <div className="relative z-10 w-full h-full rounded-[26px] overflow-hidden bg-white border-2 border-white shadow-xl">
-              <img
-                src={member.card}
-                alt={member.stageName}
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
+            <div className="relative z-10 w-full h-full rotate-[2deg] sm:rotate-[2.5deg]">
+              <div className="w-full h-full rounded-[24px] sm:rounded-[28px] overflow-hidden bg-white border-4 border-white shadow-xl">
+                <img
+                  src={member.card}
+                  alt={member.stageName}
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
 
-            <div className="absolute -right-3 sm:-right-4 top-1/3 translate-y-1 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-md border border-white flex items-center justify-center p-1.5">
-              {renderBadgeIcon(member)}
+              <div className="absolute -right-3 sm:-right-3.5 top-[30%] -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-md border border-white flex items-center justify-center p-1.5">
+                {renderBadgeIcon(member)}
+              </div>
             </div>
           </div>
 
@@ -297,7 +323,7 @@ export default function MemberModal() {
 
             <h2
               id="member-modal-title"
-              className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#1F1A12] tracking-tight leading-none mb-3"
+              className="text-5xl sm:text-6xl lg:text-7xl font-balbes font-normal text-[#1F1A12] tracking-tight leading-none mb-3"
             >
               {member.stageName}
             </h2>
@@ -307,36 +333,10 @@ export default function MemberModal() {
                 {member.tagline || 'The Dramatic Artist / Deep Soul'}
               </div>
 
-              {(hasVoiceAudio || member.audio || member.id === 'faril') && (
-                <button
-                  type="button"
-                  onClick={toggleVoicePlayback}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/85 hover:bg-white text-xs font-semibold shadow-xs border border-white/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
-                  style={{ color: member.themeColor }}
-                  title={isVoicePlaying ? 'Jeda suara member' : 'Putar suara member'}
-                >
-                  {isVoicePlaying ? (
-                    <>
-                      <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-                      <span>Voice Intro</span>
-                      <span className="flex gap-0.5 items-end h-3 ml-0.5">
-                        <span className="w-0.5 h-2 bg-current animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-0.5 h-3 bg-current animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-0.5 h-1.5 bg-current animate-bounce" style={{ animationDelay: '300ms' }} />
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <VolumeX className="w-3.5 h-3.5 opacity-70" />
-                      <span>Putar Suara</span>
-                    </>
-                  )}
-                </button>
-              )}
             </div>
 
             <p className="text-xs sm:text-sm text-[#554663] leading-relaxed mb-6 max-w-lg">
-              {member.summary || member.story01}
+              {member.summary}
             </p>
 
             <div className="space-y-4 pt-1">

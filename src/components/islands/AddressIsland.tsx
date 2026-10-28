@@ -79,7 +79,7 @@ export default function AddressIsland() {
     {
       id: 'addr_default',
       label: 'Rumah',
-      recipientName: user?.name || 'Aulia Rahma',
+      recipientName: user?.name || 'Fahmi',
       phone: user?.phone || '081234567890',
       street: 'Jl. Melpomene No. 18',
       city: 'Bandung',

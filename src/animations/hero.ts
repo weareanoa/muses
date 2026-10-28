@@ -30,7 +30,7 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
       frame2.setAttribute('data-active', 'faril');
     }
     if (activeName) activeName.textContent = 'Faril';
-    if (activeSubtitle) activeSubtitle.textContent = 'Muse of Melpomene · The Dramatic Artist';
+    if (activeSubtitle) activeSubtitle.textContent = 'The Dramatic Artist / Deep Soul';
     if (activeBullet) activeBullet.style.backgroundColor = '#8E24AA';
   }
 

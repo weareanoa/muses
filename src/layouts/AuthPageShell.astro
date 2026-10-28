@@ -1,6 +1,7 @@
 ---
 import RootLayout from './RootLayout.astro';
 import AuthIsland from '../components/islands/AuthIsland';
+import { withBase } from '../lib/paths';
 
 interface Props {
   title?: string;
@@ -21,12 +22,56 @@ const {
   currentPath="/auth"
   hideNavbar={true}
 >
-  <div class="relative min-h-screen py-12 px-4 sm:px-6 flex items-center justify-center overflow-hidden bg-[#FCFAF5]">
-    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#F7E08F]/20 rounded-full blur-[140px] pointer-events-none"></div>
+  <main class="relative min-h-screen lg:h-screen w-full flex flex-col lg:flex-row overflow-x-hidden bg-[#FEFAF1]">
+    <div class="relative w-full lg:w-[65%] xl:w-[68%] min-h-[420px] sm:min-h-[500px] lg:min-h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#FCF5E5] via-[#EFDDAD] to-[#D8BE82] select-none shrink-0">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_45%_35%,rgba(247,224,143,0.55),transparent_70%)] pointer-events-none z-5"></div>
 
-    <div class="relative z-10 w-full max-w-md mx-auto">
+      <div class="absolute top-[12%] left-[23%] pointer-events-none z-20">
+        <div class="absolute inset-0 bg-[#F7E08F]/70 blur-[8px] rounded-full scale-150"></div>
+        <svg viewBox="0 0 24 24" class="w-7 h-7 sm:w-9 sm:h-9 text-[#C9971C] fill-current drop-shadow-[0_0_10px_rgba(247,224,143,0.9)] relative z-10">
+          <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
+        </svg>
+      </div>
+
+      <div class="absolute top-[28%] left-[34%] pointer-events-none z-20">
+        <div class="absolute inset-0 bg-[#F7E08F]/70 blur-[7px] rounded-full scale-150"></div>
+        <svg viewBox="0 0 24 24" class="w-6 h-6 sm:w-8 sm:h-8 text-[#C9971C] fill-current drop-shadow-[0_0_9px_rgba(247,224,143,0.9)] relative z-10">
+          <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
+        </svg>
+      </div>
+
+      <div class="absolute top-[62%] left-[15%] pointer-events-none z-20">
+        <div class="absolute inset-0 bg-[#F7E08F]/60 blur-[6px] rounded-full scale-150"></div>
+        <svg viewBox="0 0 24 24" class="w-5 h-5 sm:w-6 sm:h-6 text-[#C9971C] fill-current drop-shadow-[0_0_8px_rgba(247,224,143,0.8)] relative z-10">
+          <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
+        </svg>
+      </div>
+
+      <div class="absolute top-[69%] left-[21%] pointer-events-none z-20">
+        <div class="absolute inset-0 bg-[#F7E08F]/60 blur-[6px] rounded-full scale-150"></div>
+        <svg viewBox="0 0 24 24" class="w-6 h-6 sm:w-7 sm:h-7 text-[#C9971C] fill-current drop-shadow-[0_0_8px_rgba(247,224,143,0.8)] relative z-10">
+          <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
+        </svg>
+      </div>
+
+      <div class="relative z-20 px-4 text-center pointer-events-none select-none">
+        <span class="font-cinzel-decorative text-7xl sm:text-8xl md:text-9xl lg:text-[130px] xl:text-[160px] 2xl:text-[185px] font-bold tracking-[0.05em] lg:tracking-[0.08em] text-[#C9971C]/75 drop-shadow-[0_4px_24px_rgba(201,151,28,0.22)] block leading-none">
+          MUSES
+        </span>
+      </div>
+
+      <img
+        src={withBase('/images/banner/MEMBERS.webp')}
+        alt="MUSES Members"
+        class="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none z-10"
+        style="-webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0.65) 65%, transparent 95%); mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0.65) 65%, transparent 95%);"
+      />
+
+      <div class="absolute inset-0 bg-gradient-to-t from-[#D3B678]/40 via-[#EFDDAD]/20 to-transparent pointer-events-none z-15"></div>
+    </div>
+
+    <div class="relative w-full lg:w-[35%] xl:w-[32%] min-h-full flex flex-col justify-center bg-[#FEFAF1] border-t lg:border-t-0 lg:border-l border-[#AD8C3B]/45 shadow-[-16px_0_40px_rgba(201,151,28,0.06)] overflow-y-auto px-6 py-10 sm:px-8 lg:px-9 z-20">
       <AuthIsland client:load initialMode={initialMode} />
     </div>
-  </div>
+  </main>
 </RootLayout>
-

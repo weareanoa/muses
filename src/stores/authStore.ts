@@ -82,12 +82,12 @@ const DEFAULT_USERS: (User & { password?: string })[] = [
     selectedAddressId: 'addr_default_1',
   },
   {
-    id: 'user_muses_aulia',
-    name: 'Aulia Rahma',
-    email: 'aulia@email.com',
+    id: 'user_muses_fahmi',
+    name: 'Fahmi',
+    email: 'fahmi@email.com',
     password: 'muses2026',
     phone: '081234567890',
-    username: 'aulia',
+    username: 'fahmi',
     authProvider: 'email',
     bias: 'Faril',
     biasEmoji: '☾',
@@ -96,9 +96,9 @@ const DEFAULT_USERS: (User & { password?: string })[] = [
     joinedAt: '22 Oktober 2026',
     addresses: [
       {
-        id: 'addr_aulia_1',
+        id: 'addr_fahmi_1',
         label: 'Rumah',
-        recipientName: 'Aulia Rahma',
+        recipientName: 'Fahmi',
         phone: '081234567890',
         street: 'Jl. Melpomene No. 18',
         district: 'Coblong',
@@ -109,7 +109,7 @@ const DEFAULT_USERS: (User & { password?: string })[] = [
         isDefault: true,
       },
     ],
-    selectedAddressId: 'addr_aulia_1',
+    selectedAddressId: 'addr_fahmi_1',
   },
 ];
 
@@ -294,10 +294,10 @@ export function loginWithGoogle(): { success: boolean; user: User } {
     const randomDigits = Math.floor(100000 + Math.random() * 900000);
     const newUser: User = {
       id: `muses_google_${Date.now()}`,
-      name: 'Bintang Pratama',
+      name: 'Fahmi',
       email: googleEmail,
       phone: '+62 813 9876 5432',
-      username: 'bintang_pratama',
+      username: 'fahmi',
       authProvider: 'google',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
       bias: 'Stella',
@@ -309,7 +309,7 @@ export function loginWithGoogle(): { success: boolean; user: User } {
         {
           id: `addr_google_${Date.now()}`,
           label: 'Rumah',
-          recipientName: 'Bintang Pratama',
+          recipientName: 'Fahmi',
           phone: '+62 813 9876 5432',
           street: 'Jl. Sudirman Kav. 52',
           city: 'Jakarta Selatan',

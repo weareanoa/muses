@@ -17,29 +17,20 @@ export interface Member {
   id: string;
   name: string;
   stageName: string;
-  fullName: string;
-  role: string;
   card: string;
   audio?: string;
   from: string;
   to: string;
   themeColor: string;
-  accentColor?: string;
-  gradientStart: string;
-  gradientEnd: string;
-  bgTint: string;
   icon: string;
   iconName: string;
   colorName: string;
   height: string;
   zodiac: string;
   birthFormatted: string;
-  birthDate?: string;
   museCategory: string;
   tagline: string;
-  heroSubtitle?: string;
   summary: string;
-  story01: string;
   decor: readonly MemberDecor[];
 }
 

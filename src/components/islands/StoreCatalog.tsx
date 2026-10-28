@@ -321,7 +321,7 @@ export default function StoreCatalog() {
 
         <div className="w-full md:w-auto flex justify-end items-center self-center shrink-0 z-10 -mr-2 sm:-mr-3 md:-mr-4">
           <img
-            src={withBase('/images/banner/shop-banner.svg')}
+            src={withBase('/images/banner/shop-banner.webp')}
             alt="MUSES Members"
             className="h-36 sm:h-42 md:h-48 lg:h-52 w-auto object-contain object-right select-none pointer-events-none drop-shadow-md"
           />
