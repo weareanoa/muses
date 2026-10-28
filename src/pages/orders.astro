@@ -1,0 +1,35 @@
+---
+import { withBase } from '../lib/paths';
+import RootLayout from '../layouts/RootLayout.astro';
+import PageBackdrop from '../components/ui/PageBackdrop.astro';
+import CheckoutIsland from '../components/islands/HistoryIsland';
+---
+
+<RootLayout
+  title="History Pesanan | MUSES Official"
+  description="Riwayat transaksi pesanan, tiket cheki event, dan pengiriman merchandise resmi MUSES."
+  solidHeader={true}
+>
+  <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-6 max-w-7xl mx-auto overflow-hidden bg-[#FCFAF5]">
+    <PageBackdrop variant="dots" />
+
+    <div class="relative z-10 mb-4">
+      <div class="flex items-center justify-between text-xs text-[#6E6453]">
+        <a href={withBase("/store")} class="inline-flex items-center gap-1.5 hover:text-[#1F1A12] transition-colors group">
+          <span class="group-hover:-translate-x-1 transition-transform">←</span>
+          <span>Kembali ke Store</span>
+        </a>
+        <div class="flex items-center gap-3">
+          <a href={withBase("/checkout")} class="hover:text-[#9A7420] transition-colors font-medium">Checkout</a>
+          <span class="text-[#A3977F]">•</span>
+          <a href={withBase("/store")} class="hover:text-[#9A7420] transition-colors">Official Merch</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-10">
+      <CheckoutIsland client:load />
+    </div>
+  </div>
+</RootLayout>
+

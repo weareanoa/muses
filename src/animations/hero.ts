@@ -87,6 +87,8 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
         pin: true,
         scrub: 0.8,
         anticipatePin: 1,
+        fastScrollEnd: true,
+        preventOverlaps: true,
         onUpdate: (self) => {
           if (self.progress > 0.52) {
             frame2.style.pointerEvents = 'auto';

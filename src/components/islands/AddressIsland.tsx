@@ -70,22 +70,26 @@ export default function AddressIsland() {
   const [platformFee] = useState(0);
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isPickerModalOpen, setIsPickerModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-  const [modalLabel, setModalLabel] = useState('Rumah');
-  const [modalRecipient, setModalRecipient] = useState(user?.name || 'Aulia Rahma');
-  const [modalPhone, setModalPhone] = useState(user?.phone?.replace(/^\+62\s*/, '') || '812 3456 7890');
-  const [modalStreet, setModalStreet] = useState('Jl. Melpomene No. 18');
-  const [modalCity, setModalCity] = useState('Bandung');
-  const [modalProvince, setModalProvince] = useState('Jawa Barat');
-  const [modalPostalCode, setModalPostalCode] = useState('40123');
-  const [modalIsDefault, setModalIsDefault] = useState(true);
+  const [addressForm, setAddressForm] = useState({
+    recipientName: '',
+    phone: '',
+    province: '',
+    city: '',
+    district: '',
+    postalCode: '',
+    street: '',
+    detail: '',
+    label: 'Rumah',
+  });
 
   const addresses = user?.addresses || [
     {
       id: 'addr_default',
       label: 'Rumah',
       recipientName: user?.name || 'Aulia Rahma',
-      phone: user?.phone || '+62 812 3456 7890',
+      phone: user?.phone || '081234567890',
       street: 'Jl. Melpomene No. 18',
       city: 'Bandung',
       province: 'Jawa Barat',
@@ -130,56 +134,61 @@ export default function AddressIsland() {
 
   const openAddModal = () => {
     setEditingAddressId(null);
-    setModalLabel('Rumah');
-    setModalRecipient(user?.name || '');
-    setModalPhone(user?.phone?.replace(/^\+62\s*/, '') || '');
-    setModalStreet('');
-    setModalCity('Bandung');
-    setModalProvince('Jawa Barat');
-    setModalPostalCode('');
-    setModalIsDefault(addresses.length === 0);
+    setAddressForm({
+      recipientName: user?.name || '',
+      phone: user?.phone || '',
+      province: '',
+      city: '',
+      district: '',
+      postalCode: '',
+      street: '',
+      detail: '',
+      label: 'Rumah',
+    });
     setIsAddressModalOpen(true);
   };
 
   const openEditModal = (addr: UserAddress) => {
     setEditingAddressId(addr.id);
-    setModalLabel(addr.label);
-    setModalRecipient(addr.recipientName);
-    setModalPhone(addr.phone.replace(/^\+62\s*/, ''));
-    setModalStreet(addr.street);
-    setModalCity(addr.city);
-    setModalProvince(addr.province);
-    setModalPostalCode(addr.postalCode);
-    setModalIsDefault(addr.isDefault);
+    setAddressForm({
+      recipientName: addr.recipientName || '',
+      phone: addr.phone || '',
+      province: addr.province || '',
+      city: addr.city || '',
+      district: addr.district || '',
+      postalCode: addr.postalCode || '',
+      street: addr.street || '',
+      detail: addr.detail || '',
+      label: addr.label || 'Rumah',
+    });
     setIsAddressModalOpen(true);
   };
 
   const handleSaveAddress = (e: React.FormEvent) => {
     e.preventDefault();
-    const formattedPhone = modalPhone.startsWith('+62') ? modalPhone : `+62 ${modalPhone.trim()}`;
+    if (!addressForm.recipientName.trim() || !addressForm.phone.trim()) return;
+
+    const addressData = {
+      recipientName: addressForm.recipientName.trim(),
+      phone: addressForm.phone.trim(),
+      province: addressForm.province.trim(),
+      city: addressForm.city.trim(),
+      district: addressForm.district.trim(),
+      postalCode: addressForm.postalCode.trim(),
+      street: addressForm.street.trim(),
+      detail: addressForm.detail.trim(),
+      label: addressForm.label,
+      isDefault: !user?.addresses || user.addresses.length === 0,
+    };
 
     if (editingAddressId) {
-      updateUserAddress(editingAddressId, {
-        label: modalLabel,
-        recipientName: modalRecipient,
-        phone: formattedPhone,
-        street: modalStreet,
-        city: modalCity,
-        province: modalProvince,
-        postalCode: modalPostalCode,
-        isDefault: modalIsDefault,
-      });
+      updateUserAddress(editingAddressId, addressData);
+      setSelectedAddress(editingAddressId);
     } else {
-      addUserAddress({
-        label: modalLabel,
-        recipientName: modalRecipient,
-        phone: formattedPhone,
-        street: modalStreet,
-        city: modalCity,
-        province: modalProvince,
-        postalCode: modalPostalCode,
-        isDefault: modalIsDefault,
-      });
+      const created = addUserAddress(addressData);
+      if (created && created.id) {
+        setSelectedAddress(created.id);
+      }
     }
     setIsAddressModalOpen(false);
   };
@@ -289,7 +298,10 @@ export default function AddressIsland() {
                   </span>
                 </div>
                 <p className="text-[#6E6453]">
-                  {selectedAddress.street}, {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
+                  {selectedAddress.street}
+                  {selectedAddress.detail ? `, ${selectedAddress.detail}` : ''}
+                  {selectedAddress.district ? `, Kec. ${selectedAddress.district}` : ''}
+                  , {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
                 </p>
                 <div className="pt-2 flex items-center gap-4">
                   <button
@@ -299,13 +311,15 @@ export default function AddressIsland() {
                   >
                     Ubah Alamat
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddressModalOpen(true)}
-                    className="text-[#6E6453] hover:text-[#1F1A12] font-medium text-[11px] cursor-pointer"
-                  >
-                    Pilih Alamat Lain ({addresses.length})
-                  </button>
+                  {addresses.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsPickerModalOpen(true)}
+                      className="text-[#6E6453] hover:text-[#1F1A12] font-medium text-[11px] cursor-pointer"
+                    >
+                      Pilih Alamat Lain ({addresses.length})
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
@@ -398,17 +412,6 @@ export default function AddressIsland() {
                 </div>
               </div>
 
-              <div className="bg-[#FCEBAE] border border-[#DFC377] rounded-full px-2.5 py-1 flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] opacity-50">
-                  -
-                </span>
-                <span className="text-xs font-bold text-[#1F1A12] min-w-3 text-center">
-                  1
-                </span>
-                <span className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] opacity-50">
-                  +
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -468,58 +471,234 @@ export default function AddressIsland() {
       </div>
 
       {isAddressModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-[#FCFAF5] border border-[#DFC478]/50 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10 mb-4">
-              <h3 className="text-base font-bold text-[#1F1A12]">
-                {editingAddressId ? 'Ubah Alamat Pengiriman' : 'Kelola Alamat Pengiriman'}
-              </h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-[#1F1A12]">
+                {editingAddressId ? 'Ubah Alamat' : 'Tambah Alamat'}
+              </h2>
               <button
                 type="button"
                 onClick={() => setIsAddressModalOpen(false)}
-                className="text-[#6E6453] hover:text-[#1F1A12] p-1 rounded-lg cursor-pointer"
+                className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {!editingAddressId && addresses.length > 0 && (
-              <div className="mb-4 space-y-2 max-h-48 overflow-y-auto pr-1">
-                <span className="text-[11px] font-bold text-[#6E6453] uppercase tracking-wider block">
-                  Pilih Alamat Tersimpan
-                </span>
-                {addresses.map((addr) => (
+            <form onSubmit={handleSaveAddress} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Nama"
+                    value={addressForm.recipientName}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, recipientName: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="No. Telepon"
+                    value={addressForm.phone}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, phone: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Provinsi"
+                    value={addressForm.province}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, province: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Kota/Kabupaten"
+                    value={addressForm.city}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, city: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Kecamatan"
+                    value={addressForm.district}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, district: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Kode Pos"
+                    value={addressForm.postalCode}
+                    onChange={(e) =>
+                      setAddressForm((p) => ({ ...p, postalCode: e.target.value }))
+                    }
+                    required
+                    className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <textarea
+                  rows={2}
+                  placeholder="Nama Jalan, Gedung, No. Rumah"
+                  value={addressForm.street}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({ ...p, street: e.target.value }))
+                  }
+                  required
+                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C] resize-none"
+                />
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="Detail lainnya (cont: Blok / Unit / Patokan)"
+                  value={addressForm.detail}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({ ...p, detail: e.target.value }))
+                  }
+                  className="w-full rounded-xl border border-[#E5DFD5] px-4 py-2.5 text-xs sm:text-sm text-[#1F1A12] placeholder-[#8A7F6C] focus:outline-none focus:ring-1 focus:ring-[#C9971C]"
+                />
+              </div>
+
+              <div>
+                <div className="text-xs text-[#7A6E58] mb-2 font-medium">
+                  Tandai sebagai:
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Rumah' }))}
+                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                      addressForm.label === 'Rumah'
+                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
+                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
+                    }`}
+                  >
+                    Rumah
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAddressForm((p) => ({ ...p, label: 'Kantor' }))}
+                    className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                      addressForm.label === 'Kantor'
+                        ? 'border-[#C9971C] text-[#C9971C] bg-[#FFFBF0]'
+                        : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
+                    }`}
+                  >
+                    Kantor
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <button
+                  type="submit"
+                  className="px-8 py-2.5 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-2xs"
+                >
+                  Simpan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isPickerModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10 mb-4">
+              <h3 className="text-base font-bold text-[#1F1A12]">
+                Pilih Alamat Pengiriman
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsPickerModalOpen(false)}
+                className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 mb-4">
+              {addresses.map((addr) => {
+                const isSelected = selectedAddress?.id === addr.id;
+                return (
                   <div
                     key={addr.id}
                     onClick={() => {
                       setSelectedAddress(addr.id);
-                      setIsAddressModalOpen(false);
+                      setIsPickerModalOpen(false);
                     }}
-                    className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-start justify-between ${
-                      selectedAddress?.id === addr.id
-                        ? 'border-[#C9971C] bg-[#FDF9ED]'
-                        : 'border-[#1F1A12]/10 bg-white hover:bg-[#FAF6EC]'
+                    className={`p-3.5 rounded-2xl border text-xs cursor-pointer transition-all flex items-start justify-between ${
+                      isSelected
+                        ? 'border-[#C9971C] bg-[#FFFDF7] shadow-xs'
+                        : 'border-[#E5DFD5] bg-white hover:bg-[#FAF6EC]'
                     }`}
                   >
-                    <div>
-                      <div className="font-bold text-[#1F1A12] flex items-center gap-1.5">
+                    <div className="space-y-1">
+                      <div className="font-bold text-[#1F1A12] flex items-center gap-2">
                         <span>{addr.recipientName}</span>
-                        <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] px-2 py-0.5 rounded-full">
+                        <span className="text-[#8A7F6C] font-normal">({addr.phone})</span>
+                        <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
                           {addr.label}
                         </span>
+                        {addr.isDefault && (
+                          <span className="text-[9px] text-[#7A6E58] bg-[#F3EEE3] px-1.5 py-0.5 rounded-sm">
+                            Utama
+                          </span>
+                        )}
                       </div>
-                      <div className="text-[11px] text-[#6E6453] mt-0.5">
-                        {addr.street}, {addr.city}
-                      </div>
+                      <p className="text-[11px] text-[#6E6453] leading-relaxed">
+                        {addr.street}
+                        {addr.detail ? `, ${addr.detail}` : ''}
+                        {addr.district ? `, Kec. ${addr.district}` : ''}
+                        , {addr.city}, {addr.province} {addr.postalCode}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1.5">
+
+                    <div className="flex items-center gap-1.5 ml-2">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
+                          setIsPickerModalOpen(false);
                           openEditModal(addr);
                         }}
-                        className="p-1 hover:text-[#9A7420]"
+                        className="p-1.5 hover:text-[#9A7420] text-[#7A6E58] transition-colors cursor-pointer"
+                        title="Edit Alamat"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -530,123 +709,37 @@ export default function AddressIsland() {
                             e.stopPropagation();
                             deleteUserAddress(addr.id);
                           }}
-                          className="p-1 hover:text-red-500"
+                          className="p-1.5 hover:text-red-500 text-[#7A6E58] transition-colors cursor-pointer"
+                          title="Hapus Alamat"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
 
-            <form onSubmit={handleSaveAddress} className="space-y-3 text-xs">
-              <span className="text-[11px] font-bold text-[#6E6453] uppercase tracking-wider block">
-                {editingAddressId ? 'Edit Data Alamat' : 'Atau Tambah Baru'}
-              </span>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] text-[#6E6453] mb-1">Label Alamat</label>
-                  <input
-                    type="text"
-                    value={modalLabel}
-                    onChange={(e) => setModalLabel(e.target.value)}
-                    placeholder="Rumah / Kantor"
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-[#6E6453] mb-1">Nama Penerima</label>
-                  <input
-                    type="text"
-                    value={modalRecipient}
-                    onChange={(e) => setModalRecipient(e.target.value)}
-                    placeholder="Nama Lengkap"
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-[#6E6453] mb-1">Nomor WhatsApp / HP</label>
-                <div className="flex items-center">
-                  <span className="bg-[#FAF2DA] border border-r-0 border-[#1F1A12]/15 rounded-l-xl px-2.5 py-2 text-xs font-mono text-[#8C6A1C]">
-                    +62
-                  </span>
-                  <input
-                    type="tel"
-                    value={modalPhone}
-                    onChange={(e) => setModalPhone(e.target.value)}
-                    placeholder="812 3456 7890"
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-r-xl px-3 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-[#6E6453] mb-1">Alamat Lengkap</label>
-                <textarea
-                  value={modalStreet}
-                  onChange={(e) => setModalStreet(e.target.value)}
-                  placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan"
-                  className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl p-3 text-[#1F1A12] focus:outline-none resize-none h-18"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-[11px] text-[#6E6453] mb-1">Kota</label>
-                  <input
-                    type="text"
-                    value={modalCity}
-                    onChange={(e) => setModalCity(e.target.value)}
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-[#6E6453] mb-1">Provinsi</label>
-                  <input
-                    type="text"
-                    value={modalProvince}
-                    onChange={(e) => setModalProvince(e.target.value)}
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-[#6E6453] mb-1">Kode Pos</label>
-                  <input
-                    type="text"
-                    value={modalPostalCode}
-                    onChange={(e) => setModalPostalCode(e.target.value)}
-                    className="w-full bg-white border border-[#1F1A12]/15 focus:border-[#C9971C] rounded-xl px-2.5 py-2 text-[#1F1A12] focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1F1A12]/10">
-                <button
-                  type="button"
-                  onClick={() => setIsAddressModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-[#6E6453] hover:text-[#1F1A12] cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#C9971C] hover:bg-[#B08A36] text-[#FCFAF5] font-bold text-xs shadow-sm transition-all cursor-pointer"
-                >
-                  Simpan Alamat
-                </button>
-              </div>
-            </form>
+            <div className="pt-2 flex items-center justify-between border-t border-[#1F1A12]/10">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsPickerModalOpen(false);
+                  openAddModal();
+                }}
+                className="px-4 py-2 rounded-xl border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
+              >
+                + Tambah Alamat Baru
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPickerModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-[#E5DFD5]/60 hover:bg-[#E5DFD5] text-[#1F1A12] text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}

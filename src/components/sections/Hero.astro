@@ -8,39 +8,43 @@ const members = [...(withBaseDeep(membersRaw) as readonly Member[])].sort(
 );
 
 const ambientPalette = MEMBER_AMBIENT_PALETTE;
+
+const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'number' && d.zIndex < 10));
 ---
 
-<div id="hero-scroll-container" class="relative w-full bg-[#FCFAF5] overflow-visible">
+<div id="hero-scroll-container" data-section="home" class="relative w-full bg-[#FCFAF5] overflow-visible">
+  <div id="home" class="absolute -top-20 left-0 w-full h-1 pointer-events-none" aria-hidden="true"></div>
+  <div id="member" class="absolute top-[680px] left-0 w-full h-1 pointer-events-none" aria-hidden="true"></div>
   <section
     id="hero-pinned-viewport"
     class="relative w-full h-screen min-h-[620px] max-h-[1080px] pt-20 flex items-center justify-center overflow-hidden select-none"
   >
     <div class="absolute inset-0 bg-gradient-to-b from-[#FCFAF5] via-[#FBF5E8] to-[#FCFAF5] pointer-events-none z-0"></div>
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0 transform-gpu" style="contain: paint;"></div>
     <div class="absolute bottom-0 inset-x-0 h-[48%] bg-gradient-to-t from-[#D4A017]/65 via-[#D4A017]/25 to-transparent pointer-events-none z-0"></div>
 
     <div
       id="hero-logo-anchor"
-      class="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-center pointer-events-none"
+      class="absolute top-20 sm:top-24 inset-x-0 w-full z-30 flex flex-col items-center justify-center pointer-events-none will-change-transform transform-gpu"
     >
       <img
         id="hero-muses-logo"
         src={withBase("/images/muses_logo_3d_clean.svg")}
         alt="MUSES"
-        class="w-[280px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
+        class="w-[280px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] mx-auto block object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
       />
     </div>
 
     <div
       id="hero-frame-1"
-      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform"
+      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform transform-gpu"
     >
       <div class="relative w-full max-w-[1550px] 2xl:max-w-[1750px] h-full max-h-[85vh] sm:max-h-[92vh] flex items-end justify-center">
         <img
           id="frame1-group-img"
           src={withBase("/images/muses_group_frame1.svg")}
           alt="MUSES Idol Group"
-          class="w-full h-full max-h-[80vh] sm:max-h-[88vh] 2xl:max-h-[92vh] object-contain object-center drop-shadow-[0_20px_50px_rgba(201,151,28,0.3)] will-change-transform"
+          class="w-full h-full max-h-[80vh] sm:max-h-[88vh] 2xl:max-h-[92vh] object-contain object-center drop-shadow-[0_20px_50px_rgba(201,151,28,0.3)] will-change-transform transform-gpu"
         />
 
         <div id="frame1-sparkles" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
@@ -55,11 +59,12 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
     <div
       id="hero-frame-2"
       data-active="faril"
-      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-2 sm:pb-4 z-10 opacity-0 pointer-events-none will-change-transform"
+      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-2 sm:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
     >
       <div
         id="frame2-ambient-glow"
         class="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+        style="contain: paint;"
       >
         <div class="absolute bottom-0 inset-x-0 h-[55%] bg-gradient-to-t from-[#FCFAF5] via-[#FCFAF5]/85 to-transparent pointer-events-none"></div>
 
@@ -101,7 +106,7 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
                     }}
                   ></div>
                   <div
-                    class="absolute left-1/2 -translate-x-1/2 bottom-[-140px] sm:bottom-[-180px] w-[1100px] sm:w-[1560px] md:w-[1920px] h-[520px] sm:h-[660px] pointer-events-none opacity-95"
+                    class="absolute left-1/2 -translate-x-1/2 bottom-[-140px] sm:bottom-[-180px] w-[1100px] sm:w-[1560px] md:w-[1920px] h-[520px] sm:h-[660px] pointer-events-none opacity-95 transform-gpu"
                     style={{
                       background: `radial-gradient(ellipse 58% 54% at 50% 62%, ${palette.primary}D9 0%, ${palette.mid}8C 36%, ${palette.soft}3D 64%, transparent 86%)`
                     }}
@@ -113,30 +118,34 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
         })}
       </div>
 
-      <div id="frame2-decor-layer" class="absolute inset-0 pointer-events-none overflow-hidden">
-        {members.map((m) => (
-          <div data-decor={m.id} class="decor-group absolute inset-x-0 -top-[24px] sm:-top-[28px] md:-top-[32px] bottom-[24px] sm:bottom-[28px] md:bottom-[32px] pointer-events-none">
-            {m.decor.map((d, i) => (
-              <img
-                src={withBase(d.src)}
-                alt=""
-                loading={m.id === 'faril' ? 'eager' : 'lazy'}
-                decoding="async"
-                class="decor-item absolute opacity-0 transition-[opacity,transform] duration-500 ease-out pointer-events-none"
-                style={{
-                  left: d.x,
-                  ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
-                  width: `${d.size}px`,
-                  zIndex: d.behind ? 5 : (d.zIndex ?? 20),
-                  '--d-rot': `${d.rotate ?? 0}deg`,
-                  '--d-flip-x': d.flipX ? -1 : 1,
-                  '--d-flip-y': d.flipY ? -1 : 1,
-                  transitionDelay: `${i * 50}ms`
-                }}
-              />
-            ))}
-          </div>
-        ))}
+      <div id="frame2-decor-layer-behind" class="decor-layer absolute inset-0 pointer-events-none overflow-hidden z-[5]">
+        {members.map((m) => {
+          const behindDecors = m.decor.filter(isBehindDecor);
+          if (!behindDecors.length) return null;
+          return (
+            <div data-decor={m.id} class="decor-group absolute inset-x-0 -top-[24px] sm:-top-[28px] md:-top-[32px] bottom-[24px] sm:bottom-[28px] md:bottom-[32px] pointer-events-none">
+              {behindDecors.map((d, i) => (
+                <img
+                  src={withBase(d.src)}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  class="decor-item absolute pointer-events-none transform-gpu"
+                  style={{
+                    left: d.x,
+                    ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
+                    width: `${d.size}px`,
+                    zIndex: d.zIndex ?? 5,
+                    '--d-rot': `${d.rotate ?? 0}deg`,
+                    '--d-flip-x': d.flipX ? -1 : 1,
+                    '--d-flip-y': d.flipY ? -1 : 1,
+                    '--d-delay': `${i * 50}ms`
+                  }}
+                />
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       <div class="relative w-full max-w-[1440px] flex flex-col items-center justify-center z-10 mb-7 sm:mb-9 md:mb-10">
@@ -155,7 +164,7 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
             return (
               <button
                 type="button"
-                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform text-left focus:outline-none w-[94px] sm:w-[116px] md:w-[132px] lg:w-[148px] xl:w-[162px] 2xl:w-[174px] h-[132px] sm:h-[164px] md:h-[188px] lg:h-[210px] xl:h-[228px] 2xl:h-[246px] rounded-2xl sm:rounded-[20px] overflow-hidden border-[2.5px] sm:border-[3px] border-white shadow-[0_12px_28px_rgba(0,0,0,0.16)]"
+                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform text-left focus:outline-none w-[94px] sm:w-[116px] md:w-[132px] lg:w-[148px] xl:w-[162px] 2xl:w-[174px] h-[132px] sm:h-[164px] md:h-[188px] lg:h-[210px] xl:h-[228px] 2xl:h-[246px] rounded-2xl sm:rounded-[20px] overflow-hidden border-[2.5px] sm:border-[3px] border-white shadow-[0_12px_28px_rgba(0,0,0,0.16)] transform-gpu"
                 style={{
                   '--offset': offset,
                   '--theme-color': themeColor,
@@ -199,11 +208,52 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
           </p>
         </div>
       </div>
+
+      <div id="frame2-decor-layer-front" class="decor-layer absolute inset-0 pointer-events-none overflow-hidden z-20">
+        {members.map((m) => {
+          const frontDecors = m.decor.filter((d) => !isBehindDecor(d));
+          if (!frontDecors.length) return null;
+          return (
+            <div data-decor={m.id} class="decor-group absolute inset-x-0 -top-[24px] sm:-top-[28px] md:-top-[32px] bottom-[24px] sm:bottom-[28px] md:bottom-[32px] pointer-events-none">
+              {frontDecors.map((d, i) => (
+                <img
+                  src={withBase(d.src)}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  class="decor-item absolute pointer-events-none transform-gpu"
+                  style={{
+                    left: d.x,
+                    ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
+                    width: `${d.size}px`,
+                    zIndex: d.zIndex ?? 20,
+                    '--d-rot': `${d.rotate ?? 0}deg`,
+                    '--d-flip-x': d.flipX ? -1 : 1,
+                    '--d-flip-y': d.flipY ? -1 : 1,
+                    '--d-delay': `${i * 50}ms`
+                  }}
+                />
+              ))}
+            </div>
+          );
+        })}
+      </div>
     </div>
   </section>
 </div>
 
 <style>
+  #hero-logo-anchor {
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .decor-layer,
   #frame2-decor-layer {
     --decor-scale: 1;
   }
@@ -236,7 +286,12 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
   }
 
   .decor-item {
-    transform: translateY(20px) scale(0.5) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+    opacity: 0;
+    transform: translateY(20px) scale(0.6) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+    transition:
+      opacity 0.25s ease-out 0ms,
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    will-change: transform, opacity;
   }
 
   #hero-frame-2:not([data-active]) [data-bg="faril"],
@@ -266,11 +321,7 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
   #hero-frame-2:not([data-active]) [data-decor="farli"] .decor-item,
   #hero-frame-2[data-active="default"] [data-decor="farli"] .decor-item,
   #hero-frame-2[data-active="farli"] [data-decor="farli"] .decor-item,
-  #hero-frame-2[data-active="faril"] [data-decor="farli"] .decor-item {
-    opacity: 1;
-    transform: translateY(0) scale(var(--decor-scale, 1)) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
-  }
-
+  #hero-frame-2[data-active="faril"] [data-decor="farli"] .decor-item,
   #hero-frame-2[data-active="vira"] [data-decor="vira"] .decor-item,
   #hero-frame-2[data-active="vely"] [data-decor="vely"] .decor-item,
   #hero-frame-2[data-active="mine"] [data-decor="mine"] .decor-item,
@@ -279,6 +330,9 @@ const ambientPalette = MEMBER_AMBIENT_PALETTE;
   #hero-frame-2[data-active="lia"] [data-decor="lia"] .decor-item {
     opacity: 1;
     transform: translateY(0) scale(var(--decor-scale, 1)) scaleX(var(--d-flip-x, 1)) scaleY(var(--d-flip-y, 1)) rotate(var(--d-rot, 0deg));
+    transition:
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1) var(--d-delay, 0ms),
+      transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) var(--d-delay, 0ms);
   }
 </style>
 

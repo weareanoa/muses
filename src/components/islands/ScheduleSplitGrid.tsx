@@ -129,21 +129,21 @@ export default function ScheduleSplitGrid() {
       </div>
 
       <div className="text-center mb-10 sm:mb-14 relative z-10">
-        <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-[0.25em] text-[#B8871B] uppercase mb-1.5">
-          <span className="text-[#C9971C]">✦</span>
-          <span>MUSES LIVE & EVENTS</span>
-          <span className="text-[#C9971C]">✦</span>
+        <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-lg mx-auto mb-2 sm:mb-2.5">
+          <div className="h-[1px] flex-1 max-w-[60px] sm:max-w-[100px] bg-gradient-to-r from-transparent to-[#D4A017]/80" />
+          <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+          <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
+            MUSES LIVE & EVENTS
+          </span>
+          <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+          <div className="h-[1px] flex-1 max-w-[60px] sm:max-w-[100px] bg-gradient-to-l from-transparent to-[#D4A017]/80" />
         </div>
+
         <div className="relative inline-block">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#1F1A12] tracking-tight font-normal">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-16 bg-[radial-gradient(ellipse_at_center,_rgba(247,224,143,0.35)_0%,_transparent_70%)] pointer-events-none blur-lg" />
+          <h2 className="relative z-10 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-balbes text-[#18181B] tracking-normal font-normal">
             Upcoming Schedule
           </h2>
-          <div className="absolute -top-3.5 -right-6">
-            <GoldenSparkle className="w-5 h-5 sm:w-6 sm:h-6" />
-          </div>
-          <div className="absolute -bottom-2 -left-6">
-            <GoldenSparkle className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
         </div>
       </div>
 

@@ -1,10 +1,9 @@
-import { withBaseDeep } from '../../lib/paths';
-import React, { useState, useEffect, useRef } from 'react';
+import { withBase, withBaseDeep } from '../../lib/paths';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import {
   currentTrack,
   isPlaying,
-  audioCurrentTime,
   playTrack,
   toggleAudio,
   type PlayingTrack,
@@ -12,29 +11,23 @@ import {
 import discographyDataRaw from '../../data/discography.json';
 import VinylRecord from '../ui/VinylRecord';
 import StreamingLinks from '../ui/StreamingLinks';
-import {
-  Play,
-  Pause,
-  Disc3,
-  Sparkles,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  Tv
-} from 'lucide-react';
+import { Play, Pause, X } from 'lucide-react';
+import { useScrollLock } from '../../hooks/useScrollLock';
+
 const discographyData = withBaseDeep(discographyDataRaw);
 
 export default function VinylPlayer() {
   const activeTrack = useStore(currentTrack);
   const playing = useStore(isPlaying);
-  const currentTime = useStore(audioCurrentTime);
 
   const [selectedAlbumIndex, setSelectedAlbumIndex] = useState(0);
-  const albumTabsRef = useRef<HTMLDivElement>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const currentAlbum = discographyData[selectedAlbumIndex] || discographyData[0];
   const titleTrack = currentAlbum.titleTrack;
   const isCurrentPlaying = playing && activeTrack?.albumId === currentAlbum.id;
+
+  useScrollLock(isVideoModalOpen);
 
   useEffect(() => {
     if (!activeTrack && titleTrack) {
@@ -70,18 +63,8 @@ export default function VinylPlayer() {
     }
   };
 
-  const handleAlbumSelect = (idx: number, e?: React.MouseEvent) => {
+  const handleAlbumSelect = (idx: number) => {
     setSelectedAlbumIndex(idx);
-    if (albumTabsRef.current && e?.currentTarget) {
-      const container = albumTabsRef.current;
-      const target = e.currentTarget as HTMLElement;
-      const scrollLeft = target.offsetLeft - container.offsetWidth / 2 + target.offsetWidth / 2;
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth',
-      });
-    }
-
     const newAlbum = discographyData[idx];
     if (newAlbum) {
       const trackObj: PlayingTrack = {
@@ -103,170 +86,161 @@ export default function VinylPlayer() {
     }
   };
 
-  const scrollAlbums = (direction: 'left' | 'right') => {
-    if (albumTabsRef.current) {
-      albumTabsRef.current.scrollBy({
-        left: direction === 'left' ? -220 : 220,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   return (
-    <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden border border-[#C9971C]/25 bg-white/80 shadow-[0_20px_60px_rgba(201,151,28,0.14)] backdrop-blur-2xl transition-all duration-700">
-      <div
-        className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-15 filter blur-3xl scale-110 transition-all duration-1000 ease-out"
-        style={{ backgroundImage: `url(${currentAlbum.coverImage})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FCFAF5]/80 via-white/85 to-[#FCFAF5]/95 pointer-events-none" />
+    <div className="relative w-full overflow-hidden select-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" style={{ contain: 'paint' }}>
+        {discographyData.map((album, idx) => {
+          const isActive = selectedAlbumIndex === idx;
+          return (
+            <div
+              key={album.id}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                isActive ? 'opacity-40 sm:opacity-50' : 'opacity-0'
+              }`}
+            >
+              <img
+                src={album.coverImage}
+                alt=""
+                aria-hidden="true"
+                className="w-full h-full object-cover filter blur-[32px] sm:blur-[48px] scale-110 transform-gpu will-change-transform"
+              />
+            </div>
+          );
+        })}
+      </div>
 
-      <div className="relative z-10 p-5 sm:p-8 lg:p-12 space-y-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-center">
-          <div className="lg:col-span-3 flex flex-col items-center justify-center relative py-6">
+      <div className="relative z-10 w-full max-w-7xl mx-auto py-10 sm:py-16 px-4 sm:px-8">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-balbes text-[#18181B] tracking-tight font-normal">
+            Discography
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 sm:mb-20">
+          <div className="lg:col-span-7 flex flex-col items-center justify-center relative py-4 sm:py-6">
             <VinylRecord
               coverImage={currentAlbum.coverImage}
               albumTitle={currentAlbum.albumTitle}
               themeColor={currentAlbum.themeColor}
               isPlaying={isCurrentPlaying}
               onTogglePlay={handleTogglePlay}
-              size="md"
             />
-
-            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
-              <button
-                type="button"
-                onClick={handleTogglePlay}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full pill-active text-[#1F1A12] text-xs font-bold tracking-wider uppercase transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
-              >
-                {isCurrentPlaying ? (
-                  <>
-                    <Pause className="w-4 h-4 fill-current" />
-                    <span>Jeda Cuplikan (Pause)</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                    <span>Putar Vinyl ({titleTrack.title})</span>
-                  </>
-                )}
-              </button>
-            </div>
           </div>
 
-          <div className="lg:col-span-2 flex flex-col space-y-4">
+          <div className="lg:col-span-5 flex flex-col justify-center space-y-4 max-w-lg mx-auto lg:mx-0 w-full">
             <div>
-              <div className="flex items-center gap-2.5 mb-2">
-                <span
-                  className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-widest font-bold border"
-                  style={{
-                    borderColor: `${currentAlbum.themeColor}60`,
-                    color: currentAlbum.themeColor || '#C9971C',
-                    backgroundColor: `${currentAlbum.themeColor}15`,
-                  }}
-                >
-                  {currentAlbum.type}
-                </span>
-                <span className="text-[11px] font-mono text-[#6E6453]">
-                  Rilis {currentAlbum.releaseDate}
-                </span>
-              </div>
+              <span className="inline-block px-4 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] shadow-xs">
+                {currentAlbum.singleTag || currentAlbum.type}
+              </span>
 
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-black text-[#1F1A12] uppercase tracking-tight">
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-balbes text-[#18181B] tracking-tight mt-3 font-normal">
                 {currentAlbum.albumTitle}
-              </h2>
+              </h3>
 
-              <p className="text-xs text-[#4B4335] leading-relaxed mt-2">
+              <p className="text-xs sm:text-sm text-[#555] leading-relaxed mt-3">
                 {currentAlbum.description}
               </p>
             </div>
 
-            <div className="w-full">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/5 border border-[#C9971C]/25 shadow-md">
-                <iframe
-                  src={currentAlbum.iframeUrl}
-                  title={`${currentAlbum.albumTitle} Music Video`}
-                  className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  loading="lazy"
+            <div className="pt-2">
+              <div
+                onClick={() => setIsVideoModalOpen(true)}
+                className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border-[1.5px] border-[#D4A017]/70 shadow-lg group cursor-pointer bg-black/5"
+              >
+                <img
+                  src={withBase(currentAlbum.mvThumbnail || currentAlbum.coverImage)}
+                  alt={`${currentAlbum.albumTitle} Music Video`}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                 />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20 group-hover:from-black/70 transition-colors" />
+
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#E5B548]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-1" />
+                </div>
+
+                <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                  <div>
+                    <span className="px-2 py-0.5 rounded text-[9px] font-mono tracking-widest uppercase bg-black/60 backdrop-blur-xs text-white block w-fit mb-1 border border-white/10">
+                      MUSIC VIDEO
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-balbes text-white tracking-wide drop-shadow-md">
+                      {currentAlbum.albumTitle}
+                    </h4>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <StreamingLinks
-              spotify={titleTrack.links.spotify}
-              youtube={titleTrack.links.youtube}
-              appleMusic={titleTrack.links.appleMusic}
-            />
+            <div className="pt-1">
+              <StreamingLinks
+                spotify={titleTrack.links.spotify}
+                youtube={titleTrack.links.youtube}
+                appleMusic={titleTrack.links.appleMusic}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-[#C9971C]/20 pt-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#C9971C] font-bold block">
-                DISCOGRAPHY ARCHIVE
-              </span>
-              <h3 className="text-lg font-bold text-[#1F1A12]">
-                Pilih Album Lainnya
-              </h3>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => scrollAlbums('left')}
-                aria-label="Previous album"
-                className="p-2 rounded-full bg-white hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer shadow-xs"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollAlbums('right')}
-                aria-label="Next album"
-                className="p-2 rounded-full bg-white hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer shadow-xs"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          <div
-            ref={albumTabsRef}
-            data-lenis-prevent
-            className="flex items-center overflow-x-auto gap-3.5 p-4 scrollbar-none overscroll-contain select-none scroll-smooth"
-          >
+        <div className="pt-4 border-t border-[#C9971C]/15">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {discographyData.map((album, idx) => {
               const isSelected = selectedAlbumIndex === idx;
               return (
                 <button
                   key={album.id}
-                  onClick={(e) => handleAlbumSelect(idx, e)}
-                  className={`shrink-0 w-36 sm:w-40 lg:w-46 rounded-2xl overflow-hidden border transition-all duration-300 p-1.5 bg-white cursor-pointer group text-left ${
+                  type="button"
+                  onClick={() => handleAlbumSelect(idx)}
+                  className={`group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border-[2.5px] transition-all duration-300 p-0 bg-white cursor-pointer text-left focus:outline-none ${
                     isSelected
-                      ? 'border-[#C9971C] ring-2 ring-[#C9971C] shadow-[0_0_20px_rgba(201,151,28,0.35)] scale-105'
-                      : 'border-[#C9971C]/20 hover:border-[#C9971C]/60 hover:scale-102 opacity-75 hover:opacity-100'
+                      ? 'border-[#D4A017] ring-2 ring-[#D4A017]/40 shadow-xl scale-[1.03] -translate-y-1.5'
+                      : 'border-transparent shadow-md hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 opacity-80 hover:opacity-100'
                   }`}
                 >
-                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FDF6E7] mb-1.5">
-                    <img
-                      src={album.coverImage}
-                      alt={album.albumTitle}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <p className="text-[10px] font-mono text-[#8C6A1C] truncate font-bold">
-                    {album.type.split(' ')[0]}
-                  </p>
-                  <p className="text-xs font-bold text-[#1F1A12] truncate">
-                    {album.albumTitle.split(':')[1] || album.albumTitle}
-                  </p>
+                  <img
+                    src={album.coverImage}
+                    alt={album.albumTitle}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div
+                    className={`absolute inset-0 transition-opacity duration-300 ${
+                      isSelected
+                        ? 'bg-gradient-to-t from-black/25 via-transparent to-transparent'
+                        : 'bg-black/10 group-hover:bg-transparent'
+                    }`}
+                  />
                 </button>
               );
             })}
           </div>
         </div>
+
+        {isVideoModalOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            onClick={() => setIsVideoModalOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/60 hover:bg-black text-white transition-all cursor-pointer"
+                aria-label="Tutup Video"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <iframe
+                src={`${currentAlbum.iframeUrl}?autoplay=1`}
+                title={`${currentAlbum.albumTitle} Music Video`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

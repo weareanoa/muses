@@ -1,7 +1,8 @@
 ---
 import { withBase } from "../lib/paths";
 import '../styles/global.css';
-import CartDrawer from '../components/islands/CartDrawer';
+import PreloaderBuffer from '../components/ui/PreloaderBuffer.astro';
+import CartDrawer from '../components/islands/CheckoutDrawer';
 import MemberModal from '../components/islands/MemberModal';
 import UserNavIsland from '../components/islands/UserNavIsland';
 
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const {
-  title = 'MUSES | Official Idol Group Website',
+  title = 'MUSES | Official Idol Group',
   description = 'Situs resmi idol grup MUSES (7 member: Aria, Clara, Stella, Faril, Maya, Reva, Zia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
   currentPath = Astro.url.pathname,
   solidHeader = false,
@@ -22,19 +23,20 @@ const {
 } = Astro.props;
 
 const navItems = [
-  { name: 'HOME', href: '/' },
-  { name: 'MEMBER', href: '/member' },
-  { name: 'DISCOGRAPHY', href: '/discography' },
-  { name: 'SCHEDULE', href: '/schedule' },
-  { name: 'STORE', href: '/store' },
-  { name: 'GALLERY', href: '/gallery' },
-  { name: 'KONTAK', href: '/kontak' },
+  { name: 'HOME', href: '/#home', id: 'home' },
+  { name: 'MEMBER', href: '/#member', id: 'member' },
+  { name: 'DISCOGRAPHY', href: '/#discography', id: 'discography' },
+  { name: 'SCHEDULE', href: '/#schedule', id: 'schedule' },
+  { name: 'GALLERY', href: '/#gallery', id: 'gallery' },
+  { name: 'STORE', href: '/#store', id: 'store' },
+  { name: 'KONTAK', href: '/#kontak', id: 'kontak' },
 ];
 
-const isItemActive = (href: string) => {
-  const bHref = withBase(href);
-  if (href === '/') return currentPath === bHref || currentPath === bHref.replace(/\/$/, '');
-  return currentPath.startsWith(bHref);
+const isItemActive = (id: string) => {
+  const isHome = currentPath === '/' || currentPath === withBase('/') || currentPath === withBase('').replace(/\/$/, '');
+  if (isHome) return id === 'home';
+  const bPath = withBase('/' + id);
+  return currentPath.startsWith(bPath);
 };
 ---
 
@@ -51,6 +53,8 @@ const isItemActive = (href: string) => {
     <title>{title}</title>
   </head>
   <body class="bg-[#FCFAF5] text-[#1F1A12] selection:bg-[#C9971C] selection:text-[#1F1A12]">
+    <PreloaderBuffer />
+
     {!hideNavbar && (
     <header
       id="main-header"
@@ -59,20 +63,24 @@ const isItemActive = (href: string) => {
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
         <a href={withBase("/")} class="flex items-center gap-2 group" aria-label="MUSES Home">
-          <span class="text-2xl sm:text-3xl font-display font-black tracking-widest gold-gradient-text transition-transform group-hover:scale-105">
-            MUSES
-          </span>
+          <img
+            src={withBase("/images/muses_logo_3d_clean.svg")}
+            alt="MUSES"
+            class="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-105"
+          />
         </a>
 
         <nav class="hidden lg:flex items-center gap-1.5 xl:gap-2 text-[11px] font-semibold tracking-wider uppercase text-[#6E6453]">
           {navItems.map((item) => {
-            const active = isItemActive(item.href);
+            const active = isItemActive(item.id);
             return (
               <a
                 href={withBase(item.href)}
-                class={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                data-nav-desktop
+                data-nav-id={item.id}
+                class={`nav-menu-link px-4 py-1.5 rounded-full transition-all duration-200 text-[11px] font-semibold tracking-wider uppercase ${
                   active
-                    ? 'pill-active'
+                    ? 'bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] shadow-xs'
                     : 'hover:text-[#1F1A12] hover:bg-[#C9971C]/10 text-[#524838]'
                 }`}
               >
@@ -93,7 +101,7 @@ const isItemActive = (href: string) => {
             </svg>
             <span
               id="cart-badge-count"
-              class="absolute -top-1 -right-1 w-5 h-5 rounded-full gold-gradient-bg text-[#1F1A12] text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(201,151,28,0.6)]"
+              class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-r from-[#C28C1D] to-[#A37418] text-[#1F1A12] text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(201,151,28,0.6)]"
             >
               0
             </span>
@@ -126,13 +134,15 @@ const isItemActive = (href: string) => {
       <div class="px-6 py-6 flex flex-col space-y-4">
         <nav class="flex flex-col space-y-2 text-xs font-bold uppercase tracking-wider text-[#4B4335]">
           {navItems.map((item, idx) => {
-            const active = isItemActive(item.href);
+            const active = isItemActive(item.id);
             return (
               <a
                 href={withBase(item.href)}
+                data-nav-mobile
+                data-nav-id={item.id}
                 class={`mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl border border-transparent transition-all ${
                   active
-                    ? 'pill-active'
+                    ? 'bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] font-semibold'
                     : 'hover:bg-[#C9971C]/10 text-[#4B4335]'
                 }`}
               >

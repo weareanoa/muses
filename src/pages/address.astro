@@ -1,21 +1,20 @@
 ---
-import RootLayout from '../layouts/RootLayout.astro';
-import AddressIsland from '../components/islands/AddressIsland';
+import { withBase } from '../lib/paths';
+
+const target = withBase('/profile?tab=alamat');
 ---
 
-<RootLayout
-  title="Checkout | MUSES Official"
-  description="Proses checkout dan pembayaran pesanan merchandise resmi MUSES."
-  solidHeader={true}
->
-  <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto bg-[#FCFAF5]">
-    <div class="w-full border-t border-[#DFC478]/80 mb-6"></div>
-    <h1 class="text-4xl sm:text-5xl font-['Playfair_Display',serif] text-[#1F1A12] mb-8 font-normal tracking-tight">
-      Checkout.
-    </h1>
-
-    <div class="relative z-10">
-      <AddressIsland client:load />
-    </div>
-  </div>
-</RootLayout>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <title>Redirecting to Alamat...</title>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </head>
+  <body class="bg-[#FCFAF5] flex items-center justify-center min-h-screen text-[#1F1A12] text-sm">
+    <p>Mengalihkan ke halaman alamat... <a href={target} class="text-[#C9971C] underline font-semibold">Klik di sini jika tidak beralih otomatis</a></p>
+  </body>
+</html>

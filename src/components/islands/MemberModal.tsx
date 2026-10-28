@@ -1,19 +1,30 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { withBase, withBaseDeep } from '../../lib/paths';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
+import { pauseAudio } from '../../stores/audioStore';
 import { members as membersDataRaw, type Member } from '../../data/members';
 import { useScrollLock } from '../../hooks/useScrollLock';
-import { X } from 'lucide-react';
+import { X, Volume2, VolumeX } from 'lucide-react';
 import gsap from 'gsap';
 
 const membersData = withBaseDeep(membersDataRaw) as readonly Member[];
+
+const MODAL_MEMBER_ORDER = ['faril', 'mine', 'ndah', 'vira', 'vely', 'liz', 'lia'] as const;
+
+const modalOrderedMembers = [...membersData].sort(
+  (a, b) => MODAL_MEMBER_ORDER.indexOf(a.id as any) - MODAL_MEMBER_ORDER.indexOf(b.id as any)
+);
 
 export default function MemberModal() {
   const currentId = useStore(activeMemberId);
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const voiceAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const [isVoicePlaying, setIsVoicePlaying] = useState<boolean>(false);
+  const [hasVoiceAudio, setHasVoiceAudio] = useState<boolean>(false);
 
   useScrollLock(Boolean(currentId));
 
@@ -27,8 +38,8 @@ export default function MemberModal() {
     return () => window.removeEventListener('open-member-modal', handleCustomOpen);
   }, []);
 
-  const currentIndex = membersData.findIndex((m: any) => m.id === currentId);
-  const member = currentIndex !== -1 ? membersData[currentIndex] : null;
+  const currentIndex = modalOrderedMembers.findIndex((m: any) => m.id === currentId);
+  const member = currentIndex !== -1 ? modalOrderedMembers[currentIndex] : null;
 
   useEffect(() => {
     if (!currentId) return;
@@ -72,7 +83,65 @@ export default function MemberModal() {
     }
   }, [currentIndex]);
 
+  useEffect(() => {
+    if (voiceAudioRef.current) {
+      voiceAudioRef.current.pause();
+      voiceAudioRef.current.currentTime = 0;
+      voiceAudioRef.current = null;
+    }
+    setIsVoicePlaying(false);
+    setHasVoiceAudio(false);
+
+    if (!member) return;
+
+    const audioUrl = member.audio ? withBase(member.audio) : withBase(`/audio/${member.id}.mp3`);
+    pauseAudio();
+
+    const audio = new Audio(audioUrl);
+    voiceAudioRef.current = audio;
+
+    audio.onplay = () => {
+      setIsVoicePlaying(true);
+      setHasVoiceAudio(true);
+    };
+
+    audio.onpause = () => {
+      setIsVoicePlaying(false);
+    };
+
+    audio.onended = () => {
+      setIsVoicePlaying(false);
+    };
+
+    audio.onerror = () => {
+      setIsVoicePlaying(false);
+      setHasVoiceAudio(false);
+    };
+
+    audio
+      .play()
+      .then(() => {
+        setIsVoicePlaying(true);
+        setHasVoiceAudio(true);
+      })
+      .catch(() => {
+        setIsVoicePlaying(false);
+      });
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [member?.id]);
+
   const handleClose = () => {
+    if (voiceAudioRef.current) {
+      voiceAudioRef.current.pause();
+      voiceAudioRef.current.currentTime = 0;
+      voiceAudioRef.current = null;
+    }
+    setIsVoicePlaying(false);
+
     if (!overlayRef.current || !containerRef.current) {
       closeMemberModal();
       return;
@@ -97,17 +166,26 @@ export default function MemberModal() {
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      openMemberModal(membersData[currentIndex - 1].id);
+      openMemberModal(modalOrderedMembers[currentIndex - 1].id);
     } else {
-      openMemberModal(membersData[membersData.length - 1].id);
+      openMemberModal(modalOrderedMembers[modalOrderedMembers.length - 1].id);
     }
   };
 
   const handleNext = () => {
-    if (currentIndex < membersData.length - 1) {
-      openMemberModal(membersData[currentIndex + 1].id);
+    if (currentIndex < modalOrderedMembers.length - 1) {
+      openMemberModal(modalOrderedMembers[currentIndex + 1].id);
     } else {
-      openMemberModal(membersData[0].id);
+      openMemberModal(modalOrderedMembers[0].id);
+    }
+  };
+
+  const toggleVoicePlayback = () => {
+    if (!voiceAudioRef.current) return;
+    if (isVoicePlaying) {
+      voiceAudioRef.current.pause();
+    } else {
+      voiceAudioRef.current.play().catch(console.error);
     }
   };
 
@@ -224,8 +302,37 @@ export default function MemberModal() {
               {member.stageName}
             </h2>
 
-            <div className="text-sm sm:text-base font-bold text-[#C9971C] mb-2 tracking-wide">
-              {member.tagline || 'The Dramatic Artist / Deep Soul'}
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <div className="text-sm sm:text-base font-bold text-[#C9971C] tracking-wide">
+                {member.tagline || 'The Dramatic Artist / Deep Soul'}
+              </div>
+
+              {(hasVoiceAudio || member.audio || member.id === 'faril') && (
+                <button
+                  type="button"
+                  onClick={toggleVoicePlayback}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/85 hover:bg-white text-xs font-semibold shadow-xs border border-white/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  style={{ color: member.themeColor }}
+                  title={isVoicePlaying ? 'Jeda suara member' : 'Putar suara member'}
+                >
+                  {isVoicePlaying ? (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                      <span>Voice Intro</span>
+                      <span className="flex gap-0.5 items-end h-3 ml-0.5">
+                        <span className="w-0.5 h-2 bg-current animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-0.5 h-3 bg-current animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-0.5 h-1.5 bg-current animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5 opacity-70" />
+                      <span>Putar Suara</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             <p className="text-xs sm:text-sm text-[#554663] leading-relaxed mb-6 max-w-lg">
@@ -288,7 +395,7 @@ export default function MemberModal() {
       </div>
 
       <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 mt-5 sm:mt-7 overflow-x-auto py-2 px-4 max-w-full">
-        {membersData.map((m) => {
+        {modalOrderedMembers.map((m) => {
           const isSelected = m.id === member.id;
           return (
             <button

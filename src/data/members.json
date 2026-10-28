@@ -26,16 +26,16 @@
     "decor": [
       {
         "src": "/decor/pita.svg",
-        "x": "8%",
-        "y": "82%",
+        "x": "6%",
+        "y": "80%",
         "size": 160
       },
       {
         "src": "/decor/pita.svg",
-        "x": "24%",
+        "x": "22%",
         "y": "84%",
         "size": 60,
-        "rotate": 15 
+        "rotate": 30 
       },
       {
         "src": "/decor/pita.svg",
@@ -57,10 +57,10 @@
       },
       {
         "src": "/decor/pita.svg",
-        "x": "94%",
-        "y": "85%",
+        "x": "92%",
+        "y": "88%",
         "size": 125,
-        "rotate": 18
+        "rotate": 10
       }
     ]
   },
@@ -92,13 +92,13 @@
       {
         "src": "/decor/whale.svg",
         "x": "-1%",
-        "y": "90%",
+        "y": "93%",
         "size": 135,
         "rotate": 20
       },
       {
         "src": "/decor/whale-1.svg",
-        "x": "20%",
+        "x": "15%",
         "y": "75%",
         "size": 155,
         "rotate": 5
@@ -106,9 +106,9 @@
       {
         "src": "/decor/whale.svg",
         "x": "40%",
-        "y": "91%",
+        "y": "94%",
         "size": 100,
-        "rotate": -15,
+        "rotate": 15,
         "flipX": true
       },
       {
@@ -154,7 +154,7 @@
     "decor": [
       {
         "src": "/decor/sun.svg",
-        "x": "0",
+        "x": "7%",
         "y": "80%",
         "size": 125,
         "rotate": -12
@@ -169,7 +169,7 @@
       {
         "src": "/decor/sun.svg",
         "x": "33%",
-        "y": "33%",
+        "y": "29%",
         "size": 185,
         "rotate": -12,
         "zIndex": 5
@@ -197,6 +197,7 @@
     "fullName": "Faril Melpomene",
     "role": "Main Performer, Visual",
     "card": "/images/members/faril.webp",
+    "audio": "/audio/faril.mp3",
     "from": "#f3e8ff",
     "to": "#b794f6",
     "themeColor": "#8E24AA",
@@ -217,9 +218,9 @@
     "decor": [
       {
         "src": "/decor/butterfly.svg",
-        "x": "1%",
+        "x": "6%",
         "bottom": "35px",
-        "size": 200,
+        "size": 180,
         "rotate": -10,
         "flipX": true
       },
@@ -234,17 +235,17 @@
       {
         "src": "/decor/butterfly.svg",
         "x": "calc(50% - 200px)",
-        "bottom": "120px",
+        "bottom": "110px",
         "size": 200,
         "rotate": -16,
         "flipX": false
       },
       {
         "src": "/decor/butterfly.svg",
-        "x": "calc(50% + 125px)",
-        "bottom": "65px",
-        "size": 180,
-        "rotate": 22,
+        "x": "calc(50% + 115px)",
+        "bottom": "55px",
+        "size": 150,
+        "rotate": -35,
         "flipX": true
       },
       {
@@ -257,10 +258,10 @@
       },
       {
         "src": "/decor/butterfly.svg",
-        "x": "93%",
+        "x": "88%",
         "bottom": "-8px",
         "size": 180,
-        "rotate": 26,
+        "rotate": -26,
         "flipX": true
       }
     ]
@@ -365,7 +366,7 @@
       },
       {
         "src": "/decor/rose.svg",
-        "x": "9%",
+        "x": "6%",
         "y": "55%",
         "size": 140,
         "flipX": true
@@ -391,7 +392,7 @@
       },
       {
         "src": "/decor/rose.svg",
-        "x": "83%",
+        "x": "85%",
         "y": "74%",
         "size": 140,
         "rotate": 40,
@@ -403,7 +404,8 @@
         "y": "30%",
         "size": 800,
         "rotate": -10,
-        "zIndex": 5
+        "zIndex": 5,
+        "flipX": true
       }
     ]
   },
@@ -434,13 +436,13 @@
     "decor": [
       {
         "src": "/decor/owl.svg",
-        "x": "12%",
+        "x": "9%",
         "y": "82%",
         "size": 100
       },
       {
         "src": "/decor/owl-1.svg",
-        "x": "40%",
+        "x": "39%",
         "y": "83%",
         "size": 70,
         "rotate": -25
@@ -454,7 +456,7 @@
       {
         "src": "/decor/owl.svg",
         "x": "59%",
-        "y": "78%",
+        "y": "76%",
         "size": 100,
         "flipY": true,
         "flipX": true,
@@ -463,7 +465,7 @@
       {
         "src": "/decor/owl.svg",
         "x": "75%",
-        "y": "44%",
+        "y": "41%",
         "size": 100,
         "rotate": 15,
         "flipX": true,

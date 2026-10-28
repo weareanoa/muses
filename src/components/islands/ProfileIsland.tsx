@@ -31,17 +31,6 @@ import {
 } from '../../data/orders';
 import { formatCountdown, formatRupiah } from '../../lib/format';
 
-type TabType = 'profile' | 'alamat' | 'orders';
-type OrderFilter = 'all' | 'unpaid' | 'processing' | 'completed';
-
-interface OrderItem {
-  name: string;
-  variant: string;
-  image: string;
-  quantity?: number;
-  price: number;
-}
-
 interface StepperStep {
   label: string;
   completed: boolean;

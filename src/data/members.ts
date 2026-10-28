@@ -20,6 +20,7 @@ export interface Member {
   fullName: string;
   role: string;
   card: string;
+  audio?: string;
   from: string;
   to: string;
   themeColor: string;

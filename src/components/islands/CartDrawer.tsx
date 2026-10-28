@@ -38,7 +38,7 @@ export default function CartDrawer() {
 
   const handleCheckout = () => {
     closeCart();
-    window.location.href = withBase('/address');
+    window.location.href = withBase('/checkout');
   };
 
   if (!isOpen) return null;
@@ -168,7 +168,7 @@ export default function CartDrawer() {
                       <span>Kirim ke: {selectedAddress.label}</span>
                     </span>
                     <a
-                      href="/address"
+                      href={withBase("/profile?tab=alamat")}
                       onClick={closeCart}
                       className="text-[#9A7420] text-[11px] hover:underline"
                     >
@@ -183,7 +183,7 @@ export default function CartDrawer() {
                 <div className="bg-[#F8F4EA] border border-[#1F1A12]/10 rounded-xl p-3 text-xs flex items-center justify-between">
                   <span className="text-[#6E6453] text-[11px]">Belum ada alamat pengiriman</span>
                   <a
-                    href="/address"
+                    href={withBase("/profile?tab=alamat")}
                     onClick={closeCart}
                     className="text-[#9A7420] font-semibold text-xs hover:underline"
                   >

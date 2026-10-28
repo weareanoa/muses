@@ -1,6 +1,5 @@
 ---
 import RootLayout from '../layouts/RootLayout.astro';
-import SectionHeading from '../components/ui/SectionHeading.astro';
 import VinylPlayer from '../components/islands/VinylPlayer';
 ---
 
@@ -9,18 +8,7 @@ import VinylPlayer from '../components/islands/VinylPlayer';
   description="Daftar album dan rilisan musik idol grup MUSES lengkap dengan pemutar piringan hitam vinyl dan tautan resmi."
   currentPath="/discography"
 >
-  <div class="pt-28 pb-20 px-4 sm:px-8">
-    <div class="max-w-7xl mx-auto mb-10">
-      <SectionHeading
-        subtitle="MUSES RELEASES"
-        title="DISCOGRAPHY & VINYL PLAYER"
-        align="center"
-      />
-      <p class="max-w-xl mx-auto text-center text-[#6E6453] text-xs sm:text-sm -mt-6">
-        Putar piringan hitam dan nikmati cuplikan audio legal dari setiap babak karya musik idol grup MUSES.
-      </p>
-    </div>
-
+  <div class="relative min-h-[calc(100vh-80px)] pt-16 overflow-hidden">
     <VinylPlayer client:load />
   </div>
 </RootLayout>

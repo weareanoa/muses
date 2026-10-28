@@ -173,12 +173,6 @@ export default function CheckoutIsland() {
 
   return (
     <div className="w-full max-w-4xl mx-auto py-2 sm:py-6 px-2 sm:px-4 relative font-sans">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-3xl sm:text-5xl font-display font-black text-[#1F1A12]/15 uppercase tracking-wider select-none">
-          MEMBER
-        </span>
-      </div>
-
       <div className="space-y-6">
         <div className="w-full bg-white rounded-2xl sm:rounded-full border border-[#EBDCB9] shadow-[0_4px_20px_rgba(201,151,28,0.06)] p-1.5">
           <div className="grid grid-cols-4 items-center">

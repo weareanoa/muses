@@ -1,15 +1,17 @@
 [
   {
-    "id": "chapter-01-first-light",
-    "albumTitle": "Chapter 01: First Light",
+    "id": "bersama-mimpi",
+    "albumTitle": "Bersama Mimpi",
+    "singleTag": "1st Single",
     "releaseDate": "2024-03-01",
-    "type": "Debut Mini Album",
-    "coverImage": "/images/albums/album-1.svg",
-    "themeColor": "#D4AF37",
-    "description": "Langkah perdana MUSES merajut melodi keemasan ke dalam kanvas musik pop modern. Mini album debut ini menceritakan kisah awal keberanian tujuh gadis mengejar impian mereka di bawah fajar pertama.",
+    "type": "1st Single",
+    "coverImage": "/images/albums/BERSAMA MIMPI ART COVER.webp",
+    "themeColor": "#93C5FD",
+    "description": "Lagu debut MUSES tentang keberanian meraih mimpi bersama, saling mendukung, dan memulai perjalanan dengan penuh harapan.",
+    "mvThumbnail": "/images/muses_group_frame1.svg",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "First Light",
+      "title": "Bersama Mimpi",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
@@ -20,16 +22,18 @@
     }
   },
   {
-    "id": "chapter-02-golden-hour",
-    "albumTitle": "Chapter 02: Golden Hour",
-    "releaseDate": "2024-09-15",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/album-2.svg",
-    "themeColor": "#C9971C",
-    "description": "Menangkap kilau senja yang magis di mana mimpi dan kenyataan bersatu. Dipenuhi aransemen string orchestra yang megah berpadu dengan ritme pop elektronik kontemporer.",
+    "id": "langkah-kita",
+    "albumTitle": "Langkah Kita",
+    "singleTag": "2nd Single",
+    "releaseDate": "2024-08-15",
+    "type": "2nd Single",
+    "coverImage": "/images/albums/LANGKAH KITA ART COVER.webp",
+    "themeColor": "#818CF8",
+    "description": "Melodi penuh semangat yang menggambarkan langkah seirama para member dan penggemar dalam melewati setiap rintangan.",
+    "mvThumbnail": "/images/albums/LANGKAH KITA ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "Golden Hour",
+      "title": "Langkah Kita",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
@@ -40,16 +44,18 @@
     }
   },
   {
-    "id": "chapter-03-afterglow",
-    "albumTitle": "Chapter 03: Afterglow",
-    "releaseDate": "2025-04-08",
-    "type": "Studio Album",
-    "coverImage": "/images/albums/album-3.svg",
-    "themeColor": "#B8860B",
-    "description": "Album studio penuh pertama yang mengeksplorasi kedewasaan vokal dan kedalaman emosional MUSES. Merekam jejak hangat yang tertinggal setelah euforia panggung mereda.",
+    "id": "rasa-terpendam",
+    "albumTitle": "Rasa Terpendam",
+    "singleTag": "3rd Single",
+    "releaseDate": "2025-01-20",
+    "type": "3rd Single",
+    "coverImage": "/images/albums/RASA TERPENDAM ART COVER.webp",
+    "themeColor": "#38BDF8",
+    "description": "Balada emosional yang menyentuh hati tentang perasaan tulus yang tersimpan rapat dalam keheningan.",
+    "mvThumbnail": "/images/albums/RASA TERPENDAM ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "Afterglow",
+      "title": "Rasa Terpendam",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
@@ -60,56 +66,18 @@
     }
   },
   {
-    "id": "chapter-04-reverie",
-    "albumTitle": "Chapter 04: Reverie",
-    "releaseDate": "2025-11-21",
-    "type": "Mini Album",
-    "coverImage": "/images/albums/album-4.svg",
-    "themeColor": "#DFB76C",
-    "description": "Sebuah lamunan musikal yang memikat dengan sentuhan city pop dan vokal harmonis berlapis. Menampilkan kemampuan songwriting dan komposisi orisinal dari para member.",
+    "id": "menuju-cahaya",
+    "albumTitle": "Menuju Cahaya",
+    "singleTag": "4th Single",
+    "releaseDate": "2025-06-10",
+    "type": "4th Single",
+    "coverImage": "/images/albums/MENUJU CAHAYA ART COVER.webp",
+    "themeColor": "#FCD34D",
+    "description": "Harmoni vokal yang membangkitkan asa, membawa pesan optimisme dan kehangatan menuju masa depan yang cerah.",
+    "mvThumbnail": "/images/albums/MENUJU CAHAYA ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
     "titleTrack": {
-      "title": "Reverie",
-      "previewAudioUrl": "/audio/preview.wav",
-      "startAtSecond": 0,
-      "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
-      }
-    }
-  },
-  {
-    "id": "chapter-05-nocturne",
-    "albumTitle": "Chapter 05: Nocturne",
-    "releaseDate": "2026-06-02",
-    "type": "Studio Album",
-    "coverImage": "/images/albums/album-5.svg",
-    "themeColor": "#9A7420",
-    "description": "Refleksi mendalam tentang malam yang sunyi dan harapan yang menyala dalam kegelapan. Melodi piano yang dramatis dan vokal power ballad yang menyentuh kalbu.",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
-    "titleTrack": {
-      "title": "Nocturne",
-      "previewAudioUrl": "/audio/preview.wav",
-      "startAtSecond": 0,
-      "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
-      }
-    }
-  },
-  {
-    "id": "chapter-06-aurora",
-    "albumTitle": "Chapter 06: Aurora",
-    "releaseDate": "2026-10-18",
-    "type": "Special Repackage Album",
-    "coverImage": "/images/albums/album-6.svg",
-    "themeColor": "#CC9933",
-    "description": "Kompilasi spesial dengan aransemen orkestra baru dan lagu eksklusif perayaan tur dunia. Menjadi simbol cahaya persaudaraan yang tak akan pernah pudar.",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
-    "titleTrack": {
-      "title": "Aurora",
+      "title": "Menuju Cahaya",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {

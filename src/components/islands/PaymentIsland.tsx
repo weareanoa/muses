@@ -367,7 +367,7 @@ export default function PaymentIsland() {
 
             <div className="pt-2 flex flex-col gap-2">
               <a
-                href={withBase("/checkout")}
+                href={withBase("/orders")}
                 className="w-full py-3 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2"
               >
                 <span>Lihat History Pesanan</span>

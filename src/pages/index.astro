@@ -7,29 +7,17 @@ import GallerySection from '../components/sections/GallerySection.astro';
 import ShopPreview from '../components/sections/ShopPreview.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
 import FooterCTA from '../components/sections/FooterCTA.astro';
-import SectionHeading from '../components/ui/SectionHeading.astro';
 ---
 
 <RootLayout
-  title="MUSES | Official Idol Group Website"
+  title="MUSES | Official Idol Group"
   description="Situs profil resmi idol grup lokal MUSES (7 member: Aria, Clara, Stella, Faril, Maya, Reva, Zia). Musik, jadwal tur, galeri, merchandise, dan kontak manajemen."
   currentPath="/"
 >
   <Hero />
 
-  <section id="discography-section" class="relative bg-[#FCFAF5] py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
-    <div class="max-w-7xl mx-auto">
-      <SectionHeading
-        subtitle="Arsip Musik Resmi"
-        title="DISCOGRAPHY & VINYL TURNTABLE"
-        align="center"
-      />
-      <p class="max-w-xl mx-auto text-center text-[#6E6453] text-xs sm:text-sm -mt-6 mb-12">
-        Putar piringan hitam vinyl untuk mendengarkan cuplikan audio legal dan saksikan cuplikan video musik resmi idol grup MUSES.
-      </p>
-
-      <VinylPlayer client:visible />
-    </div>
+  <section id="discography" data-section="discography" class="relative w-full overflow-hidden">
+    <VinylPlayer client:visible />
   </section>
 
   <ScheduleTimeline />

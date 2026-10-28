@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Balbes';
+  src: local('Balbes'), local('Balbes Free'), url('/fonts/Balbes.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-ivory: #fcfaf5;
   --color-sand: #f8f5ec;
@@ -19,6 +27,7 @@
   --font-serif-display: 'Cinzel', 'Playfair Display', Georgia, serif;
   --font-sans: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
+  --font-balbes: 'Balbes', 'Playfair Display', Georgia, serif;
 
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -26,6 +35,10 @@
   --radius-full: 9999px;
 
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.font-balbes {
+  font-family: 'Balbes', 'Playfair Display', Georgia, serif;
 }
 
 :root {
