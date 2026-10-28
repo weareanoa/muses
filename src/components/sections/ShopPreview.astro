@@ -1,73 +1,94 @@
 ---
 import { withBase } from '../../lib/paths';
-import SectionHeading from '../ui/SectionHeading.astro';
-import Button from '../ui/Button.astro';
 import productsData from '../../data/products.json';
 ---
 
-<section id="store" data-section="store" class="relative bg-[#FCFAF5] py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-      <SectionHeading
-        subtitle="Official Merchandise"
-        title="MERCHANDISE RESMI MUSES"
-        align="left"
-        class="mb-0 md:mb-0"
-      />
-      <div class="mt-6 md:mt-0">
-        <Button href="/store" variant="outline" size="md">
-          Lihat Semua Produk →
-        </Button>
-      </div>
+<section id="store" data-section="store" class="relative bg-[#FCFAF5] py-20 sm:py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="mb-4 sm:mb-6 pl-2 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <h2 class="font-balbes text-6xl sm:text-7xl md:text-8xl text-[#1F1A12] leading-none tracking-normal select-none">
+        Store
+      </h2>
+      <a
+        href={withBase("/store")}
+        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-[#C9971C]/60 bg-white hover:bg-[#FAF3E2] text-xs font-semibold text-[#1F1A12] transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+      >
+        <span>Lihat Semua Produk</span>
+        <span>→</span>
+      </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-      {
-        productsData.slice(0, 3).map((product) => (
-          <a
-            href={withBase(`/store/${product.id}`)}
-            class="group relative bg-white border border-[#C9971C]/25 rounded-3xl overflow-hidden hover:border-[#C9971C] transition-all duration-300 hover:shadow-[0_15px_35px_rgba(201,151,28,0.18)] hover:-translate-y-1 flex flex-col"
-          >
-            <div class="relative aspect-square w-full bg-[#FDF6E7] overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
+    <div class="bg-[#FAF3E2] border border-[#EADBBD] rounded-3xl sm:rounded-[32px] p-6 sm:p-10 lg:p-12 shadow-[0_4px_30px_rgba(201,151,28,0.06)] font-['Poppins',sans-serif]">
+      <div class="mb-6 sm:mb-8 space-y-1">
+        <span class="block text-xs font-semibold tracking-[0.2em] uppercase text-[#9E7B26]">
+          OFFICIAL MERCHANDISE
+        </span>
+        <h3 class="text-2xl sm:text-3xl font-bold text-[#1F1A12] tracking-tight">
+          Merchandise Resmi MUSES.
+        </h3>
+        <p class="text-xs sm:text-sm text-[#5A4E38] leading-relaxed">
+          Koleksi merchandise eksklusif, apparel tur resmi, album edisi terbatas, dan lightstick resmi MUSES.
+        </p>
+      </div>
 
-              <div class="absolute top-4 left-4">
-                <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/90 backdrop-blur-md text-[#8C6A1C] border border-[#C9971C]/30 shadow-xs">
-                  {product.category}
-                </span>
-              </div>
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
+        {
+          productsData.slice(0, 3).map((product) => (
+            <a
+              href={withBase(`/store/${product.id}`)}
+              class="group relative bg-white border border-[#EADBBD] rounded-3xl overflow-hidden hover:border-[#C9971C] hover:shadow-[0_14px_30px_rgba(201,151,28,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+            >
+              <div class="relative aspect-square w-full bg-[#FAF3E2]/60 overflow-hidden">
+                <img
+                  src={withBase(product.image)}
+                  alt={product.name}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
 
-            <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
-              <div>
-                <h3 class="text-base font-bold text-[#1F1A12] group-hover:text-[#C9971C] transition-colors line-clamp-1">
-                  {product.name}
-                </h3>
-                <p class="text-xs text-[#6E6453] mt-1 line-clamp-2 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-
-              <div class="flex items-center justify-between pt-3 border-t border-[#C9971C]/20">
-                <div>
-                  <span class="text-[10px] text-[#8A7F6C] uppercase font-mono block">Harga Resmi</span>
-                  <span class="text-base font-bold font-mono text-[#1F1A12]">
-                    Rp {(Math.round(product.price * 16000)).toLocaleString('id-ID')}
+                <div class="absolute top-4 left-4">
+                  <span class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-white/90 backdrop-blur-md text-[#8C6A1C] border border-[#EADBBD] shadow-2xs">
+                    {product.category}
                   </span>
                 </div>
-                <span class="text-xs font-semibold text-[#C9971C] group-hover:translate-x-1 transition-transform">
-                  Detail →
-                </span>
+
+                {product.isFeatured && (
+                  <div class="absolute top-4 right-4">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-[#C29322] text-[#2A1D0B] shadow-2xs">
+                      Featured
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
-          </a>
-        ))
-      }
+
+              <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div>
+                  <h4 class="text-base font-bold text-[#1F1A12] group-hover:text-[#9E7B26] transition-colors line-clamp-1">
+                    {product.name}
+                  </h4>
+                  <p class="text-xs text-[#5A4E38] mt-1 line-clamp-2 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-[#EADBBD]">
+                  <div>
+                    <span class="text-[10px] text-[#8C7A58] uppercase font-semibold tracking-wider block">
+                      Harga Resmi
+                    </span>
+                    <span class="text-base sm:text-lg font-bold text-[#1F1A12]">
+                      Rp {(Math.round(product.price * 16000)).toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-[#20180B] bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37418] group-hover:brightness-105 transition-all shadow-xs group-hover:shadow-md">
+                    <span>Beli</span>
+                    <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+                  </span>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>

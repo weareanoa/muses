@@ -127,7 +127,9 @@ export default function CartDrawer() {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm font-bold text-[#9A7420]">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {item.price >= 1000
+                          ? `Rp ${(item.price * item.quantity).toLocaleString('id-ID')}`
+                          : `$${(item.price * item.quantity).toFixed(2)}`}
                       </span>
                       <div className="flex items-center gap-2 bg-[#F6F1E5] border border-[#1F1A12]/10 rounded-md px-1.5 py-0.5">
                         <button
@@ -195,7 +197,9 @@ export default function CartDrawer() {
               <div className="flex justify-between items-center text-sm">
                 <span className="text-[#6E6453]">Subtotal</span>
                 <span className="text-xl font-bold font-display text-[#1F1A12]">
-                  ${subtotal.toFixed(2)} USD
+                  {subtotal >= 1000
+                    ? `Rp ${subtotal.toLocaleString('id-ID')}`
+                    : `$${subtotal.toFixed(2)} USD`}
                 </span>
               </div>
               <p className="text-[11px] text-[#8A7F6C] leading-tight">

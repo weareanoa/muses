@@ -1,29 +1,17 @@
 ---
 import RootLayout from '../../layouts/RootLayout.astro';
 import StoreCatalog from '../../components/islands/StoreCatalog';
-import SectionHeading from '../../components/ui/SectionHeading.astro';
 import FooterCTA from '../../components/sections/FooterCTA.astro';
 ---
 
 <RootLayout
   title="Official Store | MUSES Official Portal"
-  description="Official MUSES merchandise store. Exclusive limited vinyl pressings, official lightstick, tour apparel, and accessories."
+  description="Official MUSES merchandise store. Exclusive limited vinyl pressings, official lightstick, tour apparel, cheki, and videocall tickets."
   currentPath="/store"
 >
-  <div class="pt-32 pb-24 px-6 sm:px-12 max-w-7xl mx-auto">
-    <div class="mb-12">
-      <SectionHeading
-        subtitle="Exclusive Collection"
-        title="MUSE OFFICIAL STORE"
-        align="left"
-      />
-      <p class="max-w-2xl text-[#6E6453] text-sm leading-relaxed -mt-6">
-        Discover official albums, tour merchandise, and lifestyle apparel curated directly for CIRCLE. Worldwide shipping available with tracked dispatch.
-      </p>
-    </div>
-
+  <main class="min-h-screen bg-[#FCFAF5] pt-28 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-10 max-w-[1400px] mx-auto font-['Poppins',sans-serif]">
     <StoreCatalog client:load />
-  </div>
+  </main>
 
   <FooterCTA />
 </RootLayout>
