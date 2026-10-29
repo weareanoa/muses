@@ -1,122 +1,317 @@
 [
   {
-    "id": "gallery-01",
-    "title": "MUSES 1st Anniversary Showcase",
-    "category": "Event",
-    "mediaType": "photo",
-    "mediaUrl": "/images/muses_group_frame1.svg",
-    "thumbnail": "/images/muses_group_frame1.svg",
-    "takenAt": "2026-03-01",
-    "caption": "Momen bersejarah perayaan satu tahun perjalanan MUSES bersama ribuan fans setia di Grand Hall.",
-    "albumGroup": "Anniversary",
-    "aspect": "wide"
-  },
-  {
-    "id": "gallery-02",
-    "title": "GOLDEN HOUR World Tour: Jakarta Live",
-    "category": "Konser",
-    "mediaType": "video",
-    "mediaUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
-    "thumbnail": "/images/tours/poster-2.svg",
-    "takenAt": "2026-05-18",
-    "caption": "Penampilan megah membawakan lagu 'First Light' dengan tata panggung cahaya keemasan penuh spektakuler.",
-    "albumGroup": "Tour Jakarta",
-    "aspect": "tall"
-  },
-  {
-    "id": "gallery-03",
-    "title": "Backstage Rehearsal & Vocal Warmup",
-    "category": "Behind the Scenes",
-    "mediaType": "photo",
-    "mediaUrl": "/images/members/vira.webp",
-    "thumbnail": "/images/members/vira.webp",
-    "takenAt": "2026-05-17",
-    "caption": "Aria memimpin pemanasan vokal dan peregangan sebelum soundcheck dimulai.",
-    "albumGroup": "Backstage Diary",
-    "aspect": "square"
-  },
-  {
-    "id": "gallery-04",
-    "title": "Studio Recording 'Afterglow' Session",
-    "category": "Behind the Scenes",
-    "mediaType": "photo",
-    "mediaUrl": "/images/members/vely.webp",
-    "thumbnail": "/images/members/vely.webp",
-    "takenAt": "2026-04-10",
-    "caption": "Clara mengambil nada tinggi dramatis di bilik rekaman studio utama Aureum Records.",
-    "albumGroup": "Studio Session",
-    "aspect": "square"
-  },
-  {
-    "id": "gallery-05",
-    "title": "Acoustic Stage & Fan Gathering",
-    "category": "Event",
-    "mediaType": "photo",
-    "mediaUrl": "/images/members/faril.webp",
-    "thumbnail": "/images/members/faril.webp",
-    "takenAt": "2026-06-22",
-    "caption": "Sesi temu sapa hangat dan penampilan akustik intim bersama member di sore hari.",
-    "albumGroup": "Fan Meeting",
-    "aspect": "tall"
-  },
-  {
-    "id": "gallery-06",
-    "title": "Stadium Fireworks Finale 'Golden Hour'",
+    "id": "gallery-1",
+    "title": "Konser MUSES #1",
     "category": "Konser",
     "mediaType": "photo",
-    "mediaUrl": "/images/tours/poster-1.svg",
-    "thumbnail": "/images/tours/poster-1.svg",
-    "takenAt": "2026-07-04",
-    "caption": "Pesta kembang api keemasan menutup konser tur dengan sorakan gemuruh para penonton.",
-    "albumGroup": "Tour Finale",
-    "aspect": "wide"
+    "mediaUrl": "/images/galery/1.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #1.",
+    "takenAt": "2026"
   },
   {
-    "id": "gallery-07",
-    "title": "Choreography Practice Room BTS",
-    "category": "Behind the Scenes",
-    "mediaType": "video",
-    "mediaUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
-    "thumbnail": "/images/members/mine.webp",
-    "takenAt": "2026-03-28",
-    "caption": "Latihan sinkronisasi intensif gerakan tarian 'Horizon' dipandu oleh Stella dan Reva.",
-    "albumGroup": "Practice Room",
-    "aspect": "tall"
-  },
-  {
-    "id": "gallery-08",
-    "title": "Music Video Outdoor Shooting Sunset",
-    "category": "Behind the Scenes",
+    "id": "gallery-2",
+    "title": "Konser MUSES #2",
+    "category": "Konser",
     "mediaType": "photo",
-    "mediaUrl": "/images/members/liz.webp",
-    "thumbnail": "/images/members/liz.webp",
-    "takenAt": "2026-08-12",
-    "caption": "Pengambilan gambar saat matahari terbenam untuk video klip 'Lumen' di bukit keemasan.",
-    "albumGroup": "MV Behind",
-    "aspect": "square"
+    "mediaUrl": "/images/galery/2.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #2.",
+    "takenAt": "2026"
   },
   {
-    "id": "gallery-09",
-    "title": "National Music Awards Red Carpet",
-    "category": "Event",
+    "id": "gallery-3",
+    "title": "Konser MUSES #3",
+    "category": "Konser",
     "mediaType": "photo",
-    "mediaUrl": "/images/members/ndah.webp",
-    "thumbnail": "/images/members/ndah.webp",
-    "takenAt": "2026-09-05",
-    "caption": "MUSES tampil memukau di karpet merah dalam balutan busana bergradasi gold karya desainer lokal.",
-    "albumGroup": "Awards Ceremony",
-    "aspect": "square"
+    "mediaUrl": "/images/galery/3.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #3.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-4",
+    "title": "Konser MUSES #4",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/4.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #4.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-5",
+    "title": "Konser MUSES #5",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/5.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #5.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-6",
+    "title": "Konser MUSES #6",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/6.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #6.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-7",
+    "title": "Konser MUSES #7",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/7.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #7.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-8",
+    "title": "Konser MUSES #8",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/8.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #8.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-9",
+    "title": "Konser MUSES #9",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/9.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #9.",
+    "takenAt": "2026"
   },
   {
     "id": "gallery-10",
-    "title": "Encore Stage Lights & Confetti",
+    "title": "Konser MUSES #10",
     "category": "Konser",
     "mediaType": "photo",
-    "mediaUrl": "/images/members/lia.webp",
-    "thumbnail": "/images/members/lia.webp",
-    "takenAt": "2026-09-20",
-    "caption": "Zia memegang mikrofon emas di tengah taburan konfeti yang menghujani panggung encore.",
-    "albumGroup": "Encore Moments",
-    "aspect": "tall"
+    "mediaUrl": "/images/galery/10.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #10.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-11",
+    "title": "Konser MUSES #11",
+    "category": "Event",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/11.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #11.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-12",
+    "title": "Konser MUSES #12",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/12.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #12.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-13",
+    "title": "Konser MUSES #13",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/13.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #13.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-14",
+    "title": "Konser MUSES #14",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/14.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #14.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-15",
+    "title": "Konser MUSES #15",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/15.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #15.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-16",
+    "title": "Konser MUSES #16",
+    "category": "Event",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/16.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #16.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-17",
+    "title": "Konser MUSES #17",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/17.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #17.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-18",
+    "title": "Konser MUSES #18",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/18.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #18.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-19",
+    "title": "Konser MUSES #19",
+    "category": "Behind the Scenes",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/19.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #19.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-20",
+    "title": "Konser MUSES #20",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/20.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #20.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-21",
+    "title": "Konser MUSES #21",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/21.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #21.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-22",
+    "title": "Konser MUSES #22",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/22.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #22.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-23",
+    "title": "Konser MUSES #23",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/23.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #23.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-24",
+    "title": "Konser MUSES #24",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/24.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #24.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-25",
+    "title": "Konser MUSES #25",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/25.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #25.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-26",
+    "title": "Konser MUSES #26",
+    "category": "Event",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/26.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #26.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-27",
+    "title": "Konser MUSES #27",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/27.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #27.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-28",
+    "title": "Konser MUSES #28",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/28.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #28.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-29",
+    "title": "Konser MUSES #29",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/29.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #29.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-30",
+    "title": "Konser MUSES #30",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/30.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #30.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-31",
+    "title": "Konser MUSES #31",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/31.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #31.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-32",
+    "title": "Konser MUSES #32",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/32.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #32.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-33",
+    "title": "Konser MUSES #33",
+    "category": "Behind the Scenes",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/33.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #33.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-34",
+    "title": "Konser MUSES #34",
+    "category": "Konser",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/34.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #34.",
+    "takenAt": "2026"
+  },
+  {
+    "id": "gallery-35",
+    "title": "Konser MUSES #35",
+    "category": "Event",
+    "mediaType": "photo",
+    "mediaUrl": "/images/galery/35.webp",
+    "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #35.",
+    "takenAt": "2026"
   }
 ]

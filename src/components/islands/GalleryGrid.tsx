@@ -1,98 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { withBase } from '../../lib/paths';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import galleryItemsRaw from '../../data/gallery.json';
 
-interface BentoCardItem {
+interface GalleryItem {
   id: string;
-  displayTitle: string;
-  category: 'Konser' | 'Behind the Scenes' | 'Event';
-  gradient: string;
-  textColor: string;
-  textAlign: 'left' | 'center';
+  title: string;
+  category: 'Konser' | 'Behind the Scenes' | 'Event' | string;
+  mediaType?: string;
   mediaUrl: string;
   caption: string;
+  takenAt?: string;
 }
 
-const BENTO_CARDS: BentoCardItem[] = [
-  {
-    id: 'bento-1',
-    displayTitle: 'Muses 1st Anniversary',
-    category: 'Event',
-    gradient: 'linear-gradient(135deg, #CF9718 0%, #E5B438 50%, #F5DE98 100%)',
-    textColor: '#7A540D',
-    textAlign: 'left',
-    mediaUrl: '/images/muses_group_frame1.svg',
-    caption: 'Momen bersejarah perayaan satu tahun perjalanan MUSES bersama ribuan fans setia di Grand Hall.',
-  },
-  {
-    id: 'bento-2',
-    displayTitle: 'BTS',
-    category: 'Behind the Scenes',
-    gradient: 'linear-gradient(135deg, #B584E8 0%, #CCA4F5 50%, #EBD5FD 100%)',
-    textColor: '#492F64',
-    textAlign: 'center',
-    mediaUrl: '/images/members/vira.webp',
-    caption: 'Aria memimpin pemanasan vokal dan peregangan sebelum soundcheck dimulai.',
-  },
-  {
-    id: 'bento-3',
-    displayTitle: 'BTS',
-    category: 'Behind the Scenes',
-    gradient: 'linear-gradient(135deg, #469651 0%, #68B172 50%, #A6DBAD 100%)',
-    textColor: '#224828',
-    textAlign: 'center',
-    mediaUrl: '/images/members/vely.webp',
-    caption: 'Clara mengambil nada tinggi dramatis di bilik rekaman studio utama Aureum Records.',
-  },
-  {
-    id: 'bento-4',
-    displayTitle: 'Muses 1st Anniversary',
-    category: 'Konser',
-    gradient: 'linear-gradient(135deg, #B57486 0%, #CB8E9E 50%, #EFCAD3 100%)',
-    textColor: '#63313E',
-    textAlign: 'left',
-    mediaUrl: '/images/tours/poster-2.svg',
-    caption: 'Penampilan megah membawakan lagu First Light dengan tata panggung cahaya keemasan spektakuler.',
-  },
-  {
-    id: 'bento-5',
-    displayTitle: 'Muses 1st Anniversary',
-    category: 'Event',
-    gradient: 'linear-gradient(135deg, #6F92B5 0%, #90AFCE 50%, #D0DEEC 100%)',
-    textColor: '#7A5612',
-    textAlign: 'left',
-    mediaUrl: '/images/members/faril.webp',
-    caption: 'Sesi temu sapa hangat dan penampilan akustik intim bersama member di sore hari.',
-  },
-  {
-    id: 'bento-6',
-    displayTitle: 'BTS',
-    category: 'Behind the Scenes',
-    gradient: 'linear-gradient(135deg, #E8CD78 0%, #F3DF9A 50%, #FAF0C9 100%)',
-    textColor: '#775614',
-    textAlign: 'center',
-    mediaUrl: '/images/members/mine.webp',
-    caption: 'Latihan koreografi intensif di studio tari menjelang peluncuran tur dunia.',
-  },
-  {
-    id: 'bento-7',
-    displayTitle: 'BTS',
-    category: 'Konser',
-    gradient: 'linear-gradient(135deg, #4387DF 0%, #6BA4EC 50%, #AED0F7 100%)',
-    textColor: '#173660',
-    textAlign: 'center',
-    mediaUrl: '/images/tours/poster-1.svg',
-    caption: 'Pesta kembang api keemasan menutup konser tur dengan sorakan gemuruh ribuan penonton.',
-  },
-];
+const GALLERY_ITEMS: GalleryItem[] = galleryItemsRaw as GalleryItem[];
 
 export default function GalleryGrid() {
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
+  const [visibleLimit, setVisibleLimit] = useState<number>(7);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const categories = ['Semua', 'Konser', 'Behind the Scenes', 'Event'];
 
-  const activeItem = lightboxIndex !== null ? BENTO_CARDS[lightboxIndex] : null;
+  const filteredItems = GALLERY_ITEMS.filter((item) => {
+    if (activeCategory === 'Semua') return true;
+    return item.category.toLowerCase() === activeCategory.toLowerCase();
+  });
+
+  const visibleItems = filteredItems.slice(0, visibleLimit);
+  const activeItem = lightboxIndex !== null && filteredItems[lightboxIndex] ? filteredItems[lightboxIndex] : null;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -100,44 +36,58 @@ export default function GalleryGrid() {
       if (e.key === 'Escape') {
         setLightboxIndex(null);
       } else if (e.key === 'ArrowRight') {
-        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % BENTO_CARDS.length : null));
+        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % filteredItems.length : null));
       } else if (e.key === 'ArrowLeft') {
-        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + BENTO_CARDS.length) % BENTO_CARDS.length : null));
+        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + filteredItems.length) % filteredItems.length : null));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex]);
+  }, [lightboxIndex, filteredItems.length]);
 
-  const isCardActive = (cat: string) => {
-    if (activeCategory === 'Semua') return true;
-    return cat.toLowerCase() === activeCategory.toLowerCase();
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setVisibleLimit(7);
+    setLightboxIndex(null);
   };
 
-  const renderCard = (card: BentoCardItem, idx: number, extraClasses = '') => {
-    const active = isCardActive(card.category);
+  const renderCard = (card: GalleryItem, idx: number, extraClasses = '') => {
     return (
       <div
         key={card.id}
         onClick={() => setLightboxIndex(idx)}
-        className={`group relative rounded-[22px] sm:rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 ${
-          active
-            ? 'opacity-100 hover:scale-[1.015] hover:shadow-md'
-            : 'opacity-35 scale-[0.98]'
-        } ${extraClasses}`}
-        style={{ background: card.gradient }}
+        className={`group relative rounded-[22px] sm:rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl hover:shadow-[#1F1A12]/10 bg-[#1F1A12] ${extraClasses}`}
       >
-        <div
-          className={`relative z-10 w-full h-full flex flex-col justify-end ${
-            card.textAlign === 'center' ? 'items-center text-center p-4' : 'items-start text-left p-5 sm:p-6'
-          }`}
-        >
-          <span
-            className="font-bold text-sm sm:text-base tracking-tight select-none leading-snug drop-shadow-2xs"
-            style={{ color: card.textColor }}
-          >
-            {card.displayTitle}
-          </span>
+        <img
+          src={withBase(card.mediaUrl)}
+          alt={card.title}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/90" />
+
+        <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 sm:p-5">
+          <div className="flex items-center justify-between">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1F1A12]/70 backdrop-blur-md text-[#E5B438] border border-[#E5B438]/30 shadow-xs">
+              {card.category}
+            </span>
+            <div className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <Eye className="w-3.5 h-3.5 text-white" />
+            </div>
+          </div>
+
+          <div>
+            <span className="font-bold text-sm sm:text-base text-white tracking-tight select-none leading-snug drop-shadow-md block group-hover:text-[#F3DF9A] transition-colors">
+              {card.title}
+            </span>
+            {card.caption && (
+              <p className="text-[11px] sm:text-xs text-[#FAF3E2]/80 line-clamp-1 mt-1 font-normal drop-shadow-xs">
+                {card.caption}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -165,7 +115,7 @@ export default function GalleryGrid() {
               <button
                 key={cat}
                 type="button"
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-7 sm:px-9 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37412] text-[#1F1A12] shadow-xs'
@@ -178,34 +128,75 @@ export default function GalleryGrid() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
-          <div className="md:col-span-5 flex flex-col gap-4 sm:gap-5">
-            {renderCard(BENTO_CARDS[0], 0, 'h-[210px] sm:h-[235px]')}
-            <div className="grid grid-cols-2 gap-4 sm:gap-5">
-              {renderCard(BENTO_CARDS[1], 1, 'h-[145px] sm:h-[165px]')}
-              {renderCard(BENTO_CARDS[2], 2, 'h-[145px] sm:h-[165px]')}
+        {filteredItems.length === 0 ? (
+          <div className="py-16 text-center text-[#7A6E58] text-sm bg-white/60 rounded-2xl border border-[#EADBBD]">
+            Belum ada foto dalam kategori ini.
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
+              {visibleItems[0] && (
+                <div className="md:col-span-5 flex flex-col gap-4 sm:gap-5">
+                  {renderCard(visibleItems[0], 0, 'h-[210px] sm:h-[235px]')}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    {visibleItems[1] && renderCard(visibleItems[1], 1, 'h-[145px] sm:h-[165px]')}
+                    {visibleItems[2] && renderCard(visibleItems[2], 2, 'h-[145px] sm:h-[165px]')}
+                  </div>
+                </div>
+              )}
+
+              {visibleItems[3] && (
+                <div className="md:col-span-4 flex flex-col gap-4 sm:gap-5">
+                  {renderCard(visibleItems[3], 3, 'h-[140px] sm:h-[155px]')}
+                  {visibleItems[4] && renderCard(visibleItems[4], 4, 'h-[215px] sm:h-[245px] flex-1')}
+                </div>
+              )}
+
+              {visibleItems[5] && (
+                <div className="md:col-span-3 flex flex-col gap-4 sm:gap-5">
+                  {renderCard(visibleItems[5], 5, 'h-[175px] sm:h-[195px]')}
+                  {visibleItems[6] && renderCard(visibleItems[6], 6, 'h-[180px] sm:h-[205px] flex-1')}
+                </div>
+              )}
             </div>
-          </div>
 
-          <div className="md:col-span-4 flex flex-col gap-4 sm:gap-5">
-            {renderCard(BENTO_CARDS[3], 3, 'h-[140px] sm:h-[155px]')}
-            {renderCard(BENTO_CARDS[4], 4, 'h-[215px] sm:h-[245px] flex-1')}
-          </div>
+            {visibleItems.length > 7 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mt-4 sm:mt-5">
+                {visibleItems.slice(7).map((item, idx) => {
+                  const actualIdx = 7 + idx;
+                  return renderCard(item, actualIdx, 'h-[210px] sm:h-[230px]');
+                })}
+              </div>
+            )}
 
-          <div className="md:col-span-3 flex flex-col gap-4 sm:gap-5">
-            {renderCard(BENTO_CARDS[5], 5, 'h-[175px] sm:h-[195px]')}
-            {renderCard(BENTO_CARDS[6], 6, 'h-[180px] sm:h-[205px] flex-1')}
-          </div>
-        </div>
+            {visibleLimit < filteredItems.length && (
+              <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setVisibleLimit((prev) => Math.min(prev + 7, filteredItems.length))}
+                  className="px-8 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37412] text-[#1F1A12] hover:brightness-105 active:scale-95 transition-all shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  Muat Lebih Banyak ({filteredItems.length - visibleLimit} foto tersisa)
+                </button>
+              </div>
+            )}
+
+            {visibleLimit >= filteredItems.length && filteredItems.length > 7 && (
+              <div className="mt-8 text-center text-xs text-[#7A6E58]">
+                Semua {filteredItems.length} foto telah ditampilkan.
+              </div>
+            )}
+          </>
+        )}
       </div>
 
-      {activeItem && (
+      {activeItem && lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
           onClick={() => setLightboxIndex(null)}
         >
           <div
-            className="relative w-full max-w-2xl bg-[#FCFAF5] rounded-3xl overflow-hidden border border-[#C9971C]/35 shadow-2xl flex flex-col max-h-[90vh]"
+            className="relative w-full max-w-3xl bg-[#FCFAF5] rounded-3xl overflow-hidden border border-[#C9971C]/35 shadow-2xl flex flex-col max-h-[92vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4 sm:p-5 border-b border-[#C9971C]/20 flex items-center justify-between bg-white">
@@ -213,8 +204,11 @@ export default function GalleryGrid() {
                 <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37418] text-[#1F1A12]">
                   {activeItem.category}
                 </span>
-                <span className="text-xs font-semibold text-[#1F1A12]">
-                  {activeItem.displayTitle}
+                <span className="text-xs sm:text-sm font-semibold text-[#1F1A12]">
+                  {activeItem.title}
+                </span>
+                <span className="text-xs text-[#7A6E58]">
+                  ({lightboxIndex + 1} / {filteredItems.length})
                 </span>
               </div>
 
@@ -223,7 +217,7 @@ export default function GalleryGrid() {
                   type="button"
                   onClick={() =>
                     setLightboxIndex((prev) =>
-                      prev !== null ? (prev - 1 + BENTO_CARDS.length) % BENTO_CARDS.length : null
+                      prev !== null ? (prev - 1 + filteredItems.length) % filteredItems.length : null
                     )
                   }
                   aria-label="Sebelumnya"
@@ -235,7 +229,7 @@ export default function GalleryGrid() {
                   type="button"
                   onClick={() =>
                     setLightboxIndex((prev) =>
-                      prev !== null ? (prev + 1) % BENTO_CARDS.length : null
+                      prev !== null ? (prev + 1) % filteredItems.length : null
                     )
                   }
                   aria-label="Berikutnya"
@@ -254,15 +248,15 @@ export default function GalleryGrid() {
               </div>
             </div>
 
-            <div className="relative flex-1 overflow-hidden bg-neutral-950 flex items-center justify-center p-4 min-h-[260px] sm:min-h-[380px]">
+            <div className="relative flex-1 overflow-hidden bg-neutral-950 flex items-center justify-center p-4 min-h-[280px] sm:min-h-[420px]">
               <img
                 src={withBase(activeItem.mediaUrl)}
-                alt={activeItem.displayTitle}
-                className="max-h-[60vh] w-auto max-w-full object-contain mx-auto rounded-xl drop-shadow-xl"
+                alt={activeItem.title}
+                className="max-h-[65vh] w-auto max-w-full object-contain mx-auto rounded-xl drop-shadow-2xl"
               />
             </div>
 
-            <div className="p-5 bg-white border-t border-[#C9971C]/20">
+            <div className="p-4 sm:p-5 bg-white border-t border-[#C9971C]/20">
               <p className="text-xs sm:text-sm text-[#4B4335] leading-relaxed">
                 {activeItem.caption}
               </p>
