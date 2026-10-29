@@ -5,6 +5,8 @@ import ProductPurchaseIsland from '../../components/islands/ProductPurchaseIslan
 import FooterCTA from '../../components/sections/FooterCTA.astro';
 import { productService } from '../../services/productService';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const { data: products = [] } = await productService.getProducts();
   return products.map((product) => ({
