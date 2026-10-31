@@ -91,6 +91,31 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
     selectCard(defaultCard);
   }
 
+  if (!canHover && frame2) {
+    const SWIPE_THRESHOLD = 36;
+    const cardList = Array.from(cards);
+    let startX = 0;
+    let startY = 0;
+
+    const onTouchStart = (event: TouchEvent) => {
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      const dx = event.changedTouches[0].clientX - startX;
+      const dy = event.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+      const current = cardList.findIndex((card) => card.getAttribute('data-member-id') === selectedId);
+      const next = cardList[Math.min(cardList.length - 1, Math.max(0, current + (dx < 0 ? 1 : -1)))];
+      if (next) selectCard(next);
+    };
+
+    frame2.addEventListener('touchstart', onTouchStart, { passive: true });
+    frame2.addEventListener('touchend', onTouchEnd, { passive: true });
+  }
+
   const ctx = gsap.context(() => {
     if (!frame1 || !frame2) return;
 
