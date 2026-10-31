@@ -25,7 +25,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
   <div id="member" class="absolute top-[680px] left-0 w-full h-1 pointer-events-none" aria-hidden="true"></div>
   <section
     id="hero-pinned-viewport"
-    class="relative w-full h-screen min-h-[620px] max-h-[1080px] pt-20 flex items-center justify-center overflow-hidden select-none"
+    class="relative w-full h-[100svh] lg:h-screen min-h-[560px] lg:min-h-[620px] max-h-[1080px] pt-14 lg:pt-20 flex items-center justify-center overflow-hidden select-none"
   >
     <div class="absolute inset-0 bg-gradient-to-b from-[#FCFAF5] via-[#FBF5E8] to-[#FCFAF5] pointer-events-none z-0"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0 transform-gpu" style="contain: paint;"></div>
@@ -33,19 +33,19 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
 
     <div
       id="hero-logo-anchor"
-      class="absolute top-20 sm:top-24 inset-x-0 w-full z-30 flex flex-col items-center justify-center pointer-events-none will-change-transform transform-gpu"
+      class="absolute top-[19svh] sm:top-24 inset-x-0 w-full z-30 flex flex-col items-center justify-center pointer-events-none will-change-transform transform-gpu"
     >
       <img
         id="hero-muses-logo"
         src={withBase("/images/muses_logo_3d_clean.svg")}
         alt="MUSES"
-        class="w-[280px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] mx-auto block object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
+        class="w-[340px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] mx-auto block object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
       />
     </div>
 
     <div
       id="hero-frame-1"
-      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform transform-gpu"
+      class="absolute inset-0 pt-14 lg:pt-20 pb-16 lg:pb-0 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform transform-gpu"
     >
       <div class="relative w-full max-w-[1550px] 2xl:max-w-[1750px] h-full max-h-[85vh] sm:max-h-[92vh] flex items-end justify-center">
         <img
@@ -67,7 +67,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     <div
       id="hero-frame-2"
       data-active="faril"
-      class="absolute inset-0 pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-2 sm:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
+      class="absolute inset-0 pt-14 lg:pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-[4.5rem] sm:pb-20 lg:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
     >
       <div
         id="frame2-ambient-glow"
@@ -159,7 +159,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
       <div class="relative w-full max-w-[1440px] flex flex-col items-center justify-center z-10 mb-7 sm:mb-9 md:mb-10">
         <div
           id="arc-cards-track"
-          class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 py-6 w-full will-change-transform overflow-visible"
+          class="flex items-center justify-center -space-x-2 sm:space-x-0 sm:gap-2 md:gap-2.5 lg:gap-3 py-6 w-full will-change-transform overflow-visible"
         >
           {members.map((member, index) => {
             const offset = index - 3;
@@ -172,7 +172,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
             return (
               <button
                 type="button"
-                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform text-left focus:outline-none w-[94px] sm:w-[116px] md:w-[132px] lg:w-[148px] xl:w-[162px] 2xl:w-[174px] h-[132px] sm:h-[164px] md:h-[188px] lg:h-[210px] xl:h-[228px] 2xl:h-[246px] rounded-2xl sm:rounded-[20px] overflow-hidden border-[2.5px] sm:border-[3px] border-white shadow-[0_12px_28px_rgba(0,0,0,0.16)] transform-gpu"
+                class="muses-hero-card group relative shrink-0 cursor-pointer will-change-transform text-left focus:outline-none w-[58px] min-[400px]:w-[66px] sm:w-[116px] md:w-[132px] lg:w-[148px] xl:w-[162px] 2xl:w-[174px] h-[84px] min-[400px]:h-[94px] sm:h-[164px] md:h-[188px] lg:h-[210px] xl:h-[228px] 2xl:h-[246px] rounded-2xl sm:rounded-[20px] overflow-hidden border-[2.5px] sm:border-[3px] border-white shadow-[0_12px_28px_rgba(0,0,0,0.16)] transform-gpu"
                 style={{
                   '--offset': offset,
                   '--theme-color': themeColor,

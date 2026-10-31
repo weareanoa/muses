@@ -45,13 +45,13 @@ export default function LanguageSwitcher({ locale }: { locale: Locale }) {
         aria-label={d.aria}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center gap-1 py-1 px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
+        className="flex items-center gap-1 p-2 -m-1 sm:m-0 sm:py-1 sm:px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
       >
         <Globe
           className="w-4.5 h-4.5 text-[#1F1A12] group-hover:text-[#C9971C] transition-colors"
           strokeWidth={1.8}
         />
-        <span className="text-xs sm:text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors uppercase tracking-normal">
+        <span className="hidden sm:inline text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors uppercase tracking-normal">
           {locale}
         </span>
       </button>

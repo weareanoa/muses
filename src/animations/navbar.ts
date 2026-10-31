@@ -10,15 +10,10 @@ export function initNavbar(): NavbarController {
   }
 
   const header = document.getElementById('main-header');
-  const mobileBtn = document.getElementById('mobile-menu-btn');
-  const mobileDrawer = document.getElementById('mobile-nav-drawer');
-  const hamburgerIcon = document.getElementById('hamburger-icon');
-  const closeIcon = document.getElementById('close-icon');
   const desktopNavLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-desktop]');
-  const mobileNavLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-mobile]');
+  const bottomNavLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-bottom]');
   const logoLink = header?.querySelector<HTMLAnchorElement>('a[aria-label="MUSES Home"]');
 
-  let isMobileMenuOpen = false;
   let lastScrollY = window.scrollY;
   let isHeaderHidden = false;
   let currentActiveId = 'home';
@@ -54,28 +49,13 @@ export function initNavbar(): NavbarController {
       }
     });
 
-    mobileNavLinks.forEach((link) => {
+    bottomNavLinks.forEach((link) => {
       const isActive = link.getAttribute('data-nav-id') === id;
+      link.setAttribute('data-active', String(isActive));
       if (isActive) {
-        link.classList.add(
-          'bg-gradient-to-r',
-          'from-[#C28C1D]',
-          'via-[#DBA736]',
-          'to-[#A37418]',
-          'text-[#1F1A12]',
-          'font-semibold'
-        );
-        link.classList.remove('hover:bg-[#C9971C]/10', 'text-[#4B4335]');
+        link.setAttribute('aria-current', 'page');
       } else {
-        link.classList.remove(
-          'bg-gradient-to-r',
-          'from-[#C28C1D]',
-          'via-[#DBA736]',
-          'to-[#A37418]',
-          'text-[#1F1A12]',
-          'font-semibold'
-        );
-        link.classList.add('hover:bg-[#C9971C]/10', 'text-[#4B4335]');
+        link.removeAttribute('aria-current');
       }
     });
   }
@@ -167,7 +147,7 @@ export function initNavbar(): NavbarController {
   function updateNavbar(scrollY: number, forceDirection?: number) {
     calculateActiveSection();
 
-    if (!header || isMobileMenuOpen) return;
+    if (!header) return;
 
     const currentY = Math.max(0, scrollY);
     const delta = currentY - lastScrollY;
@@ -196,31 +176,7 @@ export function initNavbar(): NavbarController {
     lastScrollY = currentY;
   }
 
-  function setMobileMenu(open: boolean) {
-    isMobileMenuOpen = open;
-    if (!mobileDrawer) return;
-
-    if (open) {
-      mobileDrawer.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
-      mobileDrawer.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
-      hamburgerIcon?.classList.add('hidden');
-      closeIcon?.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    } else {
-      mobileDrawer.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
-      mobileDrawer.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
-      hamburgerIcon?.classList.remove('hidden');
-      closeIcon?.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-  }
-
-  const toggleMobileMenu = () => setMobileMenu(!isMobileMenuOpen);
-  const closeMobile = () => setMobileMenu(false);
-
-  mobileBtn?.addEventListener('click', toggleMobileMenu);
-
-  const allNavLinks = [...desktopNavLinks, ...mobileNavLinks];
+  const allNavLinks = [...desktopNavLinks, ...bottomNavLinks];
   const handleLinkClick = (e: MouseEvent) => {
     const link = e.currentTarget as HTMLAnchorElement;
     const navId = link.getAttribute('data-nav-id');
@@ -231,7 +187,6 @@ export function initNavbar(): NavbarController {
       e.preventDefault();
       scrollToSection(navId);
       history.pushState(null, '', '#' + navId);
-      closeMobile();
     }
   };
 
@@ -243,7 +198,6 @@ export function initNavbar(): NavbarController {
       e.preventDefault();
       scrollToSection('home');
       history.pushState(null, '', '#home');
-      closeMobile();
     }
   };
 
@@ -283,7 +237,6 @@ export function initNavbar(): NavbarController {
 
   return {
     destroy: () => {
-      mobileBtn?.removeEventListener('click', toggleMobileMenu);
       allNavLinks.forEach((link) => link.removeEventListener('click', handleLinkClick));
       logoLink?.removeEventListener('click', handleLogoClick);
       window.removeEventListener('scroll', windowScrollHandler);

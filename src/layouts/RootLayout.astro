@@ -36,7 +36,15 @@ const navItems = [
   { name: d.nav.contact, href: '/#kontak', id: 'kontak' },
 ];
 
-const isItemActive = (id: string) => {
+const bottomNavItems = [
+  { id: 'home', name: d.nav.home, href: '/#home', icon: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>' },
+  { id: 'member', name: d.nav.member, href: '/#member', icon: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+  { id: 'discography', name: d.nav.album, href: '/#discography', icon: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/>' },
+  { id: 'schedule', name: d.nav.schedule, href: '/#schedule', icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>' },
+  { id: 'store', name: d.nav.store, href: '/#store', icon: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>' },
+];
+
+const isItemActive =(id: string) => {
   const isHome = currentPath === '/' || currentPath === withBase('/') || currentPath === withBase('').replace(/\/$/, '');
   if (isHome) return id === 'home';
   const bPath = withBase('/' + id);
@@ -48,7 +56,7 @@ const isItemActive = (id: string) => {
 <html lang={locale}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
@@ -68,7 +76,7 @@ const isItemActive = (id: string) => {
       class="fixed top-0 inset-x-0 z-40 navbar-visible border-b border-[#C9971C]/25 bg-white/95 backdrop-blur-md shadow-xs"
       data-solid-header={solidHeader ? 'true' : 'false'}
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 h-14 lg:h-20 flex items-center justify-between">
         <a href={withBase("/")} class="flex items-center gap-2 group" aria-label={d.footer.homeAria}>
           <img
             src={withBase("/images/muses_logo_3d_clean.svg")}
@@ -97,62 +105,35 @@ const isItemActive = (id: string) => {
           })}
         </nav>
 
-        <div class="flex items-center gap-2.5 sm:gap-3">
-          <UserNavIsland client:load locale={locale} />
-
-          <button
-            id="mobile-menu-btn"
-            class="lg:hidden p-2.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] transition-all cursor-pointer flex items-center justify-center group"
-            aria-label={d.nav.openNavAria}
-          >
-            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+        <UserNavIsland client:load locale={locale} />
       </div>
     </header>
 
-    <div
-      id="mobile-nav-drawer"
-      class="fixed inset-x-0 top-20 z-30 bg-white/95 backdrop-blur-2xl border-b border-[#C9971C]/30 transition-all duration-300 ease-in-out -translate-y-full opacity-0 pointer-events-none lg:hidden shadow-xl"
+    <nav
+      aria-label={d.nav.mobileNavAria}
+      class="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[#C9971C]/25 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(90,70,30,0.08)]"
     >
-      <div class="px-6 py-6 flex flex-col space-y-4">
-        <nav class="flex flex-col space-y-2 text-xs font-bold uppercase tracking-wider text-[#4B4335]">
-          {navItems.map((item, idx) => {
-            const active = isItemActive(item.id);
-            return (
-              <a
-                href={withBase(item.href)}
-                data-nav-mobile
-                data-nav-id={item.id}
-                class={`mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl border border-transparent transition-all ${
-                  active
-                    ? 'bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] font-semibold'
-                    : 'hover:bg-[#C9971C]/10 text-[#4B4335]'
-                }`}
-              >
-                <span>{item.name}</span>
-                <span class="text-[10px] font-mono text-[#C9971C]">0{idx + 1}</span>
-              </a>
-            );
-          })}
-          <a
-            href={withBase("/auth")}
-            class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-[#C9971C]/10 text-[#1F1A12] border-t border-[#1F1A12]/10 mt-2 pt-3"
-          >
-            <span>{d.nav.mobileSignIn}</span>
-            <span class="text-[10px] font-mono text-[#C9971C]">★</span>
-          </a>
-        </nav>
-      </div>
-    </div>
+      <ul class="grid grid-cols-5 h-16 max-w-xl mx-auto">
+        {bottomNavItems.map((item) => (
+          <li class="contents">
+            <a
+              href={withBase(item.href)}
+              data-nav-bottom
+              data-nav-id={item.id}
+              data-active={isItemActive(item.id) ? 'true' : 'false'}
+              aria-current={isItemActive(item.id) ? 'page' : undefined}
+              class="relative flex flex-col items-center justify-center gap-1 text-[#6E6453] transition-colors active:bg-[#C9971C]/10 data-[active=true]:text-[#8C6A1C] before:absolute before:top-0 before:h-0.5 before:w-8 before:rounded-b-full before:bg-[#C9971C] before:opacity-0 before:transition-opacity data-[active=true]:before:opacity-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={item.icon} />
+              <span class="text-[10px] font-medium leading-none lowercase first-letter:uppercase">{item.name}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
     )}
 
-    <main class="min-h-screen">
+    <main class="min-h-screen pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
       <slot />
     </main>
 
