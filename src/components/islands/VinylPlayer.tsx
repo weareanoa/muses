@@ -13,10 +13,12 @@ import VinylRecord from '../ui/VinylRecord';
 import StreamingLinks from '../ui/StreamingLinks';
 import { Play, Pause, X } from 'lucide-react';
 import { useScrollLock } from '../../hooks/useScrollLock';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 
 const discographyData = withBaseDeep(discographyDataRaw);
 
-export default function VinylPlayer() {
+export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).discography;
   const activeTrack = useStore(currentTrack);
   const playing = useStore(isPlaying);
 
@@ -112,7 +114,7 @@ export default function VinylPlayer() {
       <div className="relative z-10 w-full max-w-7xl mx-auto py-10 sm:py-16 px-4 sm:px-8">
         <div className="mb-8 sm:mb-12">
           <h2 className="text-5xl sm:text-6xl md:text-7xl font-balbes text-[#18181B] tracking-tight font-normal">
-            Discography
+            {d.heading}
           </h2>
         </div>
 
@@ -138,7 +140,7 @@ export default function VinylPlayer() {
               </h3>
 
               <p className="text-xs sm:text-sm text-[#555] leading-relaxed mt-3">
-                {currentAlbum.description}
+                {locale === 'en' && (currentAlbum as { descriptionEn?: string }).descriptionEn ? (currentAlbum as { descriptionEn?: string }).descriptionEn : currentAlbum.description}
               </p>
             </div>
 
@@ -149,7 +151,7 @@ export default function VinylPlayer() {
               >
                 <img
                   src={withBase(currentAlbum.mvThumbnail || currentAlbum.coverImage)}
-                  alt={`${currentAlbum.albumTitle} Music Video`}
+                  alt={fmt(d.mvTitle, { album: currentAlbum.albumTitle })}
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                 />
 
@@ -162,7 +164,7 @@ export default function VinylPlayer() {
                 <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
                   <div>
                     <span className="px-2 py-0.5 rounded text-[9px] font-mono tracking-widest uppercase bg-black/60 backdrop-blur-xs text-white block w-fit mb-1 border border-white/10">
-                      MUSIC VIDEO
+                      {d.mvLabel}
                     </span>
                     <h4 className="text-lg sm:text-xl font-balbes text-white tracking-wide drop-shadow-md">
                       {currentAlbum.albumTitle}
@@ -176,7 +178,7 @@ export default function VinylPlayer() {
               <StreamingLinks
                 spotify={titleTrack.links.spotify}
                 youtube={titleTrack.links.youtube}
-                appleMusic={titleTrack.links.appleMusic}
+                locale={locale}
               />
             </div>
           </div>
@@ -227,13 +229,13 @@ export default function VinylPlayer() {
               <button
                 onClick={() => setIsVideoModalOpen(false)}
                 className="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/60 hover:bg-black text-white transition-all cursor-pointer"
-                aria-label="Tutup Video"
+                aria-label={d.closeVideo}
               >
                 <X className="w-5 h-5" />
               </button>
               <iframe
                 src={`${currentAlbum.iframeUrl}?autoplay=1`}
-                title={`${currentAlbum.albumTitle} Music Video`}
+                title={fmt(d.mvTitle, { album: currentAlbum.albumTitle })}
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

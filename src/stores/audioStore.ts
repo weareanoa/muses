@@ -13,7 +13,6 @@ export interface PlayingTrack {
   externalLinks: {
     spotify: string;
     youtube: string;
-    appleMusic: string;
   };
 }
 

@@ -9,17 +9,17 @@
     "themeColor": "#93C5FD",
     "description": "Lagu debut MUSES tentang keberanian meraih mimpi bersama, saling mendukung, dan memulai perjalanan dengan penuh harapan.",
     "mvThumbnail": "/images/muses_group_frame1.svg",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/NNTFQ51cl5Y",
     "titleTrack": {
       "title": "Bersama Mimpi",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
+        "spotify": "https://open.spotify.com/track/61nWL7aJ1GyNGxi6mhsrYZ",
+        "youtube": "https://music.youtube.com/watch?v=NNTFQ51cl5Y"
       }
-    }
+    },
+    "descriptionEn": "MUSES' debut song about the courage to chase dreams together, supporting one another, and starting the journey full of hope."
   },
   {
     "id": "langkah-kita",
@@ -31,17 +31,17 @@
     "themeColor": "#818CF8",
     "description": "Melodi penuh semangat yang menggambarkan langkah seirama para member dan penggemar dalam melewati setiap rintangan.",
     "mvThumbnail": "/images/albums/LANGKAH KITA ART COVER.webp",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/XIQ55o5YdMg",
     "titleTrack": {
       "title": "Langkah Kita",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
+        "spotify": "https://open.spotify.com/track/4HmIUBCsGmfdjsczdF7WTM",
+        "youtube": "https://youtu.be/XIQ55o5YdMg"
       }
-    }
+    },
+    "descriptionEn": "An energetic melody depicting the members and fans walking in step through every obstacle."
   },
   {
     "id": "rasa-terpendam",
@@ -53,17 +53,17 @@
     "themeColor": "#38BDF8",
     "description": "Balada emosional yang menyentuh hati tentang perasaan tulus yang tersimpan rapat dalam keheningan.",
     "mvThumbnail": "/images/albums/RASA TERPENDAM ART COVER.webp",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/TCaltF7L2Wk",
     "titleTrack": {
       "title": "Rasa Terpendam",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
+        "spotify": "https://open.spotify.com/track/4H45C1CCKgHZDd46EIbiW9",
+        "youtube": "https://youtu.be/TCaltF7L2Wk"
       }
-    }
+    },
+    "descriptionEn": "An emotional ballad that touches the heart, about sincere feelings kept tightly in silence."
   },
   {
     "id": "menuju-cahaya",
@@ -75,16 +75,16 @@
     "themeColor": "#FCD34D",
     "description": "Harmoni vokal yang membangkitkan asa, membawa pesan optimisme dan kehangatan menuju masa depan yang cerah.",
     "mvThumbnail": "/images/albums/MENUJU CAHAYA ART COVER.webp",
-    "iframeUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    "iframeUrl": "https://www.youtube-nocookie.com/embed/zeAj9kjX7cw",
     "titleTrack": {
       "title": "Menuju Cahaya",
       "previewAudioUrl": "/audio/preview.wav",
       "startAtSecond": 0,
       "links": {
-        "spotify": "https://open.spotify.com",
-        "youtube": "https://music.youtube.com",
-        "appleMusic": "https://music.apple.com"
+        "spotify": "https://open.spotify.com/track/2lT7rQARipJV1GjyDYdQOD",
+        "youtube": "https://youtu.be/zeAj9kjX7cw"
       }
-    }
+    },
+    "descriptionEn": "Vocal harmonies that stir hope, carrying a message of optimism and warmth toward a bright future."
   }
 ]
