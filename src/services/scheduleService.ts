@@ -87,7 +87,14 @@ export const scheduleService = {
   async upsertSchedule(schedule: ScheduleDTO): Promise<ServiceResult<ScheduleDTO>> {
     const sb = getSupabaseClient();
     if (!sb) {
-      return { success: true, data: schedule };
+      // Dulu fungsi ini mengembalikan success: true padahal tidak ada
+      // yang tersimpan ke mana-mana. Untuk admin itu menyesatkan, jadi
+      // sekarang gagal secara eksplisit kalau Supabase belum dikonfigurasi.
+      // (Bacaan publik tetap memakai fallback JSON di getSchedules.)
+      return {
+        success: false,
+        error: 'Supabase belum dikonfigurasi, jadi jadwal tidak bisa disimpan.',
+      };
     }
 
     const { data, error } = await sb
@@ -109,6 +116,7 @@ export const scheduleService = {
         ticket_url: schedule.ticketUrl,
         poster_image: schedule.posterImage,
         target_date: schedule.targetDate,
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -117,6 +125,22 @@ export const scheduleService = {
       return { success: false, error: error?.message || 'Gagal menyimpan jadwal.' };
     }
     return { success: true, data: mapDbScheduleToDto(data) };
+  },
+
+  async deleteSchedule(id: string): Promise<ServiceResult<boolean>> {
+    const sb = getSupabaseClient();
+    if (!sb) {
+      return {
+        success: false,
+        error: 'Supabase belum dikonfigurasi, jadi jadwal tidak bisa dihapus.',
+      };
+    }
+
+    const { error } = await sb.from('schedules').delete().eq('id', id);
+    if (error) {
+      return { success: false, error: error.message || 'Gagal menghapus jadwal.' };
+    }
+    return { success: true, data: true };
   },
 };
 

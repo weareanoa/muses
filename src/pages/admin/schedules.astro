@@ -1,0 +1,25 @@
+---
+import RootLayout from '../../layouts/RootLayout.astro';
+import AdminScheduleIsland from '../../components/islands/AdminScheduleIsland';
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
+
+// Halaman ini sengaja TIDAK di-prerender: gate admin dicek di browser
+// lewat sesi Supabase (lihat AdminScheduleIsland + authService
+// .getSupabaseAdminProfile), dan penegakan tulisnya ada di RLS Supabase.
+// Jangan pernah mengandalkan "menyembunyikan link admin" sebagai
+// keamanan: yang melindungi data adalah policy admin di database.
+---
+
+<RootLayout
+  title={d.meta.adminSchedulesTitle}
+  description={d.meta.adminSchedulesDesc}
+  currentPath="/admin/schedules"
+  solidHeader={true}
+>
+  <div class="relative min-h-[calc(100vh-80px)] pt-24 sm:pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
+    <AdminScheduleIsland client:load locale={locale} />
+  </div>
+</RootLayout>

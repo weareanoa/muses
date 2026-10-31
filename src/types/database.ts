@@ -22,6 +22,7 @@ export interface UserProfileDTO {
   id: string;
   name: string;
   email: string;
+  role?: 'user' | 'admin';
   phone?: string;
   username?: string;
   authProvider?: 'google' | 'email' | 'credentials';
