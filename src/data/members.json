@@ -200,7 +200,8 @@
         "bottom": "35px",
         "size": 180,
         "rotate": -10,
-        "flipX": true
+        "flipX": true,
+        "mobile": { "x": "-2%", "y": "72%", "size": 95, "rotate": -10 }
       },
       {
         "src": "/decor/butterfly.svg",
@@ -208,7 +209,8 @@
         "bottom": "-45px",
         "size": 200,
         "rotate": -20,
-        "flipX": false
+        "flipX": false,
+        "mobile": { "x": "12%", "y": "86.5%", "size": 78, "rotate": -20 }
       },
       {
         "src": "/decor/butterfly.svg",
@@ -216,7 +218,8 @@
         "bottom": "110px",
         "size": 200,
         "rotate": -16,
-        "flipX": false
+        "flipX": false,
+        "mobile": { "x": "1%", "y": "94%", "size": 98, "rotate": -8 }
       },
       {
         "src": "/decor/butterfly.svg",
@@ -224,7 +227,8 @@
         "bottom": "55px",
         "size": 150,
         "rotate": -35,
-        "flipX": true
+        "flipX": true,
+        "mobile": { "x": "86%", "y": "57%", "size": 95, "rotate": -30 }
       },
       {
         "src": "/decor/butterfly.svg",
@@ -232,7 +236,8 @@
         "bottom": "-42px",
         "size": 200,
         "rotate": 0,
-        "flipX": false
+        "flipX": false,
+        "mobile": { "x": "43%", "y": "92.5%", "size": 98, "rotate": -25 }
       },
       {
         "src": "/decor/butterfly.svg",
@@ -240,7 +245,16 @@
         "bottom": "-8px",
         "size": 180,
         "rotate": -26,
-        "flipX": true
+        "flipX": true,
+        "mobile": { "x": "91%", "y": "83%", "size": 85, "rotate": -12 }
+      },
+      {
+        "src": "/decor/butterfly.svg",
+        "x": "0%",
+        "bottom": "0px",
+        "size": 0,
+        "mobileOnly": true,
+        "mobile": { "x": "82%", "y": "96%", "size": 78, "rotate": -15 }
       }
     ],
     "summaryEn": "A deep, emotional, resilient soul, full of expression."

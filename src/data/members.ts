@@ -11,6 +11,13 @@ export interface MemberDecor {
   flipY?: boolean;
   zIndex?: number;
   behind?: boolean;
+  mobileOnly?: boolean;
+  mobile?: {
+    x: string;
+    y: string;
+    size: number;
+    rotate?: number;
+  };
 }
 
 export interface Member {

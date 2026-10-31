@@ -138,7 +138,8 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                   alt=""
                   loading="eager"
                   decoding="async"
-                  class="decor-item absolute pointer-events-none transform-gpu"
+                  class:list={['decor-item absolute pointer-events-none transform-gpu', { 'sm:hidden': d.mobileOnly }]}
+                  data-mobile={d.mobile ? '' : undefined}
                   style={{
                     left: d.x,
                     ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
@@ -147,7 +148,13 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                     '--d-rot': `${d.rotate ?? 0}deg`,
                     '--d-flip-x': d.flipX ? -1 : 1,
                     '--d-flip-y': d.flipY ? -1 : 1,
-                    '--d-delay': `${i * 50}ms`
+                    '--d-delay': `${i * 50}ms`,
+                    ...(d.mobile && {
+                      '--m-left': d.mobile.x,
+                      '--m-top': d.mobile.y,
+                      '--m-size': `${d.mobile.size}px`,
+                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`
+                    })
                   }}
                 />
               ))}
@@ -233,7 +240,8 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                   alt=""
                   loading="eager"
                   decoding="async"
-                  class="decor-item absolute pointer-events-none transform-gpu"
+                  class:list={['decor-item absolute pointer-events-none transform-gpu', { 'sm:hidden': d.mobileOnly }]}
+                  data-mobile={d.mobile ? '' : undefined}
                   style={{
                     left: d.x,
                     ...(d.bottom ? { bottom: d.bottom } : { top: d.y }),
@@ -242,7 +250,13 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                     '--d-rot': `${d.rotate ?? 0}deg`,
                     '--d-flip-x': d.flipX ? -1 : 1,
                     '--d-flip-y': d.flipY ? -1 : 1,
-                    '--d-delay': `${i * 50}ms`
+                    '--d-delay': `${i * 50}ms`,
+                    ...(d.mobile && {
+                      '--m-left': d.mobile.x,
+                      '--m-top': d.mobile.y,
+                      '--m-size': `${d.mobile.size}px`,
+                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`
+                    })
                   }}
                 />
               ))}
@@ -277,6 +291,19 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
       height: calc((100% - 4rem) / 0.55);
       transform: scale(0.55);
       transform-origin: top left;
+    }
+
+    .decor-group {
+      top: 0;
+      bottom: 0;
+    }
+
+    .decor-item[data-mobile] {
+      left: var(--m-left) !important;
+      top: var(--m-top) !important;
+      bottom: auto !important;
+      width: var(--m-size) !important;
+      --d-rot: var(--m-rot) !important;
     }
 
     [data-decor="ndah"] .decor-item[src$="tulip-1.svg"] {
