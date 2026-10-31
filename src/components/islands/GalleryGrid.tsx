@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { withBase } from '../../lib/paths';
 import { X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import galleryItemsRaw from '../../data/gallery.json';
+import { fmt, getDict, localizeGalleryCategory, type Locale } from '../../i18n/dictionary';
 
 interface GalleryItem {
   id: string;
@@ -10,17 +11,25 @@ interface GalleryItem {
   mediaType?: string;
   mediaUrl: string;
   caption: string;
+  titleEn?: string;
+  captionEn?: string;
   takenAt?: string;
 }
 
 const GALLERY_ITEMS: GalleryItem[] = galleryItemsRaw as GalleryItem[];
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).gallery;
+  const home = getDict(locale).home;
+  const titleOf = (card: GalleryItem) => (locale === 'en' && card.titleEn ? card.titleEn : card.title);
+  const captionOf = (card: GalleryItem) => (locale === 'en' && card.captionEn ? card.captionEn : card.caption);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [visibleLimit, setVisibleLimit] = useState<number>(7);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const categories = ['Semua', 'Konser', 'Behind the Scenes', 'Event'];
+  const categoryLabel = (cat: string) =>
+    cat === 'Semua' ? d.filterAll : cat === 'Konser' ? d.filterConcert : cat === 'Behind the Scenes' ? d.filterBts : d.filterEvent;
 
   const filteredItems = GALLERY_ITEMS.filter((item) => {
     if (activeCategory === 'Semua') return true;
@@ -60,7 +69,7 @@ export default function GalleryGrid() {
       >
         <img
           src={withBase(card.mediaUrl)}
-          alt={card.title}
+          alt={titleOf(card)}
           loading="lazy"
           decoding="async"
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
@@ -69,10 +78,7 @@ export default function GalleryGrid() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/90" />
 
         <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 sm:p-5">
-          <div className="flex items-center justify-between">
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1F1A12]/70 backdrop-blur-md text-[#E5B438] border border-[#E5B438]/30 shadow-xs">
-              {card.category}
-            </span>
+          <div className="flex items-center justify-end">
             <div className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <Eye className="w-3.5 h-3.5 text-white" />
             </div>
@@ -80,11 +86,11 @@ export default function GalleryGrid() {
 
           <div>
             <span className="font-bold text-sm sm:text-base text-white tracking-tight select-none leading-snug drop-shadow-md block group-hover:text-[#F3DF9A] transition-colors">
-              {card.title}
+              {titleOf(card)}
             </span>
             {card.caption && (
               <p className="text-[11px] sm:text-xs text-[#FAF3E2]/80 line-clamp-1 mt-1 font-normal drop-shadow-xs">
-                {card.caption}
+                {captionOf(card)}
               </p>
             )}
           </div>
@@ -98,13 +104,13 @@ export default function GalleryGrid() {
       <div className="bg-[#FAF3E2] border border-[#EADBBD] rounded-3xl sm:rounded-[32px] p-6 sm:p-10 lg:p-12 shadow-[0_4px_30px_rgba(201,151,28,0.06)]">
         <div className="mb-6 sm:mb-8 space-y-1">
           <span className="block text-xs font-semibold tracking-[0.2em] uppercase text-[#9E7B26]">
-            OUR LITTLE UNIVERSE
+            {home.galleryEyebrow}
           </span>
           <h3 className="text-2xl sm:text-3xl font-bold text-[#1F1A12] tracking-tight">
-            Little Moments, Endless Memories.
+            {home.galleryHeading}
           </h3>
           <p className="text-xs sm:text-sm text-[#5A4E38] leading-relaxed">
-            From little behind-the-scenes moments to unforgettable days with our favorite stars.
+            {home.galleryBody}
           </p>
         </div>
 
@@ -122,7 +128,7 @@ export default function GalleryGrid() {
                     : 'bg-white border border-[#C9971C]/60 text-[#1F1A12] hover:bg-[#FFFDF7]'
                 }`}
               >
-                {cat}
+                {categoryLabel(cat)}
               </button>
             );
           })}
@@ -130,7 +136,7 @@ export default function GalleryGrid() {
 
         {filteredItems.length === 0 ? (
           <div className="py-16 text-center text-[#7A6E58] text-sm bg-white/60 rounded-2xl border border-[#EADBBD]">
-            Belum ada foto dalam kategori ini.
+            {d.empty}
           </div>
         ) : (
           <>
@@ -176,14 +182,14 @@ export default function GalleryGrid() {
                   onClick={() => setVisibleLimit((prev) => Math.min(prev + 7, filteredItems.length))}
                   className="px-8 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37412] text-[#1F1A12] hover:brightness-105 active:scale-95 transition-all shadow-md cursor-pointer flex items-center gap-2"
                 >
-                  Muat Lebih Banyak ({filteredItems.length - visibleLimit} foto tersisa)
+                  {fmt(d.loadMore, { remaining: filteredItems.length - visibleLimit })}
                 </button>
               </div>
             )}
 
             {visibleLimit >= filteredItems.length && filteredItems.length > 7 && (
               <div className="mt-8 text-center text-xs text-[#7A6E58]">
-                Semua {filteredItems.length} foto telah ditampilkan.
+                {fmt(d.allShown, { count: filteredItems.length })}
               </div>
             )}
           </>
@@ -202,10 +208,10 @@ export default function GalleryGrid() {
             <div className="p-4 sm:p-5 border-b border-[#C9971C]/20 flex items-center justify-between bg-white">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37418] text-[#1F1A12]">
-                  {activeItem.category}
+                  {localizeGalleryCategory(locale, activeItem.category)}
                 </span>
                 <span className="text-xs sm:text-sm font-semibold text-[#1F1A12]">
-                  {activeItem.title}
+                  {titleOf(activeItem)}
                 </span>
                 <span className="text-xs text-[#7A6E58]">
                   ({lightboxIndex + 1} / {filteredItems.length})
@@ -220,7 +226,7 @@ export default function GalleryGrid() {
                       prev !== null ? (prev - 1 + filteredItems.length) % filteredItems.length : null
                     )
                   }
-                  aria-label="Sebelumnya"
+                  aria-label={d.prevAria}
                   className="p-1.5 rounded-xl bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -232,7 +238,7 @@ export default function GalleryGrid() {
                       prev !== null ? (prev + 1) % filteredItems.length : null
                     )
                   }
-                  aria-label="Berikutnya"
+                  aria-label={d.nextAria}
                   className="p-1.5 rounded-xl bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -240,7 +246,7 @@ export default function GalleryGrid() {
                 <button
                   type="button"
                   onClick={() => setLightboxIndex(null)}
-                  aria-label="Tutup"
+                  aria-label={d.closeAria}
                   className="p-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-[#1F1A12] cursor-pointer ml-1"
                 >
                   <X className="w-4 h-4" />
@@ -251,14 +257,14 @@ export default function GalleryGrid() {
             <div className="relative flex-1 overflow-hidden bg-neutral-950 flex items-center justify-center p-4 min-h-[280px] sm:min-h-[420px]">
               <img
                 src={withBase(activeItem.mediaUrl)}
-                alt={activeItem.title}
+                alt={titleOf(activeItem)}
                 className="max-h-[65vh] w-auto max-w-full object-contain mx-auto rounded-xl drop-shadow-2xl"
               />
             </div>
 
             <div className="p-4 sm:p-5 bg-white border-t border-[#C9971C]/20">
               <p className="text-xs sm:text-sm text-[#4B4335] leading-relaxed">
-                {activeItem.caption}
+                {captionOf(activeItem)}
               </p>
             </div>
           </div>

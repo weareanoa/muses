@@ -1,5 +1,13 @@
 ---
 import { withBase } from '../../lib/paths';
+import { getDict, type Locale } from '../../i18n/dictionary';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+const d = getDict(locale).contact;
 ---
 
 <section id="kontak" data-section="kontak" class="relative bg-[#FCFAF5] overflow-hidden">
@@ -7,13 +15,13 @@ import { withBase } from '../../lib/paths';
     <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col lg:flex-row items-center justify-between min-h-[300px] lg:min-h-[360px] relative">
       <div class="py-10 sm:py-14 max-w-xl z-10 font-['Poppins',sans-serif]">
         <span class="block text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-[#543C0A] mb-3">
-          OFFICIAL CONTACT
+          {d.eyebrow}
         </span>
         <h2 class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#2A1D0B] leading-[1.18] mb-4 tracking-tight">
-          Let’s Create Something<br />Beautiful Together
+          {d.headline}
         </h2>
         <p class="text-xs sm:text-[13px] text-[#423218] leading-relaxed max-w-lg font-normal">
-          for business inquiries, collaborations, event partnerships, please reach out to the MUSES management team.
+          {d.body}
         </p>
       </div>
 
@@ -27,119 +35,68 @@ import { withBase } from '../../lib/paths';
     </div>
   </div>
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16 sm:pb-20 font-['Poppins',sans-serif]">
-    <div class="bg-[#FAF3E3] border border-[#E7D6AF] rounded-3xl sm:rounded-[32px] p-6 sm:p-10 lg:p-12 shadow-[0_4px_25px_rgba(201,151,28,0.06)]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-        <div class="lg:col-span-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#EBD8A6]/70 flex items-center justify-center shrink-0">
-            <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#C29322] flex items-center justify-center text-[#2A1D0B] shadow-xs">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-              </svg>
-            </div>
-          </div>
+  <div class="max-w-6xl mx-auto px-4 sm:px-8 pt-12 sm:pt-16 pb-16 sm:pb-20 font-['Poppins',sans-serif]">
+    <div class="border-t border-[#1F1A12]/15 pt-8 sm:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+      <div class="lg:col-span-7">
+        <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-3">
+          {d.management}
+        </span>
+        <h3 class="text-3xl sm:text-4xl font-bold text-[#1A140B] leading-tight tracking-tight">
+          {d.cardHeadline}
+        </h3>
+        <p class="text-xs sm:text-sm text-[#5C4F39] leading-relaxed mt-3 max-w-lg">
+          {d.cardBody}
+        </p>
+        <a
+          href="mailto:dania@muses.id?subject=Collaboration%20Inquiry%20-%20MUSES"
+          class="inline-block mt-5 text-lg sm:text-xl font-bold text-[#1A140B] underline decoration-[#C9971C] underline-offset-4 break-all hover:text-[#8E6D24] transition-colors"
+        >
+          dania@muses.id
+        </a>
+        <p class="text-xs text-[#5C4F39] leading-relaxed mt-3 max-w-lg">
+          {d.advice}
+        </p>
+        
+      </div>
 
-          <div class="space-y-3">
-            <div>
-              <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-1">
-                OFFICIAL MANAGEMENT CONTACT
-              </span>
-              <h3 class="text-xl sm:text-2xl font-bold text-[#1A140B] leading-tight tracking-tight">
-                Your Next Collaboration Starts Here.
-              </h3>
-              <p class="text-xs text-[#5C4F39] mt-1 font-normal">
-                for official business inquiries only.
-              </p>
-            </div>
-
-            <div class="pt-1">
-              <a
-                href="mailto:dania@muses.id?subject=Collaboration%20Inquiry%20-%20MUSES"
-                class="inline-flex items-center gap-2 px-7 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37412] hover:brightness-105 active:scale-95 text-[#20180B] font-bold text-xs sm:text-[13px] shadow-sm transition-all cursor-pointer"
-              >
-                <span>Contact (Dania)</span>
-                <span class="text-sm">↗</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="hidden lg:block lg:col-span-1 flex justify-center">
-          <div class="w-px h-28 bg-[#D8C496]"></div>
-        </div>
-        <div class="lg:hidden w-full h-px bg-[#D8C496]"></div>
-
-        <div class="lg:col-span-4 space-y-3.5">
-          <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-3">
-            FOLLOW US FOR UPDATE
-          </span>
-
-          <div class="space-y-3">
-            <a
-              href="https://instagram.com/muses.official"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-3.5 group cursor-pointer"
-            >
-              <div class="w-9 h-9 rounded-full bg-[#EBD8A6] flex items-center justify-center text-[#73510C] group-hover:scale-105 transition-transform shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                </svg>
-              </div>
-              <div>
-                <span class="block text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-                  Instagram
-                </span>
-                <span class="block text-[11px] text-[#52442D]">
-                  @muses.official
-                </span>
-              </div>
-            </a>
-
-            <a
-              href="https://tiktok.com/@muses.official"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-3.5 group cursor-pointer"
-            >
-              <div class="w-9 h-9 rounded-full bg-[#EBD8A6] flex items-center justify-center text-[#73510C] group-hover:scale-105 transition-transform shrink-0">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.69 6.34 6.34 0 0 0 9.35 22a6.33 6.33 0 0 0 6.32-6.31V9.12a8.16 8.16 0 0 0 4.92 1.64V7.32a4.85 4.85 0 0 1-1-.63z"/>
-                </svg>
-              </div>
-              <div>
-                <span class="block text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-                  Tiktok
-                </span>
-                <span class="block text-[11px] text-[#52442D]">
-                  @muses.official
-                </span>
-              </div>
-            </a>
-
-            <a
-              href="https://youtube.com/@muses.official"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-3.5 group cursor-pointer"
-            >
-              <div class="w-9 h-9 rounded-full bg-[#EBD8A6] flex items-center justify-center text-[#73510C] group-hover:scale-105 transition-transform shrink-0">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </div>
-              <div>
-                <span class="block text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-                  YouTube
-                </span>
-                <span class="block text-[11px] text-[#52442D]">
-                  @muses.official
-                </span>
-              </div>
-            </a>
-          </div>
+      <div class="lg:col-span-5">
+        <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-3">
+          {d.follow}
+        </span>
+        <div class="divide-y divide-[#1F1A12]/10 border-t border-b border-[#1F1A12]/10">
+          <a
+            href="https://instagram.com/muses.official"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
+          >
+            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
+              Instagram
+            </span>
+            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
+          </a>
+          <a
+            href="https://tiktok.com/@muses.official"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
+          >
+            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
+              TikTok
+            </span>
+            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
+          </a>
+          <a
+            href="https://youtube.com/@muses.official"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
+          >
+            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
+              YouTube
+            </span>
+            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
+          </a>
         </div>
       </div>
     </div>
