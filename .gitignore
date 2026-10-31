@@ -31,3 +31,8 @@ __pycache__/
 *.pyc
 
 
+
+# cloudflare
+.wrangler/
+.dev.vars
+.hermes/

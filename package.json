@@ -10,9 +10,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "start": "node server.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-types": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14.4.3",
     "@astrojs/node": "^11.1.9",
     "@astrojs/react": "^7.0.0",
     "@nanostores/react": "^2.0.1",
@@ -29,7 +31,8 @@
     "nanostores": "^1.5.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "wrangler": "^4.156.0"
   },
   "allowScripts": {
     "esbuild": true
