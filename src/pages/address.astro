@@ -1,20 +1,24 @@
 ---
 import { withBase } from '../lib/paths';
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 
 const target = withBase('/profile?tab=alamat');
 ---
 
 <!doctype html>
-<html lang="id">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="refresh" content={`0;url=${target}`} />
-    <title>Redirecting to Alamat...</title>
+    <title>{d.meta.addressRedirectTitle}</title>
     <script is:inline define:vars={{ target }}>
       window.location.replace(target);
     </script>
   </head>
   <body class="bg-[#FCFAF5] flex items-center justify-center min-h-screen text-[#1F1A12] text-sm">
-    <p>Mengalihkan ke halaman alamat... <a href={target} class="text-[#C9971C] underline font-semibold">Klik di sini jika tidak beralih otomatis</a></p>
+    <p>{d.meta.addressRedirectBody} <a href={target} class="text-[#C9971C] underline font-semibold">{d.meta.addressRedirectLink}</a></p>
   </body>
 </html>

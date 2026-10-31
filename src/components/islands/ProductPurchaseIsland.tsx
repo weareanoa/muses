@@ -1,6 +1,7 @@
 import { withBase } from '../../lib/paths';
 import React, { useState, useEffect } from 'react';
 import { addToCart, openCart } from '../../stores/cartStore';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 import {
   Share2,
   Check,
@@ -45,7 +46,8 @@ interface Props {
   relatedProducts?: Product[];
 }
 
-export default function ProductPurchaseIsland({ product, relatedProducts = [] }: Props) {
+export default function ProductPurchaseIsland({ product, relatedProducts = [], locale = 'id' }: Props & { locale?: Locale }) {
+  const d = getDict(locale).product;
   const images = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [selectedColor, setSelectedColor] = useState<string>(
@@ -146,7 +148,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
   const contentsInfo =
     product.packageContents && product.packageContents.length > 0
       ? product.packageContents.join(', ')
-      : 'See product details';
+      : d.contentsFallback;
 
   const manufacturerInfo = product.manufacturer || 'AUREUM 360 / AUREUM RECORDS';
   const countryInfo = product.origin || 'REPUBLIC OF KOREA';
@@ -212,7 +214,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
             <div className="relative">
               <button
                 onClick={handleShare}
-                aria-label="Share product"
+                aria-label={d.shareAria}
                 className="w-9 h-9 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 flex items-center justify-center text-[#4B4335] hover:text-[#1F1A12] transition-colors cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
@@ -220,7 +222,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               {copiedLink && (
                 <div className="absolute right-0 top-11 z-20 whitespace-nowrap bg-[#EDE6D6] border border-[#1F1A12]/10 text-[#1F1A12] text-[11px] font-medium px-2.5 py-1 rounded shadow-md flex items-center gap-1.5">
                   <Check className="w-3 h-3 text-[#9A7420]" />
-                  <span>Link copied</span>
+                  <span>{d.copied}</span>
                 </div>
               )}
             </div>
@@ -232,7 +234,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
           <div className="mt-2">
             <span className="inline-block px-1.5 py-0.5 border border-[#9A7420] text-[#9A7420] text-[10px] font-bold uppercase tracking-wider rounded">
-              EXCLUSIVE
+              {d.exclusive}
             </span>
           </div>
 
@@ -242,17 +244,17 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               <span>${product.price.toFixed(2)}</span>
             </div>
             <div className="flex items-center gap-1 text-xs text-[#6E6453] mt-1">
-              <span>Excl. tax</span>
+              <span>{d.exclTax}</span>
               <Info className="w-3.5 h-3.5 text-[#6E6453] stroke-[2]" />
             </div>
             <div className="text-xs text-[#9A7420] font-medium mt-1">
-              Up to USD ${storeCash} MUSE Hub Store Cash
+              {fmt(d.storeCash, { cash: storeCash })}
             </div>
           </div>
 
           {product.colors && product.colors.length > 1 && (
             <div className="mt-5 space-y-2">
-              <span className="text-xs text-[#6E6453] block">Color</span>
+              <span className="text-xs text-[#6E6453] block">{d.colorLabel}</span>
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((c) => (
                   <button
@@ -273,7 +275,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
           {product.sizes && product.sizes.length > 1 && (
             <div className="mt-4 space-y-2">
-              <span className="text-xs text-[#6E6453] block">Size</span>
+              <span className="text-xs text-[#6E6453] block">{d.sizeLabel}</span>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s) => (
                   <button
@@ -304,7 +306,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
                   className="w-8 h-8 flex items-center justify-center text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 disabled:opacity-30 cursor-pointer"
-                  aria-label="Decrease quantity"
+                  aria-label={d.decreaseAria}
                 >
                   <Minus className="w-3 h-3 stroke-[2.5]" />
                 </button>
@@ -316,7 +318,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                   disabled={quantity >= product.stock}
                   className="w-8 h-8 flex items-center justify-center text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 disabled:opacity-30 cursor-pointer"
-                  aria-label="Increase quantity"
+                  aria-label={d.increaseAria}
                 >
                   <Plus className="w-3 h-3 stroke-[2.5]" />
                 </button>
@@ -331,10 +333,10 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           <div className="flex items-center justify-between mt-4 text-xs">
             <div>
               <div className="font-semibold text-[#1F1A12]">
-                {quantity} selected
+                {fmt(d.selected, { qty: quantity })}
               </div>
               <div className="text-[#6E6453] text-[11px] mt-0.5">
-                You can order up to {maxOrderLimit} items.
+                {fmt(d.maxOrder, { max: maxOrderLimit })}
               </div>
             </div>
 
@@ -343,7 +345,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 USD ${(product.price * quantity).toFixed(2)}
               </div>
               <div className="text-[11px] text-[#6E6453]">
-                Excl. tax
+                {d.exclTax}
               </div>
             </div>
           </div>
@@ -357,10 +359,10 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               {addedNotice ? (
                 <>
                   <Check className="w-4 h-4 text-[#9A7420]" />
-                  <span>Added</span>
+                  <span>{d.added}</span>
                 </>
               ) : (
-                <span>Add to Cart</span>
+                <span>{d.addToCart}</span>
               )}
             </button>
 
@@ -369,13 +371,13 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               onClick={() => handleAddToCart(true)}
               className="py-3 px-4 rounded-lg bg-[#9A7420] hover:bg-[#7D5C16] text-[#FCFAF5] font-bold text-sm transition-colors shadow-sm cursor-pointer flex items-center justify-center"
             >
-              Purchase
+              {d.purchase}
             </button>
           </div>
 
           <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[#1F1A12]/10 text-xs text-[#6E6453]">
             <MapPin className="w-3.5 h-3.5 text-[#8A7F6C] shrink-0" />
-            <span>Add a shipping address to check shipping fee.</span>
+            <span>{d.shippingHint}</span>
           </div>
         </div>
       </div>
@@ -390,7 +392,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               : 'text-[#6E6453] hover:text-[#1F1A12]'
           }`}
         >
-          Details
+          {d.detailsTab}
         </button>
         <button
           type="button"
@@ -401,7 +403,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               : 'text-[#6E6453] hover:text-[#1F1A12]'
           }`}
         >
-          Notes
+          {d.notesTab}
         </button>
       </div>
 
@@ -413,7 +415,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               onClick={() => setIsInfoOpen(!isInfoOpen)}
               className="w-full flex items-center justify-between text-left py-2 font-bold text-sm sm:text-base text-[#1F1A12] cursor-pointer"
             >
-              <span>Information</span>
+              <span>{d.information}</span>
               {isInfoOpen ? (
                 <ChevronUp className="w-4 h-4 text-[#6E6453]" />
               ) : (
@@ -425,49 +427,49 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           {isInfoOpen && (
             <div className="divide-y divide-[#1F1A12]/10 text-xs">
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Product Name</span>
+                <span className="text-[#6E6453] font-medium">{d.productName}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{product.name}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Product material</span>
+                <span className="text-[#6E6453] font-medium">{d.material}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{materialInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Size(cm)</span>
+                <span className="text-[#6E6453] font-medium">{d.sizeCm}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{dimensionsInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Contents</span>
+                <span className="text-[#6E6453] font-medium">{d.contents}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{contentsInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Manufacturer</span>
+                <span className="text-[#6E6453] font-medium">{d.manufacturer}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{manufacturerInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Country of manufacture</span>
+                <span className="text-[#6E6453] font-medium">{d.country}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{countryInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Power</span>
+                <span className="text-[#6E6453] font-medium">{d.power}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{powerInfo}</span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Operation time</span>
+                <span className="text-[#6E6453] font-medium">{d.operationTime}</span>
                 <span className="sm:col-span-3 text-[#1F1A12] whitespace-pre-line leading-relaxed">
                   {operationTimeInfo}
                 </span>
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">KC Mark</span>
+                <span className="text-[#6E6453] font-medium">{d.kcMark}</span>
                 <span className="sm:col-span-3 text-[#4B4335] leading-relaxed font-mono text-[11px]">
                   한국 KC : R-R-1EL-TTNN23JO<br />
                   일본 JMIC : 020-230349<br />
@@ -476,7 +478,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
               </div>
 
               <div className="py-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                <span className="text-[#6E6453] font-medium">Year and month of manufacture</span>
+                <span className="text-[#6E6453] font-medium">{d.manufactureDate}</span>
                 <span className="sm:col-span-3 text-[#1F1A12]">{releaseYear}</span>
               </div>
 
@@ -496,14 +498,14 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
           )}
 
           <div className="mt-12 pt-8 border-t border-[#1F1A12]/10">
-            <h3 className="text-sm font-bold text-[#1F1A12] mb-3">Product Overview</h3>
+            <h3 className="text-sm font-bold text-[#1F1A12] mb-3">{d.overview}</h3>
             <p className="text-xs text-[#4B4335] leading-relaxed font-normal">
               {product.description}
             </p>
 
             {product.features && product.features.length > 0 && (
               <div className="mt-6 space-y-2">
-                <h4 className="text-xs font-bold text-[#1F1A12]">Key Features</h4>
+                <h4 className="text-xs font-bold text-[#1F1A12]">{d.keyFeatures}</h4>
                 <ul className="list-disc list-inside text-xs text-[#4B4335] space-y-1">
                   {product.features.map((feat, i) => (
                     <li key={i}>{feat}</li>
@@ -516,71 +518,71 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
 
         <div id="section-notes" className="mt-16 pt-12 border-t border-[#1F1A12]/10 space-y-8 text-xs text-[#4B4335] leading-relaxed font-normal scroll-mt-28">
           <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
-            Notes & Notice
+            {d.notesTitle}
           </h2>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-[#1F1A12] text-sm">Returns & Exchanges</h3>
+            <h3 className="font-bold text-[#1F1A12] text-sm">{d.returns}</h3>
             <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>
-                Go to [MY or More &rarr; My Orders &rarr; Order Details] to request a(n) exchange/return.
+                {d.returnsB1a}
               </li>
-              <li>Please refer to the FAQ available from Help on MUSE Hub for more information.</li>
+              <li>{d.returnsB1b}</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-[#1F1A12] text-sm">Return & Exchange Period</h3>
+            <h3 className="font-bold text-[#1F1A12] text-sm">{d.returnsPeriod}</h3>
             <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
               <li>
-                Customers can request a(n) exchange/return through the My Orders page or by going to Help on MUSE Hub [Contact us] within 7 days of receiving the product. (In the case of a simple change of mind, only returns are possible and exchanges will not be allowed.)
+                {d.returnsB2a}
               </li>
               <li>
-                In case the product is different from its advertisement or the stipulations outlined in its contract, including defects, the customer may contact us through Help on MUSE Hub [Contact us] to withdraw the purchase order within 3 months of receiving the product and within 30 days from the date the customer discovers or could have discovered such fact.
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="font-bold text-[#1F1A12] text-sm">Return & Exchange Fees</h3>
-            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
-              <li>
-                If the customer wishes to exchange/return the product due to a simple change of mind, the customer will bear the shipping costs.
-              </li>
-              <li>
-                In the case of defective products, product mismatches, or returns due to delivery issues, the seller will cover the shipping costs.
+                {d.returnsB2b}
               </li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-bold text-[#1F1A12] text-sm">Exchange & Return Notes</h3>
+            <h3 className="font-bold text-[#1F1A12] text-sm">{d.returnsFees}</h3>
             <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
-              <li>Exchange/refund may not be available in the following cases:</li>
               <li>
-                Where the product is destroyed or damaged due to a cause attributable to the customer (except in cases where the package is opened for checking the content);
+                {d.returnsB3a}
               </li>
               <li>
-                Where the product's value has substantially decreased due to the customer's total or partial use or consumption (including the usage of a Digital Code);
+                {d.returnsB3b}
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="font-bold text-[#1F1A12] text-sm">{d.returnsNotes}</h3>
+            <ul className="space-y-1.5 list-disc list-inside pl-1 text-[#6E6453]">
+              <li>{d.returnsB4a}</li>
+              <li>
+                {d.returnsB4b}
               </li>
               <li>
-                Where the value of the product has substantially decreased due to the elapse of time, making resale difficult or impossible;
+                {d.returnsB4c}
               </li>
               <li>
-                Where the package of copyable products has been damaged (where the packaging of copyable products including albums, books, video publications, photocards, postcards, and posters is opened);
+                {d.returnsB4d}
               </li>
               <li>
-                Where making of the made-to-order product has already proceeded (where irreparable damage to the seller is foreseen, and the seller has obtained written consent acknowledging that the right of withdrawal cannot be exercised due to such foreseen damage);
+                {d.returnsB4e}
               </li>
               <li>
-                Where some components of the product have been used, lost, or are not resalable due to damage/failure/contamination caused by mishandling, or the product is returned with some components missing;
+                {d.returnsB4f}
               </li>
-              <li>Exchange/refund in each product category may not be available for the following cases:</li>
+              <li>
+                {d.returnsB4g}
+              </li>
+              <li>{d.returnsB4h}</li>
               <li className="pl-4 list-none">
-                &bull; [Clothing, bags, shoes, fashion accessories]
+                &bull; {d.returnsB4i}
               </li>
               <li className="pl-4 list-none">
-                &bull; Where the product's value has substantially decreased due to washing, stains on the product, odor from fragrance or deodorant, signs of use, etc.
+                &bull; {d.returnsB4j}
               </li>
             </ul>
           </div>
@@ -590,7 +592,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
       {relatedProducts && relatedProducts.length > 0 && (
         <div className="mt-20 pt-16 border-t border-[#1F1A12]/10">
           <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-6">
-            Related Products
+            {d.relatedTitle}
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
@@ -620,17 +622,17 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                       USD ${rel.price.toFixed(2)}
                     </span>
                     <span className="text-[10px] text-[#8A7F6C] block">
-                      Excl. tax
+                      {d.exclTax}
                     </span>
                   </div>
 
                   <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                     <span className="px-1.5 py-0.5 border border-[#9A7420] text-[#9A7420] text-[9px] font-bold uppercase rounded">
-                      EXCLUSIVE
+                      {d.exclusive}
                     </span>
                     <span className="px-1.5 py-0.5 border border-[#1F1A12]/10 text-[#6E6453] text-[9px] font-medium rounded flex items-center gap-1">
                       <span>✈</span>
-                      <span>Shipped from KR</span>
+                      <span>{d.shippedFrom}</span>
                     </span>
                   </div>
                 </div>
@@ -645,7 +647,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage <= 1}
                 className="p-1.5 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 hover:text-[#1F1A12] disabled:opacity-30 cursor-pointer transition-colors"
-                aria-label="Previous page"
+                aria-label={d.prevPage}
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
@@ -657,7 +659,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [] }:
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage >= totalPages}
                 className="p-1.5 rounded-full border border-[#1F1A12]/10 hover:bg-[#1F1A12]/10 hover:text-[#1F1A12] disabled:opacity-30 cursor-pointer transition-colors"
-                aria-label="Next page"
+                aria-label={d.nextPage}
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>

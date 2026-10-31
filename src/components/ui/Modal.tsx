@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useScrollLock } from '../../hooks/useScrollLock';
+import { getDict, type Locale } from '../../i18n/dictionary';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ export interface ModalProps {
   maxWidth?: string;
   showCloseButton?: boolean;
   className?: string;
+  locale?: Locale;
 }
 
 export function Modal({
@@ -20,6 +22,7 @@ export function Modal({
   maxWidth = 'max-w-lg',
   showCloseButton = true,
   className = '',
+  locale = 'id',
 }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +66,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 className="text-[#6E6453] hover:text-[#1F1A12] p-1 rounded-lg cursor-pointer transition-colors"
-                aria-label="Tutup Modal"
+                aria-label={getDict(locale).common.close}
               >
                 <X className="w-5 h-5" />
               </button>

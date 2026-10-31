@@ -7,6 +7,7 @@ import { members as membersDataRaw, type Member } from '../../data/members';
 import { useScrollLock } from '../../hooks/useScrollLock';
 import { X, Volume2, VolumeX } from 'lucide-react';
 import gsap from 'gsap';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 
 const membersData = withBaseDeep(membersDataRaw) as readonly Member[];
 
@@ -16,7 +17,8 @@ const modalOrderedMembers = [...membersData].sort(
   (a, b) => MODAL_MEMBER_ORDER.indexOf(a.id as any) - MODAL_MEMBER_ORDER.indexOf(b.id as any)
 );
 
-export default function MemberModal() {
+export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).member;
   const currentId = useStore(activeMemberId);
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -273,7 +275,7 @@ export default function MemberModal() {
       >
         <button
           onClick={handleClose}
-          aria-label="Tutup Profil Member"
+          aria-label={d.closeAria}
           className="absolute top-4 right-4 sm:top-5 sm:right-5 z-30 p-2 rounded-full bg-white/60 hover:bg-white text-[#4A3B5A] shadow-xs border border-white/80 transition-all cursor-pointer hover:scale-105 active:scale-95"
         >
           <X className="w-4 h-4" />
@@ -336,14 +338,14 @@ export default function MemberModal() {
             </div>
 
             <p className="text-xs sm:text-sm text-[#554663] leading-relaxed mb-6 max-w-lg">
-              {member.summary}
+              {locale === 'en' && member.summaryEn ? member.summaryEn : member.summary}
             </p>
 
             <div className="space-y-4 pt-1">
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <span className="block text-[10px] font-mono tracking-[0.2em] uppercase text-[#8D7C9D] font-bold mb-1">
-                    LAHIR
+                    {d.born}
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
                     {member.birthFormatted}
@@ -351,7 +353,7 @@ export default function MemberModal() {
                 </div>
                 <div>
                   <span className="block text-[10px] font-mono tracking-[0.2em] uppercase text-[#8D7C9D] font-bold mb-1">
-                    TINGGI
+                    {d.height}
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
                     {member.height}
@@ -359,7 +361,7 @@ export default function MemberModal() {
                 </div>
                 <div>
                   <span className="block text-[10px] font-mono tracking-[0.2em] uppercase text-[#8D7C9D] font-bold mb-1">
-                    ZODIAK
+                    {d.zodiac}
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
                     {member.zodiac}
@@ -370,7 +372,7 @@ export default function MemberModal() {
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <span className="block text-[10px] font-mono tracking-[0.2em] uppercase text-[#8D7C9D] font-bold mb-1">
-                    WARNA
+                    {d.color}
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12] inline-flex items-center gap-1.5">
                     <span
@@ -382,7 +384,7 @@ export default function MemberModal() {
                 </div>
                 <div>
                   <span className="block text-[10px] font-mono tracking-[0.2em] uppercase text-[#8D7C9D] font-bold mb-1">
-                    IKON
+                    {d.icon}
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-[#1F1A12]">
                     {member.iconName || 'Butterfly'}
@@ -409,7 +411,7 @@ export default function MemberModal() {
               style={{
                 boxShadow: isSelected ? `0 0 0 3px ${m.themeColor}` : undefined,
               }}
-              aria-label={`Pilih ${m.stageName}`}
+              aria-label={fmt(d.pickAria, { name: m.stageName })}
             >
               <div className="w-full h-full rounded-full overflow-hidden bg-white border border-white/80">
                 <img

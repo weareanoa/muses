@@ -10,6 +10,7 @@ import { withBase } from '../../lib/paths';
 import { formatRupiah } from '../../lib/format';
 import { transactionService } from '../../services/transactionService';
 import type { PaymentOrderSummary } from '../../types/database';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 
 type PaymentOrder = PaymentOrderSummary;
 
@@ -37,7 +38,8 @@ const QR_MATRIX = [
   [1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,0,0,1,1,1,1],
 ];
 
-export default function PaymentIsland() {
+export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).payment;
   const [order, setOrder] = useState<PaymentOrder>(() =>
     transactionService.getDefaultPaymentOrder()
   );
@@ -79,7 +81,7 @@ export default function PaymentIsland() {
       };
       image.src = blobURL;
     } catch {
-      alert('QR Code dapat di-screenshot atau di-scan langsung dari layar.');
+      alert(d.qrAlert);
     }
   };
 
@@ -108,7 +110,7 @@ export default function PaymentIsland() {
           <div className="bg-[#FDF3D6] border border-[#EBD6A2] rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center shadow-sm w-full max-w-sm">
             <div className="bg-[#E5BF58] text-[#3E2F0A] text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-2 mb-6">
               <span className="w-2 h-2 rounded-full bg-[#1F1A12]" />
-              <span>Menunggu Pembayaran</span>
+              <span>{d.waiting}</span>
             </div>
 
             <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-[#EBD6A2]/40 mb-4 inline-block">
@@ -137,16 +139,16 @@ export default function PaymentIsland() {
 
             <div className="w-full space-y-1">
               <p className="text-xs text-[#8A7F6C] font-mono">
-                No. pesanan #{order.orderId}
+                {fmt(d.orderNo, { id: order.orderId })}
               </p>
               <p className="text-xs font-medium text-[#70644D] pt-1">
-                Total Pembayaran
+                {d.totalPayment}
               </p>
               <p className="text-2xl sm:text-3xl font-bold text-[#1F1A12]">
                 {formatRupiah(order.total)}
               </p>
               <p className="text-[11px] text-[#8A7F6C]">
-                Bayar sebelum <span className="font-mono font-medium text-[#1F1A12]">{order.deadline}</span>
+                {d.payBefore} <span className="font-mono font-medium text-[#1F1A12]">{order.deadline}</span>
               </p>
             </div>
 
@@ -157,7 +159,7 @@ export default function PaymentIsland() {
                 className="bg-[#F5DE9B] hover:bg-[#EDD387] text-[#3E2F0A] font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Unduh QR</span>
+                <span>{d.downloadQR}</span>
               </button>
 
               <button
@@ -167,7 +169,7 @@ export default function PaymentIsland() {
                 className="bg-[#F5DE9B] hover:bg-[#EDD387] text-[#3E2F0A] font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-60"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isChecking ? 'animate-spin' : ''}`} />
-                <span>{isChecking ? 'Mengecek...' : 'Cek status'}</span>
+                <span>{isChecking ? d.checking : d.checkStatus}</span>
               </button>
             </div>
           </div>
@@ -176,7 +178,7 @@ export default function PaymentIsland() {
         <div className="lg:col-span-7 space-y-6">
           <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5 space-y-4">
             <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-              Cara Membayar
+              {d.howToPay}
             </h2>
 
             <div className="space-y-3.5">
@@ -185,7 +187,7 @@ export default function PaymentIsland() {
                   1
                 </div>
                 <p className="text-xs sm:text-sm text-[#42392B] leading-relaxed">
-                  Buka aplikasi e-wallet atau m-banking yang kamu pakai.
+                  {d.step1}
                 </p>
               </div>
 
@@ -194,7 +196,7 @@ export default function PaymentIsland() {
                   2
                 </div>
                 <p className="text-xs sm:text-sm text-[#42392B] leading-relaxed">
-                  Pilih menu bayar atau pindai, lalu arahkan kamera ke kode QR.
+                  {d.step2}
                 </p>
               </div>
 
@@ -203,7 +205,7 @@ export default function PaymentIsland() {
                   3
                 </div>
                 <p className="text-xs sm:text-sm text-[#42392B] leading-relaxed">
-                  Pastikan nominalnya sesuai, lalu konfirmasi. Halaman ini akan berubah otomatis.
+                  {d.step3}
                 </p>
               </div>
             </div>
@@ -211,7 +213,7 @@ export default function PaymentIsland() {
 
           <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5 space-y-3.5">
             <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-              Ringkasan Pembayaran
+              {d.summaryTitle}
             </h2>
 
             <div className="space-y-3">
@@ -230,14 +232,14 @@ export default function PaymentIsland() {
               ))}
 
               <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
-                <span>Ongkos kirim</span>
+                <span>{d.shippingCost}</span>
                 <span className="font-bold text-[#1F1A12]">
                   {formatRupiah(order.shippingFee)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
-                <span>Biaya layanan & asuransi</span>
+                <span>{d.serviceCost}</span>
                 <span className="font-bold text-[#1F1A12]">
                   {formatRupiah(order.platformFee)}
                 </span>
@@ -247,7 +249,7 @@ export default function PaymentIsland() {
             <hr className="border-t border-[#DFC478]/50 my-2" />
 
             <div className="flex justify-between items-center text-sm sm:text-base font-bold text-[#1F1A12]">
-              <span>Total</span>
+              <span>{d.total}</span>
               <span>{formatRupiah(order.total)}</span>
             </div>
           </div>
@@ -262,11 +264,11 @@ export default function PaymentIsland() {
             </div>
 
             <h3 className="text-xl font-bold font-display text-[#1F1A12]">
-              Pembayaran Berhasil!
+              {d.paidTitle}
             </h3>
 
             <p className="text-xs text-[#6E6453] leading-relaxed">
-              Terima kasih! Pembayaran untuk pesanan #{order.orderId} senilai {formatRupiah(order.total)} telah berhasil diverifikasi.
+              {fmt(d.paidBody, { id: order.orderId, total: formatRupiah(order.total) })}
             </p>
 
             <div className="pt-2 flex flex-col gap-2">
@@ -274,7 +276,7 @@ export default function PaymentIsland() {
                 href={withBase("/orders")}
                 className="w-full py-3 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2"
               >
-                <span>Lihat History Pesanan</span>
+                <span>{d.viewHistory}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 
@@ -282,7 +284,7 @@ export default function PaymentIsland() {
                 href={withBase("/store")}
                 className="w-full py-2.5 rounded-full border border-[#1F1A12]/15 text-[#6E6453] hover:text-[#1F1A12] font-semibold text-xs transition-colors"
               >
-                Kembali ke Store
+                {d.backToStore}
               </a>
             </div>
           </div>

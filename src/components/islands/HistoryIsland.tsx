@@ -14,6 +14,7 @@ import { transactionService } from '../../services/transactionService';
 import { currentUser } from '../../stores/authStore';
 import { formatCountdown, formatRupiah } from '../../lib/format';
 import StatusBadge from '../ui/StatusBadge';
+import { fmt, getDict, localizeDemoText, type Locale } from '../../i18n/dictionary';
 
 const FILTER_TABS = [
   { id: 'all', label: 'Semua' },
@@ -24,7 +25,8 @@ const FILTER_TABS = [
 
 type FilterTabId = typeof FILTER_TABS[number]['id'];
 
-export default function HistoryIsland() {
+export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).orders;
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
   const [orders, setOrders] = useState<OrderTransaction[]>(() =>
     transactionService.getInitialTransactions()
@@ -93,7 +95,7 @@ export default function HistoryIsland() {
                       : 'text-[#6E6453] hover:text-[#1F1A12]'
                   }`}
                 >
-                  <span>{tab.label}</span>
+                  <span>{localizeDemoText(locale, tab.label)}</span>
                   {isActive ? (
                     <span className="w-10 sm:w-16 h-0.5 bg-[#C9971C] rounded-full mt-1 animate-in fade-in zoom-in duration-150"></span>
                   ) : (
@@ -110,17 +112,17 @@ export default function HistoryIsland() {
             <div className="text-center py-16 bg-white/70 rounded-3xl border border-[#E8D9B5] p-8">
               <Package className="w-12 h-12 text-[#C9971C]/60 mx-auto mb-3" />
               <h3 className="text-base font-bold text-[#1F1A12]">
-                Belum ada pesanan dengan status ini
+                {d.emptyTitle}
               </h3>
               <p className="text-xs text-[#736856] mt-1 mb-6">
-                Jelajahi jadwal event, tiket cheki, atau merchandise resmi MUSES.
+                {d.emptyBody}
               </p>
               <a
                 href={withBase("/store")}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#C9971C] to-[#9A7420] text-white text-xs font-bold uppercase tracking-wider hover:brightness-110 shadow-md"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Kunjungi Store</span>
+                <span>{d.visitStore}</span>
               </a>
             </div>
           ) : (
@@ -146,7 +148,7 @@ export default function HistoryIsland() {
                     </div>
 
                     <div className="shrink-0">
-                      <StatusBadge status={order.status} label={order.statusLabel} />
+                      <StatusBadge status={order.status} label={localizeDemoText(locale, order.statusLabel)} locale={locale} />
                     </div>
                   </div>
 
@@ -167,7 +169,7 @@ export default function HistoryIsland() {
                         <div className="flex items-center gap-3">
                           <img
                             src={withBase(item.image || '/images/members/faril.webp')}
-                            alt={item.name || 'Produk MUSES'}
+                            alt={item.name || d.productFallbackAlt}
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = withBase('/images/members/faril.webp');
                             }}
@@ -194,7 +196,7 @@ export default function HistoryIsland() {
 
                   <div className="border-t border-[#1F1A12]/8 pt-3 mt-2 flex items-center justify-between text-xs sm:text-sm">
                     <span className="text-[#736856] font-medium">
-                      {order.deliveryInfo}
+                      {localizeDemoText(locale, order.deliveryInfo)}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#1F1A12]">
                       {formatRupiah(order.totalPrice ?? 0)}
@@ -205,20 +207,20 @@ export default function HistoryIsland() {
                     <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm text-[#1F1A12]">
-                          Selesaikan pembayaran dalam{' '}
+                          {d.payWithin}{' '}
                           <span className="font-bold text-[#7A5B15]">
                             {formatCountdown(countdown)}
                           </span>
                         </p>
                         <p className="text-[11px] sm:text-xs text-[#736856]">
-                          Pesanan otomatis dibatalkan jika waktu habis. Slot cheki baru aman setelah dibayar.
+                          {d.autoCancel}
                         </p>
                       </div>
                       <a
                         href={withBase(`/payment?orderId=${order.id}&amount=${order.totalPrice ?? 0}`)}
                         className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A328] via-[#B8871B] to-[#996B10] text-[#FCFAF5] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                       >
-                        Bayar dengan QR
+                        {d.payWithQR}
                       </a>
                     </div>
                   )}
@@ -227,16 +229,16 @@ export default function HistoryIsland() {
                     <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                          {order.pickupLocation || 'Ambil cheki di venue event'}
+                          {order.pickupLocation ? localizeDemoText(locale, order.pickupLocation) : d.pickupFallbackLocation}
                         </p>
                         <p className="text-[11px] sm:text-xs text-[#736856]">
-                          {order.pickupDate || 'Tunjukkan kode ini ke staff management.'}
+                          {order.pickupDate ? localizeDemoText(locale, order.pickupDate) : d.pickupFallbackNote}
                         </p>
                       </div>
                       {order.pickupCode && (
                         <div
                           onClick={() => handleCopyCode(order.pickupCode!)}
-                          title="Klik untuk menyalin kode"
+                          title={d.copyCodeTitle}
                           className="w-full sm:w-auto px-6 py-2 rounded-xl bg-[#FCEBAE] border-2 border-dashed border-[#C9971C] text-xs sm:text-sm font-mono font-black text-[#1F1A12] tracking-widest text-center shadow-xs cursor-pointer hover:bg-[#F5DE91] transition-colors flex items-center justify-center gap-2"
                         >
                           <span>{order.pickupCode}</span>
@@ -254,10 +256,10 @@ export default function HistoryIsland() {
                     <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                          Paket dalam perjalanan via {order.shippingCourier || 'JNE Regular'}
+                          {fmt(d.shippingInTransit, { courier: order.shippingCourier || 'JNE Regular' })}
                         </p>
                         <p className="text-[11px] sm:text-xs text-[#736856]">
-                          Nomor Resi: <span className="font-mono font-semibold">{order.trackingNumber || 'JNE8829104829'}</span> • Estimasi tiba {order.estimatedArrival || '2 - 3 hari'}
+                          {d.trackingNo} <span className="font-mono font-semibold">{order.trackingNumber || 'JNE8829104829'}</span> • {fmt(d.eta, { eta: localizeDemoText(locale, order.estimatedArrival || '2 - 3 hari') })}
                         </p>
                       </div>
                       <button
@@ -266,7 +268,7 @@ export default function HistoryIsland() {
                         className="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#FCEBAE] hover:bg-[#F5DE91] text-[#7A5B15] text-xs font-bold border border-[#C9971C]/40 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Truck className="w-3.5 h-3.5" />
-                        <span>{copiedCode === order.trackingNumber ? 'Tersalin' : 'Lacak Resi'}</span>
+                        <span>{copiedCode === order.trackingNumber ? d.copied : d.trackReceipt}</span>
                       </button>
                     </div>
                   )}
@@ -275,17 +277,17 @@ export default function HistoryIsland() {
                     <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#F2F8F1] border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm font-bold text-emerald-900">
-                          Pesanan telah selesai & cheki telah diterima
+                          {d.completedTitle}
                         </p>
                         <p className="text-[11px] sm:text-xs text-emerald-700">
-                          Terima kasih telah mendukung MUSES! Sampai jumpa di event berikutnya.
+                          {d.completedBody}
                         </p>
                       </div>
                       <a
                         href={withBase("/store")}
                         className="w-full sm:w-auto px-5 py-2 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-300 transition-colors text-center cursor-pointer"
                       >
-                        Beli Cheki Lagi
+                        {d.buyChekiAgain}
                       </a>
                     </div>
                   )}
@@ -297,7 +299,7 @@ export default function HistoryIsland() {
                         onClick={() => toggleStepper(order.id)}
                         className="flex items-center justify-between w-full text-xs font-semibold text-[#8C6A1C] hover:text-[#C9971C] transition-colors cursor-pointer py-1"
                       >
-                        <span>Lihat alur pesanan</span>
+                        <span>{d.viewOrderFlow}</span>
                         {order.isStepperExpanded ? (
                           <ChevronUp className="w-4 h-4 text-[#8C6A1C]" />
                         ) : (
@@ -344,7 +346,7 @@ export default function HistoryIsland() {
                                       : 'font-normal text-[#8A7F6C]'
                                   }`}
                                 >
-                                  {step.label}
+                                  {localizeDemoText(locale, step.label)}
                                 </span>
                               </div>
                             ))}

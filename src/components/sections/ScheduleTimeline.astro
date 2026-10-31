@@ -1,9 +1,16 @@
 ---
 import ScheduleSplitGrid from '../islands/ScheduleSplitGrid';
+import type { Locale } from '../../i18n/dictionary';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
 ---
 
 <section id="schedule" data-section="schedule" class="relative bg-[#FCFAF5] py-16 sm:py-20 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
   <div class="max-w-7xl mx-auto relative z-10">
-    <ScheduleSplitGrid client:visible />
+    <ScheduleSplitGrid client:visible locale={locale} />
   </div>
 </section>

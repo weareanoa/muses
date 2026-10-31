@@ -1,16 +1,19 @@
 ---
-export const prerender = true;
-
 import RootLayout from '../layouts/RootLayout.astro';
 import VinylPlayer from '../components/islands/VinylPlayer';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="Discography | MUSES Official Portal"
-  description="Daftar album dan rilisan musik idol grup MUSES lengkap dengan pemutar piringan hitam vinyl dan tautan resmi."
+  title={d.meta.discographyTitle}
+  description={d.meta.discographyDesc}
   currentPath="/discography"
 >
   <div class="relative min-h-[calc(100vh-80px)] pt-16 overflow-hidden">
-    <VinylPlayer client:load />
+    <VinylPlayer client:load locale={locale} />
   </div>
 </RootLayout>

@@ -1,16 +1,19 @@
 ---
-export const prerender = true;
-
 import RootLayout from '../layouts/RootLayout.astro';
 import Hero from '../components/sections/Hero.astro';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="Members Profile | MUSES Official Portal"
-  description="Profil lengkap 7 member MUSES: Vira, Vely, Mine, Faril, Ndah, Liz, Lia."
+  title={d.meta.memberTitle}
+  description={d.meta.memberDesc}
   currentPath="/member"
 >
   <div class="pt-16">
-    <Hero />
+    <Hero locale={locale} />
   </div>
 </RootLayout>

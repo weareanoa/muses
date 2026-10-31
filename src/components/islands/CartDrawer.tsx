@@ -15,8 +15,10 @@ import { X, Trash2, ShoppingBag, Plus, Minus, ArrowRight, CheckCircle2, MapPin }
 import confetti from 'canvas-confetti';
 import { currentUser } from '../../stores/authStore';
 import { formatRupiah } from '../../lib/format';
+import { fmt, getDict, localizeAddressLabel, localizeOption, type Locale } from '../../i18n/dictionary';
 
-export default function CartDrawer() {
+export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).cart;
   const isOpen = useStore(isCartOpen);
   const items = useStore(cartItems);
   const subtotal = useStore(cartSubtotal);
@@ -57,7 +59,7 @@ export default function CartDrawer() {
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#9A7420]" />
               <h2 className="text-lg font-bold font-display text-[#1F1A12] uppercase tracking-wider">
-                Shopping Cart ({items.length})
+                {fmt(d.title, { count: items.length })}
               </h2>
             </div>
             <button
@@ -74,16 +76,16 @@ export default function CartDrawer() {
                 <div className="w-16 h-16 bg-[#9A7420]/15 rounded-full flex items-center justify-center mx-auto text-[#9A7420]">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold font-display text-[#1F1A12]">Order Received!</h3>
+                <h3 className="text-xl font-bold font-display text-[#1F1A12]">{d.orderReceived}</h3>
                 <p className="text-xs text-[#6E6453] max-w-xs mx-auto">
-                  Thank you for supporting MUSES. Your order confirmation and receipt will be processed shortly.
+                  {d.orderReceivedBody}
                 </p>
                 <div className="pt-4">
                   <button
                     onClick={closeCart}
                     className="px-6 py-2 border border-[#9A7420] text-[#9A7420] hover:bg-[#9A7420]/10 text-xs font-semibold rounded-md transition-colors cursor-pointer"
                   >
-                    Continue Browsing
+                    {d.continueBrowsing}
                   </button>
                 </div>
               </div>
@@ -93,15 +95,15 @@ export default function CartDrawer() {
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[#1F1A12]">Your cart is empty</h3>
-                  <p className="text-xs text-[#6E6453] mt-1">Discover official albums, lightsticks, and tour apparel.</p>
+                  <h3 className="text-sm font-semibold text-[#1F1A12]">{d.emptyTitle}</h3>
+                  <p className="text-xs text-[#6E6453] mt-1">{d.emptyBody}</p>
                 </div>
                 <a
-                  href={withBase("/#store")}
+                  href={withBase("/store")}
                   onClick={closeCart}
                   className="inline-flex items-center gap-2 text-xs font-semibold text-[#9A7420] hover:underline pt-2 cursor-pointer"
                 >
-                  Explore Store
+                  {d.viewStore}
                   <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
@@ -126,8 +128,8 @@ export default function CartDrawer() {
                         {item.name}
                       </a>
                       <div className="flex items-center gap-2 mt-1 text-xs text-[#6E6453]">
-                        {item.size && <span>Size: {item.size}</span>}
-                        {item.color && <span>• Color: {item.color}</span>}
+                        {item.size && <span>{getDict(locale).cart.size}: {localizeOption(locale, item.size)}</span>}
+                        {item.color && <span>• {getDict(locale).cart.color}: {item.color}</span>}
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-2">
@@ -171,16 +173,16 @@ export default function CartDrawer() {
               <div className="flex items-center justify-between text-xs pb-1">
                 <span className="text-[#6E6453] flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-[#9A7420]" />
-                  Alamat Pengiriman
+                  {d.shippingAddress}
                 </span>
-                <span className="text-[#9A7420] font-semibold">{user ? user.name : 'Tamu'}</span>
+                <span className="text-[#9A7420] font-semibold">{user ? user.name : d.guest}</span>
               </div>
               {selectedAddress ? (
                 <div className="p-2.5 rounded-xl bg-white/80 border border-[#1F1A12]/10 text-xs text-[#524838]">
                   <div className="font-semibold text-[#1F1A12] flex items-center gap-1.5">
                     <span>{selectedAddress.recipientName}</span>
                     <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#9A7420]/15 text-[#9A7420] font-mono">
-                      {selectedAddress.label}
+                      {localizeAddressLabel(locale, selectedAddress.label)}
                     </span>
                   </div>
                   <div className="truncate mt-0.5 text-[11px] text-[#6E6453]">{selectedAddress.street}</div>
@@ -190,19 +192,19 @@ export default function CartDrawer() {
                 </div>
               ) : (
                 <div className="p-2 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-center justify-between">
-                  <span>Belum ada alamat tersimpan</span>
+                  <span>{d.noAddress}</span>
                   <a
                     href={withBase("/profile?tab=alamat")}
                     onClick={closeCart}
                     className="text-[#9A7420] font-semibold text-xs hover:underline"
                   >
-                    + Atur Alamat
+                    {d.setAddress}
                   </a>
                 </div>
               )}
 
               <div className="flex justify-between items-center text-sm">
-                <span className="text-[#6E6453]">Subtotal</span>
+                <span className="text-[#6E6453]">{d.subtotal}</span>
                 <span className="text-xl font-bold font-display text-[#1F1A12]">
                   {subtotal >= 1000
                     ? formatRupiah(subtotal)
@@ -210,7 +212,7 @@ export default function CartDrawer() {
                 </span>
               </div>
               <p className="text-[11px] text-[#8A7F6C] leading-tight">
-                Taxes and shipping calculated at checkout. Free shipping on official albums.
+                {d.taxesNote}
               </p>
               <button
                 onClick={handleCheckout}
@@ -220,11 +222,11 @@ export default function CartDrawer() {
                 {isCheckingOut ? (
                   <>
                     <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                    Processing...
+                    {d.processing}
                   </>
                 ) : (
                   <>
-                    Checkout Now
+                    {d.checkoutNow}
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

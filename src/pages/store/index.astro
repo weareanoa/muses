@@ -2,16 +2,21 @@
 import RootLayout from '../../layouts/RootLayout.astro';
 import StoreCatalog from '../../components/islands/StoreCatalog';
 import FooterCTA from '../../components/sections/FooterCTA.astro';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="Official Store | MUSES Official Portal"
-  description="Official MUSES merchandise store. Exclusive limited vinyl pressings, official lightstick, tour apparel, cheki, and videocall tickets."
+  title={d.meta.storeTitle}
+  description={d.meta.storeDesc}
   currentPath="/store"
 >
   <main class="min-h-screen bg-[#FCFAF5] pt-28 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-10 max-w-[1400px] mx-auto font-['Poppins',sans-serif]">
-    <StoreCatalog client:load />
+    <StoreCatalog client:load locale={locale} />
   </main>
 
-  <FooterCTA />
+  <FooterCTA locale={locale} />
 </RootLayout>

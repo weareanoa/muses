@@ -4,33 +4,32 @@ import RootLayout from '../../layouts/RootLayout.astro';
 import ProductPurchaseIsland from '../../components/islands/ProductPurchaseIsland';
 import FooterCTA from '../../components/sections/FooterCTA.astro';
 import { productService } from '../../services/productService';
+import { fmt, getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
 
-export const prerender = true;
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 
-export async function getStaticPaths() {
-  const { data: products = [] } = await productService.getProducts();
-  return products.map((product) => ({
-    params: { id: product.id },
-    props: { product, allProducts: products },
-  }));
+const { id } = Astro.params;
+const { data: products = [] } = await productService.getProducts();
+const byId = id ? await productService.getProductById(id) : null;
+const product = byId?.data ?? products.find((p) => p.id === id);
+if (!product) {
+  return Astro.redirect(withBase('/store'));
 }
-
-const { product, allProducts = [] } = Astro.props;
-
-const relatedProducts = allProducts.filter((p) => p.id !== product.id);
+const relatedProducts = products.filter((p) => p.id !== product.id);
 ---
 
 <RootLayout
-  title={`${product.name} | MUSES Official Store`}
+  title={fmt(d.meta.storeDetailTitle, { name: product.name })}
   description={product.description}
   currentPath="/store"
 >
   <div class="bg-[#FCFAF5] min-h-screen text-[#1F1A12] pt-28 pb-20">
     <div class="max-w-6xl mx-auto px-4 sm:px-8">
       <nav class="flex items-center gap-2 text-xs text-[#6E6453] py-3 mb-6 border-b border-[#1F1A12]/10">
-        <a href="/" class="hover:text-[#1F1A12] transition-colors">Home</a>
+        <a href="/" class="hover:text-[#1F1A12] transition-colors">{d.product.breadcrumbHome}</a>
         <span>/</span>
-        <a href="/store" class="hover:text-[#1F1A12] transition-colors">Store</a>
+        <a href="/store" class="hover:text-[#1F1A12] transition-colors">{d.product.breadcrumbStore}</a>
         <span>/</span>
         <a href={withBase(`/store?cat=${product.category}`)} class="hover:text-[#9A7420] transition-colors">
           {product.category}
@@ -45,9 +44,10 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         client:load
         product={product as any}
         relatedProducts={relatedProducts as any}
+        locale={locale}
       />
     </div>
   </div>
 
-  <FooterCTA />
+  <FooterCTA locale={locale} />
 </RootLayout>

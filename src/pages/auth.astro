@@ -1,8 +1,12 @@
 ---
 import AuthPageShell from '../layouts/AuthPageShell.astro';
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <AuthPageShell
-  title="Masuk / Daftar Akun | MUSES Official Portal"
-  description="Akses resmi MUSES Official Portal dengan Google atau Email OTP untuk pembelian tiket, merchandise, dan konten eksklusif."
+  title={d.meta.authTitle}
+  description={d.meta.authDesc}
 />

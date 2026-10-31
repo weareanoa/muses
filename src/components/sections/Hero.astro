@@ -2,6 +2,14 @@
 import { withBase, withBaseDeep } from '../../lib/paths';
 import membersRaw from '../../data/members.json';
 import { type Member, MEMBER_ORDER, MEMBER_AMBIENT_PALETTE } from '../../data/members';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+const d = getDict(locale).home;
 
 const members = [...(withBaseDeep(membersRaw) as readonly Member[])].sort(
   (a, b) => MEMBER_ORDER.indexOf(a.id as any) - MEMBER_ORDER.indexOf(b.id as any)
@@ -174,7 +182,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                 data-member-name={member.name}
                 data-muse-title={member.tagline}
                 data-theme-color={themeColor}
-                aria-label={`Buka Profil ${member.name}`}
+                aria-label={fmt(d.heroOpenProfile, { name: member.name })}
               >
                 <img
                   src={member.card}

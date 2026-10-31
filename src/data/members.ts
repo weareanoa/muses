@@ -31,6 +31,7 @@ export interface Member {
   museCategory: string;
   tagline: string;
   summary: string;
+  summaryEn: string;
   decor: readonly MemberDecor[];
 }
 

@@ -1,11 +1,23 @@
 ---
 import { withBase } from '../../lib/paths';
+import { getDict, type Locale } from '../../i18n/dictionary';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+const d = getDict(locale).preloader;
 ---
 
 <div
   id="muses-preloader"
+  data-stage={d.stage}
+  data-charm={d.charm}
+  data-harmony={d.harmony}
+  data-welcome={d.welcome}
   class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FCFAF5] transition-all duration-700 ease-out select-none"
-  aria-label="Memuat MUSES"
+  aria-label={d.aria}
   role="status"
 >
   <div class="absolute inset-0 bg-gradient-to-b from-[#FCFAF5] via-[#FDF8EE] to-[#FCFAF5] pointer-events-none"></div>
@@ -32,7 +44,7 @@ import { withBase } from '../../lib/paths';
 
     <div class="flex items-center justify-between w-64 sm:w-72 text-xs font-medium text-[#6E6453]">
       <span id="preloader-status" class="tracking-wide text-[11px] uppercase text-[#8C6A1C] transition-opacity duration-300">
-        Menyiapkan panggung...
+        {d.stage}
       </span>
       <span id="preloader-percent" class="font-mono font-bold text-[#C9971C]">
         0%
@@ -105,14 +117,18 @@ import { withBase } from '../../lib/paths';
       }
 
       if (statusText) {
+        const stage = preloader?.dataset.stage || 'Menyiapkan panggung...';
+        const charm = preloader?.dataset.charm || 'Memuat pesona para muse...';
+        const harmony = preloader?.dataset.harmony || 'Menyelaraskan harmoni...';
+        const welcome = preloader?.dataset.welcome || 'Selamat datang di MUSES';
         if (targetPercent < 35) {
-          statusText.textContent = 'Menyiapkan panggung...';
+          statusText.textContent = stage;
         } else if (targetPercent < 70) {
-          statusText.textContent = 'Memuat pesona para muse...';
+          statusText.textContent = charm;
         } else if (targetPercent < 100) {
-          statusText.textContent = 'Menyelaraskan harmoni...';
+          statusText.textContent = harmony;
         } else {
-          statusText.textContent = 'Selamat datang di MUSES';
+          statusText.textContent = welcome;
         }
       }
     }

@@ -56,7 +56,8 @@
         "size": 125,
         "rotate": 10
       }
-    ]
+    ],
+    "summaryEn": "Love, romance, warmth, and emotional expression."
   },
   {
     "id": "vely",
@@ -113,7 +114,8 @@
         "size": 155,
         "rotate": 5
       }
-    ]
+    ],
+    "summaryEn": "Music, cheerfulness, creativity, and expressions that bring the atmosphere to life."
   },
   {
     "id": "mine",
@@ -170,7 +172,8 @@
         "size": 125,
         "rotate": -12
       }
-    ]
+    ],
+    "summaryEn": "Energy, elegance, charisma, and expression through movement."
   },
   {
     "id": "faril",
@@ -239,7 +242,8 @@
         "rotate": -26,
         "flipX": true
       }
-    ]
+    ],
+    "summaryEn": "A deep, emotional, resilient soul, full of expression."
   },
   {
     "id": "ndah",
@@ -298,7 +302,8 @@
         "rotate": 5,
         "flipX": true
       }
-    ]
+    ],
+    "summaryEn": "Wisdom, calm, depth of thought, and elegance."
   },
   {
     "id": "liz",
@@ -370,7 +375,8 @@
         "zIndex": 5,
         "flipX": true
       }
-    ]
+    ],
+    "summaryEn": "Imagination, vision, curiosity, and aspirations toward the future."
   },
   {
     "id": "lia",
@@ -428,6 +434,7 @@
         "flipX": true,
         "zIndex": 5
       }
-    ]
+    ],
+    "summaryEn": "Curiosity, precision, wisdom, and the ability to remember meaningful things."
   }
 ]

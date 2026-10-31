@@ -1,6 +1,4 @@
 ---
-export const prerender = true;
-
 import RootLayout from '../layouts/RootLayout.astro';
 import Hero from '../components/sections/Hero.astro';
 import VinylPlayer from '../components/islands/VinylPlayer';
@@ -9,26 +7,31 @@ import GallerySection from '../components/sections/GallerySection.astro';
 import ShopPreview from '../components/sections/ShopPreview.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
 import FooterCTA from '../components/sections/FooterCTA.astro';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="MUSES | Official Idol Group"
-  description="Situs profil resmi idol grup lokal MUSES (7 member: Vira, Vely, Mine, Faril, Ndah, Liz, Lia). Musik, jadwal tur, galeri, merchandise, dan kontak manajemen."
+  title={d.meta.homeTitle}
+  description={d.meta.homeDesc}
   currentPath="/"
 >
-  <Hero />
+  <Hero locale={locale} />
 
   <section id="discography" data-section="discography" class="relative w-full overflow-hidden">
-    <VinylPlayer client:visible />
+    <VinylPlayer client:visible locale={locale} />
   </section>
 
-  <ScheduleTimeline />
+  <ScheduleTimeline locale={locale} />
 
-  <GallerySection />
+  <GallerySection locale={locale} />
 
-  <ShopPreview />
+  <ShopPreview locale={locale} />
 
-  <ContactSection />
+  <ContactSection locale={locale} />
 
-  <FooterCTA />
+  <FooterCTA locale={locale} />
 </RootLayout>

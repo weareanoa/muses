@@ -5,6 +5,7 @@ import PreloaderBuffer from '../components/ui/PreloaderBuffer.astro';
 import CartDrawer from '../components/islands/CartDrawer';
 import MemberModal from '../components/islands/MemberModal';
 import UserNavIsland from '../components/islands/UserNavIsland';
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
 
 interface Props {
   title?: string;
@@ -14,22 +15,25 @@ interface Props {
   hideNavbar?: boolean;
 }
 
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
+
 const {
-  title = 'MUSES | Official Idol Group',
-  description = 'Situs resmi idol grup MUSES (7 member: Vira, Vely, Mine, Faril, Ndah, Liz, Lia). Album, jadwal konser tur, galeri, dan merchandise resmi.',
+  title = d.meta.defaultTitle,
+  description = d.meta.defaultDesc,
   currentPath = Astro.url.pathname,
   solidHeader = false,
   hideNavbar = false,
 } = Astro.props;
 
 const navItems = [
-  { name: 'HOME', href: '/#home', id: 'home' },
-  { name: 'MEMBER', href: '/#member', id: 'member' },
-  { name: 'DISCOGRAPHY', href: '/#discography', id: 'discography' },
-  { name: 'SCHEDULE', href: '/#schedule', id: 'schedule' },
-  { name: 'GALLERY', href: '/#gallery', id: 'gallery' },
-  { name: 'STORE', href: '/#store', id: 'store' },
-  { name: 'KONTAK', href: '/#kontak', id: 'kontak' },
+  { name: d.nav.home, href: '/#home', id: 'home' },
+  { name: d.nav.member, href: '/#member', id: 'member' },
+  { name: d.nav.discography, href: '/#discography', id: 'discography' },
+  { name: d.nav.schedule, href: '/#schedule', id: 'schedule' },
+  { name: d.nav.gallery, href: '/#gallery', id: 'gallery' },
+  { name: d.nav.store, href: '/#store', id: 'store' },
+  { name: d.nav.contact, href: '/#kontak', id: 'kontak' },
 ];
 
 const isItemActive = (id: string) => {
@@ -41,7 +45,7 @@ const isItemActive = (id: string) => {
 ---
 
 <!doctype html>
-<html lang="id">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -56,7 +60,7 @@ const isItemActive = (id: string) => {
     <title>{title}</title>
   </head>
   <body class="bg-[#FCFAF5] text-[#1F1A12] selection:bg-[#C9971C] selection:text-[#1F1A12]">
-    <PreloaderBuffer />
+    <PreloaderBuffer locale={locale} />
 
     {!hideNavbar && (
     <header
@@ -65,7 +69,7 @@ const isItemActive = (id: string) => {
       data-solid-header={solidHeader ? 'true' : 'false'}
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        <a href={withBase("/")} class="flex items-center gap-2 group" aria-label="MUSES Home">
+        <a href={withBase("/")} class="flex items-center gap-2 group" aria-label={d.footer.homeAria}>
           <img
             src={withBase("/images/muses_logo_3d_clean.svg")}
             alt="MUSES"
@@ -94,30 +98,12 @@ const isItemActive = (id: string) => {
         </nav>
 
         <div class="flex items-center gap-2.5 sm:gap-3">
-          <button
-            id="nav-cart-btn"
-            class="relative p-2.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] transition-all cursor-pointer flex items-center justify-center group"
-            aria-label="Keranjang Belanja"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span
-              id="cart-badge-count"
-              class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-r from-[#C28C1D] to-[#A37418] text-[#1F1A12] text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(201,151,28,0.6)]"
-            >
-              0
-            </span>
-          </button>
-
-          <span class="h-6 w-px bg-[#C9971C]/30 mx-0.5" aria-hidden="true"></span>
-
-          <UserNavIsland client:load />
+          <UserNavIsland client:load locale={locale} />
 
           <button
             id="mobile-menu-btn"
             class="lg:hidden p-2.5 rounded-full bg-[#FCFAF5] hover:bg-[#C9971C]/15 border border-[#C9971C]/30 text-[#1F1A12] transition-all cursor-pointer flex items-center justify-center group"
-            aria-label="Buka Menu Navigasi"
+            aria-label={d.nav.openNavAria}
           >
             <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#8C6A1C] group-hover:text-[#C9971C] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -158,7 +144,7 @@ const isItemActive = (id: string) => {
             href={withBase("/auth")}
             class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-[#C9971C]/10 text-[#1F1A12] border-t border-[#1F1A12]/10 mt-2 pt-3"
           >
-            <span>AKUN SAYA / SIGN IN</span>
+            <span>{d.nav.mobileSignIn}</span>
             <span class="text-[10px] font-mono text-[#C9971C]">★</span>
           </a>
         </nav>
@@ -170,24 +156,15 @@ const isItemActive = (id: string) => {
       <slot />
     </main>
 
-    <CartDrawer client:idle />
-    <MemberModal client:idle />
+    <CartDrawer client:idle locale={locale} />
+    <MemberModal client:idle locale={locale} />
 
     <script>
       import { initSmoothScroll } from '../animations/scroll';
       import { initNavbar } from '../animations/navbar';
-      import { totalCartCount } from '../stores/cartStore';
 
       initSmoothScroll();
       initNavbar();
-
-      const badge = document.getElementById('cart-badge-count');
-      totalCartCount.subscribe((count) => {
-        if (badge) {
-          badge.textContent = count.toString();
-          badge.style.display = count > 0 ? 'flex' : 'none';
-        }
-      });
     </script>
   </body>
 </html>

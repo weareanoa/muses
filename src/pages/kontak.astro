@@ -1,16 +1,19 @@
 ---
-export const prerender = true;
-
 import RootLayout from '../layouts/RootLayout.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="Kontak Manajemen Resmi | MUSES Official Portal"
-  description="Kanal kontak resmi manajemen idol grup MUSES untuk kerjasama bisnis, sponsor, kolaborasi, dan kemitraan acara."
+  title={d.meta.contactTitle}
+  description={d.meta.contactDesc}
   currentPath="/kontak"
 >
   <div class="pt-20">
-    <ContactSection />
+    <ContactSection locale={locale} />
   </div>
 </RootLayout>

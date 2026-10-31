@@ -3,6 +3,7 @@ import { withBase } from '../../lib/paths';
 import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { MapPin, Clock, Ticket } from 'lucide-react';
+import { getDict, type Locale } from '../../i18n/dictionary';
 
 export type ScheduleItem = ScheduleDTO;
 
@@ -28,7 +29,8 @@ function GoldenSparkle({ className = 'w-6 h-6' }: { className?: string }) {
   );
 }
 
-export default function ScheduleSplitGrid() {
+export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).schedule;
   const [schedules, setSchedules] = useState<ScheduleItem[]>(() =>
     scheduleService.getInitialSchedules()
   );
@@ -78,7 +80,7 @@ export default function ScheduleSplitGrid() {
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#E2EFE3] border border-[#C5E2C8] text-[#346B40] shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#346B40]" />
-          AVAILABLE
+          {d.statusAvailable}
         </span>
       );
     }
@@ -86,7 +88,7 @@ export default function ScheduleSplitGrid() {
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#FCF1CE] border border-[#F3DD9C] text-[#A67812] shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#A67812]" />
-          SELLING FAST
+          {d.statusSellingFast}
         </span>
       );
     }
@@ -94,14 +96,14 @@ export default function ScheduleSplitGrid() {
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#EAE2F8] border border-[#D5C4F3] text-[#6942BD] shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#6942BD]" />
-          COMING SOON
+          {d.statusComingSoon}
         </span>
       );
     }
     return (
       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#ECE7DC] border border-[#DDD6C8] text-[#7A7165] shrink-0">
         <span className="w-1.5 h-1.5 rounded-full bg-[#968C7D]" />
-        SOLD OUT
+        {d.statusSoldOut}
       </span>
     );
   };
@@ -125,7 +127,7 @@ export default function ScheduleSplitGrid() {
           <div className="h-[1px] flex-1 max-w-[60px] sm:max-w-[100px] bg-gradient-to-r from-transparent to-[#D4A017]/80" />
           <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
           <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
-            MUSES LIVE & EVENTS
+            {d.eyebrow}
           </span>
           <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
           <div className="h-[1px] flex-1 max-w-[60px] sm:max-w-[100px] bg-gradient-to-l from-transparent to-[#D4A017]/80" />
@@ -134,7 +136,7 @@ export default function ScheduleSplitGrid() {
         <div className="relative inline-block">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-16 bg-[radial-gradient(ellipse_at_center,_rgba(247,224,143,0.35)_0%,_transparent_70%)] pointer-events-none blur-lg" />
           <h2 className="relative z-10 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-balbes text-[#18181B] tracking-normal font-normal">
-            Upcoming Schedule
+            {d.heading}
           </h2>
         </div>
       </div>
@@ -145,7 +147,7 @@ export default function ScheduleSplitGrid() {
             <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-4 border border-[#C9971C]/25 bg-[#FAF6EC]">
               <img
                 src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.svg')}
-                alt="MUSES 7 Members"
+                alt={d.posterAlt}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -156,7 +158,7 @@ export default function ScheduleSplitGrid() {
                   {String(countdown.days).padStart(2, '0')}
                 </span>
                 <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-1 block">
-                  DAYS
+                  {d.days}
                 </span>
               </div>
               <div className="rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-2 px-1 text-center">
@@ -164,7 +166,7 @@ export default function ScheduleSplitGrid() {
                   {String(countdown.hours).padStart(2, '0')}
                 </span>
                 <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-1 block">
-                  HOURS
+                  {d.hours}
                 </span>
               </div>
               <div className="rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-2 px-1 text-center">
@@ -172,7 +174,7 @@ export default function ScheduleSplitGrid() {
                   {String(countdown.mins).padStart(2, '0')}
                 </span>
                 <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-1 block">
-                  MINUTE
+                  {d.minutes}
                 </span>
               </div>
               <div className="rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-2 px-1 text-center">
@@ -180,7 +182,7 @@ export default function ScheduleSplitGrid() {
                   {String(countdown.secs).padStart(2, '0')}
                 </span>
                 <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-1 block">
-                  SECOND
+                  {d.seconds}
                 </span>
               </div>
             </div>
@@ -192,7 +194,7 @@ export default function ScheduleSplitGrid() {
               className="w-full py-3.5 px-6 rounded-full font-bold text-xs sm:text-sm tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(201,151,28,0.35)] hover:shadow-[0_12px_28px_rgba(201,151,28,0.45)] hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-[#D7A227] via-[#E4B841] to-[#A37B1D] text-[#332205] cursor-pointer"
             >
               <Ticket className="w-4 h-4 fill-current shrink-0" />
-              <span>GET TICKETS</span>
+              <span>{d.getTickets}</span>
             </a>
           </div>
         </div>

@@ -1,21 +1,26 @@
 ---
 import RootLayout from '../layouts/RootLayout.astro';
 import PaymentIsland from '../components/islands/PaymentIsland';
+
+import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const d = getDict(locale);
 ---
 
 <RootLayout
-  title="Pembayaran QRIS | MUSES Official"
-  description="Halaman pembayaran resmi untuk pesanan merchandise dan tiket idol grup MUSES."
+  title={d.meta.paymentTitle}
+  description={d.meta.paymentDesc}
   solidHeader={true}
 >
   <div class="relative min-h-[calc(100vh-80px)] pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto bg-[#FCFAF5]">
     <div class="w-full border-t border-[#DFC478]/80 mb-6"></div>
     <h1 class="text-4xl sm:text-5xl font-['Playfair_Display',serif] text-[#1F1A12] mb-8 font-normal tracking-tight">
-      Pembayaran.
+      {d.payment.paymentHeading}
     </h1>
 
     <div class="relative z-10">
-      <PaymentIsland client:load />
+      <PaymentIsland client:load locale={locale} />
     </div>
   </div>
 </RootLayout>

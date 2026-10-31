@@ -6,7 +6,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/1.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #1.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #1",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #1."
   },
   {
     "id": "gallery-2",
@@ -15,7 +17,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/2.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #2.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #2",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #2."
   },
   {
     "id": "gallery-3",
@@ -24,7 +28,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/3.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #3.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #3",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #3."
   },
   {
     "id": "gallery-4",
@@ -33,7 +39,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/4.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #4.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #4",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #4."
   },
   {
     "id": "gallery-5",
@@ -42,7 +50,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/5.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #5.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #5",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #5."
   },
   {
     "id": "gallery-6",
@@ -51,7 +61,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/6.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #6.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #6",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #6."
   },
   {
     "id": "gallery-7",
@@ -60,7 +72,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/7.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #7.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #7",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #7."
   },
   {
     "id": "gallery-8",
@@ -69,7 +83,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/8.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #8.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #8",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #8."
   },
   {
     "id": "gallery-9",
@@ -78,7 +94,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/9.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #9.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #9",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #9."
   },
   {
     "id": "gallery-10",
@@ -87,7 +105,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/10.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #10.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #10",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #10."
   },
   {
     "id": "gallery-11",
@@ -96,7 +116,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/11.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #11.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #11",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #11."
   },
   {
     "id": "gallery-12",
@@ -105,7 +127,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/12.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #12.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #12",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #12."
   },
   {
     "id": "gallery-13",
@@ -114,7 +138,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/13.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #13.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #13",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #13."
   },
   {
     "id": "gallery-14",
@@ -123,7 +149,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/14.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #14.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #14",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #14."
   },
   {
     "id": "gallery-15",
@@ -132,7 +160,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/15.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #15.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #15",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #15."
   },
   {
     "id": "gallery-16",
@@ -141,7 +171,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/16.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #16.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #16",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #16."
   },
   {
     "id": "gallery-17",
@@ -150,7 +182,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/17.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #17.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #17",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #17."
   },
   {
     "id": "gallery-18",
@@ -159,7 +193,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/18.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #18.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #18",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #18."
   },
   {
     "id": "gallery-19",
@@ -168,7 +204,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/19.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #19.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #19",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #19."
   },
   {
     "id": "gallery-20",
@@ -177,7 +215,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/20.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #20.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #20",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #20."
   },
   {
     "id": "gallery-21",
@@ -186,7 +226,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/21.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #21.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #21",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #21."
   },
   {
     "id": "gallery-22",
@@ -195,7 +237,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/22.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #22.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #22",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #22."
   },
   {
     "id": "gallery-23",
@@ -204,7 +248,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/23.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #23.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #23",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #23."
   },
   {
     "id": "gallery-24",
@@ -213,7 +259,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/24.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #24.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #24",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #24."
   },
   {
     "id": "gallery-25",
@@ -222,7 +270,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/25.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #25.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #25",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #25."
   },
   {
     "id": "gallery-26",
@@ -231,7 +281,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/26.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #26.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #26",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #26."
   },
   {
     "id": "gallery-27",
@@ -240,7 +292,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/27.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #27.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #27",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #27."
   },
   {
     "id": "gallery-28",
@@ -249,7 +303,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/28.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #28.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #28",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #28."
   },
   {
     "id": "gallery-29",
@@ -258,7 +314,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/29.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #29.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #29",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #29."
   },
   {
     "id": "gallery-30",
@@ -267,7 +325,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/30.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #30.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #30",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #30."
   },
   {
     "id": "gallery-31",
@@ -276,7 +336,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/31.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #31.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #31",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #31."
   },
   {
     "id": "gallery-32",
@@ -285,7 +347,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/32.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #32.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #32",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #32."
   },
   {
     "id": "gallery-33",
@@ -294,7 +358,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/33.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #33.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #33",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #33."
   },
   {
     "id": "gallery-34",
@@ -303,7 +369,9 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/34.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #34.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #34",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #34."
   },
   {
     "id": "gallery-35",
@@ -312,6 +380,8 @@
     "mediaType": "photo",
     "mediaUrl": "/images/galery/35.webp",
     "caption": "Dokumentasi momen konser dan penampilan panggung MUSES #35.",
-    "takenAt": "2026"
+    "takenAt": "2026",
+    "titleEn": "MUSES Concert #35",
+    "captionEn": "Documentation of MUSES concert moments and stage performances #35."
   }
 ]

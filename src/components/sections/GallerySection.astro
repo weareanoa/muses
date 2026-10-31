@@ -1,15 +1,23 @@
 ---
 import GalleryGrid from '../islands/GalleryGrid';
+import { getDict, type Locale } from '../../i18n/dictionary';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+const d = getDict(locale).home;
 ---
 
 <section id="gallery" data-section="gallery" class="relative bg-[#FCFAF5] py-20 sm:py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
   <div class="max-w-6xl mx-auto relative z-10">
     <div class="mb-4 sm:mb-6 pl-2">
       <h2 class="font-balbes text-6xl sm:text-7xl md:text-8xl text-[#1F1A12] leading-none tracking-normal select-none">
-        Gallery
+        {d.galleryTitle}
       </h2>
     </div>
 
-    <GalleryGrid client:visible />
+    <GalleryGrid client:visible locale={locale} />
   </div>
 </section>
