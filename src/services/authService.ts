@@ -19,68 +19,10 @@ interface StoredOtp {
   attempts: number;
 }
 
-const DEFAULT_USERS: (UserProfileDTO & { password?: string })[] = [
-  {
-    id: 'user_muses_default',
-    name: 'Winaa',
-    email: 'winarahmaliaxx@gmail.com',
-    password: 'muses2026',
-    phone: '0813111111111',
-    username: 'winaa',
-    authProvider: 'email',
-    bias: 'Faril',
-    biasEmoji: '☾',
-    membershipTier: 'Official MUSES CIRCLE',
-    membershipNumber: 'MSE-261022',
-    joinedAt: '22 Oktober 2026',
-    addresses: [
-      {
-        id: 'addr_default_1',
-        label: 'Rumah',
-        recipientName: 'Wina',
-        phone: '(+62) 8131111111111',
-        street: 'Perumahan hantu, Jalan dengan sepatu rodaku Blok A1 No. 3, RT.0/RW.1, Bekasi Timur',
-        district: 'TAMBUN SELATAN',
-        city: 'KAB. BEKASI',
-        province: 'JAWA BARAT',
-        postalCode: '17510',
-        detail: '',
-        isDefault: true,
-      },
-    ],
-    selectedAddressId: 'addr_default_1',
-  },
-  {
-    id: 'user_muses_fahmi',
-    name: 'Fahmi',
-    email: 'fahmi@email.com',
-    password: 'muses2026',
-    phone: '081234567890',
-    username: 'fahmi',
-    authProvider: 'email',
-    bias: 'Faril',
-    biasEmoji: '☾',
-    membershipTier: 'Official MUSES CIRCLE',
-    membershipNumber: 'MSE-261023',
-    joinedAt: '22 Oktober 2026',
-    addresses: [
-      {
-        id: 'addr_fahmi_1',
-        label: 'Rumah',
-        recipientName: 'Fahmi',
-        phone: '081234567890',
-        street: 'Jl. Melpomene No. 18',
-        district: 'Coblong',
-        city: 'Bandung',
-        province: 'Jawa Barat',
-        postalCode: '40123',
-        detail: '',
-        isDefault: true,
-      },
-    ],
-    selectedAddressId: 'addr_fahmi_1',
-  },
-];
+const DEFAULT_USERS: (UserProfileDTO & { password?: string })[] = [];
+// Tidak ada lagi akun demo hardcode di sini. Pengguna lokal dimulai dari
+// daftar kosong dan hanya dibuat lewat register; akun produksi memakai
+// Supabase Auth, bukan akun demo di bundle ini.
 
 function mapDbAddressToDto(row: any): UserAddressDTO {
   return {
@@ -103,6 +45,7 @@ function mapDbProfileToDto(profile: any, addresses: UserAddressDTO[] = []): User
     id: profile.id,
     name: profile.name,
     email: profile.email,
+    role: profile.role === 'admin' ? 'admin' : 'user',
     phone: profile.phone,
     username: profile.username,
     authProvider: profile.auth_provider || 'email',
@@ -124,16 +67,16 @@ function mapDbProfileToDto(profile: any, addresses: UserAddressDTO[] = []): User
 }
 
 export function getLocalStoredUsers(): (UserProfileDTO & { password?: string })[] {
-  if (typeof window === 'undefined') return DEFAULT_USERS;
+  if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem('muses_registered_users');
     if (!raw) {
-      localStorage.setItem('muses_registered_users', JSON.stringify(DEFAULT_USERS));
-      return DEFAULT_USERS;
+      localStorage.setItem('muses_registered_users', JSON.stringify([]));
+      return [];
     }
     return JSON.parse(raw);
   } catch {
-    return DEFAULT_USERS;
+    return [];
   }
 }
 
@@ -157,8 +100,7 @@ export function loadLocalCurrentUser(): UserProfileDTO | null {
     if (saved) {
       return JSON.parse(saved);
     }
-    localStorage.setItem('muses_current_user', JSON.stringify(DEFAULT_USERS[0]));
-    return DEFAULT_USERS[0];
+    return null;
   } catch {
     return null;
   }
@@ -211,6 +153,58 @@ export const authService = {
       }
     }
     return loadLocalCurrentUser();
+  },
+
+  // Admin gate yang dipakai halaman /admin/*.
+  //
+  // PENTING: fungsi ini sengaja TIDAK memakai getSessionUser() dan
+  // TIDAK memakai user lokal/demo dari localStorage. getSessionUser()
+  // jatuh kembali ke user lokal kalau tidak ada sesi Supabase, dan
+  // localStorage bisa diubah siapa saja dari DevTools, jadi itu bukan
+  // bukti admin. Yang dipercaya di sini hanya:
+  //   1. Supabase sudah dikonfigurasi (PUBLIC_SUPABASE_URL + ANON_KEY),
+  //   2. ada sesi Supabase Auth yang valid di browser ini,
+  //   3. baris profiles untuk auth.uid() tersebut punya role = 'admin'.
+  //
+  // Penegakan sesungguhnya tetap di RLS (policy admin di
+  // supabase/migrations/20261031_admin_schedules.sql): kalaupun
+  // seseorang mem-bypass UI ini, Supabase akan menolak tulisnya.
+  async getSupabaseAdminProfile(): Promise<{
+    isConfigured: boolean;
+    isLoggedIn: boolean;
+    isAdmin: boolean;
+    user: UserProfileDTO | null;
+  }> {
+    const sb = getSupabaseClient();
+    if (!sb) {
+      return { isConfigured: false, isLoggedIn: false, isAdmin: false, user: null };
+    }
+
+    const { data: sessionData } = await sb.auth.getSession();
+    const authUser = sessionData.session?.user;
+    if (!authUser) {
+      return { isConfigured: true, isLoggedIn: false, isAdmin: false, user: null };
+    }
+
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('id, name, email, role')
+      .eq('id', authUser.id)
+      .single();
+
+    const user: UserProfileDTO = {
+      id: authUser.id,
+      name: profile?.name || authUser.email || 'Admin',
+      email: profile?.email || authUser.email || '',
+      role: profile?.role === 'admin' ? 'admin' : 'user',
+    };
+
+    return {
+      isConfigured: true,
+      isLoggedIn: true,
+      isAdmin: user.role === 'admin',
+      user,
+    };
   },
 
   async signInWithPassword(
@@ -492,62 +486,30 @@ export const authService = {
     return { success: true, user: found };
   },
 
-  loginWithGoogleSync(): { success: boolean; user: UserProfileDTO } {
+  async loginWithGoogle(): Promise<{ success: boolean; error?: string }> {
     const sb = getSupabaseClient();
-    if (sb && typeof window !== 'undefined') {
-      sb.auth
-        .signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin },
-        })
-        .catch(() => {});
-    }
-
-    const users = getLocalStoredUsers();
-    const googleEmail = 'fan.muses@gmail.com';
-    let found = users.find((u) => u.email.toLowerCase() === googleEmail);
-
-    if (!found) {
-      const randomDigits = Math.floor(100000 + Math.random() * 900000);
-      const addrId = `addr_google_${Date.now()}`;
-      const newUser: UserProfileDTO = {
-        id: `muses_google_${Date.now()}`,
-        name: 'Fahmi',
-        email: googleEmail,
-        phone: '+62 813 9876 5432',
-        username: 'fahmi',
-        authProvider: 'google',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-        bias: 'Faril',
-        biasEmoji: '🦋',
-        membershipTier: 'Verified Google CIRCLE',
-        membershipNumber: `MUSES-G-${randomDigits}`,
-        joinedAt: new Date().toLocaleDateString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }),
-        addresses: [
-          {
-            id: addrId,
-            label: 'Rumah',
-            recipientName: 'Fahmi',
-            phone: '+62 813 9876 5432',
-            street: 'Jl. Sudirman Kav. 52',
-            city: 'Jakarta Selatan',
-            province: 'DKI Jakarta',
-            postalCode: '12190',
-            isDefault: true,
-          },
-        ],
-        selectedAddressId: addrId,
+    if (!sb || typeof window === 'undefined') {
+      return {
+        success: false,
+        error: 'Supabase belum dikonfigurasi, jadi login Google belum bisa dipakai.',
       };
-      users.push(newUser);
-      saveLocalUsers(users);
-      found = newUser;
     }
-
-    return { success: true, user: found };
+    const { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error || !data?.url) {
+      return {
+        success: false,
+        error:
+          error?.message ||
+          'Login Google gagal dimulai. Pastikan provider Google sudah diaktifkan di Supabase.',
+      };
+    }
+    // Arahkan browser ke Google. Jangan set user lokal di sini: sesi baru
+    // hanya ada setelah user kembali dari Google dan Supabase membuat sesi.
+    window.location.href = data.url;
+    return { success: true };
   },
 
   async signOut(): Promise<void> {

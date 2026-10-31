@@ -21,6 +21,7 @@ import {
 import AddressModal, { type AddressFormData } from './AddressModal';
 import { formatRupiah, usdToIdr } from '../../lib/format';
 import { transactionService } from '../../services/transactionService';
+import { getDict, localizeAddressLabel, type Locale } from '../../i18n/dictionary';
 
 interface CheckoutItem {
   id: string;
@@ -50,7 +51,8 @@ const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
   },
 ];
 
-export default function AddressIsland() {
+export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).address;
   const user = useStore(currentUser);
   const cart = useStore(cartItems);
 
@@ -76,19 +78,7 @@ export default function AddressIsland() {
   const [isPickerModalOpen, setIsPickerModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
 
-  const addresses = user?.addresses || [
-    {
-      id: 'addr_default',
-      label: 'Rumah',
-      recipientName: user?.name || 'Fahmi',
-      phone: user?.phone || '081234567890',
-      street: 'Jl. Melpomene No. 18',
-      city: 'Bandung',
-      province: 'Jawa Barat',
-      postalCode: '40123',
-      isDefault: true,
-    },
-  ];
+  const addresses = user?.addresses || [];
 
   const selectedAddress =
     addresses.find((a) => a.id === user?.selectedAddressId) ||
@@ -191,7 +181,7 @@ export default function AddressIsland() {
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                Alamat
+                {d.heading}
               </h2>
               {addresses.length === 0 ? (
                 <button
@@ -199,7 +189,7 @@ export default function AddressIsland() {
                   onClick={openAddModal}
                   className="px-4 py-1.5 rounded-full border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  + Tambah Alamat
+                  {d.addAddress}
                 </button>
               ) : null}
             </div>
@@ -216,7 +206,7 @@ export default function AddressIsland() {
                         ({selectedAddress.phone})
                       </span>
                       <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
-                        {selectedAddress.label}
+                        {localizeAddressLabel(locale, selectedAddress.label)}
                       </span>
                     </div>
 
@@ -234,7 +224,7 @@ export default function AddressIsland() {
                       onClick={() => openEditModal(selectedAddress)}
                       className="px-4 py-1.5 rounded-xl border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
                     >
-                      Ubah
+                      {d.edit}
                     </button>
                     {addresses.length > 1 && (
                       <button
@@ -242,7 +232,7 @@ export default function AddressIsland() {
                         onClick={() => setIsPickerModalOpen(true)}
                         className="px-4 py-1.5 rounded-xl bg-[#E5DFD5]/60 hover:bg-[#E5DFD5] text-[#1F1A12] text-xs font-semibold transition-colors cursor-pointer"
                       >
-                        Pilih Lain
+                        {d.chooseOther}
                       </button>
                     )}
                   </div>
@@ -252,14 +242,14 @@ export default function AddressIsland() {
               <div className="text-center py-8 border-2 border-dashed border-[#DFC478]/50 rounded-2xl bg-[#FFFDF7]">
                 <MapPin className="w-8 h-8 text-[#8C6A1C] mx-auto mb-2 opacity-60" />
                 <p className="text-xs text-[#6E6453] mb-3">
-                  Kamu belum memiliki alamat pengiriman tersimpan.
+                  {d.noAddressText}
                 </p>
                 <button
                   type="button"
                   onClick={openAddModal}
                   className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs transition-colors cursor-pointer shadow-2xs"
                 >
-                  Tambah Alamat Baru
+                  {d.addNewAddress}
                 </button>
               </div>
             )}
@@ -268,14 +258,14 @@ export default function AddressIsland() {
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                Pesanan
+                {d.ordersHeading}
               </h2>
               <button
                 type="button"
                 onClick={handleAddItem}
                 className="text-xs text-[#8C6A1C] hover:underline font-semibold cursor-pointer"
               >
-                + Tambah
+                {d.addItem}
               </button>
             </div>
 
@@ -309,7 +299,7 @@ export default function AddressIsland() {
                       type="button"
                       onClick={() => updateQuantity(item.id, -1)}
                       className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
-                      aria-label="Kurangi jumlah"
+                      aria-label={d.decreaseAria}
                     >
                       -
                     </button>
@@ -320,7 +310,7 @@ export default function AddressIsland() {
                       type="button"
                       onClick={() => updateQuantity(item.id, 1)}
                       className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
-                      aria-label="Tambah jumlah"
+                      aria-label={d.increaseAria}
                     >
                       +
                     </button>
@@ -332,7 +322,7 @@ export default function AddressIsland() {
 
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
-              Metode pembayaran
+              {d.paymentMethod}
             </h2>
 
             <div className="bg-[#FDF6E2] border border-[#E8D49E] rounded-2xl p-4 flex items-center justify-between">
@@ -345,7 +335,7 @@ export default function AddressIsland() {
                     QRIS
                   </div>
                   <div className="text-xs text-[#8A7F6C]">
-                    Gopay, OVO, ShopeePay, DANA, BCA Mobile, Livin, dll
+                    {d.paymentWallets}
                   </div>
                 </div>
               </div>
@@ -356,24 +346,24 @@ export default function AddressIsland() {
         <div className="lg:col-span-5">
           <div className="bg-[#FDF3D6] border border-[#EBD6A2] rounded-3xl p-6 sm:p-7 shadow-sm sticky top-28 space-y-4">
             <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-              Ringkasan
+              {d.summary}
             </h2>
 
             <div className="space-y-2 text-xs sm:text-sm text-[#70644D]">
               <div className="flex justify-between items-center">
-                <span>Subtotal Produk</span>
+                <span>{d.subtotalProducts}</span>
                 <span className="font-semibold text-[#1F1A12]">
                   {formatRupiah(subtotal)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Biaya Pengiriman</span>
+                <span>{d.shippingFee}</span>
                 <span className="font-semibold text-[#1F1A12]">
                   {formatRupiah(shippingFee)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Biaya Layanan & Asuransi</span>
+                <span>{d.serviceFee}</span>
                 <span className="font-semibold text-[#1F1A12]">-</span>
               </div>
             </div>
@@ -382,14 +372,14 @@ export default function AddressIsland() {
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Catatan"
+                placeholder={d.notesPlaceholder}
                 className="w-full h-24 bg-white rounded-2xl p-3.5 text-xs text-[#1F1A12] placeholder-[#A3977F] border border-[#EBD6A2]/60 focus:outline-none focus:border-[#C9971C] resize-none"
               />
             </div>
 
             <div className="pt-2 flex justify-between items-baseline">
               <span className="text-base font-bold text-[#1F1A12]">
-                Total harga
+                {d.totalPrice}
               </span>
               <span className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
                 {formatRupiah(total)}
@@ -401,13 +391,14 @@ export default function AddressIsland() {
               onClick={handlePlaceOrder}
               className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer text-center"
             >
-              Pesan
+              {d.orderButton}
             </button>
           </div>
         </div>
       </div>
 
       <AddressModal
+        locale={locale}
         isOpen={isAddressModalOpen}
         onClose={() => setIsAddressModalOpen(false)}
         onSave={handleSaveAddress}
@@ -419,7 +410,7 @@ export default function AddressIsland() {
           <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10 mb-4">
               <h3 className="text-base font-bold text-[#1F1A12]">
-                Pilih Alamat Pengiriman
+                {d.pickerTitle}
               </h3>
               <button
                 type="button"
@@ -451,11 +442,11 @@ export default function AddressIsland() {
                         <span>{addr.recipientName}</span>
                         <span className="text-[#8A7F6C] font-normal">({addr.phone})</span>
                         <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
-                          {addr.label}
+                          {localizeAddressLabel(locale, addr.label)}
                         </span>
                         {addr.isDefault && (
                           <span className="text-[9px] text-[#7A6E58] bg-[#F3EEE3] px-1.5 py-0.5 rounded-sm">
-                            Utama
+                            {d.defaultBadge}
                           </span>
                         )}
                       </div>
@@ -476,7 +467,7 @@ export default function AddressIsland() {
                           openEditModal(addr);
                         }}
                         className="p-1.5 hover:text-[#9A7420] text-[#7A6E58] transition-colors cursor-pointer"
-                        title="Edit Alamat"
+                        title={d.editAddressTitle}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -488,7 +479,7 @@ export default function AddressIsland() {
                             deleteUserAddress(addr.id);
                           }}
                           className="p-1.5 hover:text-red-500 text-[#7A6E58] transition-colors cursor-pointer"
-                          title="Hapus Alamat"
+                          title={d.deleteAddressTitle}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -508,14 +499,14 @@ export default function AddressIsland() {
                 }}
                 className="px-4 py-2 rounded-xl border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
               >
-                + Tambah Alamat Baru
+                {d.addNewAddress}
               </button>
               <button
                 type="button"
                 onClick={() => setIsPickerModalOpen(false)}
                 className="px-5 py-2 rounded-xl bg-[#E5DFD5]/60 hover:bg-[#E5DFD5] text-[#1F1A12] text-xs font-semibold transition-colors cursor-pointer"
               >
-                Tutup
+                {d.close}
               </button>
             </div>
           </div>

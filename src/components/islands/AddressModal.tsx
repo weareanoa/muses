@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useScrollLock } from '../../hooks/useScrollLock';
 import type { UserAddress } from '../../stores/authStore';
+import { getDict, type Locale } from '../../i18n/dictionary';
 
 export interface AddressFormData {
   recipientName: string;
@@ -33,6 +34,7 @@ export interface AddressModalProps {
   onSave: (data: AddressFormData) => void;
   initialData?: UserAddress | null;
   title?: string;
+  locale?: Locale;
 }
 
 export default function AddressModal({
@@ -41,7 +43,9 @@ export default function AddressModal({
   onSave,
   initialData,
   title,
+  locale = 'id',
 }: AddressModalProps) {
+  const d = getDict(locale).addressModal;
   const [addressForm, setAddressForm] = useState<AddressFormData>(EMPTY_FORM);
 
   useScrollLock(isOpen);
@@ -77,7 +81,7 @@ export default function AddressModal({
 
   if (!isOpen) return null;
 
-  const modalTitle = title || (initialData ? 'Ubah Alamat' : 'Tambah Alamat');
+  const modalTitle = title || (initialData ? d.titleEdit : d.titleAdd);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +103,7 @@ export default function AddressModal({
             type="button"
             onClick={onClose}
             className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
-            aria-label="Tutup"
+            aria-label={d.closeAria}
           >
             <X className="w-4 h-4" />
           </button>
@@ -110,7 +114,7 @@ export default function AddressModal({
             <div>
               <input
                 type="text"
-                placeholder="Nama"
+                placeholder={d.phName}
                 value={addressForm.recipientName}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, recipientName: e.target.value }))
@@ -122,7 +126,7 @@ export default function AddressModal({
             <div>
               <input
                 type="tel"
-                placeholder="No. Telepon"
+                placeholder={d.phPhone}
                 value={addressForm.phone}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, phone: e.target.value }))
@@ -137,7 +141,7 @@ export default function AddressModal({
             <div>
               <input
                 type="text"
-                placeholder="Provinsi"
+                placeholder={d.phProvince}
                 value={addressForm.province}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, province: e.target.value }))
@@ -149,7 +153,7 @@ export default function AddressModal({
             <div>
               <input
                 type="text"
-                placeholder="Kota/Kabupaten"
+                placeholder={d.phCity}
                 value={addressForm.city}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, city: e.target.value }))
@@ -164,7 +168,7 @@ export default function AddressModal({
             <div>
               <input
                 type="text"
-                placeholder="Kecamatan"
+                placeholder={d.phDistrict}
                 value={addressForm.district}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, district: e.target.value }))
@@ -176,7 +180,7 @@ export default function AddressModal({
             <div>
               <input
                 type="text"
-                placeholder="Kode Pos"
+                placeholder={d.phPostal}
                 value={addressForm.postalCode}
                 onChange={(e) =>
                   setAddressForm((p) => ({ ...p, postalCode: e.target.value }))
@@ -190,7 +194,7 @@ export default function AddressModal({
           <div>
             <textarea
               rows={2}
-              placeholder="Nama Jalan, Gedung, No. Rumah"
+              placeholder={d.phStreet}
               value={addressForm.street}
               onChange={(e) =>
                 setAddressForm((p) => ({ ...p, street: e.target.value }))
@@ -203,7 +207,7 @@ export default function AddressModal({
           <div>
             <input
               type="text"
-              placeholder="Detail lainnya (cont: Blok / Unit / Patokan)"
+              placeholder={d.phDetail}
               value={addressForm.detail}
               onChange={(e) =>
                 setAddressForm((p) => ({ ...p, detail: e.target.value }))
@@ -213,7 +217,7 @@ export default function AddressModal({
           </div>
 
           <div>
-            <div className="text-xs text-[#7A6E58] mb-2 font-medium">Tandai sebagai:</div>
+            <div className="text-xs text-[#7A6E58] mb-2 font-medium">{d.markAs}</div>
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -224,7 +228,7 @@ export default function AddressModal({
                     : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
                 }`}
               >
-                Rumah
+                {d.homeLabel}
               </button>
               <button
                 type="button"
@@ -235,7 +239,7 @@ export default function AddressModal({
                     : 'border-[#E5DFD5] text-[#7A6E58] hover:border-[#C9971C]/50'
                 }`}
               >
-                Kantor
+                {d.officeLabel}
               </button>
             </div>
           </div>
@@ -245,7 +249,7 @@ export default function AddressModal({
               type="submit"
               className="px-8 py-2.5 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-2xs"
             >
-              Simpan
+              {d.save}
             </button>
           </div>
         </form>

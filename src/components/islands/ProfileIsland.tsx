@@ -34,6 +34,7 @@ import {
   type StepperItem,
 } from '../../data/orders';
 import { formatCountdown, formatRupiah } from '../../lib/format';
+import { fmt, getDict, localizeAddressLabel, localizeDemoText, type Locale } from '../../i18n/dictionary';
 
 interface StepperStep {
   label: string;
@@ -191,7 +192,8 @@ const DEFAULT_ORDERS: ProfileOrder[] = [
   },
 ];
 
-export default function ProfileIsland() {
+export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
+  const d = getDict(locale).profile;
   const user = useStore(currentUser);
 
   const [activeTab, setActiveTab] = useState<TabType>('profile');
@@ -202,9 +204,9 @@ export default function ProfileIsland() {
     'ord-4': true,
   });
 
-  const [name, setName] = useState('Winaa');
-  const [email, setEmail] = useState('winarahmaliaxx@gmail.com');
-  const [phone, setPhone] = useState('08xxxxxxxxx');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [avatar, setAvatar] = useState<string | undefined>(undefined);
   const [isSaved, setIsSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -229,9 +231,9 @@ export default function ProfileIsland() {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || 'Winaa');
-      setEmail(user.email || 'winarahmaliaxx@gmail.com');
-      setPhone(user.phone || '08xxxxxxxxx');
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
       setAvatar(user.avatar);
     }
   }, [user]);
@@ -362,7 +364,7 @@ export default function ProfileIsland() {
                 onClick={() => handleTabChange('profile')}
                 className="text-xs text-[#7A6F5B] hover:text-[#C9971C] transition-colors cursor-pointer mt-0.5 block"
               >
-                Ubah Profil
+                {d.changeProfile}
               </button>
             </div>
           </div>
@@ -372,7 +374,7 @@ export default function ProfileIsland() {
           <div className="space-y-4">
             <div>
               <div className="font-bold text-sm text-[#1F1A12] mb-2.5">
-                Akun saya
+                {d.myAccount}
               </div>
               <div className="space-y-1.5 pl-0.5">
                 <button
@@ -384,7 +386,7 @@ export default function ProfileIsland() {
                       : 'text-[#6E6453] hover:text-[#1F1A12]'
                   }`}
                 >
-                  Profile
+                  {d.sidebarProfile}
                 </button>
                 <button
                   type="button"
@@ -395,7 +397,7 @@ export default function ProfileIsland() {
                       : 'text-[#6E6453] hover:text-[#1F1A12]'
                   }`}
                 >
-                  Alamat
+                  {d.sidebarAddresses}
                 </button>
               </div>
             </div>
@@ -410,7 +412,7 @@ export default function ProfileIsland() {
                     : 'text-[#1F1A12] hover:text-[#C9971C]'
                 }`}
               >
-                Pesanan Saya
+                {d.sidebarOrders}
               </button>
             </div>
 
@@ -421,7 +423,7 @@ export default function ProfileIsland() {
                 className="flex items-center gap-2 text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Keluar Akun</span>
+                <span>{d.signOutAccount}</span>
               </button>
             </div>
           </div>
@@ -432,10 +434,10 @@ export default function ProfileIsland() {
             <div className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-6 sm:p-10 shadow-xs">
               <div className="mb-6">
                 <h1 className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
-                  Profil Saya
+                  {d.myProfileHeading}
                 </h1>
                 <p className="text-xs sm:text-sm text-[#5B503D] mt-1.5">
-                  Kelola informasi profil Anda untuk mengontrol, melindungi dan mengamankan akun
+                  {d.myProfileDesc}
                 </p>
                 <div className="w-full border-t border-[#E6D4A5] mt-5"></div>
               </div>
@@ -464,14 +466,14 @@ export default function ProfileIsland() {
                   onClick={() => fileInputRef.current?.click()}
                   className="mt-3.5 px-4 py-1.5 rounded-full bg-[#EBD7A1] hover:bg-[#E2CC90] text-xs font-semibold text-[#2C2417] transition-all cursor-pointer shadow-2xs"
                 >
-                  Pilih gambar
+                  {d.chooseImage}
                 </button>
               </div>
 
               <form onSubmit={handleSaveProfile} className="space-y-5 max-w-2xl mx-auto">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-[#4D422F] mb-1.5">
-                    Nama
+                    {d.nameLabel}
                   </label>
                   <input
                     type="text"
@@ -484,7 +486,7 @@ export default function ProfileIsland() {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-[#4D422F] mb-1.5">
-                    Email
+                    {d.emailLabel}
                   </label>
                   <input
                     type="email"
@@ -497,7 +499,7 @@ export default function ProfileIsland() {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-[#4D422F] mb-1.5">
-                    No. Telepon
+                    {d.phoneLabel}
                   </label>
                   <input
                     type="tel"
@@ -511,7 +513,7 @@ export default function ProfileIsland() {
                   {isSaved ? (
                     <span className="text-xs font-semibold text-emerald-800 bg-emerald-100/80 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
                       <Check className="w-3.5 h-3.5" />
-                      Profil berhasil disimpan
+                      {d.saved}
                     </span>
                   ) : <span />}
 
@@ -519,7 +521,7 @@ export default function ProfileIsland() {
                     type="submit"
                     className="px-10 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#D6A628] via-[#BF901B] to-[#8C6912] text-[#1F1A12] font-black text-xs sm:text-sm tracking-wider uppercase shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
                   >
-                    SIMPAN
+                    {d.saveButton}
                   </button>
                 </div>
               </form>
@@ -530,14 +532,14 @@ export default function ProfileIsland() {
             <div className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-6 sm:p-10 shadow-xs min-h-[460px]">
               <div className="flex items-center justify-between mb-8">
                 <h1 className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
-                  Alamat
+                  {d.addressesHeading}
                 </h1>
                 <button
                   type="button"
                   onClick={openAddAddressModal}
                   className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-xs font-bold text-[#1F1A12] transition-colors cursor-pointer shadow-2xs"
                 >
-                  + Tambahkan Alamat
+                  {d.addAddress}
                 </button>
               </div>
 
@@ -563,7 +565,7 @@ export default function ProfileIsland() {
                         {addr.label && (
                           <div className="pt-1">
                             <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-[#EEDAA2] text-[#423827]">
-                              {addr.label}
+                              {localizeAddressLabel(locale, addr.label)}
                             </span>
                           </div>
                         )}
@@ -574,7 +576,7 @@ export default function ProfileIsland() {
                         onClick={() => openEditAddressModal(addr)}
                         className="text-xs sm:text-sm text-[#C9971C] hover:text-[#9A7420] font-semibold cursor-pointer shrink-0"
                       >
-                        Ubah
+                        {d.editAddress}
                       </button>
                     </div>
                   </div>
@@ -588,10 +590,10 @@ export default function ProfileIsland() {
               <div className="bg-white rounded-full p-1.5 shadow-xs border border-[#EDE2CC] flex items-center justify-around">
                 {(
                   [
-                    { id: 'all', label: 'Semua' },
-                    { id: 'unpaid', label: 'Belum dibayar' },
-                    { id: 'processing', label: 'Sedang diproses' },
-                    { id: 'completed', label: 'Selesai' },
+                    { id: 'all', label: d.orderFilterAll },
+                    { id: 'unpaid', label: d.orderFilterUnpaid },
+                    { id: 'processing', label: d.orderFilterProcessing },
+                    { id: 'completed', label: d.orderFilterCompleted },
                   ] as const
                 ).map((tab) => {
                   const isActive = orderFilter === tab.id;
@@ -618,7 +620,7 @@ export default function ProfileIsland() {
               <div className="space-y-4">
                 {filteredOrders.length === 0 ? (
                   <div className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-10 text-center text-sm text-[#6A5E48]">
-                    Tidak ada pesanan pada filter ini.
+                    {d.noOrdersFilter}
                   </div>
                 ) : (
                   filteredOrders.map((ord) => {
@@ -639,7 +641,7 @@ export default function ProfileIsland() {
                             </span>
                           </div>
 
-                          <div><StatusBadge status={ord.status} label={ord.statusLabel} /></div>
+                          <div><StatusBadge status={ord.status} label={localizeDemoText(locale, ord.statusLabel)} locale={locale} /></div>
                         </div>
 
                         <div>
@@ -677,7 +679,7 @@ export default function ProfileIsland() {
 
                         <div className="flex items-center justify-between pt-1 text-xs sm:text-sm">
                           <span className="text-[#7A6E58]">
-                            {ord.deliverySummary}
+                            {localizeDemoText(locale, ord.deliverySummary)}
                           </span>
                           <span className="font-bold text-sm sm:text-base text-[#1F1A12]">
                             {formatRupiah(ord.totalPrice)}
@@ -688,17 +690,17 @@ export default function ProfileIsland() {
                           <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
                               <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                Selesaikan pembayaran dalam {formatCountdown(countdown)}
+                                {fmt(d.payWithin, { time: formatCountdown(countdown) })}
                               </div>
                               <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                Pesanan otomatis dibatalkan jika waktu habis.
+                                {d.autoCancel}
                               </div>
                             </div>
                             <a
                               href={withBase("/payment")}
                               className="px-5 py-2 rounded-full bg-gradient-to-r from-[#D6A628] to-[#9B7718] text-[#1F1A12] font-bold text-xs shadow-xs hover:brightness-105 text-center cursor-pointer shrink-0"
                             >
-                              Bayar dengan QR
+                              {d.payWithQR}
                             </a>
                           </div>
                         )}
@@ -707,10 +709,10 @@ export default function ProfileIsland() {
                           <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
                               <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                {ord.pickupInfo.location}
+                                {localizeDemoText(locale, ord.pickupInfo.location)}
                               </div>
                               <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                {ord.pickupInfo.note}
+                                {localizeDemoText(locale, ord.pickupInfo.note)}
                               </div>
                             </div>
                             <span className="px-4 py-1.5 rounded-full border border-dashed border-[#D4A338] bg-[#FCE5A4] font-mono font-bold text-xs text-[#1F1A12] tracking-wider text-center shrink-0">
@@ -726,16 +728,16 @@ export default function ProfileIsland() {
                             </div>
                             <div className="text-xs space-y-1">
                               <div className="font-bold text-[#1F1A12]">
-                                Informasi Penting
+                                {d.importantInfo}
                               </div>
                               <p className="text-[#6A5E48] leading-relaxed">
-                                Jika kamu tidak dapat hadir saat event untuk mengambil cheki, hubungi tim MUSES melalui kontak resmi kami untuk informasi lebih lanjut mengenai pengambilan alternatif.
+                                {d.importantBody}
                               </p>
                               <a
                                 href={withBase("/kontak")}
                                 className="inline-flex items-center gap-1 font-bold text-[#8C6A1C] hover:underline pt-0.5"
                               >
-                                <span>Hubungi Tim MUSES</span>
+                                <span>{d.contactTeam}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
                               </a>
                             </div>
@@ -745,10 +747,10 @@ export default function ProfileIsland() {
                         {ord.shippingInfo && (
                           <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4">
                             <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                              {ord.shippingInfo.courier}
+                              {localizeDemoText(locale, ord.shippingInfo.courier)}
                             </div>
                             <div className="text-xs font-mono font-bold text-[#1F1A12] mt-0.5">
-                              No Resi: {ord.shippingInfo.trackingNumber}
+                              {d.trackingLabel} {ord.shippingInfo.trackingNumber}
                             </div>
                           </div>
                         )}
@@ -757,17 +759,17 @@ export default function ProfileIsland() {
                           <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
                               <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                {ord.completedMessage.title}
+                                {localizeDemoText(locale, ord.completedMessage.title)}
                               </div>
                               <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                {ord.completedMessage.subtitle}
+                                {localizeDemoText(locale, ord.completedMessage.subtitle)}
                               </div>
                             </div>
                             <a
                               href={withBase("/store")}
                               className="px-6 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs shadow-2xs text-center cursor-pointer shrink-0"
                             >
-                              Beli lagi
+                              {d.buyAgain}
                             </a>
                           </div>
                         )}
@@ -779,7 +781,7 @@ export default function ProfileIsland() {
                               onClick={() => toggleStepper(ord.id)}
                               className="flex items-center gap-1.5 text-xs text-[#7A6E58] hover:text-[#1F1A12] font-medium transition-colors cursor-pointer mb-3"
                             >
-                              <span>Lihat alur pesanan</span>
+                              <span>{d.viewOrderFlow}</span>
                               {isExpanded ? (
                                 <ChevronUp className="w-3.5 h-3.5" />
                               ) : (
@@ -805,7 +807,7 @@ export default function ProfileIsland() {
                                         }`}
                                       ></div>
                                       <span className="text-[10px] sm:text-[11px] font-medium text-[#4D4230] mt-1.5 leading-tight">
-                                        {st.label}
+                                        {localizeDemoText(locale, st.label)}
                                       </span>
                                     </div>
                                   ))}
@@ -825,6 +827,7 @@ export default function ProfileIsland() {
       </div>
 
       <AddressModal
+        locale={locale}
         isOpen={isAddressModalOpen}
         onClose={() => setIsAddressModalOpen(false)}
         onSave={handleSaveAddress}

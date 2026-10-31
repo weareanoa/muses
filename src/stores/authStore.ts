@@ -51,10 +51,11 @@ export function verifyOtp(
   return result;
 }
 
-export function loginWithGoogle(): { success: boolean; user: User } {
-  const result = authService.loginWithGoogleSync();
-  currentUser.set(result.user);
-  return result;
+export async function loginWithGoogle(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  return authService.loginWithGoogle();
 }
 
 export function logoutUser(redirectToAuth = false) {

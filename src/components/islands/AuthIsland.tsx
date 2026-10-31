@@ -17,26 +17,30 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { withBase } from '../../lib/paths';
+import { fmt, getDict, translateServiceError, type Locale } from '../../i18n/dictionary';
 
 interface AuthIslandProps {
   initialMode?: 'login' | 'register';
   redirectPath?: string;
+  locale?: Locale;
 }
 
 export default function AuthIsland({
   initialMode = 'login',
-  redirectPath = '/'
+  redirectPath = '/',
+  locale = 'id'
 }: AuthIslandProps) {
+  const d = getDict(locale).auth;
   const user = useStore(currentUser);
   const [isRegisterMode, setIsRegisterMode] = useState<boolean>(initialMode === 'register');
   const [isOtpFlow, setIsOtpFlow] = useState<boolean>(false);
   const [otpStep, setOtpStep] = useState<'email' | 'code'>('email');
 
-  const [email, setEmail] = useState<string>('fahmi@email.com');
-  const [phone, setPhone] = useState<string>('081234567890');
-  const [password, setPassword] = useState<string>('muses2026');
-  const [confirmPassword, setConfirmPassword] = useState<string>('muses2026');
-  const [agreeTerms, setAgreeTerms] = useState<boolean>(true);
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
@@ -87,11 +91,11 @@ export default function AuthIsland({
 
     const cleanEmail = email.trim();
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      setErrorMessage('Silakan masukkan format alamat email yang valid.');
+      setErrorMessage(d.errInvalidEmail);
       return;
     }
     if (!password) {
-      setErrorMessage('Silakan masukkan kata sandi Anda.');
+      setErrorMessage(d.errPasswordRequired);
       return;
     }
 
@@ -103,7 +107,7 @@ export default function AuthIsland({
         triggerCelebration();
         window.location.href = withBase(redirectPath || '/');
       } else {
-        setErrorMessage(res.error || 'Email atau kata sandi tidak sesuai.');
+        setErrorMessage(res.error ? translateServiceError(locale, res.error) : d.errLoginMismatch);
       }
     }, 400);
   };
@@ -116,23 +120,23 @@ export default function AuthIsland({
     const cleanPhone = phone.trim();
 
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      setErrorMessage('Silakan masukkan format alamat email yang valid.');
+      setErrorMessage(d.errInvalidEmail);
       return;
     }
     if (!cleanPhone || cleanPhone.length < 8) {
-      setErrorMessage('Silakan masukkan nomor HP yang valid.');
+      setErrorMessage(d.errPhoneInvalid);
       return;
     }
     if (!password || password.length < 6) {
-      setErrorMessage('Kata sandi harus minimal 6 karakter.');
+      setErrorMessage(d.errPasswordMin);
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage('Konfirmasi kata sandi tidak cocok.');
+      setErrorMessage(d.errConfirmMismatch);
       return;
     }
     if (!agreeTerms) {
-      setErrorMessage('Anda harus menyetujui Syarat & Ketentuan serta Kebijakan Privasi.');
+      setErrorMessage(d.errAgreeRequired);
       return;
     }
 
@@ -151,22 +155,22 @@ export default function AuthIsland({
         triggerCelebration();
         window.location.href = withBase(redirectPath || '/');
       } else {
-        setErrorMessage(res.error || 'Gagal mendaftarkan akun. Silakan coba kembali.');
+        setErrorMessage(res.error ? translateServiceError(locale, res.error) : d.errRegisterFailed);
       }
     }, 450);
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setIsLoading(true);
     setErrorMessage(null);
-    setTimeout(() => {
-      const result = loginWithGoogle();
+    const result = await loginWithGoogle();
+    if (!result.success) {
       setIsLoading(false);
-      if (result.success) {
-        triggerCelebration();
-        window.location.href = withBase(redirectPath || '/');
-      }
-    }, 400);
+      setErrorMessage(result.error ? translateServiceError(locale, result.error) : d.errGoogleFailed);
+    }
+    // Kalau sukses, loginWithGoogle() sudah mengarahkan browser ke Google.
+    // Jangan redirect ke '/' di sini dan jangan set user lokal: sesi baru
+    // hanya ada setelah user kembali dari Google.
   };
 
   const handleStartEmailOtp = () => {
@@ -183,7 +187,7 @@ export default function AuthIsland({
           setCountdown(60);
           setCanResend(false);
           setOtpDigits(['', '', '', '', '', '']);
-          setSuccessNotice(`Kode verifikasi dikirim ke ${clean} (Kode demo: ${res.testCode})`);
+          setSuccessNotice(fmt(d.otpSent, { email: clean, code: res.testCode }));
           setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
         }
       }, 400);
@@ -197,7 +201,7 @@ export default function AuthIsland({
     setErrorMessage(null);
     const clean = email.trim();
     if (!clean || !clean.includes('@')) {
-      setErrorMessage('Silakan masukkan format alamat email yang valid.');
+      setErrorMessage(d.errInvalidEmail);
       return;
     }
     setIsLoading(true);
@@ -209,7 +213,7 @@ export default function AuthIsland({
         setCountdown(60);
         setCanResend(false);
         setOtpDigits(['', '', '', '', '', '']);
-        setSuccessNotice(`Kode verifikasi dikirim ke ${clean} (Kode demo: ${res.testCode})`);
+        setSuccessNotice(fmt(d.otpSent, { email: clean, code: res.testCode }));
         setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
       }
     }, 400);
@@ -263,7 +267,7 @@ export default function AuthIsland({
     setErrorMessage(null);
     const fullCode = otpDigits.join('');
     if (fullCode.length !== 6) {
-      setErrorMessage('Harap masukkan 6 digit kode OTP secara lengkap.');
+      setErrorMessage(d.errOtpIncomplete);
       return;
     }
     setIsLoading(true);
@@ -274,13 +278,13 @@ export default function AuthIsland({
         triggerCelebration();
         window.location.href = withBase(redirectPath || '/');
       } else {
-        setErrorMessage(result.error || 'Kode verifikasi tidak valid.');
+        setErrorMessage(result.error ? translateServiceError(locale, result.error) : d.errOtpInvalid);
       }
     }, 450);
   };
 
   return (
-    <div className="w-full max-w-[360px] mx-auto select-none">
+    <div className="w-full max-w-[408px] mx-auto select-none">
       <div className="text-center mb-5">
         <a href={withBase('/')} className="inline-block" aria-label="MUSES Home">
           <img
@@ -293,10 +297,10 @@ export default function AuthIsland({
 
       <div className="text-center mb-6">
         <h1 className="text-2xl sm:text-[26px] font-bold text-[#9C6F13] tracking-tight mb-1">
-          Welcome to Muverse!
+          {d.welcome}
         </h1>
         <p className="text-xs text-[#7A6B53] font-normal">
-          Choose your account and let's get started.
+          {d.welcomeSub}
         </p>
       </div>
 
@@ -305,7 +309,7 @@ export default function AuthIsland({
           type="button"
           onClick={handleGoogleLogin}
           disabled={isLoading}
-          className="w-full py-2.5 px-4 rounded-full bg-[#F5EDDA] hover:bg-[#EFE2C7] border border-[#EBD6A7] text-[#4A3C23] font-semibold text-xs transition-all flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer active:scale-[0.99]"
+          className="w-full py-3.5 px-4 rounded-[20px] bg-[#F4EAD1] hover:bg-[#EFE2C7] border border-[#EBD6A7] text-[#4A3C23] font-semibold text-xs transition-all flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer active:scale-[0.99]"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
@@ -325,35 +329,16 @@ export default function AuthIsland({
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
             />
           </svg>
-          <span>Continue with Google</span>
+          <span>{d.continueGoogle}</span>
         </button>
 
-        <button
-          type="button"
-          onClick={handleStartEmailOtp}
-          disabled={isLoading}
-          className="w-full py-2.5 px-4 rounded-full bg-[#F5EDDA] hover:bg-[#EFE2C7] border border-[#EBD6A7] text-[#4A3C23] font-semibold text-xs transition-all flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer active:scale-[0.99]"
-        >
-          <svg
-            className="w-4 h-4 shrink-0 text-[#4A3C23]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect width="20" height="16" x="2" y="4" rx="2" />
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-          </svg>
-          <span>Continue with Email</span>
-        </button>
+        
       </div>
 
       <div className="relative flex items-center justify-center my-4">
         <div className="w-full border-t border-[#EAE3D2]" />
         <span className="absolute px-3 bg-[#FEFAF1] text-[10px] font-bold text-[#C9971C] uppercase tracking-widest">
-          OR
+          {d.or}
         </span>
       </div>
 
@@ -375,22 +360,22 @@ export default function AuthIsland({
         <form onSubmit={handleLoginSubmit} className="space-y-3.5">
           <div>
             <label htmlFor="login-email" className="block text-xs font-semibold text-[#1F1A12] mb-1.5 px-1">
-              Email
+              {d.emailLabel}
             </label>
             <input
               id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-4 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+              placeholder={d.emailPlaceholder}
+              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-4 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
               required
             />
           </div>
 
           <div>
             <label htmlFor="login-password" className="block text-xs font-semibold text-[#1F1A12] mb-1.5 px-1">
-              Password
+              {d.passwordLabel}
             </label>
             <div className="relative">
               <input
@@ -398,15 +383,15 @@ export default function AuthIsland({
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Masukkan password"
-                className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full pl-4 pr-10 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+                placeholder={d.passwordPlaceholder}
+                className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] pl-4 pr-10 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8C6A1C] hover:text-[#1F1A12] cursor-pointer"
-                aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                aria-label={showPassword ? d.hidePassword : d.showPassword}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -416,15 +401,15 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 py-3 rounded-full bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Memproses...</span>
+                <span>{d.processing}</span>
               </>
             ) : (
-              <span>Login</span>
+              <span>{d.loginSubmit}</span>
             )}
           </button>
 
@@ -439,7 +424,7 @@ export default function AuthIsland({
               }}
               className="text-[#8C6A1C] hover:text-[#C9971C] font-semibold underline cursor-pointer"
             >
-              Belum punya akun? Daftar
+              {d.noAccount}
             </button>
           </div>
         </form>
@@ -449,30 +434,30 @@ export default function AuthIsland({
         <form onSubmit={handleRegisterSubmit} className="space-y-3">
           <div>
             <label htmlFor="reg-email" className="block text-xs font-semibold text-[#1F1A12] mb-1 px-1">
-              Email
+              {d.emailLabel}
             </label>
             <input
               id="reg-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-4 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+              placeholder={d.emailPlaceholder}
+              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-4 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
               required
             />
           </div>
 
           <div>
             <label htmlFor="reg-phone" className="block text-xs font-semibold text-[#1F1A12] mb-1 px-1">
-              Nomor Handphone
+              {d.phoneLabel}
             </label>
             <input
               id="reg-phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="081234567890"
-              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-4 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+              placeholder={d.phonePlaceholder}
+              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-4 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
               required
             />
           </div>
@@ -480,7 +465,7 @@ export default function AuthIsland({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label htmlFor="reg-password" className="block text-xs font-semibold text-[#1F1A12] mb-1 px-1">
-                Password
+                {d.passwordLabel}
               </label>
               <div className="relative">
                 <input
@@ -488,15 +473,15 @@ export default function AuthIsland({
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 6 digit"
-                  className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-3.5 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+                  placeholder={d.passwordMinPlaceholder}
+                  className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-3.5 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
                   required
                 />
               </div>
             </div>
             <div>
               <label htmlFor="reg-confirm" className="block text-xs font-semibold text-[#1F1A12] mb-1 px-1">
-                Ulangi Sandi
+                {d.confirmLabel}
               </label>
               <div className="relative">
                 <input
@@ -504,8 +489,8 @@ export default function AuthIsland({
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Ulangi sandi"
-                  className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-3.5 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+                  placeholder={d.confirmPlaceholder}
+                  className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-3.5 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
                   required
                 />
               </div>
@@ -522,22 +507,22 @@ export default function AuthIsland({
               required
             />
             <label htmlFor="agree-terms" className="text-[11px] text-[#6E6453] leading-snug cursor-pointer">
-              Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi MUSES.
+              {d.terms}
             </label>
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 py-3 rounded-full bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Mendaftarkan...</span>
+                <span>{d.registering}</span>
               </>
             ) : (
-              <span>Daftar Akun</span>
+              <span>{d.registerSubmit}</span>
             )}
           </button>
 
@@ -552,7 +537,7 @@ export default function AuthIsland({
               }}
               className="text-[11px] text-[#8C6A1C] hover:text-[#C9971C] font-semibold underline cursor-pointer"
             >
-              Sudah punya akun? Masuk
+              {d.hasAccount}
             </button>
           </div>
         </form>
@@ -562,15 +547,15 @@ export default function AuthIsland({
         <form onSubmit={handleSendOtpForm} className="space-y-3">
           <div>
             <label htmlFor="otp-email" className="block text-xs font-semibold text-[#1F1A12] mb-1.5 px-1">
-              Alamat Email untuk OTP
+              {d.otpEmailLabel}
             </label>
             <input
               id="otp-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-full px-4 py-2.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
+              placeholder={d.emailPlaceholder}
+              className="w-full bg-white border border-[#E2D8C3] focus:border-[#C9971C] rounded-[20px] px-4 py-3.5 text-xs text-[#1F1A12] placeholder:text-[#A89C85] focus:outline-none focus:ring-2 focus:ring-[#C9971C]/20 transition-all shadow-2xs"
               required
               autoFocus
             />
@@ -579,15 +564,15 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-full bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Mengirim Kode...</span>
+                <span>{d.sendingCode}</span>
               </>
             ) : (
-              <span>Kirim Kode OTP</span>
+              <span>{d.sendOtp}</span>
             )}
           </button>
 
@@ -600,7 +585,7 @@ export default function AuthIsland({
             }}
             className="w-full text-center text-xs text-[#6E6453] hover:text-[#1F1A12] pt-1 cursor-pointer"
           >
-            ← Kembali ke form utama
+            {d.backToMain}
           </button>
         </form>
       )}
@@ -636,7 +621,7 @@ export default function AuthIsland({
               }}
               className="text-[#8C6A1C] hover:text-[#C9971C] font-semibold underline cursor-pointer"
             >
-              Ganti email
+              {d.changeEmail}
             </button>
 
             <div>
@@ -648,16 +633,16 @@ export default function AuthIsland({
                     const res = requestOtp(email);
                     setCountdown(60);
                     setCanResend(false);
-                    setSuccessNotice(`Kode baru telah dikirim! (Gunakan: ${res.testCode})`);
+                    setSuccessNotice(fmt(d.otpResent, { code: res.testCode }));
                   }}
                   className="text-[#C9971C] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw className="w-3 h-3" />
-                  <span>Kirim ulang</span>
+                  <span>{d.resend}</span>
                 </button>
               ) : (
                 <span className="font-mono text-[#8A7F6C]">
-                  Kirim ulang ({countdown}s)
+                  {fmt(d.resendIn, { seconds: countdown })}
                 </span>
               )}
             </div>
@@ -666,15 +651,15 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading || otpDigits.join('').length !== 6}
-            className="w-full py-3 rounded-full bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Memverifikasi...</span>
+                <span>{d.verifying}</span>
               </>
             ) : (
-              <span>Verifikasi & Masuk</span>
+              <span>{d.verify}</span>
             )}
           </button>
 
@@ -687,7 +672,7 @@ export default function AuthIsland({
             }}
             className="w-full text-center text-xs text-[#6E6453] hover:text-[#1F1A12] pt-1 cursor-pointer"
           >
-            ← Kembali ke form utama
+            {d.backToMain}
           </button>
         </form>
       )}
