@@ -1,4 +1,3 @@
-import { openCart } from '../stores/cartStore';
 import { getLenis } from './scroll';
 
 export interface NavbarController {
@@ -17,7 +16,6 @@ export function initNavbar(): NavbarController {
   const closeIcon = document.getElementById('close-icon');
   const desktopNavLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-desktop]');
   const mobileNavLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-mobile]');
-  const cartBtn = document.getElementById('nav-cart-btn');
   const logoLink = header?.querySelector<HTMLAnchorElement>('a[aria-label="MUSES Home"]');
 
   let isMobileMenuOpen = false;
@@ -186,17 +184,14 @@ export function initNavbar(): NavbarController {
 
     header.classList.add('navbar-scrolled');
 
-    if (direction === 1 && !isHeaderHidden && !isManualScrolling) {
-      header.classList.remove('navbar-visible');
-      header.classList.add('navbar-hidden');
-      header.style.transform = 'translateY(-100%)';
-      isHeaderHidden = true;
-    } else if (direction === -1 && isHeaderHidden) {
-      header.classList.remove('navbar-hidden');
-      header.classList.add('navbar-visible');
-      header.style.transform = 'translateY(0)';
-      isHeaderHidden = false;
-    }
+    // Navbar must stay visible while scrolling (user request 2026-10-31):
+    // no auto-hide on scroll down, no show-on-scroll-up either. Only the
+    // scrolled styling above changes. Active-section highlighting still
+    // runs via calculateActiveSection() at the top of updateNavbar().
+    header.classList.remove('navbar-hidden');
+    header.classList.add('navbar-visible');
+    header.style.transform = 'translateY(0)';
+    isHeaderHidden = false;
 
     lastScrollY = currentY;
   }
@@ -254,9 +249,6 @@ export function initNavbar(): NavbarController {
 
   logoLink?.addEventListener('click', handleLogoClick);
 
-  const handleCartClick = () => openCart();
-  cartBtn?.addEventListener('click', handleCartClick);
-
   const lenis = getLenis();
   const lenisScrollHandler = (e: any) => {
     updateNavbar(e.scroll, e.direction);
@@ -294,7 +286,6 @@ export function initNavbar(): NavbarController {
       mobileBtn?.removeEventListener('click', toggleMobileMenu);
       allNavLinks.forEach((link) => link.removeEventListener('click', handleLinkClick));
       logoLink?.removeEventListener('click', handleLogoClick);
-      cartBtn?.removeEventListener('click', handleCartClick);
       window.removeEventListener('scroll', windowScrollHandler);
       window.removeEventListener('muses-preloader-done', handleInitialHash);
       if (manualScrollTimer) clearTimeout(manualScrollTimer);
