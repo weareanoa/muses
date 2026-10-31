@@ -67,7 +67,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     <div
       id="hero-frame-2"
       data-active="faril"
-      class="absolute inset-0 pt-14 lg:pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-[4.5rem] sm:pb-20 lg:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
+      class="absolute inset-0 pt-14 lg:pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-[calc(4rem+16svh)] sm:pb-20 lg:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
     >
       <div
         id="frame2-ambient-glow"
@@ -181,6 +181,8 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                 data-member-id={member.id}
                 data-member-name={member.name}
                 data-muse-title={member.tagline}
+                data-member-icon={member.icon}
+                data-muse-category={member.museCategory}
                 data-theme-color={themeColor}
                 aria-label={fmt(d.heroOpenProfile, { name: member.name })}
               >
@@ -202,17 +204,19 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
         >
           <h3
             id="active-member-name"
-            class="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold tracking-tight text-[#18121E]"
+            class="text-xl sm:text-3xl md:text-[34px] font-display font-extrabold tracking-tight text-[#18121E]"
           >
-            Faril
+            <span id="active-member-name-text">Faril</span>
+            <span id="active-member-icon" class="sm:hidden text-lg align-middle">🦋</span>
           </h3>
 
           <p
             id="active-member-subtitle"
-            class="text-xs sm:text-sm md:text-[15px] font-sans font-medium text-[#2A1836] mt-1 flex items-center justify-center gap-2.5"
+            class="text-[11px] sm:text-sm md:text-[15px] font-sans font-medium text-[#2A1836] mt-1 flex items-center justify-center gap-2 sm:gap-2.5"
           >
-            <span id="active-bullet" class="w-3 h-3 rounded-full bg-[#8E24AA] shrink-0"></span>
-            <span id="active-subtitle-text">The Dramatic Artist / Deep Soul</span>
+            <span id="active-bullet" class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#8E24AA] shrink-0"></span>
+            <span id="active-subtitle-mobile" class="sm:hidden">Muse of Melpomene · The Dramatic Artist</span>
+            <span id="active-subtitle-text" class="hidden sm:inline">The Dramatic Artist / Deep Soul</span>
           </p>
         </div>
       </div>
@@ -287,7 +291,8 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     z-index: 50;
   }
 
-  .muses-hero-card:hover {
+  .muses-hero-card:hover,
+  .muses-hero-card[data-selected="true"] {
     transform: translateY(calc(var(--base-y) - 18px)) rotate(calc(var(--base-rot) * 0.25)) scale(1.14) !important;
     box-shadow: 0 0 0 3px var(--theme-color), 0 22px 48px color-mix(in srgb, var(--theme-color) 42%, rgba(0, 0, 0, 0.22)) !important;
     z-index: 55 !important;

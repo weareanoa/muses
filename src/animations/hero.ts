@@ -21,49 +21,74 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
   const cardsTrack = rootContainer.querySelector<HTMLElement>('#arc-cards-track');
   const cards = rootContainer.querySelectorAll<HTMLButtonElement>('.muses-hero-card');
 
-  const activeName = rootContainer.querySelector<HTMLElement>('#active-member-name');
+  const activeName = rootContainer.querySelector<HTMLElement>('#active-member-name-text');
+  const activeIcon = rootContainer.querySelector<HTMLElement>('#active-member-icon');
   const activeSubtitle = rootContainer.querySelector<HTMLElement>('#active-subtitle-text');
+  const activeSubtitleMobile = rootContainer.querySelector<HTMLElement>('#active-subtitle-mobile');
   const activeBullet = rootContainer.querySelector<HTMLElement>('#active-bullet');
 
-  function resetToDefaultState() {
-    if (frame2) {
-      frame2.setAttribute('data-active', 'faril');
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  const defaultCard = rootContainer.querySelector<HTMLButtonElement>('.muses-hero-card[data-member-id="faril"]');
+  let selectedId = 'faril';
+
+  const toTitleCase = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/(^|\s)\S/g, (char) => char.toUpperCase())
+      .replace(/\sOf\s/g, ' of ');
+
+  function showMember(card: HTMLButtonElement | null) {
+    if (!card) return;
+    const memberId = card.getAttribute('data-member-id');
+    const museTitle = card.getAttribute('data-muse-title') || '';
+    const museCategory = card.getAttribute('data-muse-category') || '';
+    const shortTitle = museTitle.split('/')[0].trim();
+
+    if (frame2 && memberId) frame2.setAttribute('data-active', memberId);
+    if (activeName) activeName.textContent = card.getAttribute('data-member-name');
+    if (activeIcon) activeIcon.textContent = card.getAttribute('data-member-icon');
+    if (activeSubtitle) activeSubtitle.textContent = museTitle;
+    if (activeSubtitleMobile) {
+      activeSubtitleMobile.textContent = [toTitleCase(museCategory), shortTitle].filter(Boolean).join(' · ');
     }
-    if (activeName) activeName.textContent = 'Faril';
-    if (activeSubtitle) activeSubtitle.textContent = 'The Dramatic Artist / Deep Soul';
-    if (activeBullet) activeBullet.style.backgroundColor = '#8E24AA';
+    if (activeBullet) activeBullet.style.backgroundColor = card.getAttribute('data-theme-color') || '#8E24AA';
+  }
+
+  function resetToDefaultState() {
+    showMember(defaultCard);
+  }
+
+  function selectCard(card: HTMLButtonElement) {
+    selectedId = card.getAttribute('data-member-id') || selectedId;
+    cards.forEach((other) => other.setAttribute('data-selected', String(other === card)));
+    showMember(card);
   }
 
   cards.forEach((card) => {
     const memberId = card.getAttribute('data-member-id');
-    const memberName = card.getAttribute('data-member-name');
-    const museTitle = card.getAttribute('data-muse-title');
-    const themeColor = card.getAttribute('data-theme-color') || '#8E24AA';
 
-    card.addEventListener('mouseenter', () => {
-      if (frame2 && memberId) {
-        frame2.setAttribute('data-active', memberId);
-      }
-      if (activeName && memberName) activeName.textContent = memberName;
-      if (activeSubtitle && museTitle) activeSubtitle.textContent = museTitle;
-      if (activeBullet) activeBullet.style.backgroundColor = themeColor;
-    });
-
-    card.addEventListener('mouseleave', () => {
-      resetToDefaultState();
-    });
+    if (canHover) {
+      card.addEventListener('mouseenter', () => showMember(card));
+      card.addEventListener('mouseleave', resetToDefaultState);
+    }
 
     card.addEventListener('click', () => {
+      if (!canHover && memberId !== selectedId) {
+        selectCard(card);
+        return;
+      }
       if (memberId) {
         window.dispatchEvent(new CustomEvent('open-member-modal', { detail: memberId }));
       }
     });
   });
 
-  if (cardsTrack) {
-    cardsTrack.addEventListener('mouseleave', () => {
-      resetToDefaultState();
-    });
+  if (canHover && cardsTrack) {
+    cardsTrack.addEventListener('mouseleave', resetToDefaultState);
+  }
+
+  if (!canHover && defaultCard) {
+    selectCard(defaultCard);
   }
 
   const ctx = gsap.context(() => {
@@ -77,7 +102,7 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
 
     const isMobile = window.innerWidth < 640;
     const targetLogoScale = isMobile ? 0.66 : 0.56;
-    const targetLogoY = isMobile ? -10 : -18;
+    const targetLogoY = isMobile ? -window.innerHeight * 0.07 : -18;
 
     const tl = gsap.timeline({
       scrollTrigger: {
