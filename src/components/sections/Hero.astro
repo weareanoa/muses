@@ -270,6 +270,20 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     --decor-scale: 1;
   }
 
+  @media (max-width: 639px) {
+    .decor-layer {
+      inset: 0 auto auto 0;
+      width: calc(100% / 0.55);
+      height: calc((100% - 4rem) / 0.55);
+      transform: scale(0.55);
+      transform-origin: top left;
+    }
+
+    [data-decor="ndah"] .decor-item[src$="tulip-1.svg"] {
+      margin-top: 18%;
+    }
+  }
+
   .muses-hero-card {
     --base-y: calc(var(--offset) * var(--offset) * 7px);
     --base-rot: calc(var(--offset) * 4.4deg);
