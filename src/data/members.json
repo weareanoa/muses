@@ -30,7 +30,7 @@
           "rotate": 15,
           "flipX": false
         },
-        "behind": true
+        "behind": false
       },
       {
         "src": "/decor/pita.svg",
@@ -337,7 +337,7 @@
           "rotate": -8,
           "flipX": true
         },
-        "behind": true
+        "behind": false
       },
       {
         "src": "/decor/butterfly.svg",
@@ -369,7 +369,7 @@
           "rotate": -15,
           "flipX": true
         },
-        "behind": true
+        "behind": false
       },
       {
         "src": "/decor/butterfly.svg",
@@ -658,7 +658,7 @@
         "y": "55%",
         "size": 140,
         "flipX": true,
-        "behind": true,
+        "behind": false,
         "mobile": {
           "x": "1%",
           "y": "71%",
