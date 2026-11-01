@@ -174,6 +174,11 @@ export const transactionService = {
             platformFee: parsed.platformFee ?? DEFAULT_PAYMENT_SUMMARY.platformFee,
             total: parsed.totalRupiah ?? parsed.total ?? DEFAULT_PAYMENT_SUMMARY.total,
             deadline: parsed.deadline || '23:59:59',
+            date: parsed.date,
+            notes: parsed.notes,
+            address: parsed.address,
+            paymentMethod: parsed.paymentMethod,
+            fulfillment: parsed.fulfillment,
           };
         }
       }
@@ -234,8 +239,11 @@ export const transactionService = {
   ): Promise<ServiceResult<{ orderId: string; transaction: TransactionDTO }>> {
     const orderNumber = 'INV-20261021-0042';
     const transactionId = `MSE-${orderNumber}`;
+    const isPickup = payload.fulfillment?.method === 'pickup';
     const deliveryCity = payload.address?.city || 'Bandung';
-    const deliveryInfo = `${deliveryCity} • Kurir JNE Regular`;
+    const deliveryInfo = isPickup
+      ? (payload.fulfillment?.pickupLocation || 'Ambil di Event')
+      : `${deliveryCity} • Kurir JNE Regular`;
 
     const orderPaymentSummary = {
       orderId: orderNumber,
@@ -255,6 +263,7 @@ export const transactionService = {
       notes: payload.notes || '',
       address: payload.address,
       paymentMethod: payload.paymentMethod || 'qris',
+      fulfillment: payload.fulfillment,
     };
 
     const newOrderEntry: TransactionDTO = {
@@ -267,15 +276,19 @@ export const transactionService = {
       }),
       status: 'unpaid',
       statusLabel: 'Menunggu pembayaran',
-      eventTag: 'OFFICIAL STORE • MERCH',
+      eventTag: isPickup ? 'EVENT PICKUP • CHEKI' : 'OFFICIAL STORE • MERCH',
       deliveryInfo,
       subtotal: payload.subtotal,
       shippingFee: payload.shippingFee,
       platformFee: payload.platformFee,
       totalPrice: payload.total,
-      actionType: 'unpaid',
+      actionType: isPickup ? 'pickup' : 'unpaid',
       initialCountdownSeconds: 180,
-      pickupLocation: 'Ambil cheki di venue event',
+      pickupLocation: isPickup ? payload.fulfillment?.pickupLocation : undefined,
+      pickupDate: isPickup ? payload.fulfillment?.pickupDate : undefined,
+      pickupCode: isPickup ? 'MUSES-PKP-042' : undefined,
+      pickupContactName: isPickup ? payload.fulfillment?.pickupContactName : undefined,
+      pickupContactPhone: isPickup ? payload.fulfillment?.pickupContactPhone : undefined,
       items: payload.items.map((i) => ({
         id: i.id,
         name: i.name,

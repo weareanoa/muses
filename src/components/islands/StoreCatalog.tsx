@@ -252,7 +252,7 @@ export default function StoreCatalog({ locale = 'id' }: { locale?: Locale }) {
             />
             {d.eyebrow}
           </span>
-          <h1 className="font-serif italic text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[#1F1A12] leading-none tracking-tight select-none mt-1 sm:mt-1.5">
+          <h1 className="font-balbes text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[#1F1A12] leading-none tracking-normal select-none mt-1 sm:mt-1.5">
             {d.heading}
           </h1>
           <p className="text-xs sm:text-[13px] text-[#6E6453] mt-1.5 sm:mt-2 max-w-md">

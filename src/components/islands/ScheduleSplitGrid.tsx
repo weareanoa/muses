@@ -135,7 +135,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
 
         <div className="relative inline-block">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-16 bg-[radial-gradient(ellipse_at_center,_rgba(247,224,143,0.35)_0%,_transparent_70%)] pointer-events-none blur-lg" />
-          <h2 className="relative z-10 text-2xl min-[380px]:text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif italic text-[#18181B] tracking-tight font-normal">
+          <h2 className="relative z-10 text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none">
             {d.heading}
           </h2>
         </div>

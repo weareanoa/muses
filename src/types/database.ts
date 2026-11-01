@@ -149,6 +149,15 @@ export interface CreateTransactionPayload {
   notes?: string;
   address?: UserAddressDTO;
   paymentMethod?: string;
+  fulfillment?: {
+    method: 'delivery' | 'pickup';
+    pickupEventId?: string;
+    pickupEventTitle?: string;
+    pickupDate?: string;
+    pickupLocation?: string;
+    pickupContactName?: string;
+    pickupContactPhone?: string;
+  };
 }
 
 export interface PaymentOrderSummary {
@@ -159,11 +168,27 @@ export interface PaymentOrderSummary {
     subtitle: string;
     quantity: number;
     price: number;
+    image?: string;
   }[];
   subtotal: number;
   shippingFee: number;
   platformFee: number;
   total: number;
   deadline: string;
+  date?: string;
+  notes?: string;
+  address?: UserAddressDTO;
+  paymentMethod?: string;
+  subtotalRupiah?: number;
+  totalRupiah?: number;
+  fulfillment?: {
+    method: 'delivery' | 'pickup';
+    pickupEventId?: string;
+    pickupEventTitle?: string;
+    pickupDate?: string;
+    pickupLocation?: string;
+    pickupContactName?: string;
+    pickupContactPhone?: string;
+  };
 }
 

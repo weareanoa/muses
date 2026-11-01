@@ -146,7 +146,7 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto py-5 sm:py-14 px-4 sm:px-8">
         <div className="mb-6 min-[380px]:mb-7 sm:mb-10 text-left">
-          <h2 className="text-2xl min-[380px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic text-[#1F1A12] tracking-tight font-normal">
+          <h2 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#1F1A12] leading-none tracking-normal select-none">
             {d.heading}
           </h2>
         </div>

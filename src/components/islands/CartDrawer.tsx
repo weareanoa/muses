@@ -89,14 +89,6 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
             </div>
           </div>
 
-          <div className="px-4 py-2 bg-gradient-to-r from-[#FAF3E2] via-[#FFFDF7] to-[#FAF3E2] border-b border-[#EADBBD] text-[10.5px] min-[380px]:text-[11px] text-[#6E5720] flex items-center justify-between shrink-0 font-medium">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#C28C1D]" />
-              Official Merchandise & Cheki
-            </span>
-            <span className="text-[#8C6A1C] font-semibold font-mono">100% Original</span>
-          </div>
-
           <div className="flex-1 overflow-y-auto p-3.5 min-[380px]:p-4 sm:p-6 space-y-3">
             {checkoutComplete ? (
               <div className="text-center py-12 space-y-4">

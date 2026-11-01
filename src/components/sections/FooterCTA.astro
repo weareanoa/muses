@@ -14,11 +14,13 @@ const d = getDict(locale).footer;
   <div class="max-w-7xl mx-auto px-6 sm:px-12">
     <div class="flex flex-col lg:flex-row lg:items-start gap-10 lg:gap-16">
       <div class="max-w-xl space-y-4">
-        <a href={withBase("/")} aria-label={d.homeAria}>
+        <a href={withBase("/")} aria-label={d.homeAria} class="inline-block -ml-[10px]">
           <img
             src={withBase("/images/muses_logo_3d_clean.webp")}
             alt="MUSES"
             class="h-10 w-auto object-contain"
+            width="1350"
+            height="365"
           />
         </a>
         <p class="text-sm text-[#6E6453] leading-relaxed text-pretty">
@@ -34,8 +36,8 @@ const d = getDict(locale).footer;
         <p class="text-xs font-bold uppercase text-[#8C6A1C]">{d.follow}</p>
         <ul class="space-y-2 text-sm text-[#6E6453] font-medium">
           <li>
-            <a href="https://instagram.com/muses.official" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
-              Instagram @muses.official
+            <a href="https://instagram.com/official.muses" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
+              Instagram @official.muses
             </a>
           </li>
           <li>
@@ -46,6 +48,11 @@ const d = getDict(locale).footer;
           <li>
             <a href="https://youtube.com/@muses.official" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
               YouTube @muses.official
+            </a>
+          </li>
+          <li>
+            <a href="https://x.com/muses_ofc" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
+              X @muses_ofc
             </a>
           </li>
         </ul>
