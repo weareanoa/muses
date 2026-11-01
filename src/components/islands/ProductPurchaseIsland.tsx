@@ -382,7 +382,7 @@ export default function ProductPurchaseIsland({ product, relatedProducts = [], l
         </div>
       </div>
 
-      <div className="sticky top-20 z-30 bg-[#FCFAF5]/95 backdrop-blur-md border-b border-[#1F1A12]/10 flex justify-center gap-16 text-sm mt-16 sm:mt-24">
+      <div className="sticky top-20 z-30 bg-[#FCFAF5]/95 backdrop-blur-none sm:backdrop-blur-md border-b border-[#1F1A12]/10 flex justify-center gap-16 text-sm mt-16 sm:mt-24">
         <button
           type="button"
           onClick={() => scrollToSection('section-details')}

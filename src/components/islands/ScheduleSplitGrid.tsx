@@ -146,7 +146,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
           <div className="relative rounded-2xl sm:rounded-3xl bg-white border border-[#C9971C]/35 p-3 sm:p-5 shadow-[0_10px_30px_rgba(201,151,28,0.1)]">
             <div className="relative aspect-[16/9] sm:aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 border border-[#C9971C]/25 bg-[#FAF6EC]">
               <img
-                src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.svg')}
+                src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.webp')}
                 alt={d.posterAlt}
                 className="w-full h-full object-cover"
               />

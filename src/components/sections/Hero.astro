@@ -28,19 +28,23 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     class="relative w-full h-[100svh] lg:h-screen min-h-[560px] lg:min-h-[620px] max-h-[1080px] pt-14 lg:pt-20 flex items-center justify-center overflow-hidden select-none"
   >
     <div class="absolute inset-0 bg-gradient-to-b from-[#FCFAF5] via-[#FBF5E8] to-[#FCFAF5] pointer-events-none z-0"></div>
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0 transform-gpu" style="contain: paint;"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[280px] sm:w-[950px] sm:h-[550px] bg-gradient-to-b from-[#F7E08F]/30 via-[#C9971C]/10 to-transparent rounded-full blur-[70px] sm:blur-[140px] pointer-events-none z-0 transform-gpu" style="contain: paint;"></div>
     <div class="absolute bottom-0 inset-x-0 h-[48%] bg-gradient-to-t from-[#D4A017]/65 via-[#D4A017]/25 to-transparent pointer-events-none z-0"></div>
 
     <div
       id="hero-logo-anchor"
-      class="absolute top-[calc(50%-0.31*(100vw-1rem))] sm:top-24 inset-x-0 w-full z-[15] sm:z-30 flex flex-col items-center justify-center pointer-events-none will-change-transform transform-gpu"
+      class="absolute top-[calc(50%-0.31*(100vw-1rem))] sm:top-24 inset-x-0 w-full z-[15] sm:z-30 flex flex-col items-center justify-center pointer-events-none transform-gpu"
     >
-      <img
-        id="hero-muses-logo"
-        src={withBase("/images/muses_logo_3d_clean.svg")}
-        alt="MUSES"
-        class="w-[340px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] mx-auto block object-contain drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
-      />
+      <picture class="contents">
+        <source media="(max-width: 639px)" srcset={withBase("/images/muses_logo_3d_clean_mobile.webp")} type="image/webp" />
+        <source srcset={withBase("/images/muses_logo_3d_clean.webp")} type="image/webp" />
+        <img
+          id="hero-muses-logo"
+          src={withBase("/images/muses_logo_3d_clean.svg")}
+          alt="MUSES"
+          class="w-[340px] sm:w-[460px] md:w-[600px] lg:w-[720px] max-w-[92vw] mx-auto block object-contain sm:drop-shadow-[0_12px_28px_rgba(201,151,28,0.25)]"
+        />
+      </picture>
     </div>
 
     <div
@@ -48,12 +52,17 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
       class="absolute inset-0 pt-14 lg:pt-20 pb-16 lg:pb-0 flex flex-col items-center justify-end px-2 sm:px-6 z-20 will-change-transform transform-gpu"
     >
       <div class="relative w-full max-w-[1550px] 2xl:max-w-[1750px] h-full max-h-[85vh] sm:max-h-[92vh] flex items-center sm:items-end justify-center">
-        <img
-          id="frame1-group-img"
-          src={withBase("/images/muses_group_frame1.svg")}
-          alt="MUSES Idol Group"
-          class="w-full h-auto sm:h-full max-sm:[mask-image:linear-gradient(to_bottom,#000_58%,transparent_100%)] max-h-[80vh] sm:max-h-[88vh] 2xl:max-h-[92vh] object-contain object-center drop-shadow-[0_20px_50px_rgba(201,151,28,0.3)] will-change-transform transform-gpu"
-        />
+        <picture class="contents">
+          <source media="(max-width: 639px)" srcset={withBase("/images/muses_group_frame1_mobile.webp")} type="image/webp" />
+          <source srcset={withBase("/images/muses_group_frame1.webp")} type="image/webp" />
+          <img
+            id="frame1-group-img"
+            src={withBase("/images/muses_group_frame1.svg")}
+            alt="MUSES Idol Group"
+            fetchpriority="high"
+            class="w-full h-auto sm:h-full max-sm:[mask-image:linear-gradient(to_bottom,#000_58%,transparent_100%)] max-h-[80vh] sm:max-h-[88vh] 2xl:max-h-[92vh] object-contain object-center sm:drop-shadow-[0_20px_50px_rgba(201,151,28,0.3)] transform-gpu"
+          />
+        </picture>
 
         <div id="frame1-sparkles" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
           <span class="absolute top-[6%] left-[10%] text-amber-400 text-2xl sm:text-3xl animate-pulse">✦</span>
@@ -67,7 +76,7 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
     <div
       id="hero-frame-2"
       data-active="faril"
-      class="absolute inset-0 pt-14 lg:pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-[calc(4rem+16svh)] sm:pb-20 lg:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
+      class="absolute inset-0 pt-14 lg:pt-20 flex flex-col items-center justify-end px-2 sm:px-6 pb-[16svh] sm:pb-20 lg:pb-4 z-10 opacity-0 pointer-events-none will-change-transform transform-gpu"
     >
       <div
         id="frame2-ambient-glow"

@@ -139,6 +139,9 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
     if (frame1Img) gsap.set(frame1Img, { scale: 1, y: 0 });
 
     const isMobile = window.innerWidth < 640;
+    // Pointer kasar (HP): morph dibuat jauh lebih kalem — jarak scrub
+    // lebih panjang, lag lebih besar, tanpa snap saat flick.
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
     const targetLogoScale = isMobile ? 0.66 : 0.56;
     const targetLogoY = isMobile ? -window.innerHeight * 0.07 : -18;
 
@@ -146,11 +149,11 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
       scrollTrigger: {
         trigger: rootContainer,
         start: 'top top',
-        end: '+=1000',
+        end: isCoarsePointer ? '+=1600' : '+=1000',
         pin: true,
-        scrub: 0.8,
+        scrub: isCoarsePointer ? 2 : 0.8,
         anticipatePin: 1,
-        fastScrollEnd: true,
+        fastScrollEnd: !isCoarsePointer,
         preventOverlaps: true,
         onUpdate: (self) => {
           if (self.progress > 0.52) {
@@ -190,7 +193,9 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
       );
     }
 
-    if (frame1Img) {
+    // Mobile: jangan scale raster grup tiap frame scroll — itu pemicu
+    // re-raster termahal. Crossfade opacity frame1 (murah) tetap jalan.
+    if (frame1Img && !isCoarsePointer) {
       tl.to(
         frame1Img,
         {

@@ -49,6 +49,20 @@ export function initSmoothScroll(): SmoothScrollController {
       scrollTo: () => {},
     };
   }
+  // Mobile (pointer kasar): pakai scroll native browser. Lenis menggerakkan
+  // scroll lewat interpolasi JS yang terasa berat di GPU HP, sementara
+  // scroll native sudah dikomposit GPU dan jauh lebih halus. Navbar dan
+  // anchor sudah punya fallback saat lenis null (lihat navbar.ts).
+  const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  if (isCoarsePointer) {
+    return {
+      lenis: null,
+      destroy: () => {},
+      stop: () => {},
+      start: () => {},
+      scrollTo: () => {},
+    };
+  }
 
   lenisInstance = new Lenis({
     duration: 1.0,

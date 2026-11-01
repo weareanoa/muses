@@ -245,7 +245,7 @@ export default function StoreCatalog({ locale = 'id' }: { locale?: Locale }) {
         <div>
           <span className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.28em] uppercase text-[#8C6A1C]">
             <img
-              src={withBase('/images/muses_logo_3d_clean.svg')}
+              src={withBase('/images/muses_logo_3d_clean.webp')}
               alt=""
               aria-hidden="true"
               className="h-3 w-auto object-contain opacity-80"

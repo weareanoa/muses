@@ -113,7 +113,10 @@ export function initNavbar(): NavbarController {
     if (id === 'home') {
       targetY = 0;
     } else if (id === 'member') {
-      targetY = heroTop + 700;
+      // Mobile: morph hero lebih panjang (1600px), jadi anchor member ikut
+      // digeser supaya mendarat saat kartu member sudah tampil & bisa ditekan.
+      const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      targetY = heroTop + (isCoarsePointer ? 1200 : 700);
     } else {
       const el = document.getElementById(id);
       if (el) {
@@ -208,8 +211,14 @@ export function initNavbar(): NavbarController {
     updateNavbar(e.scroll, e.direction);
   };
 
+  let scrollTicking = false;
   const windowScrollHandler = () => {
-    updateNavbar(window.scrollY);
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+      updateNavbar(window.scrollY);
+      scrollTicking = false;
+    });
   };
 
   if (lenis) {

@@ -288,7 +288,7 @@ export default function AuthIsland({
       <div className="text-center mb-5">
         <a href={withBase('/')} className="inline-block" aria-label="MUSES Home">
           <img
-            src={withBase('/images/muses_logo_3d_clean.svg')}
+            src={withBase('/images/muses_logo_3d_clean.webp')}
             alt="MUSES"
             className="h-10 sm:h-11 mx-auto object-contain hover:scale-105 transition-transform"
           />
