@@ -93,7 +93,7 @@ export const scheduleService = {
       // (Bacaan publik tetap memakai fallback JSON di getSchedules.)
       return {
         success: false,
-        error: 'Supabase belum dikonfigurasi, jadi jadwal tidak bisa disimpan.',
+        error: 'Layanan admin belum terhubung, jadi jadwal tidak bisa disimpan.',
       };
     }
 
@@ -132,7 +132,7 @@ export const scheduleService = {
     if (!sb) {
       return {
         success: false,
-        error: 'Supabase belum dikonfigurasi, jadi jadwal tidak bisa dihapus.',
+        error: 'Layanan admin belum terhubung, jadi jadwal tidak bisa dihapus.',
       };
     }
 

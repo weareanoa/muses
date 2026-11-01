@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { withBase } from '../../lib/paths';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
 import { authService } from '../../services/authService';
 import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { DATE_LOCALE, fmt, getDict, translateServiceError, type Locale } from '../../i18n/dictionary';
+import AdminShell from '../admin/AdminShell';
+import { Plus } from 'lucide-react';
 
 type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';
 
@@ -74,8 +76,8 @@ function sortByTargetDate(items: ScheduleDTO[]): ScheduleDTO[] {
 }
 
 const inputClass =
-  'w-full rounded-xl border border-[#E9D9AE] bg-white px-3 py-2.5 text-sm text-[#1F1A12] outline-none focus:border-[#C9971C] focus:ring-2 focus:ring-[#C9971C]/30';
-const labelClass = 'block text-xs font-bold tracking-wider uppercase text-[#6E6453] mb-1.5';
+  'mt-1.5 w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]';
+const labelClass = 'block text-sm font-medium text-[#1F1A12]';
 
 export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).admin;
@@ -288,13 +290,13 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
 
   return (
     <div className="space-y-6">
-            <a
+      <a
         href={withBase('/admin')}
         className="inline-block text-sm font-bold text-[#8C6A1C] hover:underline"
       >
         {d.backAdmin}
       </a>
-<div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
             {fmt(d.headerAdmin, { email: adminEmail })}
@@ -314,14 +316,14 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
       </div>
 
       {notice && (
-        <div className="rounded-xl border border-[#C5E2C8] bg-[#E2EFE3] px-4 py-3 text-sm font-semibold text-[#346B40]">
+        <p role="status" className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
           {notice}
-        </div>
+        </p>
       )}
       {error && (
-        <div className="rounded-xl border border-[#F3DD9C] bg-[#FCF1CE] px-4 py-3 text-sm font-semibold text-[#8C6A1C]">
+        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
-        </div>
+        </p>
       )}
 
       <form
@@ -449,6 +451,10 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
           </div>
         </div>
 
+        <p className="mt-6 text-sm font-medium text-[#1F1A12]">
+          {d.dateDetailHint}
+        </p>
+
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
             <div>
@@ -544,7 +550,6 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
                     {item.venue} · {item.showTime} · {item.status}
                     {item.targetDate ? ` · ${new Date(item.targetDate).toLocaleString(DATE_LOCALE[locale])}` : ''}
                   </p>
-                  <p className="truncate text-xs text-[#8C6A1C]">{item.id}</p>
                 </div>
                 <div className="flex gap-2">
                   <button

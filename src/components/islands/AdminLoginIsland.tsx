@@ -83,7 +83,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
 
   if (view === 'checking') {
     return (
-      <div className="rounded-[20px] border border-[#E9D9AE] bg-white p-8 text-center text-sm text-[#6E6453]">
+      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center text-sm text-[#6E6453]">
         {d.checking}
       </div>
     );
@@ -91,7 +91,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
 
   if (view === 'no-supabase') {
     return (
-      <div className="rounded-[20px] border border-[#E9D9AE] bg-white p-8">
+      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8">
         <h2 className="text-lg font-bold text-[#1F1A12]">{d.noSupabaseTitle}</h2>
         <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
           {d.loginNoSupabaseBody}
@@ -102,7 +102,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
 
   if (view === 'forbidden') {
     return (
-      <div className="rounded-[20px] border border-[#E9D9AE] bg-white p-8 text-center">
+      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center">
         <h2 className="text-lg font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
         <p className="mt-2 text-sm text-[#6E6453]">
           {fmt(d.loginForbiddenBody, { account: accountEmail ? (locale === 'id' ? `Akun ${accountEmail}` : `Account ${accountEmail}`) : (locale === 'id' ? 'Akun ini' : 'This account') })}

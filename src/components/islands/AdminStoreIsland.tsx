@@ -341,18 +341,18 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
 
   return (
     <div className="space-y-6">
-            <a
+      <a
         href={withBase('/admin')}
         className="inline-block text-sm font-bold text-[#8C6A1C] hover:underline"
       >
         {d.backAdmin}
       </a>
-<div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#8C6A1C]">{d.storeEyebrow}</p>
           <h1 className="mt-1 text-2xl font-bold text-[#1F1A12]">{d.storeHeading}</h1>
-          <p className="mt-1 text-sm text-[#6E6453]">
-            {fmt(d.count, { count: products.length })}
+          <p className="mt-1 max-w-2xl text-sm text-[#6E6453]">
+            {d.storeIntro}
           </p>
         </div>
         <button
@@ -363,12 +363,14 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
         </button>
       </div>
 
-      <div className="rounded-2xl border border-[#E9D9AE] bg-[#FFF8E7] p-5">
-        <p className="text-sm font-bold text-[#1F1A12]">{d.warningTitle}</p>
-        <p className="mt-1 text-sm leading-relaxed text-[#6E6453]">
-          {d.warningBody}
-        </p>
-      </div>
+      {products.length === 0 && (
+        <div className="rounded-2xl border border-[#E9D9AE] bg-[#FFF8E7] p-5">
+          <p className="text-sm font-bold text-[#1F1A12]">{d.warningTitle}</p>
+          <p className="mt-1 text-sm leading-relaxed text-[#6E6453]">
+            {d.warningBody}
+          </p>
+        </div>
+      )}
 
       {notice && (
         <p role="status" className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
@@ -546,7 +548,9 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
           </p>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <div>
+          <h2 className="text-base font-bold text-[#1F1A12]">{fmt(d.prodListTitle, { count: products.length })}</h2>
+          <ul className="mt-4 space-y-3">
           {products.map((product) => (
             <li
               key={product.id}
@@ -605,7 +609,8 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
               </div>
             </li>
           ))}
-        </ul>
+          </ul>
+        </div>
       )}
     </div>
   );
