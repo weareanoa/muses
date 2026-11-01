@@ -11,8 +11,7 @@ import {
   clearCart
 } from '../../stores/cartStore';
 import { useScrollLock } from '../../hooks/useScrollLock';
-import { X, Trash2, ShoppingBag, Plus, Minus, ArrowRight, CheckCircle2, MapPin } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { X, Trash2, ShoppingBag, Plus, Minus, ArrowRight, CheckCircle2, MapPin, Sparkles } from 'lucide-react';
 import { currentUser } from '../../stores/authStore';
 import { formatRupiah } from '../../lib/format';
 import { fmt, getDict, localizeAddressLabel, localizeOption, type Locale } from '../../i18n/dictionary';
@@ -23,7 +22,6 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
   const items = useStore(cartItems);
   const subtotal = useStore(cartSubtotal);
   const user = useStore(currentUser);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutComplete, setCheckoutComplete] = useState(false);
 
   const selectedAddress =
@@ -47,141 +45,196 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
   if (!isOpen) return null;
 
   return (
-    <div data-lenis-prevent className="fixed inset-0 z-50 overflow-hidden transition-all duration-300">
+    <div data-lenis-prevent className="fixed inset-0 z-[70] overflow-hidden transition-all duration-300 font-['Poppins',sans-serif]">
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity cursor-pointer"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity cursor-pointer"
         onClick={closeCart}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[#FCFAF5] border-l border-[#1F1A12]/15 shadow-2xl flex flex-col justify-between">
-          <div className="p-6 border-b border-[#1F1A12]/10 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-[#9A7420]" />
-              <h2 className="text-lg font-bold font-display text-[#1F1A12] uppercase tracking-wider">
-                {fmt(d.title, { count: items.length })}
-              </h2>
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
+        <div className="w-screen max-w-md bg-[#FCFAF5] sm:border-l border-[#1F1A12]/15 shadow-2xl flex flex-col justify-between h-full">
+          <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-[#EADBBD] bg-white/90 backdrop-blur-md flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4A017] flex items-center justify-center text-[#1F1A12] shadow-2xs">
+                <ShoppingBag className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-sm min-[380px]:text-base font-bold text-[#1F1A12] leading-none">
+                  {fmt(d.title, { count: items.length })}
+                </h2>
+                <span className="text-[10px] min-[380px]:text-[11px] text-[#8C7A58] font-medium">
+                  {items.length} item
+                </span>
+              </div>
             </div>
-            <button
-              onClick={closeCart}
-              className="p-1 rounded-md text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#1F1A12]/5 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+
+            <div className="flex items-center gap-2">
+              {items.length > 0 && !checkoutComplete && (
+                <button
+                  type="button"
+                  onClick={clearCart}
+                  className="text-[11px] text-[#8C7A58] hover:text-red-500 px-2 py-1 rounded-md hover:bg-red-50 transition-colors font-medium cursor-pointer"
+                >
+                  Kosongkan
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={closeCart}
+                className="w-8 h-8 rounded-full bg-[#FAF3E2] hover:bg-[#EADBBD] text-[#5A4E38] hover:text-[#1F1A12] flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Tutup Keranjang"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="px-4 py-2 bg-gradient-to-r from-[#FAF3E2] via-[#FFFDF7] to-[#FAF3E2] border-b border-[#EADBBD] text-[10.5px] min-[380px]:text-[11px] text-[#6E5720] flex items-center justify-between shrink-0 font-medium">
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#C28C1D]" />
+              Official Merchandise & Cheki
+            </span>
+            <span className="text-[#8C6A1C] font-semibold font-mono">100% Original</span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3.5 min-[380px]:p-4 sm:p-6 space-y-3">
             {checkoutComplete ? (
               <div className="text-center py-12 space-y-4">
                 <div className="w-16 h-16 bg-[#9A7420]/15 rounded-full flex items-center justify-center mx-auto text-[#9A7420]">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold font-display text-[#1F1A12]">{d.orderReceived}</h3>
+                <h3 className="text-xl font-bold font-serif text-[#1F1A12]">{d.orderReceived}</h3>
                 <p className="text-xs text-[#6E6453] max-w-xs mx-auto">
                   {d.orderReceivedBody}
                 </p>
                 <div className="pt-4">
                   <button
+                    type="button"
                     onClick={closeCart}
-                    className="px-6 py-2 border border-[#9A7420] text-[#9A7420] hover:bg-[#9A7420]/10 text-xs font-semibold rounded-md transition-colors cursor-pointer"
+                    className="px-6 py-2 border border-[#9A7420] text-[#9A7420] hover:bg-[#9A7420]/10 text-xs font-semibold rounded-full transition-colors cursor-pointer"
                   >
                     {d.continueBrowsing}
                   </button>
                 </div>
               </div>
             ) : items.length === 0 ? (
-              <div className="text-center py-16 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#1F1A12]/5 flex items-center justify-center mx-auto text-[#6E6453]">
+              <div className="text-center py-14 px-4 space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#FAF3E2] border border-[#EADBBD] flex items-center justify-center mx-auto text-[#8C6A1C] shadow-2xs">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[#1F1A12]">{d.emptyTitle}</h3>
-                  <p className="text-xs text-[#6E6453] mt-1">{d.emptyBody}</p>
+                  <h3 className="text-sm min-[380px]:text-base font-bold text-[#1F1A12]">{d.emptyTitle}</h3>
+                  <p className="text-xs text-[#6E6453] mt-1 max-w-xs mx-auto leading-relaxed">{d.emptyBody}</p>
                 </div>
                 <a
                   href={withBase("/store")}
                   onClick={closeCart}
-                  className="inline-flex items-center gap-2 text-xs font-semibold text-[#9A7420] hover:underline pt-2 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-[#1F1A12] shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
+                  }}
                 >
-                  {d.viewStore}
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{d.viewStore}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
             ) : (
               items.map((item) => (
                 <div
                   key={`${item.id}-${item.size || ''}-${item.color || ''}`}
-                  className="flex gap-4 p-3 rounded-lg bg-[#F8F4EA]/60 border border-[#1F1A12]/10 hover:border-[#1F1A12]/15 transition-all"
+                  className="flex gap-3 p-3 rounded-2xl bg-white border border-[#EADBBD] shadow-2xs hover:shadow-xs transition-all"
                 >
                   <img
-                    src={item.image}
+                    src={withBase(item.image)}
                     alt={item.name}
-                    className="w-20 h-20 object-cover rounded-md bg-[#F8F4EA] border border-[#1F1A12]/10 shrink-0"
+                    className="w-18 h-18 min-[380px]:w-20 min-[380px]:h-20 aspect-square rounded-xl object-cover bg-[#FAF3E2] border border-[#EADBBD] shrink-0"
                   />
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      <a
-                        href={withBase(`/store/${item.id}`)}
-                        onClick={closeCart}
-                        className="text-sm font-semibold truncate text-[#1F1A12] hover:text-[#9A7420] transition-colors block"
-                      >
-                        {item.name}
-                      </a>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-[#6E6453]">
-                        {item.size && <span>{getDict(locale).cart.size}: {localizeOption(locale, item.size)}</span>}
-                        {item.color && <span>• {getDict(locale).cart.color}: {item.color}</span>}
+                      <div className="flex items-start justify-between gap-1.5">
+                        <a
+                          href={withBase(`/store/${item.id}`)}
+                          onClick={closeCart}
+                          className="text-xs min-[380px]:text-sm font-bold text-[#1F1A12] hover:text-[#9A7420] transition-colors line-clamp-1 block leading-snug"
+                        >
+                          {item.name}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item.id, item.size, item.color)}
+                          className="text-[#A8987E] hover:text-red-500 transition-colors p-1 cursor-pointer shrink-0 -mr-1"
+                          aria-label="Hapus item"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
+
+                      {(item.size || item.color) && (
+                        <div className="flex flex-wrap items-center gap-1 mt-1">
+                          {item.size && (
+                            <span className="inline-block px-1.5 py-0.5 rounded bg-[#FAF3E2] border border-[#EADBBD] text-[9px] min-[380px]:text-[10px] text-[#5A4E38] font-medium">
+                              {localizeOption(locale, item.size)}
+                            </span>
+                          )}
+                          {item.color && (
+                            <span className="inline-block px-1.5 py-0.5 rounded bg-[#FAF3E2] border border-[#EADBBD] text-[9px] min-[380px]:text-[10px] text-[#5A4E38] font-medium">
+                              {item.color}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm font-bold text-[#9A7420]">
+
+                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#F5EFE0]">
+                      <span className="text-xs min-[380px]:text-sm font-bold text-[#1F1A12]">
                         {item.price >= 1000
                           ? formatRupiah(item.price * item.quantity)
                           : `$${(item.price * item.quantity).toFixed(2)}`}
                       </span>
-                      <div className="flex items-center gap-2 bg-[#F6F1E5] border border-[#1F1A12]/10 rounded-md px-1.5 py-0.5">
+
+                      <div className="flex items-center gap-1.5 bg-[#FAF3E2] border border-[#EADBBD] rounded-full px-1.5 py-0.5">
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.id, item.quantity - 1, item.size, item.color)}
-                          className="p-1 hover:text-[#9A7420] text-[#6E6453] transition-colors cursor-pointer"
+                          className="w-5 h-5 rounded-full bg-white hover:bg-[#FFFDF7] shadow-2xs flex items-center justify-center text-[#5A4E38] hover:text-[#1F1A12] active:scale-90 transition-all cursor-pointer"
+                          aria-label="Kurang satu"
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-2.5 h-2.5" />
                         </button>
-                        <span className="text-xs font-semibold text-[#1F1A12] w-4 text-center">
+                        <span className="text-xs font-bold font-mono text-[#1F1A12] w-4 text-center">
                           {item.quantity}
                         </span>
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1, item.size, item.color)}
-                          className="p-1 hover:text-[#9A7420] text-[#6E6453] transition-colors cursor-pointer"
+                          className="w-5 h-5 rounded-full bg-white hover:bg-[#FFFDF7] shadow-2xs flex items-center justify-center text-[#5A4E38] hover:text-[#1F1A12] active:scale-90 transition-all cursor-pointer"
+                          aria-label="Tambah satu"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-2.5 h-2.5" />
                         </button>
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => removeFromCart(item.id, item.size, item.color)}
-                    className="text-[#6E6453] hover:text-red-500 p-1 self-start transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 </div>
               ))
             )}
           </div>
 
           {items.length > 0 && !checkoutComplete && (
-            <div className="p-6 border-t border-[#1F1A12]/10 bg-[#F8F4EA]/80 space-y-4">
-              <div className="flex items-center justify-between text-xs pb-1">
-                <span className="text-[#6E6453] flex items-center gap-1">
+            <div className="p-4 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:pb-6 border-t border-[#EADBBD] bg-white/95 backdrop-blur-md space-y-3 shrink-0">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#6E6453] flex items-center gap-1 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-[#9A7420]" />
                   {d.shippingAddress}
                 </span>
                 <span className="text-[#9A7420] font-semibold">{user ? user.name : d.guest}</span>
               </div>
+
               {selectedAddress ? (
-                <div className="p-2.5 rounded-xl bg-white/80 border border-[#1F1A12]/10 text-xs text-[#524838]">
+                <div className="p-2.5 rounded-xl bg-[#FAF3E2]/60 border border-[#EADBBD] text-xs text-[#524838]">
                   <div className="font-semibold text-[#1F1A12] flex items-center gap-1.5">
                     <span>{selectedAddress.recipientName}</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#9A7420]/15 text-[#9A7420] font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#9A7420]/15 text-[#9A7420] font-mono font-semibold">
                       {localizeAddressLabel(locale, selectedAddress.label)}
                     </span>
                   </div>
@@ -191,7 +244,7 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
                   </div>
                 </div>
               ) : (
-                <div className="p-2 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-center justify-between">
+                <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 flex items-center justify-between">
                   <span>{d.noAddress}</span>
                   <a
                     href={withBase("/profile?tab=alamat")}
@@ -203,33 +256,29 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
                 </div>
               )}
 
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-[#6E6453]">{d.subtotal}</span>
-                <span className="text-xl font-bold font-display text-[#1F1A12]">
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-xs sm:text-sm text-[#6E6453] font-medium">{d.subtotal}</span>
+                <span className="text-base min-[380px]:text-lg sm:text-xl font-bold text-[#1F1A12]">
                   {subtotal >= 1000
                     ? formatRupiah(subtotal)
                     : `$${subtotal.toFixed(2)} USD`}
                 </span>
               </div>
-              <p className="text-[11px] text-[#8A7F6C] leading-tight">
+
+              <p className="text-[10px] min-[380px]:text-[10.5px] text-[#8A7F6C] leading-tight">
                 {d.taxesNote}
               </p>
+
               <button
+                type="button"
                 onClick={handleCheckout}
-                disabled={isCheckingOut}
-                className="w-full py-3.5 bg-[#9A7420] hover:bg-[#B08A36] text-[#FCFAF5] font-bold uppercase tracking-wider text-xs rounded-md shadow-[0_0_20px_rgba(154,116,32,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3 min-[380px]:py-3.5 sm:py-4 px-6 rounded-full font-bold uppercase tracking-wider text-xs sm:text-sm text-[#1F1A12] shadow-md hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
+                }}
               >
-                {isCheckingOut ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                    {d.processing}
-                  </>
-                ) : (
-                  <>
-                    {d.checkoutNow}
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
+                <span>{d.checkoutNow}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}

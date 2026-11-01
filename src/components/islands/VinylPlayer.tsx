@@ -88,6 +88,39 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
     }
   };
 
+  const renderAlbumThumbnails = (gridClass: string) => (
+    <div className={gridClass}>
+      {discographyData.map((album, idx) => {
+        const isSelected = selectedAlbumIndex === idx;
+        return (
+          <button
+            key={album.id}
+            type="button"
+            onClick={() => handleAlbumSelect(idx)}
+            className={`group relative aspect-square rounded-lg min-[380px]:rounded-xl sm:rounded-2xl overflow-hidden border-[2px] transition-all duration-300 p-0 bg-white cursor-pointer text-left focus:outline-none ${
+              isSelected
+                ? 'border-white ring-2 ring-[#C28C1D]/60 shadow-md scale-[1.03]'
+                : 'border-white/40 shadow-xs opacity-85 hover:opacity-100 hover:scale-[1.02]'
+            }`}
+          >
+            <img
+              src={album.coverImage}
+              alt={album.albumTitle}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div
+              className={`absolute inset-0 transition-opacity duration-300 ${
+                isSelected
+                  ? 'bg-gradient-to-t from-black/20 via-transparent to-transparent'
+                  : 'bg-black/10 group-hover:bg-transparent'
+              }`}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="relative w-full overflow-hidden select-none">
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" style={{ contain: 'paint' }}>
@@ -97,29 +130,29 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             <div
               key={album.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                isActive ? 'opacity-40 sm:opacity-50' : 'opacity-0'
+                isActive ? 'opacity-30 sm:opacity-40' : 'opacity-0'
               }`}
             >
               <img
                 src={album.coverImage}
                 alt=""
                 aria-hidden="true"
-                className="w-full h-full object-cover filter blur-[32px] sm:blur-[48px] scale-110 transform-gpu will-change-transform"
+                className="w-full h-full object-cover filter blur-[10px] sm:blur-[16px] scale-105 transform-gpu will-change-transform"
               />
             </div>
           );
         })}
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto py-10 sm:py-16 px-4 sm:px-8">
-        <div className="mb-8 sm:mb-12">
-          <h2 className="text-5xl sm:text-6xl md:text-7xl font-balbes text-[#18181B] tracking-tight font-normal">
+      <div className="relative z-10 w-full max-w-7xl mx-auto py-5 sm:py-14 px-4 sm:px-8">
+        <div className="mb-6 min-[380px]:mb-7 sm:mb-10 text-left">
+          <h2 className="text-2xl min-[380px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic text-[#1F1A12] tracking-tight font-normal">
             {d.heading}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 sm:mb-20">
-          <div className="lg:col-span-7 flex flex-col items-center justify-center relative py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-center mb-8 sm:mb-16">
+          <div className="lg:col-span-7 flex flex-col items-center justify-center relative py-1 sm:py-4 pr-5 sm:pr-8">
             <VinylRecord
               coverImage={currentAlbum.coverImage}
               albumTitle={currentAlbum.albumTitle}
@@ -129,25 +162,29 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             />
           </div>
 
-          <div className="lg:col-span-5 flex flex-col justify-center space-y-4 max-w-lg mx-auto lg:mx-0 w-full">
+          <div className="w-full max-w-[270px] min-[380px]:max-w-[295px] sm:max-w-md mx-auto my-1.5 sm:my-4 lg:hidden">
+            {renderAlbumThumbnails("grid grid-cols-4 gap-1.5 min-[380px]:gap-2 sm:gap-4")}
+          </div>
+
+          <div className="lg:col-span-5 flex flex-col justify-center space-y-2 sm:space-y-4 max-w-sm sm:max-w-lg mx-auto lg:mx-0 w-full text-left">
             <div>
-              <span className="inline-block px-4 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] shadow-xs">
+              <span className="inline-block px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] shadow-xs">
                 {currentAlbum.singleTag || currentAlbum.type}
               </span>
 
-              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-balbes text-[#18181B] tracking-tight mt-3 font-normal">
+              <h3 className="text-xl min-[380px]:text-2xl sm:text-4xl lg:text-5xl font-balbes text-[#18181B] tracking-tight mt-1.5 sm:mt-2.5 font-normal">
                 {currentAlbum.albumTitle}
               </h3>
 
-              <p className="text-xs sm:text-sm text-[#555] leading-relaxed mt-3">
+              <p className="text-[11px] min-[380px]:text-xs sm:text-sm text-[#555] leading-relaxed mt-1 sm:mt-2 max-w-md">
                 {locale === 'en' && (currentAlbum as { descriptionEn?: string }).descriptionEn ? (currentAlbum as { descriptionEn?: string }).descriptionEn : currentAlbum.description}
               </p>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-0.5 sm:pt-1">
               <div
                 onClick={() => setIsVideoModalOpen(true)}
-                className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border-[1.5px] border-[#D4A017]/70 shadow-lg group cursor-pointer bg-black/5"
+                className="relative aspect-[16/9] w-full rounded-xl sm:rounded-2xl overflow-hidden border-[1.5px] border-[#D4A017]/70 shadow-md group cursor-pointer bg-black/5"
               >
                 <img
                   src={withBase(currentAlbum.mvThumbnail || currentAlbum.coverImage)}
@@ -157,16 +194,16 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20 group-hover:from-black/70 transition-colors" />
 
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#E5B548]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-1" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 sm:w-14 sm:h-14 rounded-full bg-[#E5B548]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Play className="w-4 h-4 sm:w-6 sm:h-6 fill-current ml-0.5" />
                 </div>
 
-                <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                <div className="absolute bottom-2 left-3 right-3 sm:bottom-2.5 sm:left-3.5 sm:right-3.5 flex items-end justify-between">
                   <div>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-mono tracking-widest uppercase bg-black/60 backdrop-blur-xs text-white block w-fit mb-1 border border-white/10">
+                    <span className="px-1.5 py-0.5 rounded text-[7.5px] min-[380px]:text-[8px] sm:text-[9px] font-mono tracking-widest uppercase bg-black/60 backdrop-blur-xs text-white block w-fit mb-0.5 border border-white/10">
                       {d.mvLabel}
                     </span>
-                    <h4 className="text-lg sm:text-xl font-balbes text-white tracking-wide drop-shadow-md">
+                    <h4 className="text-sm min-[380px]:text-base sm:text-xl font-balbes text-white tracking-wide drop-shadow-md">
                       {currentAlbum.albumTitle}
                     </h4>
                   </div>
@@ -174,47 +211,19 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
               </div>
             </div>
 
-            <div className="pt-1">
+            <div className="pt-0.5 sm:pt-1">
               <StreamingLinks
                 spotify={titleTrack.links.spotify}
                 youtube={titleTrack.links.youtube}
+                appleMusic={(titleTrack.links as any)?.appleMusic}
                 locale={locale}
               />
             </div>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[#C9971C]/15">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {discographyData.map((album, idx) => {
-              const isSelected = selectedAlbumIndex === idx;
-              return (
-                <button
-                  key={album.id}
-                  type="button"
-                  onClick={() => handleAlbumSelect(idx)}
-                  className={`group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border-[2.5px] transition-all duration-300 p-0 bg-white cursor-pointer text-left focus:outline-none ${
-                    isSelected
-                      ? 'border-[#D4A017] ring-2 ring-[#D4A017]/40 shadow-xl scale-[1.03] -translate-y-1.5'
-                      : 'border-transparent shadow-md hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 opacity-80 hover:opacity-100'
-                  }`}
-                >
-                  <img
-                    src={album.coverImage}
-                    alt={album.albumTitle}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div
-                    className={`absolute inset-0 transition-opacity duration-300 ${
-                      isSelected
-                        ? 'bg-gradient-to-t from-black/25 via-transparent to-transparent'
-                        : 'bg-black/10 group-hover:bg-transparent'
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </div>
+        <div className="hidden lg:block pt-8 border-t border-[#C9971C]/15">
+          {renderAlbumThumbnails("grid grid-cols-4 gap-4 sm:gap-6")}
         </div>
 
         {isVideoModalOpen && (

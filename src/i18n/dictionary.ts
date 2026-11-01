@@ -148,13 +148,14 @@ const id = {
     posterAlt: "7 Member MUSES",
   },
   discography: {
-    heading: "Diskografi",
-    mvLabel: "VIDEO MUSIK",
+    heading: "Discography",
+    mvLabel: "MUSIC VIDEO",
     mvTitle: "{album} Video Musik",
     closeVideo: "Tutup Video",
     listenOn: "Dengarkan di",
     spotifyTitle: "Dengarkan di Spotify",
     youtubeTitle: "Tonton di YouTube",
+    appleTitle: "Dengarkan di Apple Music",
   },
   member: {
     closeAria: "Tutup Profil Member",
@@ -766,6 +767,7 @@ const en = {
     listenOn: "Listen on",
     spotifyTitle: "Listen on Spotify",
     youtubeTitle: "Watch on YouTube",
+    appleTitle: "Listen on Apple Music",
   },
   member: {
     closeAria: "Close Member Profile",

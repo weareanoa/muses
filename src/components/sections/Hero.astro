@@ -108,15 +108,15 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
               ) : (
                 <>
                   <div
-                    class="absolute bottom-0 inset-x-0 h-[54%] pointer-events-none"
+                    class="absolute bottom-0 inset-x-0 h-[78%] sm:h-[54%] pointer-events-none"
                     style={{
-                      background: `linear-gradient(to top, ${palette.primary}85 0%, ${palette.mid}4D 40%, ${palette.soft}24 74%, transparent 100%)`
+                      background: `linear-gradient(to top, color-mix(in srgb, ${palette.primary} 55%, ${palette.soft} 45%)75 0%, ${palette.mid}45 42%, ${palette.soft}25 72%, transparent 100%)`
                     }}
                   ></div>
                   <div
-                    class="absolute left-1/2 -translate-x-1/2 bottom-[-140px] sm:bottom-[-180px] w-[1100px] sm:w-[1560px] md:w-[1920px] h-[520px] sm:h-[660px] pointer-events-none opacity-95 transform-gpu"
+                    class="absolute left-1/2 -translate-x-1/2 bottom-[-140px] sm:bottom-[-180px] w-[1100px] sm:w-[1560px] md:w-[1920px] h-[520px] sm:h-[660px] pointer-events-none opacity-55 sm:opacity-95 transform-gpu"
                     style={{
-                      background: `radial-gradient(ellipse 58% 54% at 50% 62%, ${palette.primary}D9 0%, ${palette.mid}8C 36%, ${palette.soft}3D 64%, transparent 86%)`
+                      background: `radial-gradient(ellipse 58% 54% at 50% 62%, ${palette.primary}A6 0%, ${palette.mid}66 36%, ${palette.soft}2D 64%, transparent 86%)`
                     }}
                   ></div>
                 </>
@@ -153,7 +153,13 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                       '--m-left': d.mobile.x,
                       '--m-top': d.mobile.y,
                       '--m-size': `${d.mobile.size}px`,
-                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`
+                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`,
+                      ...(d.mobile.flipX !== undefined && {
+                        '--m-flip-x': d.mobile.flipX ? -1 : 1
+                      }),
+                      ...(d.mobile.flipY !== undefined && {
+                        '--m-flip-y': d.mobile.flipY ? -1 : 1
+                      })
                     })
                   }}
                 />
@@ -255,7 +261,13 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
                       '--m-left': d.mobile.x,
                       '--m-top': d.mobile.y,
                       '--m-size': `${d.mobile.size}px`,
-                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`
+                      '--m-rot': `${d.mobile.rotate ?? d.rotate ?? 0}deg`,
+                      ...(d.mobile.flipX !== undefined && {
+                        '--m-flip-x': d.mobile.flipX ? -1 : 1
+                      }),
+                      ...(d.mobile.flipY !== undefined && {
+                        '--m-flip-y': d.mobile.flipY ? -1 : 1
+                      })
                     })
                   }}
                 />
@@ -302,13 +314,13 @@ const isBehindDecor = (d: any) => Boolean(d.behind || (typeof d.zIndex === 'numb
       left: var(--m-left) !important;
       top: var(--m-top) !important;
       bottom: auto !important;
+      margin-top: 0 !important;
       width: var(--m-size) !important;
       --d-rot: var(--m-rot) !important;
+      --d-flip-x: var(--m-flip-x, var(--d-flip-x, 1)) !important;
+      --d-flip-y: var(--m-flip-y, var(--d-flip-y, 1)) !important;
     }
 
-    [data-decor="ndah"] .decor-item[src$="tulip-1.svg"] {
-      margin-top: 18%;
-    }
   }
 
   .muses-hero-card {

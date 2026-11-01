@@ -58,6 +58,8 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
     showMember(defaultCard);
   }
 
+  let lastSwipeTime = 0;
+
   function selectCard(card: HTMLButtonElement) {
     selectedId = card.getAttribute('data-member-id') || selectedId;
     cards.forEach((other) => other.setAttribute('data-selected', String(other === card)));
@@ -72,12 +74,14 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
       card.addEventListener('mouseleave', resetToDefaultState);
     }
 
-    card.addEventListener('click', () => {
-      if (!canHover && memberId !== selectedId) {
-        selectCard(card);
+    card.addEventListener('click', (e) => {
+      if (Date.now() - lastSwipeTime < 400) {
+        e.preventDefault();
+        e.stopPropagation();
         return;
       }
       if (memberId) {
+        selectCard(card);
         window.dispatchEvent(new CustomEvent('open-member-modal', { detail: memberId }));
       }
     });
@@ -92,7 +96,7 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
   }
 
   if (!canHover && frame2) {
-    const SWIPE_THRESHOLD = 36;
+    const SWIPE_THRESHOLD = 28;
     const cardList = Array.from(cards);
     let startX = 0;
     let startY = 0;
@@ -102,17 +106,26 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
       startY = event.touches[0].clientY;
     };
 
+    const onTouchMove = (event: TouchEvent) => {
+      const dx = event.touches[0].clientX - startX;
+      if (Math.abs(dx) > 10) {
+        lastSwipeTime = Date.now();
+      }
+    };
+
     const onTouchEnd = (event: TouchEvent) => {
       const dx = event.changedTouches[0].clientX - startX;
       const dy = event.changedTouches[0].clientY - startY;
-      if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.2) return;
 
+      lastSwipeTime = Date.now();
       const current = cardList.findIndex((card) => card.getAttribute('data-member-id') === selectedId);
       const next = cardList[Math.min(cardList.length - 1, Math.max(0, current + (dx < 0 ? 1 : -1)))];
       if (next) selectCard(next);
     };
 
     frame2.addEventListener('touchstart', onTouchStart, { passive: true });
+    frame2.addEventListener('touchmove', onTouchMove, { passive: true });
     frame2.addEventListener('touchend', onTouchEnd, { passive: true });
   }
 

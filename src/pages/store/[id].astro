@@ -24,9 +24,9 @@ const relatedProducts = products.filter((p) => p.id !== product.id);
   description={product.description}
   currentPath="/store"
 >
-  <div class="bg-[#FCFAF5] min-h-screen text-[#1F1A12] pt-28 pb-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8">
-      <nav class="flex items-center gap-2 text-xs text-[#6E6453] py-3 mb-6 border-b border-[#1F1A12]/10">
+  <div class="bg-[#FCFAF5] min-h-screen text-[#1F1A12] pt-20 sm:pt-28 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:pb-20">
+    <div class="max-w-6xl mx-auto px-3.5 sm:px-8">
+      <nav class="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-[#6E6453] py-2.5 sm:py-3 mb-4 sm:mb-6 border-b border-[#1F1A12]/10 overflow-x-auto no-scrollbar whitespace-nowrap">
         <a href="/" class="hover:text-[#1F1A12] transition-colors">{d.product.breadcrumbHome}</a>
         <span>/</span>
         <a href="/store" class="hover:text-[#1F1A12] transition-colors">{d.product.breadcrumbStore}</a>
@@ -35,7 +35,7 @@ const relatedProducts = products.filter((p) => p.id !== product.id);
           {product.category}
         </a>
         <span>/</span>
-        <span class="text-[#1F1A12] font-medium truncate max-w-[200px] sm:max-w-none">
+        <span class="text-[#1F1A12] font-medium truncate max-w-[140px] sm:max-w-none">
           {product.name}
         </span>
       </nav>

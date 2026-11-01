@@ -17,6 +17,8 @@ export interface MemberDecor {
     y: string;
     size: number;
     rotate?: number;
+    flipX?: boolean;
+    flipY?: boolean;
   };
 }
 
