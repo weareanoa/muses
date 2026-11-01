@@ -3,6 +3,7 @@
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "muses",
+	"routes": [{ "pattern": "muses.id", "custom_domain": true }],
 	"workers_dev": true,
 	"main": "@astrojs/cloudflare/entrypoints/server",
 	"assets": {
