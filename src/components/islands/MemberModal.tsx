@@ -297,12 +297,18 @@ export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:pb-5 sm:p-5 lg:p-6 bg-[#FCFAF5] sm:bg-black/65 sm:backdrop-blur-md overflow-y-auto select-none"
+      data-lenis-prevent
+      className="fixed inset-0 z-[75] flex flex-col items-center justify-center p-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:pb-5 sm:p-5 lg:p-6 bg-[#FCFAF5] sm:bg-black/65 sm:backdrop-blur-md overflow-y-auto select-none overscroll-contain"
       onClick={(e) => {
         if (e.target === overlayRef.current) handleClose();
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchMove={(e) => {
+        if (e.target === overlayRef.current) {
+          e.preventDefault();
+        }
+      }}
     >
       <div
         ref={containerRef}
