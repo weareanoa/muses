@@ -14,7 +14,7 @@ const d = getDict(locale);
   description={d.meta.storeDesc}
   currentPath="/store"
 >
-  <main class="min-h-screen bg-[#FCFAF5] pt-28 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-10 max-w-[1400px] mx-auto font-['Poppins',sans-serif]">
+  <main class="min-h-screen bg-[#FCFAF5] pt-20 sm:pt-32 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:pb-24 px-3 sm:px-6 lg:px-10 max-w-[1400px] mx-auto font-['Poppins',sans-serif]">
     <StoreCatalog client:load locale={locale} />
   </main>
 

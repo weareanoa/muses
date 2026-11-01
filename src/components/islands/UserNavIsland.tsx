@@ -94,7 +94,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
       <button
         type="button"
         onClick={() => openCart()}
-        className="relative p-1 text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center group focus:outline-none"
+        className="relative p-2 -m-1 text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center group focus:outline-none"
         aria-label={d.nav.cartAria}
       >
         <ShoppingCart
@@ -117,14 +117,14 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
       {!mounted || !user ? (
         <a
           href={withBase('/auth')}
-          className="flex items-center gap-1.5 py-1 px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
+          className="flex items-center gap-1.5 p-2 -m-1 sm:m-0 sm:py-1 sm:px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
           aria-label={d.nav.signInAria}
         >
           <UserIcon
             className="w-4.5 h-4.5 text-[#1F1A12] group-hover:text-[#C9971C] transition-colors"
             strokeWidth={1.8}
           />
-          <span className="text-xs sm:text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors lowercase tracking-normal">
+          <span className="hidden sm:inline text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors lowercase tracking-normal">
             {d.nav.signIn}
           </span>
         </a>
@@ -133,7 +133,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-1.5 py-1 px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
+            className="flex items-center gap-1.5 p-2 -m-1 sm:m-0 sm:py-1 sm:px-1 rounded-md text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer group focus:outline-none"
             aria-label={`${d.nav.accountMenuAria} ${displayName}`}
             aria-haspopup="menu"
             aria-expanded={dropdownOpen}
@@ -142,7 +142,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
               className="w-4.5 h-4.5 text-[#1F1A12] group-hover:text-[#C9971C] transition-colors"
               strokeWidth={1.8}
             />
-            <span className="text-xs sm:text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors max-w-[110px] sm:max-w-[140px] truncate lowercase tracking-normal">
+            <span className="hidden sm:inline text-sm font-medium text-[#1F1A12] group-hover:text-[#C9971C] transition-colors max-w-[110px] sm:max-w-[140px] truncate lowercase tracking-normal">
               {displayName}
             </span>
           </button>
@@ -150,7 +150,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
           {dropdownOpen && (
             <div
               role="menu"
-              className="menu-in absolute right-0 mt-2 w-72 rounded-2xl bg-white/95 backdrop-blur-2xl border border-[#C9971C]/30 shadow-[0_6px_16px_rgba(90,70,30,0.08),0_20px_48px_rgba(90,70,30,0.18)] p-3 text-left z-50"
+              className="menu-in absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)]rounded-2xl bg-white/95 backdrop-blur-2xl border border-[#C9971C]/30 shadow-[0_6px_16px_rgba(90,70,30,0.08),0_20px_48px_rgba(90,70,30,0.18)] p-3 text-left z-50"
             >
               <div className="px-1.5 pt-1 pb-3 border-b border-[#1F1A12]/10">
                 <div className="flex items-center gap-3">

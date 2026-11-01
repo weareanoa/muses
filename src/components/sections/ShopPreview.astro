@@ -11,41 +11,35 @@ interface Props {
 const { locale = 'id' } = Astro.props;
 const d = getDict(locale).home;
 
-// Home preview shows cheki, not merch: the light stick / hoodie / vinyl in
-// the old preview are still coming soon. Cheki catalog order is Faril,
-// Mine, Ndah, Vira, Vely, Liz, Lia - take the first 3 for the 3-card grid.
-// The cards themselves are NOT rebuilt here: ChekiPreview renders the
-// exact StoreCard component used by /store, so home and store can never
-// drift apart again (same photo, toggle, price, stock, and Tambah button).
 const chekiItems = productService
   .getInitialCatalogItems()
   .filter((item) => item.category === 'CHEKI')
   .slice(0, 3);
 ---
 
-<section id="store" data-section="store" class="relative bg-[#FCFAF5] py-20 sm:py-24 px-4 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
+<section id="store" data-section="store" class="relative bg-[#FCFAF5] py-8 sm:py-24 px-3 sm:px-8 border-t border-[#C9971C]/20 overflow-hidden">
   <div class="max-w-6xl mx-auto relative z-10">
-    <div class="reveal mb-4 sm:mb-6 pl-2 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-      <h2 class="font-balbes text-6xl sm:text-7xl md:text-8xl text-[#1F1A12] leading-none tracking-normal select-none">
+    <div class="reveal mb-3 sm:mb-6 px-1 flex items-center justify-between gap-4">
+      <h2 class="font-serif italic text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[#1F1A12] leading-none tracking-tight select-none">
         Store
       </h2>
       <a
         href={withBase("/store")}
-        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-[#C9971C]/60 bg-white hover:bg-[#FAF3E2] text-xs font-semibold text-[#1F1A12] transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+        class="inline-flex items-center gap-1.5 px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-full border border-[#C9971C]/60 bg-white hover:bg-[#FAF3E2] text-[11px] sm:text-xs font-semibold text-[#1F1A12] transition-all shadow-xs cursor-pointer shrink-0"
       >
         <span>{d.viewAll}</span>
         <span>→</span>
       </a>
     </div>
 
-    <div class="mb-6 sm:mb-8 space-y-1 pl-2 font-['Poppins',sans-serif]">
-      <span class="block text-xs font-semibold tracking-[0.2em] uppercase text-[#9E7B26]">
+    <div class="mb-4 sm:mb-8 space-y-0.5 sm:space-y-1 px-1 font-['Poppins',sans-serif]">
+      <span class="block text-[9.5px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-[#9E7B26]">
         {d.shopEyebrow}
       </span>
-      <h3 class="text-2xl sm:text-3xl font-bold text-[#1F1A12] tracking-tight">
+      <h3 class="text-base min-[380px]:text-lg sm:text-3xl font-bold text-[#1F1A12] tracking-tight">
         {d.shopHeading}
       </h3>
-      <p class="text-xs sm:text-sm text-[#5A4E38] leading-relaxed">
+      <p class="text-[11px] sm:text-sm text-[#5A4E38] leading-relaxed max-w-xl">
         {d.shopBody}
       </p>
     </div>
