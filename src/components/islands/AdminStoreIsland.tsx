@@ -324,7 +324,7 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
       <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center">
         <h2 className="text-lg font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
         <p className="mt-2 text-sm text-[#6E6453]">
-          {fmt(d.storeForbiddenBody, { account: adminEmail ? `Akun ${adminEmail}` : 'Akun ini' })}
+          {fmt(d.storeForbiddenBody, { account: adminEmail ? (locale === 'id' ? `Akun ${adminEmail}` : `Account ${adminEmail}`) : (locale === 'id' ? 'Akun ini' : 'This account') })}
         </p>
         <a
           href={withBase('/store')}
@@ -341,7 +341,13 @@ export default function AdminStoreIsland({ locale = 'id' }: { locale?: Locale })
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+            <a
+        href={withBase('/admin')}
+        className="inline-block text-sm font-bold text-[#8C6A1C] hover:underline"
+      >
+        {d.backAdmin}
+      </a>
+<div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#8C6A1C]">{d.storeEyebrow}</p>
           <h1 className="mt-1 text-2xl font-bold text-[#1F1A12]">{d.storeHeading}</h1>

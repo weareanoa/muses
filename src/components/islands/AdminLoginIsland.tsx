@@ -31,7 +31,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
       const gate = await authService.getSupabaseAdminProfile();
       if (!alive) return;
       if (gate.isLoggedIn && gate.isAdmin) {
-        window.location.href = withBase('/admin/schedules');
+        window.location.href = withBase('/admin');
         return;
       }
       if (gate.isLoggedIn && !gate.isAdmin) {
@@ -73,7 +73,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
     }
     const gate = await authService.getSupabaseAdminProfile();
     if (gate.isAdmin) {
-      window.location.href = withBase('/admin/schedules');
+      window.location.href = withBase('/admin');
       return;
     }
     setAccountEmail(gate.user?.email || cleanEmail);
@@ -105,7 +105,7 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
       <div className="rounded-[20px] border border-[#E9D9AE] bg-white p-8 text-center">
         <h2 className="text-lg font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
         <p className="mt-2 text-sm text-[#6E6453]">
-          {fmt(d.loginForbiddenBody, { account: accountEmail ? `Akun ${accountEmail}` : 'Akun ini' })}
+          {fmt(d.loginForbiddenBody, { account: accountEmail ? (locale === 'id' ? `Akun ${accountEmail}` : `Account ${accountEmail}`) : (locale === 'id' ? 'Akun ini' : 'This account') })}
         </p>
         <button
           onClick={handleSignOut}
