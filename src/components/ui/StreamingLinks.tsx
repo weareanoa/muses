@@ -4,7 +4,6 @@ import { getDict, type Locale } from '../../i18n/dictionary';
 export interface StreamingLinksProps {
   spotify?: string;
   youtube?: string;
-  appleMusic?: string;
   className?: string;
   locale?: Locale;
 }
@@ -12,7 +11,6 @@ export interface StreamingLinksProps {
 export default function StreamingLinks({
   spotify,
   youtube,
-  appleMusic,
   className = '',
   locale = 'id',
 }: StreamingLinksProps) {
@@ -53,20 +51,6 @@ export default function StreamingLinks({
           </a>
         )}
 
-        {appleMusic && (
-          <a
-            href={appleMusic}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#FFFDF9] hover:bg-white text-[#1F1A12] border border-[#DEB887]/80 text-[11px] sm:text-xs font-semibold shadow-xs transition-all duration-200 active:scale-95 shrink-0"
-            title={(d as any).appleTitle || 'Apple Music'}
-          >
-            <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#1F1A12] shrink-0" viewBox="0 0 24 24">
-              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-            </svg>
-            <span>Apple Music</span>
-          </a>
-        )}
       </div>
     </div>
   );

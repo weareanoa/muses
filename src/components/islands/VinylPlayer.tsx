@@ -215,7 +215,6 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
               <StreamingLinks
                 spotify={titleTrack.links.spotify}
                 youtube={titleTrack.links.youtube}
-                appleMusic={(titleTrack.links as any)?.appleMusic}
                 locale={locale}
               />
             </div>
