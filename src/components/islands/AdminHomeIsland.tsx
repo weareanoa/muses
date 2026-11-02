@@ -21,6 +21,7 @@ import {
   ChevronRight,
   AlertTriangle,
   Lock,
+  ClipboardList,
 } from 'lucide-react';
 
 type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';
@@ -42,6 +43,7 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
   const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
   const [products, setProducts] = useState<ProductSummary[]>([]);
   const [loadingData, setLoadingData] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(0);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -81,6 +83,20 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
             if (data) {
               setProducts(data);
             }
+          }
+        } catch {
+          // ignore
+        }
+
+        try {
+          const sb = getSupabaseClient();
+          if (sb) {
+            await sb.rpc('expire_stale_orders');
+            const { count } = await sb
+              .from('transactions')
+              .select('id', { count: 'exact', head: true })
+              .eq('status', 'awaiting_verification');
+            setPendingVerification(count ?? 0);
           }
         } catch {
           // ignore
@@ -251,6 +267,13 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
             <span>{locale === 'id' ? 'Jadwal Tur' : 'Schedules'}</span>
           </a>
           <a
+            href={withBase('/admin/orders')}
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#E9D9AE] bg-white px-3.5 py-2 text-xs font-bold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC] transition-all shadow-2xs"
+          >
+            <ClipboardList className="h-3.5 w-3.5" />
+            <span>{locale === 'id' ? 'Pesanan' : 'Orders'}</span>
+          </a>
+          <a
             href={withBase('/admin/store')}
             className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#C9971C] to-[#B38317] px-4 py-2 text-xs font-bold text-white shadow-xs hover:brightness-105 transition-all"
           >
@@ -316,26 +339,27 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          {/* Card 3: Database & Security Status */}
-          <div className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md">
+          <a
+            href={withBase('/admin/orders')}
+            className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-                {locale === 'id' ? 'Status Database' : 'Database Status'}
+                {locale === 'id' ? 'Perlu Verifikasi' : 'Needs Verification'}
               </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <ShieldCheck className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF6DE] text-[#8C6A1C] border border-[#E9D9AE]">
+                <ClipboardList className="h-5 w-5" />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-[#1F1A12]">
-                Cloud Live
+              <div className="text-3xl font-extrabold tracking-tight text-[#1F1A12]">
+                {loadingData ? '...' : pendingVerification}
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-emerald-700 font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Supabase RLS Enforced</span>
-              </div>
+              <p className="mt-1 text-xs text-[#6E6453]">
+                {locale === 'id' ? 'pembayaran menunggu dicek' : 'payments waiting to be checked'}
+              </p>
             </div>
-          </div>
+          </a>
 
           {/* Card 4: Access Level */}
           <div className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md">

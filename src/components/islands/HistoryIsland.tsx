@@ -8,9 +8,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { type OrderTransaction } from '../../data/orders';
+import type { TransactionDTO } from '../../types/database';
 import { transactionService } from '../../services/transactionService';
-import { currentUser } from '../../stores/authStore';
 import { formatCountdown, formatRupiah } from '../../lib/format';
 import StatusBadge from '../ui/StatusBadge';
 import { fmt, getDict, localizeDemoText, type Locale } from '../../i18n/dictionary';
@@ -28,10 +27,9 @@ type FilterTabId = typeof FILTER_TABS[number]['id'];
 export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).orders;
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
-  const [orders, setOrders] = useState<OrderTransaction[]>(() =>
-    transactionService.getInitialTransactions()
-  );
-  const [countdown, setCountdown] = useState<number>(178);
+  const [orders, setOrders] = useState<TransactionDTO[]>([]);
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [now, setNow] = useState<number>(() => Date.now());
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   // Label stepper pesanan lama masih menyebut kurir; tampilkan netral.
@@ -43,18 +41,18 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
   };
 
   useEffect(() => {
-    const userId = currentUser.get()?.id;
-    transactionService.getTransactions(userId).then((res) => {
+    transactionService.getTransactions().then((res) => {
       if (res.success && res.data) {
         setOrders(res.data);
+        setLoadState('ready');
+      } else {
+        setLoadState('failed');
       }
     });
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => (prev > 0 ? prev - 1 : 178));
-    }, 1000);
+    const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -79,8 +77,8 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
 
   const filteredOrders = orders.filter((order) => {
     if (activeFilter === 'all') return true;
-    if (activeFilter === 'unpaid') return order.status === 'unpaid';
-    if (activeFilter === 'processing') return order.status === 'processing';
+    if (activeFilter === 'unpaid') return order.status === 'unpaid' || order.status === 'awaiting_verification';
+    if (activeFilter === 'processing') return order.status === 'processing' || order.status === 'ready';
     if (activeFilter === 'completed') return order.status === 'completed';
     return true;
   });
@@ -116,7 +114,11 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
         </div>
 
         <div className="space-y-5">
-          {filteredOrders.length === 0 ? (
+          {loadState === 'failed' ? (
+            <div className="text-center py-16 bg-white/70 rounded-3xl border border-[#E8D9B5] p-8">
+              <p className="text-sm text-[#736856]">{d.loadFailed}</p>
+            </div>
+          ) : filteredOrders.length === 0 ? (
             <div className="text-center py-16 bg-white/70 rounded-3xl border border-[#E8D9B5] p-8">
               <Package className="w-12 h-12 text-[#C9971C]/60 mx-auto mb-3" />
               <h3 className="text-base font-bold text-[#1F1A12]">
@@ -136,6 +138,12 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
           ) : (
             filteredOrders.map((order, orderIdx) => {
               const isUnpaid = order.status === 'unpaid';
+              const isAwaiting = order.status === 'awaiting_verification';
+              const isClosed = ['expired', 'rejected', 'cancelled'].includes(order.status);
+              const secondsLeft = order.paymentDeadline
+                ? Math.max(0, Math.floor((new Date(order.paymentDeadline).getTime() - now) / 1000))
+                : 0;
+              const displayTotal = isUnpaid || isAwaiting ? order.payableAmount ?? order.totalPrice : order.totalPrice;
               const isPickup = order.actionType === 'pickup';
               const isShipping = order.actionType === 'shipping';
               const isCompleted = order.status === 'completed';
@@ -207,7 +215,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                       {localizeDemoText(locale, order.deliveryInfo)}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                      {formatRupiah(order.totalPrice ?? 0)}
+                      {formatRupiah(displayTotal ?? 0)}
                     </span>
                   </div>
 
@@ -217,7 +225,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                         <p className="text-xs sm:text-sm text-[#1F1A12]">
                           {d.payWithin}{' '}
                           <span className="font-bold text-[#7A5B15]">
-                            {formatCountdown(countdown)}
+                            {formatCountdown(secondsLeft)}
                           </span>
                         </p>
                         <p className="text-[11px] sm:text-xs text-[#736856]">
@@ -225,11 +233,38 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                         </p>
                       </div>
                       <a
-                        href={withBase(`/payment?orderId=${order.id}&amount=${order.totalPrice ?? 0}`)}
+                        href={withBase(`/payment?orderId=${encodeURIComponent(order.id)}`)}
                         className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A328] via-[#B8871B] to-[#996B10] text-[#FCFAF5] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                       >
                         {d.payWithQR}
                       </a>
+                    </div>
+                  )}
+
+                  {isAwaiting && (
+                    <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">{d.awaitingTitle}</p>
+                        <p className="text-[11px] sm:text-xs text-[#736856]">{d.awaitingBody}</p>
+                      </div>
+                      <a
+                        href={daniaWaLink(fmt(d.waProofTemplate, { id: order.id, amount: formatRupiah(displayTotal ?? 0) }))}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#25D366] hover:brightness-105 text-white text-xs font-bold shadow-sm transition-all text-center shrink-0"
+                      >
+                        {d.sendProof}
+                      </a>
+                    </div>
+                  )}
+
+                  {isClosed && (
+                    <div className="rounded-2xl p-4 mt-4 bg-rose-50 border border-rose-200 text-xs text-rose-800">
+                      {order.status === 'expired'
+                        ? d.expiredNote
+                        : order.status === 'rejected'
+                          ? fmt(d.rejectedNote, { reason: order.rejectReason || '-' })
+                          : d.cancelledNote}
                     </div>
                   )}
 

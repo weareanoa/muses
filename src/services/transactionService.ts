@@ -1,545 +1,208 @@
 import { getSupabaseClient } from '../lib/supabase';
-import { INITIAL_ORDERS } from '../data/orders';
-import { formatRupiah } from '../lib/format';
-import { productService } from './productService';
 import type {
   TransactionDTO,
   TransactionItemDTO,
+  TransactionStatus,
   CreateTransactionPayload,
-  PaymentOrderSummary,
+  PaymentSettings,
   ServiceResult,
 } from '../types/database';
 
-const DEFAULT_PAYMENT_SUMMARY: PaymentOrderSummary = {
-  orderId: 'INV-20261021-0042',
-  items: [
-    {
-      id: 'item-faril',
-      name: 'Faril',
-      subtitle: 'Muse of Melpomene',
-      quantity: 1,
-      price: 80000,
-    },
-    {
-      id: 'item-mine',
-      name: 'Mine',
-      subtitle: 'Muse of Terpsichore',
-      quantity: 1,
-      price: 80000,
-    },
-  ],
-  subtotal: 160000,
-  shippingFee: 10000,
-  platformFee: 5000,
-  total: 175000,
-  deadline: '23:59:59',
-};
+const STATUSES: TransactionStatus[] = [
+  'unpaid',
+  'awaiting_verification',
+  'processing',
+  'ready',
+  'completed',
+  'cancelled',
+  'rejected',
+  'expired',
+];
 
-function generateOrderNumber(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
-  return `INV-${y}${m}${d}-${rand}`;
-}
+const KNOWN_RPC_ERRORS = [
+  'AUTH_REQUIRED',
+  'INVALID_ITEMS',
+  'INVALID_FULFILLMENT',
+  'INVALID_ADDRESS',
+  'INVALID_CONTACT',
+  'INVALID_EVENT',
+  'EVENT_PASSED',
+  'UNKNOWN_PRODUCT',
+  'STOCK_INSUFFICIENT',
+  'QTY_LIMIT',
+  'TOO_MANY_OPEN_ORDERS',
+  'ORDER_COOLDOWN',
+  'GATEWAY_NOT_READY',
+  'ORDER_NOT_FOUND',
+  'ORDER_EXPIRED',
+  'INVALID_STATE',
+  'FORBIDDEN',
+  'REFERENCE_REQUIRED',
+  'REASON_REQUIRED',
+  'INVALID_TRANSITION',
+  'PICKUP_CODE_MISMATCH',
+  'AMOUNT_CONFLICT',
+  'INVALID_SETTINGS',
+];
 
-function generatePickupCode(): string {
-  return `PKP-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+export function rpcErrorCode(message: string | undefined): string {
+  const found = KNOWN_RPC_ERRORS.find((code) => message?.includes(code));
+  return found || 'UNKNOWN';
 }
 
 export function normalizeTransaction(raw: any): TransactionDTO {
-  const numericTotal =
-    typeof raw.totalPrice === 'number'
-      ? raw.totalPrice
-      : typeof raw.total_price === 'number'
-      ? raw.total_price
-      : typeof raw.numericPrice === 'number'
-      ? raw.numericPrice
-      : typeof raw.total === 'number'
-      ? raw.total
-      : parseInt(String(raw.price || raw.totalPrice || raw.numericPrice || '0').replace(/\D/g, ''), 10) || 0;
+  const status: TransactionStatus = STATUSES.includes(raw.status) ? raw.status : 'unpaid';
 
-  const rawStatus = String(raw.status || 'unpaid').toLowerCase();
-  let status: TransactionDTO['status'] = 'unpaid';
-  if (rawStatus === 'paid' || rawStatus === 'processing') {
-    status = 'processing';
-  } else if (rawStatus === 'completed') {
-    status = 'completed';
-  } else if (rawStatus === 'cancelled') {
-    status = 'cancelled';
-  }
-
-  const rawActionType =
-    raw.actionType ||
-    raw.action_type ||
-    (status === 'unpaid'
-      ? 'unpaid'
-      : status === 'completed'
-      ? 'completed'
-      : raw.pickupCode || raw.pickup_code
-      ? 'pickup'
-      : 'shipping');
-
-  const rawItemsSource = raw.items || raw.transaction_items;
-  const rawItems: TransactionItemDTO[] = Array.isArray(rawItemsSource)
-    ? rawItemsSource.map((it: any, idx: number) => {
-        const itemPrice =
-          typeof it.price === 'number'
-            ? it.price
-            : parseInt(String(it.price || '0').replace(/\D/g, ''), 10) || 0;
-        return {
-          id: it.id || `item-${idx}`,
-          name: it.name || 'Official Merchandise',
-          variant: it.variant || it.role || it.subtitle || 'Official Merchandise',
-          image: it.image || '/images/members/faril.webp',
-          quantity: it.quantity || it.qty || 1,
-          price: itemPrice,
-        };
-      })
+  const rawItems: TransactionItemDTO[] = Array.isArray(raw.transaction_items)
+    ? raw.transaction_items.map((it: any, idx: number) => ({
+        id: it.id || `item-${idx}`,
+        name: it.name || 'Official Merchandise',
+        variant: it.variant || 'Official Merchandise',
+        image: it.image || '/images/members/faril.webp',
+        quantity: it.quantity || 1,
+        price: Number(it.price) || 0,
+      }))
     : [];
 
   return {
-    id: String(raw.id || raw.order_code || raw.orderCode || `MSE-${Date.now().toString().slice(-6)}`),
-    orderCode: raw.order_code || raw.orderCode || raw.id,
-    date:
-      raw.date ||
-      (raw.created_at
-        ? new Date(raw.created_at).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })
-        : new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })),
+    id: String(raw.id),
+    orderCode: raw.order_code || raw.id,
+    date: new Date(raw.created_at || Date.now()).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }),
     status,
-    statusLabel:
-      raw.statusLabel ||
-      raw.status_label ||
-      (status === 'unpaid' ? 'Menunggu pembayaran' : status === 'completed' ? 'Selesai' : 'Sedang diproses'),
-    eventTag: raw.eventTag || raw.event_tag || 'OFFICIAL STORE',
-    items:
-      rawItems.length > 0
-        ? rawItems
-        : [
-            {
-              name: raw.title || 'Official Merchandise',
-              variant: 'Standard',
-              image: '/images/members/faril.webp',
-              quantity: 1,
-              price: numericTotal,
-            },
-          ],
-    deliveryInfo: raw.deliveryInfo || raw.delivery_info || raw.location || 'Pengiriman Kurir JNE Regular',
-    totalPrice: numericTotal,
-    actionType: rawActionType,
-    initialCountdownSeconds:
-      typeof raw.initialCountdownSeconds === 'number' ? raw.initialCountdownSeconds : 180,
-    pickupLocation: raw.pickupLocation || raw.pickup_location || raw.location,
-    pickupDate: raw.pickupDate || raw.pickup_date,
-    pickupCode: raw.pickupCode || raw.pickup_code,
-    shippingCourier: raw.shippingCourier || raw.shipping_courier || 'JNE Regular',
-    trackingNumber: raw.trackingNumber || raw.tracking_number || 'JNE8829104829',
-    estimatedArrival: raw.estimatedArrival || raw.estimated_arrival || '2 - 3 hari kerja',
-    stepper:
-      Array.isArray(raw.stepper) && raw.stepper.length > 0
-        ? raw.stepper
-        : raw.pickup_code || raw.pickupCode
-          ? [
-              { label: 'Dibayar', completed: status !== 'unpaid' },
-              { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
-              { label: 'Diambil di Event', completed: status === 'completed' },
-              { label: 'Selesai', completed: status === 'completed' },
-            ]
-          : [
-              { label: 'Dibayar', completed: status !== 'unpaid' },
-              { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
-              { label: 'Dalam Pengiriman (JNE)', completed: status === 'processing' || status === 'completed' },
-              { label: 'Selesai', completed: status === 'completed' },
-            ],
-    isStepperExpanded: Boolean(raw.isStepperExpanded),
+    statusLabel: raw.status_label || status,
+    eventTag: raw.event_tag || 'OFFICIAL STORE',
+    items: rawItems,
+    deliveryInfo: raw.delivery_info || '',
+    subtotal: Number(raw.subtotal) || 0,
+    shippingFee: Number(raw.shipping_fee) || 0,
+    platformFee: Number(raw.platform_fee) || 0,
+    totalPrice: Number(raw.total_price) || 0,
+    payableAmount: Number(raw.payable_amount ?? raw.total_price) || 0,
+    uniqueCode: Number(raw.unique_code) || 0,
+    paymentDeadline: raw.payment_deadline || undefined,
+    rejectReason: raw.reject_reason || undefined,
+    actionType: raw.action_type || 'none',
+    fulfillmentMethod: raw.fulfillment_method === 'pickup' ? 'pickup' : 'delivery',
+    pickupLocation: raw.pickup_location || undefined,
+    pickupDate: raw.pickup_date || undefined,
+    pickupCode: raw.pickup_code || undefined,
+    pickupContactName: raw.pickup_contact_name || undefined,
+    pickupContactPhone: raw.pickup_contact_phone || undefined,
+    trackingNumber: raw.tracking_number || undefined,
+    stepper: Array.isArray(raw.stepper) ? raw.stepper : [],
+    isStepperExpanded: status === 'unpaid' || status === 'awaiting_verification',
   };
 }
 
 export const transactionService = {
-  getInitialTransactions(): TransactionDTO[] {
-    return INITIAL_ORDERS;
-  },
-
-  getDefaultPaymentOrder(): PaymentOrderSummary {
-    return DEFAULT_PAYMENT_SUMMARY;
-  },
-
-  getActivePaymentOrder(): PaymentOrderSummary {
-    if (typeof window === 'undefined') return DEFAULT_PAYMENT_SUMMARY;
-    try {
-      const stored =
-        sessionStorage.getItem('muse_active_payment') ||
-        localStorage.getItem('muse_active_payment');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed) {
-          return {
-            orderId: parsed.orderId || DEFAULT_PAYMENT_SUMMARY.orderId,
-            items:
-              parsed.items && parsed.items.length > 0
-                ? parsed.items.map((i: any, idx: number) => ({
-                    id: i.id || `item-${idx}`,
-                    name: i.name || 'Member Cheki',
-                    subtitle: i.subtitle || 'Official Merch',
-                    quantity: i.quantity || 1,
-                    price: i.price || 80000,
-                  }))
-                : DEFAULT_PAYMENT_SUMMARY.items,
-            subtotal: parsed.subtotalRupiah ?? parsed.subtotal ?? DEFAULT_PAYMENT_SUMMARY.subtotal,
-            shippingFee: parsed.shippingFee ?? DEFAULT_PAYMENT_SUMMARY.shippingFee,
-            platformFee: parsed.platformFee ?? DEFAULT_PAYMENT_SUMMARY.platformFee,
-            total: parsed.totalRupiah ?? parsed.total ?? DEFAULT_PAYMENT_SUMMARY.total,
-            deadline: parsed.deadline || '23:59:59',
-            date: parsed.date,
-            notes: parsed.notes,
-            address: parsed.address || undefined,
-            paymentMethod: parsed.paymentMethod,
-            fulfillment: parsed.fulfillment || undefined,
-          };
-        }
-      }
-    } catch (e) {
-      console.error('Failed to read active payment order', e);
-    }
-    return DEFAULT_PAYMENT_SUMMARY;
-  },
-
-  async getTransactions(userId?: string): Promise<ServiceResult<TransactionDTO[]>> {
+  async getTransactions(): Promise<ServiceResult<TransactionDTO[]>> {
     const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        let query = sb
-          .from('transactions')
-          .select('*, transaction_items(*)')
-          .order('created_at', { ascending: false });
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
-        if (userId && !userId.startsWith('user_') && !userId.startsWith('muses_')) {
-          query = query.eq('user_id', userId);
-        }
+    await sb.rpc('expire_stale_orders');
+    const { data, error } = await sb
+      .from('transactions')
+      .select('*, transaction_items(*)')
+      .order('created_at', { ascending: false });
 
-        const { data, error } = await query;
-        if (!error && data && data.length > 0) {
-          return { success: true, data: data.map(normalizeTransaction) };
-        }
-      } catch (err) {
-        console.error('Failed to fetch transactions from Supabase, using local fallback:', err);
-      }
-    }
+    if (error) return { success: false, error: 'UNKNOWN' };
+    return { success: true, data: (data || []).map(normalizeTransaction) };
+  },
 
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('muses_user_orders');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            const normalized = parsed
-              .map((item) => {
-                try {
-                  return normalizeTransaction(item);
-                } catch {
-                  return null;
-                }
-              })
-              .filter(Boolean) as TransactionDTO[];
-            return { success: true, data: [...normalized, ...INITIAL_ORDERS] };
-          }
-        }
-      } catch {}
-    }
+  async getTransaction(orderId: string): Promise<ServiceResult<TransactionDTO>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
-    return { success: true, data: INITIAL_ORDERS };
+    await sb.rpc('expire_stale_orders');
+    const { data, error } = await sb
+      .from('transactions')
+      .select('*, transaction_items(*)')
+      .eq('id', orderId)
+      .maybeSingle();
+
+    if (error || !data) return { success: false, error: 'ORDER_NOT_FOUND' };
+    return { success: true, data: normalizeTransaction(data) };
+  },
+
+  async getLatestOpenTransaction(): Promise<ServiceResult<TransactionDTO>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    await sb.rpc('expire_stale_orders');
+    const { data, error } = await sb
+      .from('transactions')
+      .select('*, transaction_items(*)')
+      .in('status', ['unpaid', 'awaiting_verification'])
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) return { success: false, error: 'ORDER_NOT_FOUND' };
+    return { success: true, data: normalizeTransaction(data) };
+  },
+
+  async getPaymentSettings(): Promise<PaymentSettings> {
+    const fallback: PaymentSettings = { qrisImageUrl: '', gatewayEnabled: false };
+    const sb = getSupabaseClient();
+    if (!sb) return fallback;
+
+    const { data } = await sb
+      .from('app_settings')
+      .select('key, value')
+      .in('key', ['qris_image_url', 'payment_gateway_enabled']);
+
+    const byKey = new Map((data || []).map((row: any) => [row.key, row.value]));
+    return {
+      qrisImageUrl: String(byKey.get('qris_image_url') ?? ''),
+      gatewayEnabled: byKey.get('payment_gateway_enabled') === true,
+    };
   },
 
   async createTransaction(
     payload: CreateTransactionPayload
-  ): Promise<ServiceResult<{ orderId: string; transaction: TransactionDTO }>> {
-    const method = payload.fulfillment?.method === 'pickup' ? 'pickup' : 'delivery';
-
-    // Hitung ulang dari katalog (satu-satunya sumber harga & stok yang sah).
-    // Angka dari client hanya dipakai kalau produknya tidak ada di katalog
-    // (item demo / fallback), jadi mengubah total di browser tidak berpengaruh.
-    let catalog: { id: string; name: string; price: number; stock: number }[] = [];
-    try {
-      const res = await productService.getCatalogItems();
-      if (res.success && res.data) catalog = res.data;
-    } catch {}
-    if (catalog.length === 0) catalog = productService.getInitialCatalogItems();
-
-    const findCatalog = (item: { id: string; name: string }) => {
-      const byId = catalog.find((c) => c.id === item.id);
-      if (byId) return byId;
-      const bareName = item.name.replace(/^(Cheki|Videocall)\s+/i, '').trim().toLowerCase();
-      return catalog.find((c) => c.name.toLowerCase() === bareName);
-    };
-
-    const pricedItems: (typeof payload.items[number] & { stock: number })[] = [];
-    for (const i of payload.items) {
-      const match = findCatalog(i);
-      if (!match) {
-        return { success: false, error: 'UNKNOWN_PRODUCT' };
-      }
-      pricedItems.push({ ...i, price: match.price, stock: match.stock });
-    }
-    if (pricedItems.some((i) => i.quantity > i.stock)) {
-      return { success: false, error: 'STOCK_INSUFFICIENT' };
-    }
-
-    const subtotal = pricedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    // Ongkir tidak lagi dibebankan di checkout; diatur lewat WhatsApp dengan Dania.
-    const shippingFee = 0;
-    const platformFee = 0;
-    const total = subtotal + shippingFee + platformFee;
-
-    const orderNumber = generateOrderNumber();
-    const transactionId = `MSE-${orderNumber}`;
-    const pickupCode = method === 'pickup' ? generatePickupCode() : undefined;
-    const pickupEventTitle = payload.fulfillment?.pickupEventTitle || '';
-    const pickupLocation = payload.fulfillment?.pickupLocation || '';
-    const pickupDate = payload.fulfillment?.pickupDate || '';
-    const deliveryCity = payload.address?.city || 'Bandung';
-    const deliveryInfo =
-      method === 'pickup'
-        ? `${pickupEventTitle} • ${pickupLocation}`.replace(/^ • | • $/g, '').trim()
-        : deliveryCity;
-    const eventTag =
-      method === 'pickup' && pickupEventTitle ? pickupEventTitle : 'OFFICIAL STORE • MERCH';
-
-    const stepper =
-      method === 'pickup'
-        ? [
-            { label: 'Menunggu Pembayaran', completed: false },
-            { label: 'Dibayar', completed: false },
-            { label: 'Disiapkan Management', completed: false },
-            { label: 'Diambil di Event', completed: false },
-            { label: 'Selesai', completed: false },
-          ]
-        : [
-            { label: 'Menunggu Pembayaran', completed: false },
-            { label: 'Dibayar', completed: false },
-            { label: 'Disiapkan Management', completed: false },
-            { label: 'Dikirim', completed: false },
-            { label: 'Selesai', completed: false },
-          ];
-
-    const orderPaymentSummary = {
-      orderId: orderNumber,
-      date: new Date().toLocaleString('id-ID'),
-      items: pricedItems.map((i) => ({
-        id: i.id,
-        name: i.name,
-        subtitle: i.subtitle,
-        quantity: i.quantity,
-        price: i.price,
-        image: i.image,
-      })),
-      subtotalRupiah: subtotal,
-      shippingFee,
-      platformFee,
-      totalRupiah: total,
-      notes: payload.notes || '',
-      address: method === 'delivery' ? payload.address : undefined,
-      paymentMethod: payload.paymentMethod || 'qris',
-      fulfillment: {
-        method,
-        pickupEventId: payload.fulfillment?.pickupEventId,
-        pickupEventTitle: pickupEventTitle || undefined,
-        pickupDate: pickupDate || undefined,
-        pickupLocation: pickupLocation || undefined,
-        pickupContactName: payload.fulfillment?.pickupContactName,
-        pickupContactPhone: payload.fulfillment?.pickupContactPhone,
-        pickupCode,
-      },
-    };
-
-    const newOrderEntry: TransactionDTO = {
-      id: transactionId,
-      orderCode: transactionId,
-      date: new Date().toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }),
-      status: 'unpaid',
-      statusLabel: 'Menunggu pembayaran',
-      eventTag,
-      deliveryInfo,
-      subtotal,
-      shippingFee,
-      platformFee,
-      totalPrice: total,
-      actionType: 'unpaid',
-      initialCountdownSeconds: 180,
-      pickupLocation: method === 'pickup' ? pickupLocation : 'Ambil cheki di venue event',
-      pickupDate: method === 'pickup' ? pickupDate : undefined,
-      pickupCode,
-      pickupContactName: payload.fulfillment?.pickupContactName,
-      pickupContactPhone: payload.fulfillment?.pickupContactPhone,
-      items: pricedItems.map((i) => ({
-        id: i.id,
-        name: i.name,
-        variant: i.subtitle || 'Official Merchandise',
-        quantity: i.quantity,
-        price: i.price,
-        image: i.image || '/images/members/faril.webp',
-      })),
-      stepper,
-      isStepperExpanded: true,
-    };
-
-    if (typeof window !== 'undefined') {
-      try {
-        sessionStorage.setItem('muse_active_payment', JSON.stringify(orderPaymentSummary));
-        localStorage.setItem('muse_active_payment', JSON.stringify(orderPaymentSummary));
-
-        const existingOrdersRaw = localStorage.getItem('muses_user_orders');
-        const existingOrders = existingOrdersRaw ? JSON.parse(existingOrdersRaw) : [];
-
-        existingOrders.unshift({
-          ...newOrderEntry,
-          title: pricedItems.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
-          pickupTime: '23:59:59',
-          price: formatRupiah(total),
-          numericPrice: total,
-          badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-          location: deliveryInfo,
-        });
-
-        localStorage.setItem('muses_user_orders', JSON.stringify(existingOrders));
-      } catch (err) {
-        console.error('Failed to save local order:', err);
-      }
-    }
-
+  ): Promise<ServiceResult<TransactionDTO>> {
     const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        const isUuidUser =
-          payload.userId &&
-          !payload.userId.startsWith('user_') &&
-          !payload.userId.startsWith('muses_') &&
-          !payload.userId.startsWith('guest_');
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
-        await sb.from('transactions').upsert({
-          id: transactionId,
-          order_code: transactionId,
-          user_id: isUuidUser ? payload.userId : null,
-          status: 'unpaid',
-          status_label: 'Menunggu pembayaran',
-          event_tag: eventTag,
-          delivery_info: deliveryInfo,
-          subtotal,
-          shipping_fee: shippingFee,
-          platform_fee: platformFee,
-          total_price: total,
-          payment_method: payload.paymentMethod || 'qris',
-          notes: payload.notes || '',
-          action_type: 'unpaid',
-          pickup_location: method === 'pickup' ? pickupLocation : null,
-          pickup_date: method === 'pickup' ? pickupDate : null,
-          pickup_code: pickupCode || null,
-          shipping_address: method === 'delivery' ? payload.address || null : null,
-          stepper,
-        });
+    const { data: sessionData } = await sb.auth.getSession();
+    if (!sessionData.session) return { success: false, error: 'AUTH_REQUIRED' };
 
-        const itemRows = pricedItems.map((i) => ({
-          transaction_id: transactionId,
-          product_id: i.id,
-          name: i.name,
-          variant: i.subtitle || 'Official Merchandise',
-          image: i.image || '/images/members/faril.webp',
-          quantity: i.quantity,
-          price: i.price,
-        }));
-
-        await sb.from('transaction_items').insert(itemRows);
-      } catch (err) {
-        console.error('Failed to sync transaction to Supabase:', err);
-      }
-    }
-
-    return {
-      success: true,
-      data: {
-        orderId: orderNumber,
-        transaction: newOrderEntry,
+    const { fulfillment, address } = payload;
+    const { data, error } = await sb.rpc('create_order', {
+      p_items: payload.items,
+      p_fulfillment: {
+        method: fulfillment.method,
+        pickupEventId: fulfillment.pickupEventId,
+        pickupContactName: fulfillment.pickupContactName,
+        pickupContactPhone: fulfillment.pickupContactPhone,
       },
-    };
+      p_address: address || null,
+      p_notes: payload.notes || null,
+    });
+
+    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    return { success: true, data: normalizeTransaction(data) };
   },
 
-  async verifyPayment(
-    orderId: string,
-    opts?: { isPickup?: boolean }
-  ): Promise<ServiceResult<boolean>> {
-    const paidStepper = [
-      { label: 'Dibayar', completed: true },
-      { label: 'Disiapkan Management', completed: true },
-      { label: 'Dikirim', completed: false },
-      { label: 'Selesai', completed: false },
-    ];
-    const paidPickupStepper = [
-      { label: 'Dibayar', completed: true },
-      { label: 'Disiapkan Management', completed: true },
-      { label: 'Diambil di Event', completed: false },
-      { label: 'Selesai', completed: false },
-    ];
-
-    if (typeof window !== 'undefined') {
-      try {
-        const storedOrders = localStorage.getItem('muses_user_orders');
-        if (storedOrders) {
-          const parsed = JSON.parse(storedOrders);
-          const updated = parsed.map((o: any) => {
-            if (
-              o.id === `MSE-${orderId}` ||
-              o.id === orderId ||
-              String(o.id).includes(orderId) ||
-              o.orderCode?.includes(orderId)
-            ) {
-              const isPickupOrder = Boolean(o.pickupCode) || opts?.isPickup;
-              return {
-                ...o,
-                status: 'processing',
-                statusLabel: 'Sedang diproses',
-                actionType: isPickupOrder ? 'pickup' : 'shipping',
-                badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-                stepper: isPickupOrder ? paidPickupStepper : paidStepper,
-              };
-            }
-            return o;
-          });
-          localStorage.setItem('muses_user_orders', JSON.stringify(updated));
-        }
-      } catch (e) {
-        console.error('Failed to update local order payment status:', e);
-      }
-    }
-
+  async claimPayment(orderId: string): Promise<ServiceResult<TransactionDTO>> {
     const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        const targetId = orderId.startsWith('MSE-') ? orderId : `MSE-${orderId}`;
-        await sb
-          .from('transactions')
-          .update({
-            status: 'processing',
-            status_label: 'Sedang diproses',
-            action_type: opts?.isPickup ? 'pickup' : 'shipping',
-            stepper: opts?.isPickup ? paidPickupStepper : paidStepper,
-            paid_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .or(`id.eq.${targetId},order_code.eq.${orderId}`);
-      } catch (err) {
-        console.error('Failed to update payment status on Supabase:', err);
-      }
-    }
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
-    return { success: true, data: true };
+    const { data, error } = await sb.rpc('claim_payment', { p_order_id: orderId });
+    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    return { success: true, data: normalizeTransaction(data) };
+  },
+
+  async cancelOrder(orderId: string): Promise<ServiceResult<TransactionDTO>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { data, error } = await sb.rpc('cancel_order', { p_order_id: orderId });
+    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    return { success: true, data: normalizeTransaction(data) };
   },
 };
-

@@ -1,7 +1,7 @@
 import React from 'react';
 import { withBase } from '../../lib/paths';
 import type { Locale } from '../../i18n/dictionary';
-import { CalendarDays, ShoppingBag, LogOut, LayoutDashboard, ExternalLink } from 'lucide-react';
+import { CalendarDays, ShoppingBag, ClipboardList, Settings, LogOut, LayoutDashboard, ExternalLink } from 'lucide-react';
 
 interface AdminShellProps {
   currentTab?: string;
@@ -47,6 +47,28 @@ export default function AdminShell({
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
                 <span>Overview</span>
+              </a>
+              <a
+                href={withBase('/admin/orders')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  currentTab === 'orders'
+                    ? 'bg-[#C9971C] text-white shadow-2xs'
+                    : 'text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#FAF3E2]'
+                }`}
+              >
+                <ClipboardList className="w-3.5 h-3.5" />
+                <span>{locale === 'id' ? 'Pesanan' : 'Orders'}</span>
+              </a>
+              <a
+                href={withBase('/admin/settings')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  currentTab === 'settings'
+                    ? 'bg-[#C9971C] text-white shadow-2xs'
+                    : 'text-[#6E6453] hover:text-[#1F1A12] hover:bg-[#FAF3E2]'
+                }`}
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span>{locale === 'id' ? 'Pengaturan' : 'Settings'}</span>
               </a>
               <a
                 href={withBase('/admin/schedules')}
