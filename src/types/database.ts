@@ -179,7 +179,12 @@ export interface PaymentOrderSummary {
   platformFee: number;
   total: number;
   deadline: string;
+  date?: string;
+  notes?: string;
   address?: UserAddressDTO;
+  paymentMethod?: string;
+  subtotalRupiah?: number;
+  totalRupiah?: number;
   fulfillment?: FulfillmentPayload;
 }
 

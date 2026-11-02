@@ -11,7 +11,6 @@ import {
   MapPin,
   Package,
   Store as StoreIcon,
-  Crown,
   CalendarClock,
   ShoppingBag,
 } from 'lucide-react';
@@ -19,7 +18,7 @@ import { withBase } from '../../lib/paths';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getDict, type Locale } from '../../i18n/dictionary';
 
-function Avatar({ name, emoji, size = 'md' }: { name: string; emoji?: string; size?: 'sm' | 'md' }) {
+function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
   const initial = useMemo(() => name.trim().charAt(0).toUpperCase() || 'M', [name]);
   const box = size === 'sm' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
   return (
@@ -29,11 +28,6 @@ function Avatar({ name, emoji, size = 'md' }: { name: string; emoji?: string; si
       >
         {initial}
       </span>
-      {emoji && (
-        <span className="absolute -bottom-1 -right-1 bg-white rounded-full border border-[#EADBBD] px-[3px] py-[1px] text-[10px] leading-none">
-          {emoji}
-        </span>
-      )}
     </span>
   );
 }
@@ -80,8 +74,6 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
       (user.email ? user.email.split('@')[0] : 'member');
     return raw.toLowerCase();
   }, [user]);
-
-  const tier = (user?.membershipTier || 'Official MUSES CIRCLE').replace(/^Official\s+/i, '');
 
   const menuLinkClass =
     'flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#C9971C]/10 text-xs text-[#1F1A12] transition-colors';
@@ -154,29 +146,12 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
             >
               <div className="px-1.5 pt-1 pb-3 border-b border-[#1F1A12]/10">
                 <div className="flex items-center gap-3">
-                  <Avatar name={user.name} emoji={user.biasEmoji} />
+                  <Avatar name={user.name} />
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-[#1F1A12] truncate">{user.name}</div>
                     <div className="text-[11px] text-[#6E6453] font-mono truncate">{user.email}</div>
                   </div>
                 </div>
-                <div className="mt-2.5 flex items-center justify-between gap-2 px-0.5">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F8E29E]/70 text-[9px] font-bold tracking-[0.14em] uppercase text-[#8C6A1C]">
-                    <Crown className="w-2.5 h-2.5" strokeWidth={2.4} />
-                    {tier}
-                  </span>
-                  {user.membershipNumber && (
-                    <span className="text-[9px] font-mono text-[#8C7A58] tracking-wide">
-                      {user.membershipNumber}
-                    </span>
-                  )}
-                </div>
-                {user.bias && (
-                  <div className="mt-1.5 px-0.5 text-[10px] text-[#6E6453]">
-                    {d.nav.bias}: <span className="text-[#8C6A1C] font-semibold">{user.bias}</span>
-                    {user.biasEmoji ? ` ${user.biasEmoji}` : ''}
-                  </div>
-                )}
               </div>
 
               <div className="py-2 space-y-1">

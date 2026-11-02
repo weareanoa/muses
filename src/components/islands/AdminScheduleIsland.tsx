@@ -5,7 +5,6 @@ import { authService } from '../../services/authService';
 import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { DATE_LOCALE, fmt, getDict, translateServiceError, type Locale } from '../../i18n/dictionary';
-import AdminShell from '../admin/AdminShell';
 import { Plus } from 'lucide-react';
 
 type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';

@@ -195,7 +195,10 @@ export const transactionService = {
             platformFee: parsed.platformFee ?? DEFAULT_PAYMENT_SUMMARY.platformFee,
             total: parsed.totalRupiah ?? parsed.total ?? DEFAULT_PAYMENT_SUMMARY.total,
             deadline: parsed.deadline || '23:59:59',
+            date: parsed.date,
+            notes: parsed.notes,
             address: parsed.address || undefined,
+            paymentMethod: parsed.paymentMethod,
             fulfillment: parsed.fulfillment || undefined,
           };
         }

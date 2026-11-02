@@ -1,4 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/800.css";
 @import "tailwindcss";
 
 @font-face {
@@ -29,6 +34,7 @@
   --font-sans: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-balbes: 'Balbes', 'Playfair Display', Georgia, serif;
+  --font-poppins: 'Poppins', sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -36,6 +42,10 @@
   --radius-full: 9999px;
 
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
 }
 
 .font-balbes {

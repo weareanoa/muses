@@ -11,15 +11,20 @@ const d = getDict(locale).contact;
 ---
 
 <section id="kontak" data-section="kontak" class="relative bg-[#FCFAF5] overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-12 pt-8 sm:pt-14 pb-3 sm:pb-6">
+    <h2 class="font-balbes text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[#1F1A12] leading-none tracking-normal select-none">
+      Contact
+    </h2>
+  </div>
   <div class="relative w-full overflow-hidden" style="background: linear-gradient(90deg, #B8860B 0%, #F6DD8A 54%, #D4A017 83%, #523C05 100%);">
     <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col lg:flex-row items-center justify-between min-h-[300px] lg:min-h-[360px] relative">
       <div class="py-10 sm:py-14 max-w-xl z-10 font-['Poppins',sans-serif]">
         <span class="block text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-[#543C0A] mb-3">
           {d.eyebrow}
         </span>
-        <h2 class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#2A1D0B] leading-[1.18] mb-4 tracking-tight">
+        <h3 class="text-3xl sm:text-4xl lg:text-[44px] font-poppins font-bold text-[#2A1D0B] leading-[1.18] mb-4 tracking-tight">
           {d.headline}
-        </h2>
+        </h3>
         <p class="text-xs sm:text-[13px] text-[#423218] leading-relaxed max-w-lg font-normal">
           {d.body}
         </p>
@@ -41,7 +46,7 @@ const d = getDict(locale).contact;
         <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-3">
           {d.management}
         </span>
-        <h3 class="text-3xl sm:text-4xl font-bold text-[#1A140B] leading-tight tracking-tight">
+        <h3 class="text-3xl sm:text-4xl font-poppins font-bold text-[#1A140B] leading-tight tracking-tight">
           {d.cardHeadline}
         </h3>
         <p class="text-xs sm:text-sm text-[#5C4F39] leading-relaxed mt-3 max-w-lg">
@@ -58,47 +63,7 @@ const d = getDict(locale).contact;
         </p>
         
       </div>
-
-      <div class="lg:col-span-5">
-        <span class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-[#8E6D24] mb-3">
-          {d.follow}
-        </span>
-        <div class="divide-y divide-[#1F1A12]/10 border-t border-b border-[#1F1A12]/10">
-          <a
-            href="https://instagram.com/muses.official"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
-          >
-            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-              Instagram
-            </span>
-            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
-          </a>
-          <a
-            href="https://tiktok.com/@muses.official"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
-          >
-            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-              TikTok
-            </span>
-            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
-          </a>
-          <a
-            href="https://youtube.com/@muses.official"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center justify-between py-3.5 group cursor-pointer transition-opacity duration-160 active:opacity-70"
-          >
-            <span class="text-xs sm:text-[13px] font-bold text-[#1A140B] group-hover:text-[#8E6D24] transition-colors">
-              YouTube
-            </span>
-            <span class="text-xs text-[#52442D]">@muses.official ↗</span>
-          </a>
-        </div>
-      </div>
+      
     </div>
   </div>
 </section>

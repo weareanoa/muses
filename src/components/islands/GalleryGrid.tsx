@@ -3,6 +3,7 @@ import { withBase } from '../../lib/paths';
 import { X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import galleryItemsRaw from '../../data/gallery.json';
 import { fmt, getDict, localizeGalleryCategory, type Locale } from '../../i18n/dictionary';
+import { useScrollLock } from '../../hooks/useScrollLock';
 
 interface GalleryItem {
   id: string;
@@ -27,6 +28,10 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [visibleLimit, setVisibleLimit] = useState<number>(7);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  useScrollLock(lightboxIndex !== null);
+
+  const lightboxTouchRef = useRef<{ startX: number; startY: number }>({ startX: 0, startY: 0 });
 
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [slideStatus, setSlideStatus] = useState<'idle' | 'swiping-left' | 'swiping-right'>('idle');
@@ -584,12 +589,31 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
 
       {activeItem && lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md"
+          data-lenis-prevent
+          className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-md select-none touch-none overscroll-contain"
           onClick={closeLightbox}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           <div
             className="relative max-w-4xl max-h-[90vh] flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => {
+              lightboxTouchRef.current = {
+                startX: e.touches[0].clientX,
+                startY: e.touches[0].clientY,
+              };
+            }}
+            onTouchEnd={(e) => {
+              const deltaX = e.changedTouches[0].clientX - lightboxTouchRef.current.startX;
+              const deltaY = e.changedTouches[0].clientY - lightboxTouchRef.current.startY;
+              if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+                if (deltaX < 0) {
+                  setLightboxIndex((prev) => (prev !== null ? (prev + 1) % filteredItems.length : null));
+                } else {
+                  setLightboxIndex((prev) => (prev !== null ? (prev - 1 + filteredItems.length) % filteredItems.length : null));
+                }
+              }
+            }}
           >
             <button
               onClick={closeLightbox}
