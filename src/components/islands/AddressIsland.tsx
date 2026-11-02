@@ -21,10 +21,14 @@ import {
 import AddressModal, { type AddressFormData } from './AddressModal';
 import { formatRupiah, usdToIdr } from '../../lib/format';
 import { transactionService } from '../../services/transactionService';
-import { getDict, localizeAddressLabel, type Locale } from '../../i18n/dictionary';
+import { scheduleService } from '../../services/scheduleService';
+import type { ScheduleDTO } from '../../types/database';
+import { fmt, getDict, localizeAddressLabel, type Locale } from '../../i18n/dictionary';
+import { daniaWaLink } from '../../lib/contact';
 
 interface CheckoutItem {
   id: string;
+  productId: string;
   name: string;
   subtitle: string;
   price: number;
@@ -35,6 +39,7 @@ interface CheckoutItem {
 const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
   {
     id: 'faril-cheki',
+    productId: 'faril-cheki',
     name: 'Faril',
     subtitle: 'Muse of Melpomene',
     price: 80000,
@@ -43,6 +48,7 @@ const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
   },
   {
     id: 'mine-cheki',
+    productId: 'mine-cheki',
     name: 'Mine',
     subtitle: 'Muse of Terpsichore',
     price: 80000,
@@ -50,6 +56,23 @@ const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
     image: '/images/members/mine.webp',
   },
 ];
+
+function formatEventDate(s: ScheduleDTO): string {
+  const parts = [s.dayName, s.day, s.month, s.year].filter(Boolean);
+  if (parts.length >= 3) return parts.join(' ');
+  if (s.targetDate) {
+    const parsed = new Date(s.targetDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    }
+  }
+  return s.title || s.tourName || '';
+}
 
 export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).address;
@@ -60,6 +83,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     if (cart && cart.length > 0) {
       return cart.map((c, idx) => ({
         id: `cart-${c.id}-${idx}`,
+        productId: c.id,
         name: c.name,
         subtitle: [c.size, c.color].filter(Boolean).join(' • ') || 'Official Merchandise',
         price: c.currency === 'USD' || c.price < 1000 ? usdToIdr(c.price) : c.price,
@@ -71,8 +95,15 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   });
 
   const [notes, setNotes] = useState('');
-  const [shippingFee] = useState(5000);
-  const [platformFee] = useState(0);
+  const [fulfillment, setFulfillment] = useState<'delivery' | 'pickup'>('delivery');
+  const [pickupEvents, setPickupEvents] = useState<ScheduleDTO[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState('');
+  const [pickupName, setPickupName] = useState('');
+  const [pickupPhone, setPickupPhone] = useState('');
+  const [orderError, setOrderError] = useState('');
+  const [placing, setPlacing] = useState(false);
+  const platformFee = 0;
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isPickerModalOpen, setIsPickerModalOpen] = useState(false);
@@ -85,8 +116,46 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     addresses.find((a) => a.isDefault) ||
     addresses[0];
 
+  // Ongkir tidak lagi dibebankan di checkout (diatur lewat WhatsApp dengan Dania).
+  const shippingFee = 0;
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + shippingFee + platformFee;
+
+  useEffect(() => {
+    let cancelled = false;
+    scheduleService
+      .getSchedules()
+      .then((res) => {
+        if (cancelled) return;
+        const all = res.success && res.data ? res.data : scheduleService.getInitialSchedules();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const upcoming = all.filter((s) => {
+          const parsed = s.targetDate ? new Date(s.targetDate) : null;
+          if (!parsed || Number.isNaN(parsed.getTime())) return true;
+          return parsed >= today;
+        });
+        setPickupEvents(upcoming);
+        setEventsLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setPickupEvents(scheduleService.getInitialSchedules());
+        setEventsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!pickupName && (user?.name || selectedAddress?.recipientName)) {
+      setPickupName(user?.name || selectedAddress?.recipientName || '');
+    }
+    if (!pickupPhone && (user?.phone || selectedAddress?.phone)) {
+      setPickupPhone(user?.phone || selectedAddress?.phone || '');
+    }
+  }, [user, selectedAddress]);
 
   const updateQuantity = (id: string, delta: number) => {
     setItems((prev) =>
@@ -105,6 +174,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   const handleAddItem = () => {
     const nextItem: CheckoutItem = {
       id: `item-${Date.now()}`,
+      productId: 'vely-cheki',
       name: 'Stella',
       subtitle: 'Muse of Urania',
       price: 80000,
@@ -151,10 +221,27 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   };
 
   const handlePlaceOrder = async () => {
-    await transactionService.createTransaction({
+    setOrderError('');
+    if (fulfillment === 'delivery' && !selectedAddress) {
+      setOrderError(d.errNoAddress);
+      return;
+    }
+    const selectedEvent = pickupEvents.find((e) => e.id === selectedEventId);
+    if (fulfillment === 'pickup') {
+      if (!selectedEvent) {
+        setOrderError(d.errNoEvent);
+        return;
+      }
+      if (!pickupName.trim() || !pickupPhone.trim()) {
+        setOrderError(d.errNoContact);
+        return;
+      }
+    }
+    setPlacing(true);
+    const res = await transactionService.createTransaction({
       userId: user?.id,
       items: items.map((i) => ({
-        id: i.id,
+        id: i.productId,
         name: i.name,
         subtitle: i.subtitle,
         quantity: i.quantity,
@@ -166,10 +253,32 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
       platformFee,
       total,
       notes,
-      address: selectedAddress,
+      address: fulfillment === 'delivery' ? selectedAddress : undefined,
       paymentMethod: 'qris',
+      fulfillment:
+        fulfillment === 'pickup' && selectedEvent
+          ? {
+              method: 'pickup',
+              pickupEventId: selectedEvent.id,
+              pickupEventTitle: selectedEvent.tourName || selectedEvent.title,
+              pickupDate: formatEventDate(selectedEvent),
+              pickupLocation: [selectedEvent.venue, selectedEvent.city].filter(Boolean).join(', '),
+              pickupContactName: pickupName.trim(),
+              pickupContactPhone: pickupPhone.trim(),
+            }
+          : { method: 'delivery' },
     });
-
+    setPlacing(false);
+    if (!res.success) {
+      setOrderError(
+        res.error === 'STOCK_INSUFFICIENT'
+          ? d.errStock
+          : res.error === 'UNKNOWN_PRODUCT'
+            ? d.errUnknownProduct
+            : d.errOrderFailed
+      );
+      return;
+    }
     clearCart();
     window.location.href = withBase('/payment');
   };
@@ -178,6 +287,31 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-7 space-y-6">
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
+            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
+              {d.fulfillmentHeading}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFulfillment('delivery')}
+                className={`text-left rounded-2xl border p-4 transition-colors cursor-pointer ${fulfillment === 'delivery' ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
+              >
+                <span className="block text-sm font-bold text-[#1F1A12]">{d.deliveryOption}</span>
+                <span className="block text-xs text-[#6E6453] mt-1 leading-relaxed">{d.deliveryOptionDesc}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFulfillment('pickup')}
+                className={`text-left rounded-2xl border p-4 transition-colors cursor-pointer ${fulfillment === 'pickup' ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
+              >
+                <span className="block text-sm font-bold text-[#1F1A12]">{d.pickupOption}</span>
+                <span className="block text-xs text-[#6E6453] mt-1 leading-relaxed">{d.pickupOptionDesc}</span>
+              </button>
+            </div>
+          </div>
+
+          {fulfillment === 'delivery' && (
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
@@ -254,6 +388,59 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               </div>
             )}
           </div>
+          )}
+
+          {fulfillment === 'pickup' && (
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
+            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
+              {d.pickupEventHeading}
+            </h2>
+            {eventsLoading ? (
+              <p className="text-xs text-[#6E6453]">{d.loadingEvents}</p>
+            ) : pickupEvents.length === 0 ? (
+              <p className="text-xs text-[#6E6453] leading-relaxed">{d.pickupNoEvents}</p>
+            ) : (
+              <div className="space-y-3">
+                {pickupEvents.map((ev) => {
+                  const isSelected = ev.id === selectedEventId;
+                  return (
+                    <button
+                      key={ev.id}
+                      type="button"
+                      onClick={() => setSelectedEventId(ev.id)}
+                      className={`w-full text-left rounded-2xl border p-4 transition-colors cursor-pointer ${isSelected ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
+                    >
+                      <span className="block text-sm font-bold text-[#1F1A12]">{ev.tourName || ev.title}</span>
+                      <span className="block text-xs text-[#6E6453] mt-0.5">
+                        {formatEventDate(ev)}
+                        {ev.venue || ev.city ? ` • ${[ev.venue, ev.city].filter(Boolean).join(', ')}` : ''}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            <h3 className="text-sm font-bold text-[#1F1A12] mt-6 mb-3">
+              {d.pickupContactHeading}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input
+                value={pickupName}
+                onChange={(e) => setPickupName(e.target.value)}
+                placeholder={d.pickupNamePh}
+                className="w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
+              />
+              <input
+                value={pickupPhone}
+                onChange={(e) => setPickupPhone(e.target.value)}
+                placeholder={d.pickupPhonePh}
+                inputMode="tel"
+                className="w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
+              />
+            </div>
+            <p className="text-xs text-[#6E6453] mt-3 leading-relaxed">{d.pickupHint}</p>
+          </div>
+          )}
 
           <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
             <div className="flex items-center justify-between mb-4">
@@ -357,12 +544,6 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span>{d.shippingFee}</span>
-                <span className="font-semibold text-[#1F1A12]">
-                  {formatRupiah(shippingFee)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
                 <span>{d.serviceFee}</span>
                 <span className="font-semibold text-[#1F1A12]">-</span>
               </div>
@@ -377,6 +558,20 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               />
             </div>
 
+            {fulfillment === 'delivery' && (
+              <div className="rounded-2xl border border-[#BFE8C9] bg-[#EFFAF1] p-4 text-center space-y-2">
+                <p className="text-xs text-[#1E7A34]">{d.shippingHelp}</p>
+                <a
+                  href={daniaWaLink(fmt(d.waCheckoutTemplate, { items: items.map((i) => `${i.name} (${i.quantity}x)`).join(', ') }))}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block px-5 py-2.5 rounded-full bg-[#25D366] text-white font-bold text-xs shadow-sm hover:brightness-105 transition-all"
+                >
+                  {d.contactDania}
+                </a>
+              </div>
+            )}
+
             <div className="pt-2 flex justify-between items-baseline">
               <span className="text-base font-bold text-[#1F1A12]">
                 {d.totalPrice}
@@ -386,10 +581,17 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               </span>
             </div>
 
+            {orderError && (
+              <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                {orderError}
+              </p>
+            )}
+
             <button
               type="button"
               onClick={handlePlaceOrder}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer text-center"
+              disabled={placing}
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer text-center disabled:opacity-60"
             >
               {d.orderButton}
             </button>

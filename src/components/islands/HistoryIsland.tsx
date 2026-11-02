@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Package,
   ShoppingBag,
-  Truck,
   Copy,
   Check,
   ChevronDown,
@@ -15,6 +14,7 @@ import { currentUser } from '../../stores/authStore';
 import { formatCountdown, formatRupiah } from '../../lib/format';
 import StatusBadge from '../ui/StatusBadge';
 import { fmt, getDict, localizeDemoText, type Locale } from '../../i18n/dictionary';
+import { daniaWaLink } from '../../lib/contact';
 
 const FILTER_TABS = [
   { id: 'all', label: 'Semua' },
@@ -33,6 +33,14 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
   );
   const [countdown, setCountdown] = useState<number>(178);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  // Label stepper pesanan lama masih menyebut kurir; tampilkan netral.
+  const stepperLabel = (label: string): string => {
+    const localized = localizeDemoText(locale, label);
+    if (localized === 'Dalam Pengiriman (JNE)') return 'Dikirim';
+    if (localized === 'In transit (JNE)') return 'Shipped';
+    return localized;
+  };
 
   useEffect(() => {
     const userId = currentUser.get()?.id;
@@ -256,20 +264,20 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                     <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                          {fmt(d.shippingInTransit, { courier: order.shippingCourier || 'JNE Regular' })}
+                          {d.shippingHelpTitle}
                         </p>
                         <p className="text-[11px] sm:text-xs text-[#736856]">
-                          {d.trackingNo} <span className="font-mono font-semibold">{order.trackingNumber || 'JNE8829104829'}</span> • {fmt(d.eta, { eta: localizeDemoText(locale, order.estimatedArrival || '2 - 3 hari') })}
+                          {d.shippingHelpBody}
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleCopyCode(order.trackingNumber || 'JNE8829104829')}
-                        className="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#FCEBAE] hover:bg-[#F5DE91] text-[#7A5B15] text-xs font-bold border border-[#C9971C]/40 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                      <a
+                        href={daniaWaLink(fmt(d.waOrderTemplate, { orderId: order.orderCode || order.id, items: order.items.map((i) => `${i.name} (${i.quantity || 1}x)`).join(', ') }))}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#25D366] hover:brightness-105 text-white text-xs font-bold shadow-sm transition-all text-center shrink-0"
                       >
-                        <Truck className="w-3.5 h-3.5" />
-                        <span>{copiedCode === order.trackingNumber ? d.copied : d.trackReceipt}</span>
-                      </button>
+                        {d.contactDania}
+                      </a>
                     </div>
                   )}
 
@@ -346,7 +354,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                                       : 'font-normal text-[#8A7F6C]'
                                   }`}
                                 >
-                                  {localizeDemoText(locale, step.label)}
+                                  {stepperLabel(step.label)}
                                 </span>
                               </div>
                             ))}

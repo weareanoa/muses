@@ -1,6 +1,7 @@
 import { getSupabaseClient } from '../lib/supabase';
 import { INITIAL_ORDERS } from '../data/orders';
 import { formatRupiah } from '../lib/format';
+import { productService } from './productService';
 import type {
   TransactionDTO,
   TransactionItemDTO,
@@ -33,6 +34,19 @@ const DEFAULT_PAYMENT_SUMMARY: PaymentOrderSummary = {
   total: 175000,
   deadline: '23:59:59',
 };
+
+function generateOrderNumber(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `INV-${y}${m}${d}-${rand}`;
+}
+
+function generatePickupCode(): string {
+  return `PKP-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
 
 export function normalizeTransaction(raw: any): TransactionDTO {
   const numericTotal =
@@ -129,12 +143,19 @@ export function normalizeTransaction(raw: any): TransactionDTO {
     stepper:
       Array.isArray(raw.stepper) && raw.stepper.length > 0
         ? raw.stepper
-        : [
-            { label: 'Dibayar', completed: status !== 'unpaid' },
-            { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
-            { label: 'Dalam Pengiriman (JNE)', completed: status === 'processing' || status === 'completed' },
-            { label: 'Selesai', completed: status === 'completed' },
-          ],
+        : raw.pickup_code || raw.pickupCode
+          ? [
+              { label: 'Dibayar', completed: status !== 'unpaid' },
+              { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
+              { label: 'Diambil di Event', completed: status === 'completed' },
+              { label: 'Selesai', completed: status === 'completed' },
+            ]
+          : [
+              { label: 'Dibayar', completed: status !== 'unpaid' },
+              { label: 'Disiapkan Management', completed: status === 'processing' || status === 'completed' },
+              { label: 'Dalam Pengiriman (JNE)', completed: status === 'processing' || status === 'completed' },
+              { label: 'Selesai', completed: status === 'completed' },
+            ],
     isStepperExpanded: Boolean(raw.isStepperExpanded),
   };
 }
@@ -174,6 +195,8 @@ export const transactionService = {
             platformFee: parsed.platformFee ?? DEFAULT_PAYMENT_SUMMARY.platformFee,
             total: parsed.totalRupiah ?? parsed.total ?? DEFAULT_PAYMENT_SUMMARY.total,
             deadline: parsed.deadline || '23:59:59',
+            address: parsed.address || undefined,
+            fulfillment: parsed.fulfillment || undefined,
           };
         }
       }
@@ -232,15 +255,78 @@ export const transactionService = {
   async createTransaction(
     payload: CreateTransactionPayload
   ): Promise<ServiceResult<{ orderId: string; transaction: TransactionDTO }>> {
-    const orderNumber = 'INV-20261021-0042';
+    const method = payload.fulfillment?.method === 'pickup' ? 'pickup' : 'delivery';
+
+    // Hitung ulang dari katalog (satu-satunya sumber harga & stok yang sah).
+    // Angka dari client hanya dipakai kalau produknya tidak ada di katalog
+    // (item demo / fallback), jadi mengubah total di browser tidak berpengaruh.
+    let catalog: { id: string; name: string; price: number; stock: number }[] = [];
+    try {
+      const res = await productService.getCatalogItems();
+      if (res.success && res.data) catalog = res.data;
+    } catch {}
+    if (catalog.length === 0) catalog = productService.getInitialCatalogItems();
+
+    const findCatalog = (item: { id: string; name: string }) => {
+      const byId = catalog.find((c) => c.id === item.id);
+      if (byId) return byId;
+      const bareName = item.name.replace(/^(Cheki|Videocall)\s+/i, '').trim().toLowerCase();
+      return catalog.find((c) => c.name.toLowerCase() === bareName);
+    };
+
+    const pricedItems: (typeof payload.items[number] & { stock: number })[] = [];
+    for (const i of payload.items) {
+      const match = findCatalog(i);
+      if (!match) {
+        return { success: false, error: 'UNKNOWN_PRODUCT' };
+      }
+      pricedItems.push({ ...i, price: match.price, stock: match.stock });
+    }
+    if (pricedItems.some((i) => i.quantity > i.stock)) {
+      return { success: false, error: 'STOCK_INSUFFICIENT' };
+    }
+
+    const subtotal = pricedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    // Ongkir tidak lagi dibebankan di checkout; diatur lewat WhatsApp dengan Dania.
+    const shippingFee = 0;
+    const platformFee = 0;
+    const total = subtotal + shippingFee + platformFee;
+
+    const orderNumber = generateOrderNumber();
     const transactionId = `MSE-${orderNumber}`;
+    const pickupCode = method === 'pickup' ? generatePickupCode() : undefined;
+    const pickupEventTitle = payload.fulfillment?.pickupEventTitle || '';
+    const pickupLocation = payload.fulfillment?.pickupLocation || '';
+    const pickupDate = payload.fulfillment?.pickupDate || '';
     const deliveryCity = payload.address?.city || 'Bandung';
-    const deliveryInfo = `${deliveryCity} • Kurir JNE Regular`;
+    const deliveryInfo =
+      method === 'pickup'
+        ? `${pickupEventTitle} • ${pickupLocation}`.replace(/^ • | • $/g, '').trim()
+        : deliveryCity;
+    const eventTag =
+      method === 'pickup' && pickupEventTitle ? pickupEventTitle : 'OFFICIAL STORE • MERCH';
+
+    const stepper =
+      method === 'pickup'
+        ? [
+            { label: 'Menunggu Pembayaran', completed: false },
+            { label: 'Dibayar', completed: false },
+            { label: 'Disiapkan Management', completed: false },
+            { label: 'Diambil di Event', completed: false },
+            { label: 'Selesai', completed: false },
+          ]
+        : [
+            { label: 'Menunggu Pembayaran', completed: false },
+            { label: 'Dibayar', completed: false },
+            { label: 'Disiapkan Management', completed: false },
+            { label: 'Dikirim', completed: false },
+            { label: 'Selesai', completed: false },
+          ];
 
     const orderPaymentSummary = {
       orderId: orderNumber,
       date: new Date().toLocaleString('id-ID'),
-      items: payload.items.map((i) => ({
+      items: pricedItems.map((i) => ({
         id: i.id,
         name: i.name,
         subtitle: i.subtitle,
@@ -248,13 +334,23 @@ export const transactionService = {
         price: i.price,
         image: i.image,
       })),
-      subtotalRupiah: payload.subtotal,
-      shippingFee: payload.shippingFee,
-      platformFee: payload.platformFee,
-      totalRupiah: payload.total,
+      subtotalRupiah: subtotal,
+      shippingFee,
+      platformFee,
+      totalRupiah: total,
       notes: payload.notes || '',
-      address: payload.address,
+      address: method === 'delivery' ? payload.address : undefined,
       paymentMethod: payload.paymentMethod || 'qris',
+      fulfillment: {
+        method,
+        pickupEventId: payload.fulfillment?.pickupEventId,
+        pickupEventTitle: pickupEventTitle || undefined,
+        pickupDate: pickupDate || undefined,
+        pickupLocation: pickupLocation || undefined,
+        pickupContactName: payload.fulfillment?.pickupContactName,
+        pickupContactPhone: payload.fulfillment?.pickupContactPhone,
+        pickupCode,
+      },
     };
 
     const newOrderEntry: TransactionDTO = {
@@ -267,16 +363,20 @@ export const transactionService = {
       }),
       status: 'unpaid',
       statusLabel: 'Menunggu pembayaran',
-      eventTag: 'OFFICIAL STORE • MERCH',
+      eventTag,
       deliveryInfo,
-      subtotal: payload.subtotal,
-      shippingFee: payload.shippingFee,
-      platformFee: payload.platformFee,
-      totalPrice: payload.total,
+      subtotal,
+      shippingFee,
+      platformFee,
+      totalPrice: total,
       actionType: 'unpaid',
       initialCountdownSeconds: 180,
-      pickupLocation: 'Ambil cheki di venue event',
-      items: payload.items.map((i) => ({
+      pickupLocation: method === 'pickup' ? pickupLocation : 'Ambil cheki di venue event',
+      pickupDate: method === 'pickup' ? pickupDate : undefined,
+      pickupCode,
+      pickupContactName: payload.fulfillment?.pickupContactName,
+      pickupContactPhone: payload.fulfillment?.pickupContactPhone,
+      items: pricedItems.map((i) => ({
         id: i.id,
         name: i.name,
         variant: i.subtitle || 'Official Merchandise',
@@ -284,13 +384,7 @@ export const transactionService = {
         price: i.price,
         image: i.image || '/images/members/faril.webp',
       })),
-      stepper: [
-        { label: 'Menunggu Pembayaran', completed: false },
-        { label: 'Dibayar', completed: false },
-        { label: 'Disiapkan Management', completed: false },
-        { label: 'Dalam Pengiriman (JNE)', completed: false },
-        { label: 'Selesai', completed: false },
-      ],
+      stepper,
       isStepperExpanded: true,
     };
 
@@ -304,10 +398,10 @@ export const transactionService = {
 
         existingOrders.unshift({
           ...newOrderEntry,
-          title: payload.items.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
+          title: pricedItems.map((i) => `${i.name} (${i.quantity}x)`).join(', '),
           pickupTime: '23:59:59',
-          price: formatRupiah(payload.total),
-          numericPrice: payload.total,
+          price: formatRupiah(total),
+          numericPrice: total,
           badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
           location: deliveryInfo,
         });
@@ -333,20 +427,23 @@ export const transactionService = {
           user_id: isUuidUser ? payload.userId : null,
           status: 'unpaid',
           status_label: 'Menunggu pembayaran',
-          event_tag: 'OFFICIAL STORE • MERCH',
+          event_tag: eventTag,
           delivery_info: deliveryInfo,
-          subtotal: payload.subtotal,
-          shipping_fee: payload.shippingFee,
-          platform_fee: payload.platformFee,
-          total_price: payload.total,
+          subtotal,
+          shipping_fee: shippingFee,
+          platform_fee: platformFee,
+          total_price: total,
           payment_method: payload.paymentMethod || 'qris',
           notes: payload.notes || '',
           action_type: 'unpaid',
-          shipping_address: payload.address || null,
-          stepper: newOrderEntry.stepper,
+          pickup_location: method === 'pickup' ? pickupLocation : null,
+          pickup_date: method === 'pickup' ? pickupDate : null,
+          pickup_code: pickupCode || null,
+          shipping_address: method === 'delivery' ? payload.address || null : null,
+          stepper,
         });
 
-        const itemRows = payload.items.map((i) => ({
+        const itemRows = pricedItems.map((i) => ({
           transaction_id: transactionId,
           product_id: i.id,
           name: i.name,
@@ -371,11 +468,20 @@ export const transactionService = {
     };
   },
 
-  async verifyPayment(orderId: string): Promise<ServiceResult<boolean>> {
+  async verifyPayment(
+    orderId: string,
+    opts?: { isPickup?: boolean }
+  ): Promise<ServiceResult<boolean>> {
     const paidStepper = [
       { label: 'Dibayar', completed: true },
       { label: 'Disiapkan Management', completed: true },
-      { label: 'Dalam Pengiriman (JNE)', completed: false },
+      { label: 'Dikirim', completed: false },
+      { label: 'Selesai', completed: false },
+    ];
+    const paidPickupStepper = [
+      { label: 'Dibayar', completed: true },
+      { label: 'Disiapkan Management', completed: true },
+      { label: 'Diambil di Event', completed: false },
       { label: 'Selesai', completed: false },
     ];
 
@@ -391,13 +497,14 @@ export const transactionService = {
               String(o.id).includes(orderId) ||
               o.orderCode?.includes(orderId)
             ) {
+              const isPickupOrder = Boolean(o.pickupCode) || opts?.isPickup;
               return {
                 ...o,
                 status: 'processing',
                 statusLabel: 'Sedang diproses',
-                actionType: o.actionType === 'pickup' ? 'pickup' : 'shipping',
+                actionType: isPickupOrder ? 'pickup' : 'shipping',
                 badgeColor: 'border-[#DFC478] bg-[#FDF6E2] text-[#8C6A1C]',
-                stepper: paidStepper,
+                stepper: isPickupOrder ? paidPickupStepper : paidStepper,
               };
             }
             return o;
@@ -418,8 +525,8 @@ export const transactionService = {
           .update({
             status: 'processing',
             status_label: 'Sedang diproses',
-            action_type: 'shipping',
-            stepper: paidStepper,
+            action_type: opts?.isPickup ? 'pickup' : 'shipping',
+            stepper: opts?.isPickup ? paidPickupStepper : paidStepper,
             paid_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })

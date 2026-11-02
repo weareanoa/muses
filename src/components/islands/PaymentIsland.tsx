@@ -11,6 +11,7 @@ import { formatRupiah } from '../../lib/format';
 import { transactionService } from '../../services/transactionService';
 import type { PaymentOrderSummary } from '../../types/database';
 import { fmt, getDict, type Locale } from '../../i18n/dictionary';
+import { daniaWaLink } from '../../lib/contact';
 
 type PaymentOrder = PaymentOrderSummary;
 
@@ -88,7 +89,9 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
   const handleCheckStatus = () => {
     setIsChecking(true);
     setTimeout(async () => {
-      await transactionService.verifyPayment(order.orderId);
+      await transactionService.verifyPayment(order.orderId, {
+        isPickup: order.fulfillment?.method === 'pickup',
+      });
       setIsChecking(false);
       setIsPaid(true);
 
@@ -231,12 +234,56 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
                 </div>
               ))}
 
-              <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
-                <span>{d.shippingCost}</span>
-                <span className="font-bold text-[#1F1A12]">
-                  {formatRupiah(order.shippingFee)}
-                </span>
-              </div>
+              {order.fulfillment && (
+                <div className="rounded-2xl border border-[#E8D49E] bg-[#FDF6E2] p-4 space-y-1.5">
+                  <p className="text-xs font-bold text-[#1F1A12]">{d.fulfillmentTitle}</p>
+                  {order.fulfillment.method === 'pickup' ? (
+                    <>
+                      <p className="text-xs text-[#42392B]">
+                        {d.pickupTitle}: {order.fulfillment.pickupEventTitle}
+                      </p>
+                      <p className="text-xs text-[#42392B]">
+                        {order.fulfillment.pickupDate} • {order.fulfillment.pickupLocation}
+                      </p>
+                      <p className="text-xs text-[#42392B]">
+                        {d.pickupContactLabel}: {order.fulfillment.pickupContactName} ({order.fulfillment.pickupContactPhone})
+                      </p>
+                      {order.fulfillment.pickupCode && (
+                        <p className="text-xs text-[#42392B]">
+                          {d.pickupCodeLabel}: <span className="font-mono font-bold text-[#1F1A12]">{order.fulfillment.pickupCode}</span>
+                        </p>
+                      )}
+                    </>
+                  ) : order.address ? (
+                    <>
+                      <p className="text-xs text-[#42392B]">
+                        {d.deliveryTitle}: {order.address.recipientName} ({order.address.phone})
+                      </p>
+                      <p className="text-xs text-[#42392B]">
+                        {order.address.street}, {order.address.city}, {order.address.province} {order.address.postalCode}
+                      </p>
+                      <p className="text-xs text-[#42392B]">{d.shippingHelp}</p>
+                      <a
+                        href={daniaWaLink(fmt(d.waShippingTemplate, { items: order.items.map((i) => `${i.name} (${i.quantity}x)`).join(', ') }))}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block mt-1 px-4 py-2 rounded-full bg-[#25D366] text-white font-bold text-[11px] shadow-sm hover:brightness-105 transition-all"
+                      >
+                        {d.contactDania}
+                      </a>
+                    </>
+                  ) : null}
+                </div>
+              )}
+
+              {order.shippingFee > 0 && (
+                <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
+                  <span>{d.shippingCost}</span>
+                  <span className="font-bold text-[#1F1A12]">
+                    {formatRupiah(order.shippingFee)}
+                  </span>
+                </div>
+              )}
 
               <div className="flex justify-between items-center text-xs sm:text-sm text-[#70644D]">
                 <span>{d.serviceCost}</span>
@@ -270,6 +317,12 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
             <p className="text-xs text-[#6E6453] leading-relaxed">
               {fmt(d.paidBody, { id: order.orderId, total: formatRupiah(order.total) })}
             </p>
+
+            {order.fulfillment?.method === 'pickup' && order.fulfillment?.pickupCode && (
+              <p className="text-xs text-[#6E6453] leading-relaxed">
+                {d.pickupCodeLabel}: <span className="font-mono font-bold text-[#1F1A12]">{order.fulfillment.pickupCode}</span>
+              </p>
+            )}
 
             <div className="pt-2 flex flex-col gap-2">
               <a

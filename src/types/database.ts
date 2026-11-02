@@ -125,11 +125,24 @@ export interface TransactionDTO {
   pickupLocation?: string;
   pickupDate?: string;
   pickupCode?: string;
+  pickupContactName?: string;
+  pickupContactPhone?: string;
   shippingCourier?: string;
   trackingNumber?: string;
   estimatedArrival?: string;
   stepper?: StepperItemDTO[];
   isStepperExpanded?: boolean;
+}
+
+export interface FulfillmentPayload {
+  method: 'delivery' | 'pickup';
+  pickupEventId?: string;
+  pickupEventTitle?: string;
+  pickupDate?: string;
+  pickupLocation?: string;
+  pickupContactName?: string;
+  pickupContactPhone?: string;
+  pickupCode?: string;
 }
 
 export interface CreateTransactionPayload {
@@ -149,6 +162,7 @@ export interface CreateTransactionPayload {
   notes?: string;
   address?: UserAddressDTO;
   paymentMethod?: string;
+  fulfillment?: FulfillmentPayload;
 }
 
 export interface PaymentOrderSummary {
@@ -165,5 +179,7 @@ export interface PaymentOrderSummary {
   platformFee: number;
   total: number;
   deadline: string;
+  address?: UserAddressDTO;
+  fulfillment?: FulfillmentPayload;
 }
 
