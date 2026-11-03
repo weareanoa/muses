@@ -107,11 +107,21 @@ export interface StepperItemDTO {
   completed: boolean;
 }
 
+export type TransactionStatus =
+  | 'unpaid'
+  | 'awaiting_verification'
+  | 'processing'
+  | 'ready'
+  | 'completed'
+  | 'cancelled'
+  | 'rejected'
+  | 'expired';
+
 export interface TransactionDTO {
   id: string;
   orderCode?: string;
   date: string;
-  status: 'unpaid' | 'processing' | 'completed' | 'cancelled';
+  status: TransactionStatus;
   statusLabel: string;
   eventTag?: string;
   items: TransactionItemDTO[];
@@ -120,16 +130,18 @@ export interface TransactionDTO {
   shippingFee?: number;
   platformFee?: number;
   totalPrice: number;
-  actionType: 'unpaid' | 'pickup' | 'shipping' | 'completed';
-  initialCountdownSeconds?: number;
+  payableAmount?: number;
+  uniqueCode?: number;
+  paymentDeadline?: string;
+  rejectReason?: string;
+  actionType: 'unpaid' | 'pickup' | 'shipping' | 'completed' | 'none';
+  fulfillmentMethod?: 'delivery' | 'pickup';
   pickupLocation?: string;
   pickupDate?: string;
   pickupCode?: string;
   pickupContactName?: string;
   pickupContactPhone?: string;
-  shippingCourier?: string;
   trackingNumber?: string;
-  estimatedArrival?: string;
   stepper?: StepperItemDTO[];
   isStepperExpanded?: boolean;
 }
@@ -146,45 +158,13 @@ export interface FulfillmentPayload {
 }
 
 export interface CreateTransactionPayload {
-  userId?: string;
-  items: {
-    id: string;
-    name: string;
-    subtitle: string;
-    quantity: number;
-    price: number;
-    image: string;
-  }[];
-  subtotal: number;
-  shippingFee: number;
-  platformFee: number;
-  total: number;
+  items: { id: string; quantity: number }[];
   notes?: string;
   address?: UserAddressDTO;
-  paymentMethod?: string;
-  fulfillment?: FulfillmentPayload;
+  fulfillment: FulfillmentPayload;
 }
 
-export interface PaymentOrderSummary {
-  orderId: string;
-  items: {
-    id: string;
-    name: string;
-    subtitle: string;
-    quantity: number;
-    price: number;
-  }[];
-  subtotal: number;
-  shippingFee: number;
-  platformFee: number;
-  total: number;
-  deadline: string;
-  date?: string;
-  notes?: string;
-  address?: UserAddressDTO;
-  paymentMethod?: string;
-  subtotalRupiah?: number;
-  totalRupiah?: number;
-  fulfillment?: FulfillmentPayload;
+export interface PaymentSettings {
+  qrisImageUrl: string;
+  gatewayEnabled: boolean;
 }
-

@@ -239,48 +239,39 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     }
     setPlacing(true);
     const res = await transactionService.createTransaction({
-      userId: user?.id,
-      items: items.map((i) => ({
-        id: i.productId,
-        name: i.name,
-        subtitle: i.subtitle,
-        quantity: i.quantity,
-        price: i.price,
-        image: i.image,
-      })),
-      subtotal,
-      shippingFee,
-      platformFee,
-      total,
+      items: items.map((i) => ({ id: i.productId, quantity: i.quantity })),
       notes,
       address: fulfillment === 'delivery' ? selectedAddress : undefined,
-      paymentMethod: 'qris',
       fulfillment:
         fulfillment === 'pickup' && selectedEvent
           ? {
               method: 'pickup',
               pickupEventId: selectedEvent.id,
-              pickupEventTitle: selectedEvent.tourName || selectedEvent.title,
-              pickupDate: formatEventDate(selectedEvent),
-              pickupLocation: [selectedEvent.venue, selectedEvent.city].filter(Boolean).join(', '),
               pickupContactName: pickupName.trim(),
               pickupContactPhone: pickupPhone.trim(),
             }
           : { method: 'delivery' },
     });
     setPlacing(false);
-    if (!res.success) {
-      setOrderError(
-        res.error === 'STOCK_INSUFFICIENT'
-          ? d.errStock
-          : res.error === 'UNKNOWN_PRODUCT'
-            ? d.errUnknownProduct
-            : d.errOrderFailed
-      );
+    if (!res.success || !res.data) {
+      const errors: Record<string, string> = {
+        STOCK_INSUFFICIENT: d.errStock,
+        UNKNOWN_PRODUCT: d.errUnknownProduct,
+        AUTH_REQUIRED: d.errAuth,
+        TOO_MANY_OPEN_ORDERS: d.errTooManyOpen,
+        ORDER_COOLDOWN: d.errCooldown,
+        QTY_LIMIT: d.errQtyLimit,
+        INVALID_CONTACT: d.errContact,
+        INVALID_ADDRESS: d.errNoAddress,
+        INVALID_EVENT: d.errNoEvent,
+        EVENT_PASSED: d.errNoEvent,
+        GATEWAY_NOT_READY: d.errGateway,
+      };
+      setOrderError(errors[res.error || ''] || d.errOrderFailed);
       return;
     }
     clearCart();
-    window.location.href = withBase('/payment');
+    window.location.href = withBase(`/payment?orderId=${encodeURIComponent(res.data.id)}`);
   };
 
   return (

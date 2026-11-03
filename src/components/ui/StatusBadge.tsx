@@ -18,6 +18,7 @@ export function StatusBadge({ status, label, className = '', locale = 'id' }: St
       defaultLabel = defaultLabel || (en ? 'Completed' : 'Selesai');
       break;
     case 'processing':
+    case 'ready':
     case 'paid':
       colorClasses = 'bg-[#FCEBAE] text-[#7A5B15] border border-[#EED07C] font-semibold';
       defaultLabel = defaultLabel || (en ? 'Processing' : 'Sedang Diproses');
@@ -26,6 +27,12 @@ export function StatusBadge({ status, label, className = '', locale = 'id' }: St
       colorClasses = 'bg-[#FDF4D9] text-[#9A7420] border border-[#F3DE9D] font-semibold';
       defaultLabel = defaultLabel || (en ? 'Waiting for Payment' : 'Menunggu Pembayaran');
       break;
+    case 'awaiting_verification':
+      colorClasses = 'bg-sky-100 text-sky-800 border border-sky-200 font-semibold';
+      defaultLabel = defaultLabel || (en ? 'Awaiting Verification' : 'Menunggu Verifikasi');
+      break;
+    case 'rejected':
+    case 'expired':
     case 'cancelled':
       colorClasses = 'bg-rose-100 text-rose-700 border border-rose-200 font-semibold';
       defaultLabel = defaultLabel || (en ? 'Cancelled' : 'Dibatalkan');
