@@ -19,10 +19,6 @@ export const DEFAULT_APP_SETTINGS: AppSettingsDTO = {
   qrisImageUrl: '',
 };
 
-const BUCKET = 'payment-assets';
-const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
-const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-
 function mapSettings(rows: { key: string; value: unknown }[]): AppSettingsDTO {
   const byKey = new Map(rows.map((row) => [row.key, row.value]));
   const num = (key: string, fallback: number) => {
@@ -70,23 +66,5 @@ export const settingsAdminService = {
       };
     }
     return { success: true, data: settings };
-  },
-
-  async uploadQris(file: File): Promise<ServiceResult<string>> {
-    const sb = getSupabaseClient();
-    if (!sb) return { success: false, error: 'UNAVAILABLE' };
-    if (!ALLOWED_TYPES.includes(file.type)) return { success: false, error: 'INVALID_FILE_TYPE' };
-    if (file.size > MAX_UPLOAD_BYTES) return { success: false, error: 'FILE_TOO_LARGE' };
-
-    const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
-    const path = `qris-${Date.now()}.${ext}`;
-    const { error } = await sb.storage.from(BUCKET).upload(path, file, {
-      contentType: file.type,
-      cacheControl: '3600',
-    });
-    if (error) return { success: false, error: 'UPLOAD_FAILED' };
-
-    const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
-    return { success: true, data: data.publicUrl };
   },
 };

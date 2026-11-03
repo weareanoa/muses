@@ -2,8 +2,7 @@
 --
 -- app_settings sebelumnya bisa ditulis admin langsung dengan key/nilai
 -- bebas. Sekarang penulisan hanya lewat admin_update_settings, yang
--- membatasi key yang dikenal dan rentang nilainya. Bucket payment-assets
--- menyimpan gambar QRIS yang diunggah admin.
+-- membatasi key yang dikenal dan rentang nilainya.
 
 drop policy if exists "Admins can manage settings" on public.app_settings;
 revoke insert, update, delete on public.app_settings from anon, authenticated;
@@ -74,21 +73,3 @@ $$;
 
 revoke all on function public.admin_update_settings(jsonb) from public, anon;
 grant execute on function public.admin_update_settings(jsonb) to authenticated;
-
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values (
-  'payment-assets', 'payment-assets', true, 2097152,
-  array['image/png', 'image/jpeg', 'image/webp']
-)
-on conflict (id) do nothing;
-
-drop policy if exists "Payment assets are public" on storage.objects;
-create policy "Payment assets are public"
-  on storage.objects for select
-  using (bucket_id = 'payment-assets');
-
-drop policy if exists "Admins manage payment assets" on storage.objects;
-create policy "Admins manage payment assets"
-  on storage.objects for all
-  using (bucket_id = 'payment-assets' and public.is_admin())
-  with check (bucket_id = 'payment-assets' and public.is_admin());

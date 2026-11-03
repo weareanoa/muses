@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Upload } from 'lucide-react';
 import AdminShell from '../admin/AdminShell';
 import { AdminGateScreen, useAdminGate } from '../admin/AdminGate';
 import {
@@ -36,7 +35,6 @@ export default function AdminSettingsIsland({ locale = 'id' }: { locale?: Locale
   const [form, setForm] = useState<AppSettingsDTO>(DEFAULT_APP_SETTINGS);
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [previewFailed, setPreviewFailed] = useState(false);
@@ -60,30 +58,6 @@ export default function AdminSettingsIsland({ locale = 'id' }: { locale?: Locale
   const handleToggleGateway = (next: boolean) => {
     if (next && !window.confirm(d.gatewayConfirm)) return;
     setForm((prev) => ({ ...prev, paymentGatewayEnabled: next }));
-  };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    setError('');
-    setNotice('');
-    setUploading(true);
-    const res = await settingsAdminService.uploadQris(file);
-    setUploading(false);
-    if (res.success && res.data) {
-      setForm((prev) => ({ ...prev, qrisImageUrl: res.data! }));
-      setPreviewFailed(false);
-      setNotice(d.noticeUploaded);
-      return;
-    }
-    setError(
-      res.error === 'INVALID_FILE_TYPE'
-        ? d.errFileType
-        : res.error === 'FILE_TOO_LARGE'
-          ? d.errFileSize
-          : d.errUpload
-    );
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -194,17 +168,6 @@ export default function AdminSettingsIsland({ locale = 'id' }: { locale?: Locale
                   <p className="text-xs text-[#6E6453]">{d.qrisEmpty}</p>
                 )}
               </div>
-              <label className="inline-flex items-center gap-2 rounded-full border border-[#E9D9AE] bg-white px-4 py-2 text-xs font-bold text-[#8C6A1C] hover:bg-[#FFF9EC] cursor-pointer">
-                <Upload className="h-3.5 w-3.5" />
-                <span>{uploading ? d.uploading : d.uploadButton}</span>
-                <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={handleUpload}
-                  disabled={uploading}
-                  className="hidden"
-                />
-              </label>
               <input
                 id="qris-url"
                 className={inputClass}
@@ -254,7 +217,7 @@ export default function AdminSettingsIsland({ locale = 'id' }: { locale?: Locale
             )}
             <button
               type="submit"
-              disabled={busy || uploading}
+              disabled={busy}
               className="rounded-full bg-gradient-to-r from-[#C9971C] to-[#B38317] px-6 py-3 text-sm font-bold text-white shadow-xs hover:brightness-105 disabled:opacity-60 cursor-pointer"
             >
               {busy ? d.saving : d.save}
