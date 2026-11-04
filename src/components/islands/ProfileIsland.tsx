@@ -1,209 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import AddressModal, { type AddressFormData } from './AddressModal';
-import StatusBadge from '../ui/StatusBadge';
+import HistoryIsland from './HistoryIsland';
 import {
   currentUser,
   logoutUser,
   updateUserProfile,
   addUserAddress,
   updateUserAddress,
-  type User,
   type UserAddress
 } from '../../stores/authStore';
 import {
   User as UserIcon,
-  Info,
-  ChevronDown,
-  ChevronUp,
-  X,
   Check,
-  ArrowRight,
-  Camera,
   LogOut
 } from 'lucide-react';
-import { withBase } from '../../lib/paths';
 
 type TabType = 'profile' | 'alamat' | 'orders';
-type OrderFilter = 'all' | 'unpaid' | 'processing' | 'completed';
 
-import {
-  INITIAL_ORDERS,
-  type OrderTransaction,
-  type OrderItem,
-  type StepperItem,
-} from '../../data/orders';
-import { formatCountdown, formatRupiah } from '../../lib/format';
-import { fmt, getDict, localizeAddressLabel, localizeDemoText, type Locale } from '../../i18n/dictionary';
-
-interface StepperStep {
-  label: string;
-  completed: boolean;
-}
-
-interface ProfileOrder {
-  id: string;
-  orderCode: string;
-  date: string;
-  status: 'unpaid' | 'processing' | 'completed';
-  statusLabel: string;
-  eventTag: string;
-  items: OrderItem[];
-  deliverySummary: string;
-  totalPrice: number;
-  pickupInfo?: {
-    location: string;
-    note: string;
-    code: string;
-  };
-  shippingInfo?: {
-    courier: string;
-    trackingNumber: string;
-  };
-  countdownSeconds?: number;
-  completedMessage?: {
-    title: string;
-    subtitle: string;
-  };
-  stepper: StepperStep[];
-}
-
-const DEFAULT_ORDERS: ProfileOrder[] = [
-  {
-    id: 'ord-1',
-    orderCode: 'MSE-261022-031',
-    date: '22 Okt 2026, 19:42',
-    status: 'unpaid',
-    statusLabel: 'Menunggu pembayaran',
-    eventTag: 'EVENT • ITASHA DOME',
-    items: [
-      {
-        name: 'Faril',
-        variant: 'Cheki Two Shoot',
-        image: '/images/members/faril.webp',
-        quantity: 2,
-        price: 40000,
-      },
-    ],
-    deliverySummary: 'Diambil saat event • 2 Cheki',
-    totalPrice: 80000,
-    countdownSeconds: 178,
-    stepper: [
-      { label: 'Menunggu Pembayaran', completed: false },
-      { label: 'Dibayar', completed: false },
-      { label: 'Disiapkan Management', completed: false },
-      { label: 'Siap diambil di event', completed: false },
-    ],
-  },
-  {
-    id: 'ord-2',
-    orderCode: 'MSE-261022-031',
-    date: '22 Okt 2026, 19:42',
-    status: 'processing',
-    statusLabel: 'Diambil di event',
-    eventTag: 'EVENT • ITASHA DOME',
-    items: [
-      {
-        name: 'Faril',
-        variant: 'Cheki Two Shoot',
-        image: '/images/members/faril.webp',
-        quantity: 1,
-        price: 80000,
-      },
-    ],
-    deliverySummary: 'Diambil saat event • 2 Cheki',
-    totalPrice: 80000,
-    pickupInfo: {
-      location: 'Ambil cheki di Itasha Dome, Bandung',
-      note: 'Sabtu, 24 Oktober 2026. Tunjukkan kode ini ke staff management.',
-      code: 'MSE-7K4Q',
-    },
-    stepper: [
-      { label: 'Dibayar', completed: true },
-      { label: 'Disiapkan Management', completed: true },
-      { label: 'Siap diambil di event', completed: true },
-      { label: 'Selesai', completed: false },
-    ],
-  },
-  {
-    id: 'ord-3',
-    orderCode: 'MSE-261022-031',
-    date: '22 Okt 2026, 19:42',
-    status: 'processing',
-    statusLabel: 'Dikirim',
-    eventTag: 'EVENT • ITASHA DOME',
-    items: [
-      {
-        name: 'Faril',
-        variant: 'Cheki Two Shoot',
-        image: '/images/members/faril.webp',
-        quantity: 1,
-        price: 40000,
-      },
-      {
-        name: 'Mine',
-        variant: 'Cheki Two Shoot',
-        image: '/images/members/mine.webp',
-        quantity: 1,
-        price: 40000,
-      },
-    ],
-    deliverySummary: 'Diambil saat event • 2 Cheki',
-    totalPrice: 80000,
-    shippingInfo: {
-      courier: 'Paket dalam perjalanan via JNE Reguler',
-      trackingNumber: 'JNE0012345678',
-    },
-    stepper: [
-      { label: 'Dibayar', completed: true },
-      { label: 'Dikemas', completed: true },
-      { label: 'Dikirim', completed: true },
-      { label: 'Diterima', completed: false },
-    ],
-  },
-  {
-    id: 'ord-4',
-    orderCode: 'MSE-261022-031',
-    date: '22 Okt 2026, 19:42',
-    status: 'completed',
-    statusLabel: 'Selesai',
-    eventTag: 'EVENT • ITASHA DOME',
-    items: [
-      {
-        name: 'Faril',
-        variant: 'Cheki Two Shoot',
-        image: '/images/members/faril.webp',
-        quantity: 1,
-        price: 80000,
-      },
-    ],
-    deliverySummary: 'Diambil saat event • 2 Cheki',
-    totalPrice: 80000,
-    completedMessage: {
-      title: 'Cheki kamu sudah kamu ambil',
-      subtitle: 'Terima kasih sudah mendukung member favoritmu!',
-    },
-    stepper: [
-      { label: 'Dibayar', completed: true },
-      { label: 'Disiapkan Management', completed: true },
-      { label: 'Siap diambil di event', completed: true },
-      { label: 'Selesai', completed: true },
-    ],
-  },
-];
+import { getDict, localizeAddressLabel, type Locale } from '../../i18n/dictionary';
 
 export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).profile;
   const user = useStore(currentUser);
 
   const [activeTab, setActiveTab] = useState<TabType>('profile');
-  const [orderFilter, setOrderFilter] = useState<OrderFilter>('all');
-  const [stepperExpanded, setStepperExpanded] = useState<Record<string, boolean>>({
-    'ord-2': true,
-    'ord-3': true,
-    'ord-4': true,
-  });
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -213,8 +34,6 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
-
-  const [countdown, setCountdown] = useState(178);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -237,13 +56,6 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
       setAvatar(user.avatar);
     }
   }, [user]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   
   const handleTabChange = (tab: TabType) => {
@@ -313,35 +125,7 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
     setIsAddressModalOpen(false);
   };
 
-  const toggleStepper = (orderId: string) => {
-    setStepperExpanded((prev) => ({
-      ...prev,
-      [orderId]: !prev[orderId],
-    }));
-  };
-
-  const filteredOrders = DEFAULT_ORDERS.filter((ord) => {
-    if (orderFilter === 'all') return true;
-    return ord.status === orderFilter;
-  });
-
-  const addresses = user?.addresses && user.addresses.length > 0
-    ? user.addresses
-    : [
-        {
-          id: 'addr_default_1',
-          label: 'Rumah',
-          recipientName: 'Wina',
-          phone: '(+62) 8131111111111',
-          street: 'Perumahan hantu, Jalan dengan sepatu rodaku Blok A1 No. 3, RT.0/RW.1, Bekasi Timur',
-          district: 'TAMBUN SELATAN',
-          city: 'KAB. BEKASI',
-          province: 'JAWA BARAT',
-          postalCode: '17510',
-          detail: '',
-          isDefault: true,
-        },
-      ];
+  const addresses = user?.addresses ?? [];
 
   return (
     <div className="w-full">
@@ -357,7 +141,7 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
             </div>
             <div>
               <div className="font-bold text-base text-[#1F1A12] leading-tight">
-                {name || 'Winaa'}
+                {name}
               </div>
               <button
                 type="button"
@@ -543,6 +327,10 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
                 </button>
               </div>
 
+              {addresses.length === 0 && (
+                <p className="text-sm text-[#6A5E48]">{d.noAddresses}</p>
+              )}
+
               <div className="space-y-6">
                 {addresses.map((addr) => (
                   <div key={addr.id} className="pt-2">
@@ -586,242 +374,7 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
           )}
 
           {activeTab === 'orders' && (
-            <div className="space-y-5">
-              <div className="bg-white rounded-full p-1.5 shadow-xs border border-[#EDE2CC] flex items-center justify-around">
-                {(
-                  [
-                    { id: 'all', label: d.orderFilterAll },
-                    { id: 'unpaid', label: d.orderFilterUnpaid },
-                    { id: 'processing', label: d.orderFilterProcessing },
-                    { id: 'completed', label: d.orderFilterCompleted },
-                  ] as const
-                ).map((tab) => {
-                  const isActive = orderFilter === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setOrderFilter(tab.id)}
-                      className={`relative px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                        isActive
-                          ? 'text-[#C9971C]'
-                          : 'text-[#5A4F3C] hover:text-[#1F1A12]'
-                      }`}
-                    >
-                      {tab.label}
-                      {isActive && (
-                        <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#C9971C] rounded-full"></span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="space-y-4">
-                {filteredOrders.length === 0 ? (
-                  <div className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-10 text-center text-sm text-[#6A5E48]">
-                    {d.noOrdersFilter}
-                  </div>
-                ) : (
-                  filteredOrders.map((ord) => {
-                    const isExpanded = stepperExpanded[ord.id];
-
-                    return (
-                      <div
-                        key={ord.id}
-                        className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-5 sm:p-7 space-y-4 shadow-xs"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
-                          <div className="flex items-center gap-3">
-                            <span className="font-bold text-xs sm:text-sm text-[#1F1A12]">
-                              {ord.orderCode}
-                            </span>
-                            <span className="text-xs text-[#7A6E58]">
-                              {ord.date}
-                            </span>
-                          </div>
-
-                          <div><StatusBadge status={ord.status} label={localizeDemoText(locale, ord.statusLabel)} locale={locale} /></div>
-                        </div>
-
-                        <div>
-                          <span className="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#FCE5A4] text-[#8C6A1C]">
-                            {ord.eventTag}
-                          </span>
-                        </div>
-
-                        <div className="space-y-3">
-                          {ord.items.map((it, idx) => (
-                            <div key={idx} className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-3">
-                                <img
-                                  src={withBase(it.image)}
-                                  alt={it.name}
-                                  className="w-12 h-12 rounded-xl object-cover bg-[#F2DC9F] shrink-0"
-                                />
-                                <div>
-                                  <div className="font-bold text-sm text-[#1F1A12]">
-                                    {it.name}
-                                  </div>
-                                  <div className="text-xs text-[#7A6E58]">
-                                    {it.variant}
-                                  </div>
-                                </div>
-                              </div>
-                              {it.quantity && (
-                                <span className="font-bold text-xs text-[#1F1A12]">
-                                  {it.quantity}x
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="flex items-center justify-between pt-1 text-xs sm:text-sm">
-                          <span className="text-[#7A6E58]">
-                            {localizeDemoText(locale, ord.deliverySummary)}
-                          </span>
-                          <span className="font-bold text-sm sm:text-base text-[#1F1A12]">
-                            {formatRupiah(ord.totalPrice)}
-                          </span>
-                        </div>
-
-                        {ord.status === 'unpaid' && (
-                          <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
-                              <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                {fmt(d.payWithin, { time: formatCountdown(countdown) })}
-                              </div>
-                              <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                {d.autoCancel}
-                              </div>
-                            </div>
-                            <a
-                              href={withBase("/payment")}
-                              className="px-5 py-2 rounded-full bg-gradient-to-r from-[#D6A628] to-[#9B7718] text-[#1F1A12] font-bold text-xs shadow-xs hover:brightness-105 text-center cursor-pointer shrink-0"
-                            >
-                              {d.payWithQR}
-                            </a>
-                          </div>
-                        )}
-
-                        {ord.pickupInfo && (
-                          <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
-                              <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                {localizeDemoText(locale, ord.pickupInfo.location)}
-                              </div>
-                              <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                {localizeDemoText(locale, ord.pickupInfo.note)}
-                              </div>
-                            </div>
-                            <span className="px-4 py-1.5 rounded-full border border-dashed border-[#D4A338] bg-[#FCE5A4] font-mono font-bold text-xs text-[#1F1A12] tracking-wider text-center shrink-0">
-                              {ord.pickupInfo.code}
-                            </span>
-                          </div>
-                        )}
-
-                        {ord.pickupInfo && (
-                          <div className="rounded-2xl bg-[#F7E7BE]/50 border border-[#E9CFA0] p-4 flex items-start gap-3">
-                            <div className="w-5 h-5 rounded-full bg-[#EAD498] text-[#8C6A1C] flex items-center justify-center shrink-0 mt-0.5">
-                              <Info className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="text-xs space-y-1">
-                              <div className="font-bold text-[#1F1A12]">
-                                {d.importantInfo}
-                              </div>
-                              <p className="text-[#6A5E48] leading-relaxed">
-                                {d.importantBody}
-                              </p>
-                              <a
-                                href={withBase("/kontak")}
-                                className="inline-flex items-center gap-1 font-bold text-[#8C6A1C] hover:underline pt-0.5"
-                              >
-                                <span>{d.contactTeam}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        {ord.shippingInfo && (
-                          <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4">
-                            <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                              {localizeDemoText(locale, ord.shippingInfo.courier)}
-                            </div>
-                            <div className="text-xs font-mono font-bold text-[#1F1A12] mt-0.5">
-                              {d.trackingLabel} {ord.shippingInfo.trackingNumber}
-                            </div>
-                          </div>
-                        )}
-
-                        {ord.completedMessage && (
-                          <div className="rounded-2xl bg-[#F7E7BE]/80 border border-[#ECCF8D] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
-                              <div className="text-xs sm:text-sm font-bold text-[#1F1A12]">
-                                {localizeDemoText(locale, ord.completedMessage.title)}
-                              </div>
-                              <div className="text-[11px] text-[#7A6E58] mt-0.5">
-                                {localizeDemoText(locale, ord.completedMessage.subtitle)}
-                              </div>
-                            </div>
-                            <a
-                              href={withBase("/store")}
-                              className="px-6 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs shadow-2xs text-center cursor-pointer shrink-0"
-                            >
-                              {d.buyAgain}
-                            </a>
-                          </div>
-                        )}
-
-                        {ord.stepper && ord.stepper.length > 0 && (
-                          <div className="pt-2">
-                            <button
-                              type="button"
-                              onClick={() => toggleStepper(ord.id)}
-                              className="flex items-center gap-1.5 text-xs text-[#7A6E58] hover:text-[#1F1A12] font-medium transition-colors cursor-pointer mb-3"
-                            >
-                              <span>{d.viewOrderFlow}</span>
-                              {isExpanded ? (
-                                <ChevronUp className="w-3.5 h-3.5" />
-                              ) : (
-                                <ChevronDown className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-
-                            {isExpanded && (
-                              <div className="pt-2 pb-1 px-2">
-                                <div className="relative flex items-center justify-between">
-                                  <div className="absolute top-2 left-3 right-3 h-0.5 bg-[#C9971C]/50 z-0"></div>
-
-                                  {ord.stepper.map((st, sIdx) => (
-                                    <div
-                                      key={sIdx}
-                                      className="relative z-10 flex flex-col items-center text-center max-w-[90px]"
-                                    >
-                                      <div
-                                        className={`w-4 h-4 rounded-full border-2 transition-all ${
-                                          st.completed
-                                            ? 'bg-[#C9971C] border-[#C9971C]'
-                                            : 'bg-[#FAF0D5] border-[#C9971C]'
-                                        }`}
-                                      ></div>
-                                      <span className="text-[10px] sm:text-[11px] font-medium text-[#4D4230] mt-1.5 leading-tight">
-                                        {localizeDemoText(locale, st.label)}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
+            <HistoryIsland locale={locale} />
           )}
         </main>
       </div>

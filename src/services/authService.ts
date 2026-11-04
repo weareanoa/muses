@@ -275,7 +275,7 @@ export const authService = {
         id: data.user.id,
         name: payload.name.trim(),
         email: cleanEmail,
-        phone: payload.phone || '+62 812 3456 7890',
+        phone: payload.phone || '',
         username,
         auth_provider: 'email',
         bias: payload.bias || 'Faril',
@@ -336,7 +336,7 @@ export const authService = {
       id: `muses_${Date.now()}`,
       name: payload.name.trim(),
       email: cleanEmail,
-      phone: payload.phone || '+62 812 3456 7890',
+      phone: payload.phone || '',
       password: payload.password,
       username,
       bias: payload.bias || 'Faril',
@@ -450,7 +450,7 @@ export const authService = {
         id: `muses_${Date.now()}`,
         name: initialName,
         email: cleanEmail,
-        phone: '+62 812 3456 7890',
+        phone: '',
         username: cleanEmail.split('@')[0],
         authProvider: 'email',
         bias: 'Faril',
@@ -462,20 +462,7 @@ export const authService = {
           month: 'long',
           year: 'numeric',
         }),
-        addresses: [
-          {
-            id: `addr_${Date.now()}`,
-            label: 'Rumah',
-            recipientName: initialName,
-            phone: '+62 812 3456 7890',
-            street: 'Jl. Melati No. 12',
-            city: 'Jakarta',
-            province: 'DKI Jakarta',
-            postalCode: '12190',
-            isDefault: true,
-          },
-        ],
-        selectedAddressId: `addr_${Date.now()}`,
+        addresses: [],
       };
 
       users.push(newUser);
@@ -532,40 +519,56 @@ export const authService = {
           username: user.username,
           bias: user.bias,
           bias_emoji: user.biasEmoji,
-          selected_address_id: user.selectedAddressId,
+          selected_address_id: user.selectedAddressId?.startsWith('addr_')
+            ? null
+            : user.selectedAddressId,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
     } catch {}
   },
 
-  async syncAddressToRemote(userId: string, address: UserAddressDTO): Promise<void> {
+  async syncAddressToRemote(userId: string, address: UserAddressDTO): Promise<string | null> {
     const sb = getSupabaseClient();
-    if (!sb) return;
-    try {
-      await sb.from('user_addresses').upsert({
-        id: address.id.startsWith('addr_') ? undefined : address.id,
-        user_id: userId,
-        label: address.label,
-        recipient_name: address.recipientName,
-        phone: address.phone,
-        street: address.street,
-        district: address.district,
-        city: address.city,
-        province: address.province,
-        postal_code: address.postalCode,
-        detail: address.detail,
-        is_default: address.isDefault,
-      });
-    } catch {}
+    if (!sb) return null;
+    const { data: sessionData } = await sb.auth.getSession();
+    if (sessionData.session?.user.id !== userId) return null;
+
+    const row = {
+      user_id: userId,
+      label: address.label,
+      recipient_name: address.recipientName,
+      phone: address.phone,
+      street: address.street,
+      district: address.district,
+      city: address.city,
+      province: address.province,
+      postal_code: address.postalCode,
+      detail: address.detail,
+      is_default: address.isDefault,
+    };
+
+    const isLocalId = address.id.startsWith('addr_');
+    const query = isLocalId
+      ? sb.from('user_addresses').insert(row)
+      : sb.from('user_addresses').upsert({ id: address.id, ...row });
+    const { data, error } = await query.select('id').single();
+    if (error || !data) return null;
+
+    if (address.isDefault) {
+      await sb
+        .from('user_addresses')
+        .update({ is_default: false })
+        .eq('user_id', userId)
+        .neq('id', data.id);
+    }
+    return data.id as string;
   },
 
   async deleteAddressFromRemote(addressId: string): Promise<void> {
     const sb = getSupabaseClient();
-    if (!sb) return;
-    try {
-      await sb.from('user_addresses').delete().eq('id', addressId);
-    } catch {}
+    if (!sb || addressId.startsWith('addr_')) return;
+    await sb.from('user_addresses').delete().eq('id', addressId);
   },
 };
 

@@ -73,6 +73,19 @@ export function updateUserProfile(updates: Partial<User>) {
   currentUser.set(updated);
 }
 
+function syncAddress(userId: string, address: UserAddress) {
+  authService.syncAddressToRemote(userId, address).then((remoteId) => {
+    if (!remoteId || remoteId === address.id) return;
+    const user = currentUser.get();
+    if (!user || !user.addresses) return;
+    currentUser.set({
+      ...user,
+      addresses: user.addresses.map((a) => (a.id === address.id ? { ...a, id: remoteId } : a)),
+      selectedAddressId: user.selectedAddressId === address.id ? remoteId : user.selectedAddressId,
+    });
+  });
+}
+
 export function addUserAddress(addressData: Omit<UserAddress, 'id'>): UserAddress {
   const user = currentUser.get();
   const newAddr: UserAddress = {
@@ -109,7 +122,7 @@ export function addUserAddress(addressData: Omit<UserAddress, 'id'>): UserAddres
     selectedAddressId: newAddr.id,
   });
 
-  authService.syncAddressToRemote(user.id, newAddr);
+  syncAddress(user.id, newAddr);
   return newAddr;
 }
 
@@ -136,7 +149,7 @@ export function updateUserAddress(id: string, updates: Partial<UserAddress>) {
   });
 
   if (updatedTarget) {
-    authService.syncAddressToRemote(user.id, updatedTarget);
+    syncAddress(user.id, updatedTarget);
   }
 }
 
@@ -208,7 +221,7 @@ export function registerUser(payload: RegisterPayload): {
     id: `muses_${Date.now()}`,
     name: payload.name.trim(),
     email: cleanEmail,
-    phone: payload.phone || '+62 812 3456 7890',
+    phone: payload.phone || '',
     password: payload.password,
     username: (payload.username || payload.name.toLowerCase().replace(/[^a-z0-9]/g, '_')).trim(),
     bias: payload.bias || 'Faril',
