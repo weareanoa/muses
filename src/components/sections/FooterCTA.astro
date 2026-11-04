@@ -1,13 +1,16 @@
 ---
 import { withBase } from '../../lib/paths';
 import { getDict, type Locale } from '../../i18n/dictionary';
+import { gmailComposeLink } from '../../lib/contact';
 
 interface Props {
   locale?: Locale;
 }
 
 const { locale = 'id' } = Astro.props;
-const d = getDict(locale).footer;
+const dict = getDict(locale);
+const d = dict.footer;
+const gmailUrl = gmailComposeLink(dict.contact.emailSubject, dict.contact.emailBody);
 ---
 
 <footer class="bg-[#F8F4EA] border-t border-[#C9971C]/25 text-[#1F1A12] pt-20 pb-12">
@@ -61,7 +64,7 @@ const d = getDict(locale).footer;
           </li>
         </ul>
         <p class="text-xs text-[#6E6453] leading-relaxed">
-          {d.businessPrefix} <a href="mailto:theamusing.muses@gmail.com" class="font-medium hover:text-[#C9971C] transition-colors">theamusing.muses@gmail.com</a>
+          {d.businessPrefix} <a href={gmailUrl} target="_blank" rel="noopener noreferrer" class="font-medium hover:text-[#C9971C] transition-colors">theamusing.muses@gmail.com</a>
         </p>
       </div>
     </div>

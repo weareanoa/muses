@@ -1,6 +1,7 @@
 ---
 import { withBase } from '../../lib/paths';
 import { getDict, type Locale } from '../../i18n/dictionary';
+import { gmailComposeLink } from '../../lib/contact';
 
 interface Props {
   locale?: Locale;
@@ -8,6 +9,7 @@ interface Props {
 
 const { locale = 'id' } = Astro.props;
 const d = getDict(locale).contact;
+const gmailUrl = gmailComposeLink(d.emailSubject, d.emailBody);
 ---
 
 <section id="kontak" data-section="kontak" class="relative bg-[#FCFAF5] overflow-hidden">
@@ -53,7 +55,9 @@ const d = getDict(locale).contact;
           {d.cardBody}
         </p>
         <a
-          href="mailto:theamusing.muses@gmail.com?subject=Collaboration%20Inquiry%20-%20MUSES"
+          href={gmailUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           class="inline-block mt-5 text-lg sm:text-xl font-bold text-[#1A140B] underline decoration-[#C9971C] underline-offset-4 break-all hover:text-[#8E6D24] transition-colors"
         >
           theamusing.muses@gmail.com
