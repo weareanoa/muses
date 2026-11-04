@@ -220,7 +220,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
         TOO_MANY_OPEN_ORDERS: d.errTooManyOpen,
         ORDER_COOLDOWN: d.errCooldown,
         QTY_LIMIT: d.errQtyLimit,
-        INVALID_CONTACT: d.errContact,
+        INVALID_CONTACT: d.errNoContact,
         INVALID_ADDRESS: d.errNoAddress,
         INVALID_EVENT: d.errNoEvent,
         EVENT_PASSED: d.errNoEvent,
