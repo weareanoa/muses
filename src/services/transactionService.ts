@@ -190,7 +190,10 @@ export const transactionService = {
       p_notes: payload.notes || null,
     });
 
-    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    if (error || !data) {
+      console.error('create_order failed:', error?.message);
+      return { success: false, error: rpcErrorCode(error?.message) };
+    }
     return { success: true, data: normalizeTransaction(data) };
   },
 

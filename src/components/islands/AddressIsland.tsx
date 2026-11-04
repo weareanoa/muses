@@ -225,6 +225,8 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
         INVALID_EVENT: d.errNoEvent,
         EVENT_PASSED: d.errNoEvent,
         GATEWAY_NOT_READY: d.errGateway,
+        INVALID_ITEMS: d.errUnknownProduct,
+        UNAVAILABLE: d.errUnavailable,
       };
       setOrderError(errors[res.error || ''] || d.errOrderFailed);
       return;
