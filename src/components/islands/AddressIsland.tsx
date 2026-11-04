@@ -9,14 +9,21 @@ import {
   setSelectedAddress,
   type UserAddress
 } from '../../stores/authStore';
-import { cartItems, clearCart } from '../../stores/cartStore';
+import {
+  cartItems,
+  clearCart,
+  removeFromCart,
+  updateQuantity,
+} from '../../stores/cartStore';
 import {
   MapPin,
   X,
   QrCode,
-  Check,
-  Edit2,
-  Trash2
+  Pencil,
+  Trash2,
+  Minus,
+  Plus,
+  ShoppingBag,
 } from 'lucide-react';
 import AddressModal, { type AddressFormData } from './AddressModal';
 import { formatRupiah, usdToIdr } from '../../lib/format';
@@ -25,37 +32,6 @@ import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { fmt, getDict, localizeAddressLabel, type Locale } from '../../i18n/dictionary';
 import { daniaWaLink } from '../../lib/contact';
-
-interface CheckoutItem {
-  id: string;
-  productId: string;
-  name: string;
-  subtitle: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
-
-const DEFAULT_CHECKOUT_ITEMS: CheckoutItem[] = [
-  {
-    id: 'faril-cheki',
-    productId: 'faril-cheki',
-    name: 'Faril',
-    subtitle: 'Muse of Melpomene',
-    price: 80000,
-    quantity: 1,
-    image: '/images/members/faril.webp',
-  },
-  {
-    id: 'mine-cheki',
-    productId: 'mine-cheki',
-    name: 'Mine',
-    subtitle: 'Muse of Terpsichore',
-    price: 80000,
-    quantity: 1,
-    image: '/images/members/mine.webp',
-  },
-];
 
 function formatEventDate(s: ScheduleDTO): string {
   const parts = [s.dayName, s.day, s.month, s.year].filter(Boolean);
@@ -74,25 +50,37 @@ function formatEventDate(s: ScheduleDTO): string {
   return s.title || s.tourName || '';
 }
 
+function StepHeading({ step, title, action }: { step: number; title: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-3 mb-5">
+      <div className="flex items-center gap-3">
+        <span className="w-7 h-7 rounded-full bg-[#1F1A12] text-[#FDF3D6] text-xs font-bold flex items-center justify-center shrink-0">
+          {step}
+        </span>
+        <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">{title}</h2>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+const CARD = 'bg-white rounded-2xl p-5 sm:p-7 border border-[#EADFC4] shadow-xs';
+
 export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).address;
   const user = useStore(currentUser);
   const cart = useStore(cartItems);
 
-  const [items, setItems] = useState<CheckoutItem[]>(() => {
-    if (cart && cart.length > 0) {
-      return cart.map((c, idx) => ({
-        id: `cart-${c.id}-${idx}`,
-        productId: c.id,
-        name: c.name,
-        subtitle: [c.size, c.color].filter(Boolean).join(' • ') || 'Official Merchandise',
-        price: c.currency === 'USD' || c.price < 1000 ? usdToIdr(c.price) : c.price,
-        quantity: c.quantity || 1,
-        image: c.image || '/images/members/faril.webp',
-      }));
-    }
-    return DEFAULT_CHECKOUT_ITEMS;
-  });
+  const items = cart.map((c) => ({
+    key: `${c.id}|${c.size ?? ''}|${c.color ?? ''}`,
+    cart: c,
+    productId: c.id,
+    name: c.name,
+    subtitle: [c.size, c.color].filter(Boolean).join(' • '),
+    price: c.currency === 'USD' || c.price < 1000 ? usdToIdr(c.price) : c.price,
+    quantity: c.quantity || 1,
+    image: c.image || '/images/members/faril.webp',
+  }));
 
   const [notes, setNotes] = useState('');
   const [fulfillment, setFulfillment] = useState<'delivery' | 'pickup'>('delivery');
@@ -103,7 +91,6 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
   const [pickupPhone, setPickupPhone] = useState('');
   const [orderError, setOrderError] = useState('');
   const [placing, setPlacing] = useState(false);
-  const platformFee = 0;
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isPickerModalOpen, setIsPickerModalOpen] = useState(false);
@@ -116,10 +103,8 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     addresses.find((a) => a.isDefault) ||
     addresses[0];
 
-  // Ongkir tidak lagi dibebankan di checkout (diatur lewat WhatsApp dengan Dania).
-  const shippingFee = 0;
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + shippingFee + platformFee;
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     let cancelled = false;
@@ -156,33 +141,6 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
       setPickupPhone(user?.phone || selectedAddress?.phone || '');
     }
   }, [user, selectedAddress]);
-
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const nextQty = item.quantity + delta;
-            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean) as CheckoutItem[]
-    );
-  };
-
-  const handleAddItem = () => {
-    const nextItem: CheckoutItem = {
-      id: `item-${Date.now()}`,
-      productId: 'vely-cheki',
-      name: 'Stella',
-      subtitle: 'Muse of Urania',
-      price: 80000,
-      quantity: 1,
-      image: '/images/members/vely.webp',
-    };
-    setItems((prev) => [...prev, nextItem]);
-  };
 
   const openAddModal = () => {
     setEditingAddress(null);
@@ -222,6 +180,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
 
   const handlePlaceOrder = async () => {
     setOrderError('');
+    if (items.length === 0) return;
     if (fulfillment === 'delivery' && !selectedAddress) {
       setOrderError(d.errNoAddress);
       return;
@@ -274,302 +233,271 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     window.location.href = withBase(`/payment?orderId=${encodeURIComponent(res.data.id)}`);
   };
 
+  const optionClass = (active: boolean) =>
+    `text-left rounded-xl border p-4 transition-colors cursor-pointer ${
+      active ? 'border-[#C9971C] bg-[#FDF6E2] ring-1 ring-[#C9971C]' : 'border-[#E8D9B5] bg-white hover:bg-[#FFFBF0]'
+    }`;
+
+  const inputClass =
+    'w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]';
+
+  if (items.length === 0) {
+    return (
+      <div className={`${CARD} flex flex-col items-center text-center py-16`}>
+        <ShoppingBag className="w-10 h-10 text-[#C9971C]/70 mb-4" />
+        <h2 className="text-lg font-bold text-[#1F1A12]">{d.emptyCartTitle}</h2>
+        <p className="text-sm text-[#6E6453] mt-1.5 mb-6 max-w-sm">{d.emptyCartBody}</p>
+        <a
+          href={withBase('/store')}
+          className="px-7 py-3 rounded-full bg-[#1F1A12] hover:bg-[#3A3022] text-[#FDF3D6] text-sm font-bold transition-colors"
+        >
+          {d.browseStore}
+        </a>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
-            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
-              {d.fulfillmentHeading}
-            </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        <div className="lg:col-span-7 space-y-5">
+          <section className={CARD}>
+            <StepHeading step={1} title={d.fulfillmentHeading} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setFulfillment('delivery')}
-                className={`text-left rounded-2xl border p-4 transition-colors cursor-pointer ${fulfillment === 'delivery' ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
-              >
+              <button type="button" onClick={() => setFulfillment('delivery')} className={optionClass(fulfillment === 'delivery')}>
                 <span className="block text-sm font-bold text-[#1F1A12]">{d.deliveryOption}</span>
                 <span className="block text-xs text-[#6E6453] mt-1 leading-relaxed">{d.deliveryOptionDesc}</span>
               </button>
-              <button
-                type="button"
-                onClick={() => setFulfillment('pickup')}
-                className={`text-left rounded-2xl border p-4 transition-colors cursor-pointer ${fulfillment === 'pickup' ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
-              >
+              <button type="button" onClick={() => setFulfillment('pickup')} className={optionClass(fulfillment === 'pickup')}>
                 <span className="block text-sm font-bold text-[#1F1A12]">{d.pickupOption}</span>
                 <span className="block text-xs text-[#6E6453] mt-1 leading-relaxed">{d.pickupOptionDesc}</span>
               </button>
             </div>
-          </div>
 
-          {fulfillment === 'delivery' && (
-          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                {d.heading}
-              </h2>
-              {addresses.length === 0 ? (
-                <button
-                  type="button"
-                  onClick={openAddModal}
-                  className="px-4 py-1.5 rounded-full border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {d.addAddress}
-                </button>
-              ) : null}
-            </div>
-
-            {selectedAddress ? (
-              <div className="bg-[#FAF2DA] border border-[#E8D49E] rounded-2xl p-5 relative">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-[#1F1A12]">
-                        {selectedAddress.recipientName}
-                      </span>
-                      <span className="text-xs text-[#8A7F6C]">
-                        ({selectedAddress.phone})
-                      </span>
-                      <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
-                        {localizeAddressLabel(locale, selectedAddress.label)}
-                      </span>
-                    </div>
-
-                    <p className="text-xs text-[#6E6453] leading-relaxed">
-                      {selectedAddress.street}
-                      {selectedAddress.detail ? `, ${selectedAddress.detail}` : ''}
-                      {selectedAddress.district ? `, Kec. ${selectedAddress.district}` : ''}
-                      , {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => openEditModal(selectedAddress)}
-                      className="px-4 py-1.5 rounded-xl border border-[#C9971C] text-[#C9971C] hover:bg-[#FFFBF0] text-xs font-semibold transition-colors cursor-pointer"
-                    >
-                      {d.edit}
-                    </button>
-                    {addresses.length > 1 && (
+            {fulfillment === 'delivery' && (
+              <div className="mt-6 pt-6 border-t border-[#EFE5CC]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-[#1F1A12]">{d.heading}</h3>
+                  {selectedAddress && (
+                    <div className="flex items-center gap-3 text-xs font-semibold">
                       <button
                         type="button"
-                        onClick={() => setIsPickerModalOpen(true)}
-                        className="px-4 py-1.5 rounded-xl bg-[#E5DFD5]/60 hover:bg-[#E5DFD5] text-[#1F1A12] text-xs font-semibold transition-colors cursor-pointer"
+                        onClick={() => openEditModal(selectedAddress)}
+                        className="text-[#C9971C] hover:text-[#9A7420] cursor-pointer"
                       >
-                        {d.chooseOther}
+                        {d.edit}
                       </button>
-                    )}
-                  </div>
+                      {addresses.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setIsPickerModalOpen(true)}
+                          className="text-[#6E6453] hover:text-[#1F1A12] cursor-pointer"
+                        >
+                          {d.chooseOther}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-8 border-2 border-dashed border-[#DFC478]/50 rounded-2xl bg-[#FFFDF7]">
-                <MapPin className="w-8 h-8 text-[#8C6A1C] mx-auto mb-2 opacity-60" />
-                <p className="text-xs text-[#6E6453] mb-3">
-                  {d.noAddressText}
-                </p>
-                <button
-                  type="button"
-                  onClick={openAddModal}
-                  className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs transition-colors cursor-pointer shadow-2xs"
-                >
-                  {d.addNewAddress}
-                </button>
-              </div>
-            )}
-          </div>
-          )}
 
-          {fulfillment === 'pickup' && (
-          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
-            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
-              {d.pickupEventHeading}
-            </h2>
-            {eventsLoading ? (
-              <p className="text-xs text-[#6E6453]">{d.loadingEvents}</p>
-            ) : pickupEvents.length === 0 ? (
-              <p className="text-xs text-[#6E6453] leading-relaxed">{d.pickupNoEvents}</p>
-            ) : (
-              <div className="space-y-3">
-                {pickupEvents.map((ev) => {
-                  const isSelected = ev.id === selectedEventId;
-                  return (
-                    <button
-                      key={ev.id}
-                      type="button"
-                      onClick={() => setSelectedEventId(ev.id)}
-                      className={`w-full text-left rounded-2xl border p-4 transition-colors cursor-pointer ${isSelected ? 'border-[#C9971C] bg-[#FDF6E2]' : 'border-[#E8D49E] bg-white hover:bg-[#FFFBF0]'}`}
-                    >
-                      <span className="block text-sm font-bold text-[#1F1A12]">{ev.tourName || ev.title}</span>
-                      <span className="block text-xs text-[#6E6453] mt-0.5">
-                        {formatEventDate(ev)}
-                        {ev.venue || ev.city ? ` • ${[ev.venue, ev.city].filter(Boolean).join(', ')}` : ''}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-            <h3 className="text-sm font-bold text-[#1F1A12] mt-6 mb-3">
-              {d.pickupContactHeading}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input
-                value={pickupName}
-                onChange={(e) => setPickupName(e.target.value)}
-                placeholder={d.pickupNamePh}
-                className="w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
-              />
-              <input
-                value={pickupPhone}
-                onChange={(e) => setPickupPhone(e.target.value)}
-                placeholder={d.pickupPhonePh}
-                inputMode="tel"
-                className="w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
-              />
-            </div>
-            <p className="text-xs text-[#6E6453] mt-3 leading-relaxed">{d.pickupHint}</p>
-          </div>
-          )}
-
-          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-                {d.ordersHeading}
-              </h2>
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="text-xs text-[#8C6A1C] hover:underline font-semibold cursor-pointer"
-              >
-                {d.addItem}
-              </button>
-            </div>
-
-            <div className="space-y-3.5">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-[#FDF6E2] border border-[#E8D49E] rounded-2xl p-4 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-14 h-14 rounded-xl object-cover object-top border border-black/5 bg-[#F8EFD7]"
-                    />
-                    <div>
-                      <div className="text-sm sm:text-base font-bold text-[#1F1A12]">
-                        {item.name}
+                {selectedAddress ? (
+                  <div className="rounded-xl border border-[#E8D9B5] bg-[#FFFBF0] p-4 flex items-start gap-3">
+                    <MapPin className="w-4 h-4 text-[#8C6A1C] mt-0.5 shrink-0" />
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-bold text-sm text-[#1F1A12]">{selectedAddress.recipientName}</span>
+                        <span className="text-xs text-[#6E6453]">{selectedAddress.phone}</span>
+                        <span className="text-[10px] font-semibold text-[#7A5B15] bg-[#FAF2DA] px-2 py-0.5 rounded-md">
+                          {localizeAddressLabel(locale, selectedAddress.label)}
+                        </span>
                       </div>
-                      <div className="text-xs text-[#8A7F6C]">
-                        {item.subtitle}
-                      </div>
-                      <div className="text-xs sm:text-sm font-bold text-[#1F1A12] mt-0.5">
-                        {formatRupiah(item.price)}
-                      </div>
+                      <p className="text-xs text-[#6E6453] leading-relaxed">
+                        {selectedAddress.street}
+                        {selectedAddress.detail ? `, ${selectedAddress.detail}` : ''}
+                        {selectedAddress.district ? `, Kec. ${selectedAddress.district}` : ''}
+                        , {selectedAddress.city}, {selectedAddress.province} {selectedAddress.postalCode}
+                      </p>
                     </div>
                   </div>
-
-                  <div className="bg-[#FCEBAE] border border-[#DFC377] rounded-full px-2.5 py-1 flex items-center gap-2.5">
+                ) : (
+                  <div className="text-center py-8 border-2 border-dashed border-[#DFC478]/60 rounded-xl bg-[#FFFDF7]">
+                    <MapPin className="w-7 h-7 text-[#8C6A1C] mx-auto mb-2 opacity-60" />
+                    <p className="text-xs text-[#6E6453] mb-3">{d.noAddressText}</p>
                     <button
                       type="button"
-                      onClick={() => updateQuantity(item.id, -1)}
-                      className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
-                      aria-label={d.decreaseAria}
+                      onClick={openAddModal}
+                      className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-[#1F1A12] font-bold text-xs transition-colors cursor-pointer"
                     >
-                      -
-                    </button>
-                    <span className="text-xs font-bold text-[#1F1A12] min-w-3 text-center">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(item.id, 1)}
-                      className="w-5 h-5 rounded-full border border-[#7A5B15]/40 flex items-center justify-center text-xs font-bold text-[#7A5B15] hover:bg-[#F8E295] transition-colors cursor-pointer"
-                      aria-label={d.increaseAria}
-                    >
-                      +
+                      {d.addNewAddress}
                     </button>
                   </div>
+                )}
+              </div>
+            )}
+
+            {fulfillment === 'pickup' && (
+              <div className="mt-6 pt-6 border-t border-[#EFE5CC]">
+                <h3 className="text-sm font-bold text-[#1F1A12] mb-3">{d.pickupEventHeading}</h3>
+                {eventsLoading ? (
+                  <p className="text-xs text-[#6E6453]">{d.loadingEvents}</p>
+                ) : pickupEvents.length === 0 ? (
+                  <p className="text-xs text-[#6E6453] leading-relaxed">{d.pickupNoEvents}</p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {pickupEvents.map((ev) => (
+                      <button
+                        key={ev.id}
+                        type="button"
+                        onClick={() => setSelectedEventId(ev.id)}
+                        className={`w-full ${optionClass(ev.id === selectedEventId)}`}
+                      >
+                        <span className="block text-sm font-bold text-[#1F1A12]">{ev.tourName || ev.title}</span>
+                        <span className="block text-xs text-[#6E6453] mt-0.5">
+                          {formatEventDate(ev)}
+                          {ev.venue || ev.city ? ` • ${[ev.venue, ev.city].filter(Boolean).join(', ')}` : ''}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <h3 className="text-sm font-bold text-[#1F1A12] mt-6 mb-3">{d.pickupContactHeading}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    value={pickupName}
+                    onChange={(e) => setPickupName(e.target.value)}
+                    placeholder={d.pickupNamePh}
+                    className={inputClass}
+                  />
+                  <input
+                    value={pickupPhone}
+                    onChange={(e) => setPickupPhone(e.target.value)}
+                    placeholder={d.pickupPhonePh}
+                    inputMode="tel"
+                    className={inputClass}
+                  />
                 </div>
+                <p className="text-xs text-[#6E6453] mt-3 leading-relaxed">{d.pickupHint}</p>
+              </div>
+            )}
+          </section>
+
+          <section className={CARD}>
+            <StepHeading
+              step={2}
+              title={d.ordersHeading}
+              action={
+                <a
+                  href={withBase('/store')}
+                  className="text-xs font-semibold text-[#8C6A1C] hover:text-[#C9971C] transition-colors"
+                >
+                  {d.addItem}
+                </a>
+              }
+            />
+
+            <ul className="divide-y divide-[#EFE5CC]">
+              {items.map((item) => (
+                <li key={item.key} className="py-4 first:pt-0 last:pb-0 flex items-center gap-4">
+                  <img
+                    src={withBase(item.image)}
+                    alt={item.name}
+                    className="w-16 h-16 rounded-xl object-cover object-top border border-black/5 bg-[#F8EFD7] shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm sm:text-base font-bold text-[#1F1A12] truncate">{item.name}</div>
+                    {item.subtitle && <div className="text-xs text-[#8A7F6C] truncate">{item.subtitle}</div>}
+                    <div className="text-sm text-[#6E6453] mt-1">{formatRupiah(item.price)}</div>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2 shrink-0">
+                    <div className="inline-flex items-center rounded-full border border-[#E3D3A5] bg-[#FFFBF0]">
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.cart.id, item.quantity - 1, item.cart.size, item.cart.color)}
+                        className="w-8 h-8 flex items-center justify-center text-[#7A5B15] hover:text-[#1F1A12] cursor-pointer"
+                        aria-label={d.decreaseAria}
+                      >
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-sm font-bold text-[#1F1A12] min-w-6 text-center">{item.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.cart.id, item.quantity + 1, item.cart.size, item.cart.color)}
+                        className="w-8 h-8 flex items-center justify-center text-[#7A5B15] hover:text-[#1F1A12] cursor-pointer"
+                        aria-label={d.increaseAria}
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFromCart(item.cart.id, item.cart.size, item.cart.color)}
+                      className="inline-flex items-center gap-1 text-[11px] text-[#8A7F6C] hover:text-rose-600 transition-colors cursor-pointer"
+                      aria-label={d.removeItemAria}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>{d.removeItemAria}</span>
+                    </button>
+                  </div>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
 
-          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#1F1A12]/5">
-            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12] mb-4">
-              {d.paymentMethod}
-            </h2>
-
-            <div className="bg-[#FDF6E2] border border-[#E8D49E] rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-white border border-[#E8D49E] flex items-center justify-center text-[#1F1A12] shrink-0">
-                  <QrCode className="w-6 h-6 text-[#1F1A12]" />
-                </div>
-                <div>
-                  <div className="text-sm sm:text-base font-bold text-[#1F1A12]">
-                    QRIS
-                  </div>
-                  <div className="text-xs text-[#8A7F6C]">
-                    {d.paymentWallets}
-                  </div>
-                </div>
+          <section className={CARD}>
+            <StepHeading step={3} title={d.paymentMethod} />
+            <div className="rounded-xl border border-[#E8D9B5] bg-[#FFFBF0] p-4 flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-white border border-[#E8D9B5] flex items-center justify-center shrink-0">
+                <QrCode className="w-6 h-6 text-[#1F1A12]" />
+              </div>
+              <div>
+                <div className="text-sm sm:text-base font-bold text-[#1F1A12]">QRIS</div>
+                <div className="text-xs text-[#8A7F6C]">{d.paymentWallets}</div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
-        <div className="lg:col-span-5">
-          <div className="bg-[#FDF3D6] border border-[#EBD6A2] rounded-3xl p-6 sm:p-7 shadow-sm sticky top-28 space-y-4">
-            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">
-              {d.summary}
-            </h2>
+        <aside className="lg:col-span-5">
+          <div className="bg-[#FDF3D6] border border-[#EBD6A2] rounded-2xl p-5 sm:p-7 shadow-sm lg:sticky lg:top-28 space-y-5">
+            <h2 className="text-base sm:text-lg font-bold text-[#1F1A12]">{d.summary}</h2>
 
-            <div className="space-y-2 text-xs sm:text-sm text-[#70644D]">
-              <div className="flex justify-between items-center">
-                <span>{d.subtotalProducts}</span>
-                <span className="font-semibold text-[#1F1A12]">
-                  {formatRupiah(subtotal)}
-                </span>
+            <div className="space-y-2 text-sm text-[#70644D]">
+              <div className="flex justify-between">
+                <span>{d.subtotalProducts} ({itemCount})</span>
+                <span className="font-semibold text-[#1F1A12]">{formatRupiah(total)}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between">
                 <span>{d.serviceFee}</span>
                 <span className="font-semibold text-[#1F1A12]">-</span>
               </div>
             </div>
 
-            <div>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder={d.notesPlaceholder}
-                className="w-full h-24 bg-white rounded-2xl p-3.5 text-xs text-[#1F1A12] placeholder-[#A3977F] border border-[#EBD6A2]/60 focus:outline-none focus:border-[#C9971C] resize-none"
-              />
-            </div>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder={d.notesPlaceholder}
+              className="w-full h-20 bg-white rounded-xl p-3.5 text-sm text-[#1F1A12] placeholder-[#A3977F] border border-[#EBD6A2]/70 focus:outline-none focus:border-[#C9971C] resize-none"
+            />
 
             {fulfillment === 'delivery' && (
-              <div className="rounded-2xl border border-[#BFE8C9] bg-[#EFFAF1] p-4 text-center space-y-2">
-                <p className="text-xs text-[#1E7A34]">{d.shippingHelp}</p>
+              <div className="rounded-xl border border-[#BFE8C9] bg-[#EFFAF1] p-4 space-y-3">
+                <p className="text-xs text-[#1E7A34] leading-relaxed">{d.shippingHelp}</p>
                 <a
                   href={daniaWaLink(fmt(d.waCheckoutTemplate, { items: items.map((i) => `${i.name} (${i.quantity}x)`).join(', ') }))}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-block px-5 py-2.5 rounded-full bg-[#25D366] text-white font-bold text-xs shadow-sm hover:brightness-105 transition-all"
+                  className="inline-block px-5 py-2 rounded-full bg-[#25D366] text-white font-bold text-xs hover:brightness-105 transition-all"
                 >
                   {d.contactDania}
                 </a>
               </div>
             )}
 
-            <div className="pt-2 flex justify-between items-baseline">
-              <span className="text-base font-bold text-[#1F1A12]">
-                {d.totalPrice}
-              </span>
-              <span className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
-                {formatRupiah(total)}
-              </span>
+            <div className="pt-4 border-t border-[#EBD6A2] flex justify-between items-baseline">
+              <span className="text-base font-bold text-[#1F1A12]">{d.totalPrice}</span>
+              <span className="text-2xl font-bold text-[#1F1A12]">{formatRupiah(total)}</span>
             </div>
 
             {orderError && (
@@ -582,12 +510,12 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               type="button"
               onClick={handlePlaceOrder}
               disabled={placing}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer text-center disabled:opacity-60"
+              className="w-full py-3.5 rounded-full bg-[#1F1A12] hover:bg-[#3A3022] text-[#FDF3D6] font-bold text-sm tracking-wide transition-colors cursor-pointer disabled:opacity-60"
             >
               {d.orderButton}
             </button>
           </div>
-        </div>
+        </aside>
       </div>
 
       <AddressModal
@@ -600,15 +528,14 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
 
       {isPickerModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl relative border border-[#EADBBD]">
             <div className="flex items-center justify-between pb-3 border-b border-[#1F1A12]/10 mb-4">
-              <h3 className="text-base font-bold text-[#1F1A12]">
-                {d.pickerTitle}
-              </h3>
+              <h3 className="text-base font-bold text-[#1F1A12]">{d.pickerTitle}</h3>
               <button
                 type="button"
                 onClick={() => setIsPickerModalOpen(false)}
                 className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-[#6A5E48] transition-colors cursor-pointer"
+                aria-label={d.close}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -624,21 +551,21 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
                       setSelectedAddress(addr.id);
                       setIsPickerModalOpen(false);
                     }}
-                    className={`p-3.5 rounded-2xl border text-xs cursor-pointer transition-all flex items-start justify-between ${
+                    className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-colors flex items-start justify-between ${
                       isSelected
-                        ? 'border-[#C9971C] bg-[#FFFDF7] shadow-xs'
+                        ? 'border-[#C9971C] bg-[#FFFDF7] ring-1 ring-[#C9971C]'
                         : 'border-[#E5DFD5] bg-white hover:bg-[#FAF6EC]'
                     }`}
                   >
                     <div className="space-y-1">
-                      <div className="font-bold text-[#1F1A12] flex items-center gap-2">
+                      <div className="font-bold text-[#1F1A12] flex flex-wrap items-center gap-2">
                         <span>{addr.recipientName}</span>
-                        <span className="text-[#8A7F6C] font-normal">({addr.phone})</span>
-                        <span className="text-[10px] text-[#8C6A1C] bg-[#FAF2DA] border border-[#DFC478]/40 px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[#8A7F6C] font-normal">{addr.phone}</span>
+                        <span className="text-[10px] text-[#7A5B15] bg-[#FAF2DA] px-2 py-0.5 rounded-md font-semibold">
                           {localizeAddressLabel(locale, addr.label)}
                         </span>
                         {addr.isDefault && (
-                          <span className="text-[9px] text-[#7A6E58] bg-[#F3EEE3] px-1.5 py-0.5 rounded-sm">
+                          <span className="text-[10px] text-white bg-[#C9971C] px-2 py-0.5 rounded-md font-semibold">
                             {d.defaultBadge}
                           </span>
                         )}
@@ -651,7 +578,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1.5 ml-2">
+                    <div className="flex items-center gap-1 ml-2 shrink-0">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -662,7 +589,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
                         className="p-1.5 hover:text-[#9A7420] text-[#7A6E58] transition-colors cursor-pointer"
                         title={d.editAddressTitle}
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
+                        <Pencil className="w-3.5 h-3.5" />
                       </button>
                       {addresses.length > 1 && (
                         <button
@@ -683,7 +610,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               })}
             </div>
 
-            <div className="pt-2 flex items-center justify-between border-t border-[#1F1A12]/10">
+            <div className="pt-3 flex items-center justify-between border-t border-[#1F1A12]/10">
               <button
                 type="button"
                 onClick={() => {
