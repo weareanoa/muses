@@ -144,6 +144,12 @@ export interface TransactionDTO {
   trackingNumber?: string;
   stepper?: StepperItemDTO[];
   isStepperExpanded?: boolean;
+  review?: OrderReviewDTO;
+}
+
+export interface OrderReviewDTO {
+  rating: number;
+  comment?: string;
 }
 
 export interface FulfillmentPayload {

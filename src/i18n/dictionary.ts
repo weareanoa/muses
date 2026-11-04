@@ -412,6 +412,19 @@ const idCheckout = {
     waProofTemplate: 'Halo admin MUSES, saya sudah membayar pesanan {id} sebesar {amount}. Bukti pembayaran terlampir.',
     loginRequired: 'Masuk untuk melihat pesananmu.',
     loadFailed: 'Gagal memuat pesanan. Coba muat ulang halaman.',
+    confirmReceivedTitle: 'Pesananmu sudah sampai?',
+    confirmReceivedBody: 'Tekan tombol ini setelah barang kamu terima supaya pesanan ditandai selesai.',
+    confirmReceived: 'Pesanan Diterima',
+    rateOrder: 'Beri Rating',
+    yourRating: 'Rating kamu',
+    ratingTitle: 'Beri rating pesanan',
+    ratingCommentPlaceholder: 'Ceritakan pengalamanmu (opsional)',
+    ratingSubmit: 'Kirim Rating',
+    ratingCancel: 'Batal',
+    ratingPick: 'Pilih jumlah bintang dulu.',
+    errReviewAlready: 'Pesanan ini sudah diberi rating.',
+    errReviewState: 'Pesanan belum bisa diubah ke langkah ini.',
+    errReviewGeneric: 'Gagal memproses. Coba lagi.',
   },
   payment: {
     waiting: 'Menunggu Pembayaran',
@@ -620,6 +633,7 @@ const idAdmin = {
   admin: {
     checking: "Memeriksa akses admin\u2026",
     noSupabaseTitle: "Layanan admin belum terhubung",
+    verifiedSession: "Sesi terverifikasi",
     loginNoSupabaseBody:
       "Layanan login admin sedang tidak terhubung. Coba muat ulang halaman ini; kalau masih berlanjut, hubungi tim teknis.",
     schedNoSupabaseBody:
@@ -1134,6 +1148,19 @@ const enCheckout = {
     waProofTemplate: "Hi MUSES admin, I have paid order {id} of {amount}. Payment proof attached.",
     loginRequired: "Sign in to see your orders.",
     loadFailed: "Failed to load orders. Please refresh the page.",
+    confirmReceivedTitle: "Has your order arrived?",
+    confirmReceivedBody: "Tap this once you have received your items so the order is marked complete.",
+    confirmReceived: "Order Received",
+    rateOrder: "Rate Order",
+    yourRating: "Your rating",
+    ratingTitle: "Rate your order",
+    ratingCommentPlaceholder: "Tell us about your experience (optional)",
+    ratingSubmit: "Submit Rating",
+    ratingCancel: "Cancel",
+    ratingPick: "Pick a star rating first.",
+    errReviewAlready: "This order has already been rated.",
+    errReviewState: "This order cannot move to that step yet.",
+    errReviewGeneric: "Something went wrong. Please try again.",
   },
   payment: {
     waiting: "Waiting for Payment",
@@ -1352,6 +1379,7 @@ const enAdmin = {
   admin: {
     checking: "Checking admin access\u2026",
     noSupabaseTitle: "Admin service not connected",
+    verifiedSession: "Verified session",
     loginNoSupabaseBody:
       "The admin sign-in service is not connected right now. Try reloading this page; if it continues, contact the tech team.",
     schedNoSupabaseBody:
@@ -1528,6 +1556,7 @@ const idAdminOrders = {
     paidAt: 'Dibayar',
     reference: 'Referensi mutasi',
     adminNote: 'Catatan admin',
+    buyerRating: 'Rating pembeli',
     rejectReason: 'Alasan ditolak',
     pickupCode: 'Kode pickup',
     tracking: 'Resi',
@@ -1601,6 +1630,7 @@ const enAdminOrders = {
     paidAt: "Paid",
     reference: "Transfer reference",
     adminNote: "Admin note",
+    buyerRating: "Buyer rating",
     rejectReason: "Rejection reason",
     pickupCode: "Pickup code",
     tracking: "Tracking",
@@ -1786,8 +1816,8 @@ export function localizeAddressLabel(locale: Locale, label: string): string {
   return ADDRESS_LABELS[label] ?? label;
 }
 
-// Demo-order strings live in src/data/orders.ts as prefilled Indonesian
-// content (not UI copy), so they are mapped here instead of the tree.
+// Server-generated order strings (status labels, stepper) arrive in
+// Indonesian, so they are mapped here instead of the tree.
 const DEMO_TEXT: Record<string, string> = {
   "Menunggu pembayaran": "Waiting for payment",
   "Diambil di event": "Pickup at event",

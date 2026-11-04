@@ -4,6 +4,7 @@ import type {
   TransactionItemDTO,
   TransactionStatus,
   CreateTransactionPayload,
+  OrderReviewDTO,
   PaymentSettings,
   ServiceResult,
 } from '../types/database';
@@ -43,6 +44,8 @@ const KNOWN_RPC_ERRORS = [
   'PICKUP_CODE_MISMATCH',
   'AMOUNT_CONFLICT',
   'INVALID_SETTINGS',
+  'INVALID_RATING',
+  'ALREADY_REVIEWED',
 ];
 
 export function rpcErrorCode(message: string | undefined): string {
@@ -63,6 +66,8 @@ export function normalizeTransaction(raw: any): TransactionDTO {
         price: Number(it.price) || 0,
       }))
     : [];
+
+  const rawReview = Array.isArray(raw.order_reviews) ? raw.order_reviews[0] : raw.order_reviews;
 
   return {
     id: String(raw.id),
@@ -95,6 +100,9 @@ export function normalizeTransaction(raw: any): TransactionDTO {
     trackingNumber: raw.tracking_number || undefined,
     stepper: Array.isArray(raw.stepper) ? raw.stepper : [],
     isStepperExpanded: status === 'unpaid' || status === 'awaiting_verification',
+    review: rawReview
+      ? { rating: Number(rawReview.rating) || 0, comment: rawReview.comment || undefined }
+      : undefined,
   };
 }
 
@@ -109,7 +117,7 @@ export const transactionService = {
     await sb.rpc('expire_stale_orders');
     const { data, error } = await sb
       .from('transactions')
-      .select('*, transaction_items(*)')
+      .select('*, transaction_items(*), order_reviews(*)')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -204,6 +212,32 @@ export const transactionService = {
     const { data, error } = await sb.rpc('claim_payment', { p_order_id: orderId });
     if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
     return { success: true, data: normalizeTransaction(data) };
+  },
+
+  async confirmReceived(orderId: string): Promise<ServiceResult<TransactionDTO>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { data, error } = await sb.rpc('user_confirm_received', { p_order_id: orderId });
+    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    return { success: true, data: normalizeTransaction(data) };
+  },
+
+  async submitReview(
+    orderId: string,
+    rating: number,
+    comment: string
+  ): Promise<ServiceResult<OrderReviewDTO>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { data, error } = await sb.rpc('submit_order_review', {
+      p_order_id: orderId,
+      p_rating: rating,
+      p_comment: comment || null,
+    });
+    if (error || !data) return { success: false, error: rpcErrorCode(error?.message) };
+    return { success: true, data: { rating: Number(data.rating) || rating, comment: data.comment || undefined } };
   },
 
   async cancelOrder(orderId: string): Promise<ServiceResult<TransactionDTO>> {

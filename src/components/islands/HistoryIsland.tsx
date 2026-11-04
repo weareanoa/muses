@@ -7,6 +7,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Star,
 } from 'lucide-react';
 import type { TransactionDTO } from '../../types/database';
 import { transactionService } from '../../services/transactionService';
@@ -31,6 +32,65 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [now, setNow] = useState<number>(() => Date.now());
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [busyOrderId, setBusyOrderId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState('');
+  const [ratingOrderId, setRatingOrderId] = useState<string | null>(null);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [ratingComment, setRatingComment] = useState('');
+
+  const actionErrorMessage = (code: string | undefined): string => {
+    if (code === 'ALREADY_REVIEWED') return d.errReviewAlready;
+    if (code === 'INVALID_STATE' || code === 'ORDER_NOT_FOUND') return d.errReviewState;
+    return d.errReviewGeneric;
+  };
+
+  const replaceOrder = (next: TransactionDTO) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === next.id ? { ...next, review: next.review ?? order.review } : order
+      )
+    );
+  };
+
+  const handleConfirmReceived = async (orderId: string) => {
+    setBusyOrderId(orderId);
+    setActionError('');
+    const res = await transactionService.confirmReceived(orderId);
+    setBusyOrderId(null);
+    if (res.success && res.data) {
+      replaceOrder(res.data);
+    } else {
+      setActionError(actionErrorMessage(res.error));
+    }
+  };
+
+  const openRating = (orderId: string) => {
+    setRatingOrderId(orderId);
+    setRatingValue(0);
+    setRatingComment('');
+    setActionError('');
+  };
+
+  const handleSubmitRating = async () => {
+    if (!ratingOrderId) return;
+    if (ratingValue < 1) {
+      setActionError(d.ratingPick);
+      return;
+    }
+    setBusyOrderId(ratingOrderId);
+    setActionError('');
+    const res = await transactionService.submitReview(ratingOrderId, ratingValue, ratingComment.trim());
+    setBusyOrderId(null);
+    if (res.success && res.data) {
+      const review = res.data;
+      setOrders((prev) =>
+        prev.map((order) => (order.id === ratingOrderId ? { ...order, review } : order))
+      );
+      setRatingOrderId(null);
+    } else {
+      setActionError(actionErrorMessage(res.error));
+    }
+  };
 
   // Label stepper pesanan lama masih menyebut kurir; tampilkan netral.
   const stepperLabel = (label: string): string => {
@@ -147,6 +207,8 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
               const isPickup = order.actionType === 'pickup';
               const isShipping = order.actionType === 'shipping';
               const isCompleted = order.status === 'completed';
+              const canConfirmReceived = order.status === 'ready' && order.fulfillmentMethod !== 'pickup';
+              const isBusy = busyOrderId === order.id;
 
               return (
                 <div
@@ -314,6 +376,98 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                         {d.contactDania}
                       </a>
                     </div>
+                  )}
+
+                  {canConfirmReceived && (
+                    <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#F2F8F1] border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <p className="text-xs sm:text-sm font-bold text-emerald-900">{d.confirmReceivedTitle}</p>
+                        <p className="text-[11px] sm:text-xs text-emerald-700">{d.confirmReceivedBody}</p>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => handleConfirmReceived(order.id)}
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer shrink-0"
+                      >
+                        {d.confirmReceived}
+                      </button>
+                    </div>
+                  )}
+
+                  {isCompleted && (
+                    <div className="rounded-2xl p-4 sm:p-5 mt-4 bg-[#FFF8E7] border border-[#EED79D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      {order.review ? (
+                        <div className="space-y-1">
+                          <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">{d.yourRating}</p>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((n) => (
+                              <Star
+                                key={n}
+                                className={`w-4 h-4 ${n <= order.review!.rating ? 'fill-[#D4A017] text-[#D4A017]' : 'text-[#D8CCA9]'}`}
+                              />
+                            ))}
+                          </div>
+                          {order.review.comment && (
+                            <p className="text-[11px] sm:text-xs text-[#736856]">{order.review.comment}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-xs sm:text-sm font-bold text-[#1F1A12]">{d.ratingTitle}</p>
+                          <button
+                            type="button"
+                            onClick={() => openRating(order.id)}
+                            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 cursor-pointer shrink-0"
+                          >
+                            {d.rateOrder}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {ratingOrderId === order.id && (
+                    <div className="rounded-2xl p-4 sm:p-5 mt-3 bg-white border border-[#E8D9B5] space-y-3">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button key={n} type="button" onClick={() => setRatingValue(n)} className="cursor-pointer">
+                            <Star
+                              className={`w-7 h-7 ${n <= ratingValue ? 'fill-[#D4A017] text-[#D4A017]' : 'text-[#D8CCA9]'}`}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        value={ratingComment}
+                        onChange={(e) => setRatingComment(e.target.value)}
+                        maxLength={500}
+                        rows={3}
+                        placeholder={d.ratingCommentPlaceholder}
+                        className="w-full rounded-xl border border-[#E8D9B5] bg-[#FFFCF6] p-3 text-xs sm:text-sm text-[#1F1A12] outline-none focus:border-[#C9971C]"
+                      />
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setRatingOrderId(null)}
+                          className="px-4 py-2 rounded-xl border border-[#E8D9B5] text-xs font-bold text-[#6E6453] cursor-pointer"
+                        >
+                          {d.ratingCancel}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={handleSubmitRating}
+                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer"
+                        >
+                          {d.ratingSubmit}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {actionError && (ratingOrderId === order.id || canConfirmReceived) && (
+                    <p className="mt-3 text-xs text-rose-700">{actionError}</p>
                   )}
 
                   {isCompleted && (

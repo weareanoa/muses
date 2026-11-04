@@ -66,6 +66,21 @@ export const scheduleService = {
     return { success: true, data: items };
   },
 
+  async getAdminSchedules(): Promise<ServiceResult<ScheduleDTO[]>> {
+    const sb = getSupabaseClient();
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { data, error } = await sb
+      .from('schedules')
+      .select('*')
+      .order('target_date', { ascending: true });
+    if (error) {
+      console.error('getAdminSchedules failed:', error.message);
+      return { success: false, error: 'UNKNOWN' };
+    }
+    return { success: true, data: (data || []).map(mapDbScheduleToDto) };
+  },
+
   async getScheduleById(id: string): Promise<ServiceResult<ScheduleDTO>> {
     const sb = getSupabaseClient();
     if (sb) {

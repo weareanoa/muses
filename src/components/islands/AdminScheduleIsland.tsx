@@ -92,7 +92,7 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
   const [error, setError] = useState('');
 
   const loadSchedules = async () => {
-    const res = await scheduleService.getSchedules();
+    const res = await scheduleService.getAdminSchedules();
     if (res.success && res.data) {
       setSchedules(sortByTargetDate(res.data));
     } else {

@@ -272,33 +272,27 @@ export const productService = {
 
   async updateStock(productId: string, quantityDelta: number): Promise<ServiceResult<{ stock: number }>> {
     const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        const { data: current } = await sb
-          .from('products')
-          .select('stock')
-          .eq('id', productId)
-          .single();
-        if (current) {
-          const nextStock = Math.max(0, Number(current.stock) + quantityDelta);
-          const { error } = await sb
-            .from('products')
-            .update({ stock: nextStock, updated_at: new Date().toISOString() })
-            .eq('id', productId);
-          if (!error) {
-            return { success: true, data: { stock: nextStock } };
-          }
-        }
-      } catch {}
-    }
-    return { success: true, data: { stock: 0 } };
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { data: current } = await sb
+      .from('products')
+      .select('stock')
+      .eq('id', productId)
+      .single();
+    if (!current) return { success: false, error: 'UNKNOWN_PRODUCT' };
+
+    const nextStock = Math.max(0, Number(current.stock) + quantityDelta);
+    const { error } = await sb
+      .from('products')
+      .update({ stock: nextStock, updated_at: new Date().toISOString() })
+      .eq('id', productId);
+    if (error) return { success: false, error: error.message };
+    return { success: true, data: { stock: nextStock } };
   },
 
   async upsertProduct(product: ProductDTO): Promise<ServiceResult<ProductDTO>> {
     const sb = getSupabaseClient();
-    if (!sb) {
-      return { success: true, data: product };
-    }
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
     const { data, error } = await sb
       .from('products')
@@ -339,12 +333,10 @@ export const productService = {
 
   async deleteProduct(id: string): Promise<ServiceResult<boolean>> {
     const sb = getSupabaseClient();
-    if (sb) {
-      const { error } = await sb.from('products').delete().eq('id', id);
-      if (error) {
-        return { success: false, error: error.message };
-      }
-    }
+    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) return { success: false, error: error.message };
     return { success: true, data: true };
   },
 };

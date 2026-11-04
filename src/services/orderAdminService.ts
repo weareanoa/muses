@@ -74,7 +74,7 @@ export const orderAdminService = {
     await sb.rpc('expire_stale_orders');
     const { data, error } = await sb
       .from('transactions')
-      .select('*, transaction_items(*), profiles(name, email, phone)')
+      .select('*, transaction_items(*), order_reviews(*), profiles(name, email, phone)')
       .order('created_at', { ascending: false })
       .limit(limit);
 

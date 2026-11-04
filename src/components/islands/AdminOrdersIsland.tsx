@@ -259,6 +259,12 @@ function OrderCard({ order, locale, d, expanded, busy, onToggle, run }: OrderCar
               {order.trackingNumber && <DetailRow label={d.tracking} value={order.trackingNumber} />}
               {order.rejectReason && <DetailRow label={d.rejectReason} value={order.rejectReason} />}
               {order.adminNote && <DetailRow label={d.adminNote} value={order.adminNote} />}
+              {order.review && (
+                <DetailRow
+                  label={d.buyerRating}
+                  value={`${'★'.repeat(order.review.rating)}${'☆'.repeat(5 - order.review.rating)}${order.review.comment ? ` — ${order.review.comment}` : ''}`}
+                />
+              )}
             </div>
           </div>
 

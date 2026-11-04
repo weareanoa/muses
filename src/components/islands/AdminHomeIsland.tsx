@@ -68,7 +68,7 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
         // Fetch dashboard overview metrics
         setLoadingData(true);
         try {
-          const schedRes = await scheduleService.getSchedules();
+          const schedRes = await scheduleService.getAdminSchedules();
           if (schedRes.success && schedRes.data) {
             setSchedules(schedRes.data);
           }
@@ -376,7 +376,7 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
                 Super Admin
               </div>
               <p className="mt-1 truncate text-xs text-[#6E6453]">
-                {adminEmail || 'Verified Session'}
+                {adminEmail || d.verifiedSession}
               </p>
             </div>
           </div>
