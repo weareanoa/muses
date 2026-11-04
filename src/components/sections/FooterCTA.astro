@@ -34,30 +34,34 @@ const d = getDict(locale).footer;
 
       <div class="lg:ml-auto space-y-4">
         <p class="text-xs font-bold uppercase text-[#8C6A1C]">{d.follow}</p>
-        <ul class="space-y-2 text-sm text-[#6E6453] font-medium">
+        <ul class="space-y-2.5 text-sm text-[#6E6453] font-medium">
           <li>
-            <a href="https://instagram.com/official.muses" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
-              Instagram @official.muses
+            <a href="https://instagram.com/official.muses" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2.5 hover:text-[#C9971C] transition-colors">
+              <img src={withBase("/icon/Instagram.svg")} alt="" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 transition-opacity shrink-0" aria-hidden="true" />
+              <span>@official.muses</span>
             </a>
           </li>
           <li>
-            <a href="https://tiktok.com/@muses.official" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
-              TikTok @muses.official
+            <a href="https://tiktok.com/@muses.official" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2.5 hover:text-[#C9971C] transition-colors">
+              <img src={withBase("/icon/TikTok.svg")} alt="" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 transition-opacity shrink-0" aria-hidden="true" />
+              <span>@muses.official</span>
             </a>
           </li>
           <li>
-            <a href="https://youtube.com/@muses.official" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
-              YouTube @muses.official
+            <a href="https://youtube.com/@muses.official" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2.5 hover:text-[#C9971C] transition-colors">
+              <img src={withBase("/icon/YouTube.svg")} alt="" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 transition-opacity shrink-0" aria-hidden="true" />
+              <span>@muses.official</span>
             </a>
           </li>
           <li>
-            <a href="https://x.com/muses_ofc" target="_blank" rel="noopener noreferrer" class="hover:text-[#C9971C] transition-colors">
-              X @muses_ofc
+            <a href="https://x.com/muses_ofc" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2.5 hover:text-[#C9971C] transition-colors">
+              <img src={withBase("/icon/X (Twitter).svg")} alt="" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 transition-opacity shrink-0" aria-hidden="true" />
+              <span>@muses_ofc</span>
             </a>
           </li>
         </ul>
         <p class="text-xs text-[#6E6453] leading-relaxed">
-          {d.businessPrefix} <a href="mailto:dania@muses.id" class="font-medium hover:text-[#C9971C] transition-colors">dania@muses.id</a>
+          {d.businessPrefix} <a href="mailto:theamusing.muses@gmail.com" class="font-medium hover:text-[#C9971C] transition-colors">theamusing.muses@gmail.com</a>
         </p>
       </div>
     </div>

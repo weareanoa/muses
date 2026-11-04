@@ -89,7 +89,7 @@ const id = {
   },
   footer: {
     tagline:
-      "Temani Vira, Vely, Mine, Faril, Ndah, Liz, dan Lia dari mimpi pertama sampai cahaya berikutnya, di rumah resmi MUSES.",
+      "Temani Faril, Mine, Ndah, Vira, Vely, Liz, dan Lia dari mimpi pertama sampai cahaya berikutnya, di rumah resmi MUSES.",
     copyright1: "© 2026 MUSES OFFICIAL MANAGEMENT. All Rights Reserved.",
     copyright2: "Local Idol Group Profile & Interactive Music Showcase.",
     follow: "Ikuti MUSES",

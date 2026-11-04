@@ -10,6 +10,22 @@ const { locale = 'id' } = Astro.props;
 const d = getDict(locale).preloader;
 ---
 
+<script is:inline>
+  (() => {
+    try {
+      if (sessionStorage.getItem('muses_preloaded') === 'true') {
+        document.documentElement.classList.add('preloader-done');
+      }
+    } catch (_) {}
+  })();
+</script>
+
+<style is:inline>
+  html.preloader-done #muses-preloader {
+    display: none !important;
+  }
+</style>
+
 <div
   id="muses-preloader"
   data-stage={d.stage}
@@ -66,180 +82,203 @@ const d = getDict(locale).preloader;
 <script>
   import { withBase } from '../../lib/paths';
 
-  const allCriticalAssets: string[] = [
-    withBase('/images/muses_logo_3d_clean.webp'),
-    withBase('/images/muses_group_frame1.webp'),
-    withBase('/images/members/faril.webp'),
-    withBase('/images/members/vira.webp'),
-    withBase('/images/members/vely.webp'),
-    withBase('/images/members/mine.webp'),
-    withBase('/images/members/ndah.webp'),
-    withBase('/images/members/liz.webp'),
-    withBase('/images/members/lia.webp'),
-    withBase('/images/albums/BERSAMA MIMPI ART COVER.webp'),
-    withBase('/images/albums/LANGKAH KITA ART COVER.webp'),
-    withBase('/images/albums/RASA TERPENDAM ART COVER.webp'),
-    withBase('/images/albums/MENUJU CAHAYA ART COVER.webp'),
-    withBase('/decor/butterfly.svg'),
-    withBase('/decor/pita.svg'),
-    withBase('/decor/rose.svg'),
-    withBase('/decor/tulip.svg'),
-    withBase('/decor/sun.svg'),
-    withBase('/decor/owl.svg'),
-    withBase('/decor/whale.svg'),
-  ];
-
-  // Mobile: jangan paksa decode 21 aset berat sebelum halaman bisa
-  // di-scroll. Cukup logo + frame hero; foto member, cover album, dan
-  // dekor mengalir lewat <img> biasa setelah splash hilang.
-  const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-  const criticalAssets = isCoarsePointer
-    ? [withBase('/images/muses_logo_3d_clean_mobile.webp'), withBase('/images/muses_group_frame1_mobile.webp')]
-    : allCriticalAssets;
-
-  // Mobile: setelah splash hilang, hangatkan decode aset non-hero di waktu
-  // idle, supaya scroll ke member/diskografi/dekor tidak decode dadakan.
-  // Tidak memblokir interaksi (requestIdleCallback, fallback timeout).
-  const warmedAssets = isCoarsePointer ? allCriticalAssets.slice(2) : [];
-  function warmRemainingAssets() {
-    const warm = () => {
-      warmedAssets.forEach((src) => {
-        const img = new Image();
-        img.src = src;
-        if (img.decode) img.decode().catch(() => {});
-      });
-    };
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(warm, { timeout: 3000 });
-    } else {
-      setTimeout(warm, 1500);
+  function isPreloaded(): boolean {
+    try {
+      return sessionStorage.getItem('muses_preloaded') === 'true';
+    } catch {
+      return false;
     }
   }
-  function runPreloaderBuffer() {
+
+  function setPreloaded(): void {
+    try {
+      sessionStorage.setItem('muses_preloaded', 'true');
+    } catch {}
+  }
+
+  if (isPreloaded()) {
     const preloader = document.getElementById('muses-preloader');
-    const progressBar = document.getElementById('preloader-progress-bar');
-    const progressPercent = document.getElementById('preloader-percent');
-    const statusText = document.getElementById('preloader-status');
+    if (preloader) {
+      preloader.remove();
+    }
+    document.body.style.overflow = '';
+    window.dispatchEvent(new CustomEvent('muses-preloader-done'));
+  } else {
+    const allCriticalAssets: string[] = [
+      withBase('/images/muses_logo_3d_clean.webp'),
+      withBase('/images/muses_group_frame1.webp'),
+      withBase('/images/members/faril.webp'),
+      withBase('/images/members/vira.webp'),
+      withBase('/images/members/vely.webp'),
+      withBase('/images/members/mine.webp'),
+      withBase('/images/members/ndah.webp'),
+      withBase('/images/members/liz.webp'),
+      withBase('/images/members/lia.webp'),
+      withBase('/images/albums/BERSAMA MIMPI ART COVER.webp'),
+      withBase('/images/albums/LANGKAH KITA ART COVER.webp'),
+      withBase('/images/albums/RASA TERPENDAM ART COVER.webp'),
+      withBase('/images/albums/MENUJU CAHAYA ART COVER.webp'),
+      withBase('/decor/butterfly.svg'),
+      withBase('/decor/pita.svg'),
+      withBase('/decor/rose.svg'),
+      withBase('/decor/tulip.svg'),
+      withBase('/decor/sun.svg'),
+      withBase('/decor/owl.svg'),
+      withBase('/decor/whale.svg'),
+    ];
 
-    if (!preloader) return;
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const criticalAssets = isCoarsePointer
+      ? [withBase('/images/muses_logo_3d_clean_mobile.webp'), withBase('/images/muses_group_frame1_mobile.webp')]
+      : allCriticalAssets;
 
-    document.body.style.overflow = 'hidden';
-
-    let loadedCount = 0;
-    const totalAssets = criticalAssets.length + 1; // +1 for fonts
-    let currentDisplayPercent = 0;
-    let isFinished = false;
-
-    const startTime = performance.now();
-    const minBufferTime = 700; // ms minimum buffer to show smooth transition
-    const maxSafetyTimeout = isCoarsePointer ? 1500 : 2500; // ms max wait before forcing unlock
-
-    function updateProgressUI(targetPercent: number) {
-      if (isFinished) return;
-      targetPercent = Math.min(100, Math.max(currentDisplayPercent, targetPercent));
-      currentDisplayPercent = targetPercent;
-
-      if (progressBar) {
-        progressBar.style.width = `${targetPercent}%`;
+    const warmedAssets = isCoarsePointer ? allCriticalAssets.slice(2) : [];
+    function warmRemainingAssets() {
+      const warm = () => {
+        warmedAssets.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+          if (img.decode) img.decode().catch(() => {});
+        });
+      };
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(warm, { timeout: 3000 });
+      } else {
+        setTimeout(warm, 1500);
       }
-      if (progressPercent) {
-        progressPercent.textContent = `${Math.round(targetPercent)}%`;
+    }
+
+    function runPreloaderBuffer() {
+      const preloader = document.getElementById('muses-preloader');
+      const progressBar = document.getElementById('preloader-progress-bar');
+      const progressPercent = document.getElementById('preloader-percent');
+      const statusText = document.getElementById('preloader-status');
+
+      if (!preloader) return;
+
+      if (isPreloaded()) {
+        preloader.remove();
+        document.body.style.overflow = '';
+        window.dispatchEvent(new CustomEvent('muses-preloader-done'));
+        return;
       }
 
-      if (statusText) {
-        const stage = preloader?.dataset.stage || 'Menyiapkan panggung...';
-        const charm = preloader?.dataset.charm || 'Memuat pesona para muse...';
-        const harmony = preloader?.dataset.harmony || 'Menyelaraskan harmoni...';
-        const welcome = preloader?.dataset.welcome || 'Selamat datang di MUSES';
-        if (targetPercent < 35) {
-          statusText.textContent = stage;
-        } else if (targetPercent < 70) {
-          statusText.textContent = charm;
-        } else if (targetPercent < 100) {
-          statusText.textContent = harmony;
-        } else {
-          statusText.textContent = welcome;
+      setPreloaded();
+      document.body.style.overflow = 'hidden';
+
+      let loadedCount = 0;
+      const totalAssets = criticalAssets.length + 1;
+      let currentDisplayPercent = 0;
+      let isFinished = false;
+
+      const startTime = performance.now();
+      const minBufferTime = 700;
+      const maxSafetyTimeout = isCoarsePointer ? 1500 : 2500;
+
+      function updateProgressUI(targetPercent: number) {
+        if (isFinished) return;
+        targetPercent = Math.min(100, Math.max(currentDisplayPercent, targetPercent));
+        currentDisplayPercent = targetPercent;
+
+        if (progressBar) {
+          progressBar.style.width = `${targetPercent}%`;
+        }
+        if (progressPercent) {
+          progressPercent.textContent = `${Math.round(targetPercent)}%`;
+        }
+
+        if (statusText) {
+          const stage = preloader?.dataset.stage || 'Menyiapkan panggung...';
+          const charm = preloader?.dataset.charm || 'Memuat pesona para muse...';
+          const harmony = preloader?.dataset.harmony || 'Menyelaraskan harmoni...';
+          const welcome = preloader?.dataset.welcome || 'Selamat datang di MUSES';
+          if (targetPercent < 35) {
+            statusText.textContent = stage;
+          } else if (targetPercent < 70) {
+            statusText.textContent = charm;
+          } else if (targetPercent < 100) {
+            statusText.textContent = harmony;
+          } else {
+            statusText.textContent = welcome;
+          }
         }
       }
-    }
 
-    function checkItemLoaded() {
-      loadedCount++;
-      const percent = (loadedCount / totalAssets) * 100;
-      updateProgressUI(percent);
+      function checkItemLoaded() {
+        loadedCount++;
+        const percent = (loadedCount / totalAssets) * 100;
+        updateProgressUI(percent);
 
-      if (loadedCount >= totalAssets) {
-        completePreloader();
+        if (loadedCount >= totalAssets) {
+          completePreloader();
+        }
       }
-    }
 
-    function completePreloader() {
-      if (isFinished) return;
-      isFinished = true;
-      updateProgressUI(100);
+      function completePreloader() {
+        if (isFinished) return;
+        isFinished = true;
+        setPreloaded();
+        updateProgressUI(100);
 
-      const elapsedTime = performance.now() - startTime;
-      const remainingDelay = Math.max(0, minBufferTime - elapsedTime);
-
-      setTimeout(() => {
-        if (progressBar) progressBar.style.width = '100%';
-        if (progressPercent) progressPercent.textContent = '100%';
+        const elapsedTime = performance.now() - startTime;
+        const remainingDelay = Math.max(0, minBufferTime - elapsedTime);
 
         setTimeout(() => {
-          preloader.classList.add('opacity-0', 'scale-105', 'pointer-events-none');
-          document.body.style.overflow = '';
-
-          window.dispatchEvent(new CustomEvent('muses-preloader-done'));
-
-          warmRemainingAssets();
-
-          if (typeof window !== 'undefined' && (window as any).ScrollTrigger) {
-            (window as any).ScrollTrigger.refresh();
-          }
+          if (progressBar) progressBar.style.width = '100%';
+          if (progressPercent) progressPercent.textContent = '100%';
 
           setTimeout(() => {
-            preloader.remove();
-          }, 700);
-        }, 180);
-      }, remainingDelay);
-    }
+            preloader.classList.add('opacity-0', 'scale-105', 'pointer-events-none');
+            document.body.style.overflow = '';
 
-    // Preload fonts
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready
-        .then(() => checkItemLoaded())
-        .catch(() => checkItemLoaded());
-    } else {
-      checkItemLoaded();
-    }
+            window.dispatchEvent(new CustomEvent('muses-preloader-done'));
 
-    // Preload and decode images
-    criticalAssets.forEach((src) => {
-      const img = new Image();
-      img.src = src;
+            warmRemainingAssets();
 
-      if (img.decode) {
-        img.decode()
+            if (typeof window !== 'undefined' && (window as any).ScrollTrigger) {
+              (window as any).ScrollTrigger.refresh();
+            }
+
+            setTimeout(() => {
+              preloader.remove();
+            }, 700);
+          }, 180);
+        }, remainingDelay);
+      }
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready
           .then(() => checkItemLoaded())
           .catch(() => checkItemLoaded());
       } else {
-        img.onload = () => checkItemLoaded();
-        img.onerror = () => checkItemLoaded();
+        checkItemLoaded();
       }
-    });
 
-    // Safety timeout
-    setTimeout(() => {
-      if (!isFinished) {
-        completePreloader();
-      }
-    }, maxSafetyTimeout);
-  }
+      criticalAssets.forEach((src) => {
+        const img = new Image();
+        img.src = src;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runPreloaderBuffer);
-  } else {
-    runPreloaderBuffer();
+        if (img.decode) {
+          img.decode()
+            .then(() => checkItemLoaded())
+            .catch(() => checkItemLoaded());
+        } else {
+          img.onload = () => checkItemLoaded();
+          img.onerror = () => checkItemLoaded();
+        }
+      });
+
+      setTimeout(() => {
+        if (!isFinished) {
+          completePreloader();
+        }
+      }, maxSafetyTimeout);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', runPreloaderBuffer);
+    } else {
+      runPreloaderBuffer();
+    }
   }
 </script>
-
