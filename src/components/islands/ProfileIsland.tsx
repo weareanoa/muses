@@ -8,11 +8,15 @@ import {
   updateUserProfile,
   addUserAddress,
   updateUserAddress,
+  deleteUserAddress,
   type UserAddress
 } from '../../stores/authStore';
 import {
   User as UserIcon,
   Check,
+  MapPin,
+  Pencil,
+  Trash2,
   LogOut
 } from 'lucide-react';
 
@@ -314,62 +318,103 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
 
           {activeTab === 'alamat' && (
             <div className="bg-[#FAF0D5] border border-[#ECDCAE] rounded-[28px] p-6 sm:p-10 shadow-xs min-h-[460px]">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between gap-4 mb-8">
                 <h1 className="text-xl sm:text-2xl font-bold text-[#1F1A12]">
                   {d.addressesHeading}
                 </h1>
                 <button
                   type="button"
                   onClick={openAddAddressModal}
-                  className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-xs font-bold text-[#1F1A12] transition-colors cursor-pointer shadow-2xs"
+                  className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-xs font-bold text-[#1F1A12] transition-colors cursor-pointer shadow-2xs shrink-0"
                 >
                   {d.addAddress}
                 </button>
               </div>
 
-              {addresses.length === 0 && (
-                <p className="text-sm text-[#6A5E48]">{d.noAddresses}</p>
-              )}
-
-              <div className="space-y-6">
-                {addresses.map((addr) => (
-                  <div key={addr.id} className="pt-2">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="font-bold text-sm text-[#1F1A12]">
-                          {addr.recipientName} | {addr.phone}
-                        </div>
-                        <p className="text-xs sm:text-sm text-[#4E4433] leading-relaxed max-w-2xl">
-                          {addr.street}
-                        </p>
-                        <p className="text-xs text-[#6A5D48] uppercase tracking-wide">
-                          {[addr.district, addr.city, addr.province, 'ID', addr.postalCode].filter(Boolean).join(', ')}
-                        </p>
-                        {addr.detail && (
-                          <p className="text-xs text-[#7A6E57]">
-                            {addr.detail}
-                          </p>
-                        )}
-                        {addr.label && (
-                          <div className="pt-1">
-                            <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-[#EEDAA2] text-[#423827]">
-                              {localizeAddressLabel(locale, addr.label)}
-                            </span>
+              {addresses.length === 0 ? (
+                <div className="flex flex-col items-center text-center py-14 rounded-2xl border-2 border-dashed border-[#DFC478]/60 bg-[#FFFDF7]/60">
+                  <MapPin className="w-9 h-9 text-[#8C6A1C] opacity-60 mb-3" />
+                  <p className="text-sm font-semibold text-[#1F1A12]">{d.noAddresses}</p>
+                  <p className="text-xs text-[#6A5E48] mt-1 mb-5 max-w-xs">{d.noAddressesHint}</p>
+                  <button
+                    type="button"
+                    onClick={openAddAddressModal}
+                    className="px-5 py-2 rounded-full bg-[#EBD69D] hover:bg-[#E3CB8C] text-xs font-bold text-[#1F1A12] transition-colors cursor-pointer"
+                  >
+                    {d.addAddress}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {addresses.map((addr) => (
+                    <div
+                      key={addr.id}
+                      className={`rounded-2xl border p-5 bg-white/70 transition-colors ${
+                        addr.isDefault ? 'border-[#C9971C]' : 'border-[#E8D49E]'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-bold text-sm text-[#1F1A12]">{addr.recipientName}</span>
+                            <span className="text-xs text-[#6A5E48]">{addr.phone}</span>
                           </div>
-                        )}
+                          <p className="text-xs sm:text-sm text-[#4E4433] leading-relaxed">{addr.street}</p>
+                          <p className="text-xs text-[#6A5D48] uppercase tracking-wide">
+                            {[addr.district, addr.city, addr.province, addr.postalCode].filter(Boolean).join(', ')}
+                          </p>
+                          {addr.detail && <p className="text-xs text-[#7A6E57]">{addr.detail}</p>}
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {addr.label && (
+                              <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-[#EEDAA2] text-[#423827]">
+                                {localizeAddressLabel(locale, addr.label)}
+                              </span>
+                            )}
+                            {addr.isDefault && (
+                              <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-[#C9971C] text-white">
+                                {d.addressPrimary}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => openEditAddressModal(addr)}
+                            className="p-2 rounded-full text-[#7A6E58] hover:bg-[#F2DC9F]/60 hover:text-[#9A7420] transition-colors cursor-pointer"
+                            title={d.editAddress}
+                            aria-label={d.editAddress}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm(d.confirmDeleteAddress)) deleteUserAddress(addr.id);
+                            }}
+                            className="p-2 rounded-full text-[#7A6E58] hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
+                            title={d.deleteAddress}
+                            aria-label={d.deleteAddress}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => openEditAddressModal(addr)}
-                        className="text-xs sm:text-sm text-[#C9971C] hover:text-[#9A7420] font-semibold cursor-pointer shrink-0"
-                      >
-                        {d.editAddress}
-                      </button>
+                      {!addr.isDefault && (
+                        <button
+                          type="button"
+                          onClick={() => updateUserAddress(addr.id, { isDefault: true })}
+                          className="mt-3 text-xs font-semibold text-[#C9971C] hover:text-[#9A7420] transition-colors cursor-pointer"
+                        >
+                          {d.setPrimary}
+                        </button>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
