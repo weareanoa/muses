@@ -374,6 +374,7 @@ const idCheckout = {
     save: 'Simpan',
   },
   orders: {
+    emptyAllTitle: 'Belum ada pesanan',
     emptyTitle: 'Belum ada pesanan dengan status ini',
     emptyBody: 'Jelajahi jadwal event, tiket cheki, atau merchandise resmi MUSES.',
     visitStore: 'Kunjungi Store',
@@ -1089,6 +1090,7 @@ const enCheckout = {
     save: "Save",
   },
   orders: {
+    emptyAllTitle: "No orders yet",
     emptyTitle: "No orders with this status yet",
     emptyBody: "Explore event schedules, cheki tickets, or official MUSES merchandise.",
     visitStore: "Visit Store",

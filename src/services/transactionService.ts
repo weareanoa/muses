@@ -101,7 +101,10 @@ export function normalizeTransaction(raw: any): TransactionDTO {
 export const transactionService = {
   async getTransactions(): Promise<ServiceResult<TransactionDTO[]>> {
     const sb = getSupabaseClient();
-    if (!sb) return { success: false, error: 'UNAVAILABLE' };
+    if (!sb) return { success: true, data: [] };
+
+    const { data: sessionData } = await sb.auth.getSession();
+    if (!sessionData.session) return { success: true, data: [] };
 
     await sb.rpc('expire_stale_orders');
     const { data, error } = await sb
@@ -109,7 +112,10 @@ export const transactionService = {
       .select('*, transaction_items(*)')
       .order('created_at', { ascending: false });
 
-    if (error) return { success: false, error: 'UNKNOWN' };
+    if (error) {
+      console.error('getTransactions failed:', error.message);
+      return { success: false, error: 'UNKNOWN' };
+    }
     return { success: true, data: (data || []).map(normalizeTransaction) };
   },
 

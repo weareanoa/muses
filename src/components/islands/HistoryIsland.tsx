@@ -122,7 +122,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
             <div className="text-center py-16 bg-white/70 rounded-3xl border border-[#E8D9B5] p-8">
               <Package className="w-12 h-12 text-[#C9971C]/60 mx-auto mb-3" />
               <h3 className="text-base font-bold text-[#1F1A12]">
-                {d.emptyTitle}
+                {activeFilter === 'all' ? d.emptyAllTitle : d.emptyTitle}
               </h3>
               <p className="text-xs text-[#736856] mt-1 mb-6">
                 {d.emptyBody}
