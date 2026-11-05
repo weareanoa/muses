@@ -7,7 +7,7 @@
     "type": "1st Single",
     "coverImage": "/images/albums/BERSAMA MIMPI ART COVER.webp",
     "themeColor": "#93C5FD",
-    "description": "Lagu debut tentang mengejar mimpi bersama, merangkul harapan, dan menemukan kekuatan dalam persahabatan. Awal perjalanan MUSES sebagai idol group.",
+    "description": "Lagu debut MUSES tentang keberanian meraih mimpi bersama, saling mendukung, dan memulai perjalanan dengan penuh harapan.",
     "mvThumbnail": "/images/muses_group_frame1.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/QkQSCqv5fFk",
     "titleTrack": {
@@ -29,7 +29,7 @@
     "type": "2nd Single",
     "coverImage": "/images/albums/LANGKAH KITA ART COVER.webp",
     "themeColor": "#818CF8",
-    "description": "Melodi penuh semangat yang menggambarkan langkah seirama para member dan penggemar dalam melewati setiap rintangan.",
+    "description": "Perjalanan untuk terus berkembang, menghadapi tantangan, dan melangkah bersama menuju masa depan yang lebih baik.",
     "mvThumbnail": "/images/albums/LANGKAH KITA ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/VbfsWAI8EG4",
     "titleTrack": {
@@ -41,7 +41,7 @@
         "youtube": "https://youtu.be/VbfsWAI8EG4?si=AbbvCOhXC_XohWt4"
       }
     },
-    "descriptionEn": "An energetic melody depicting the members and fans walking in step through every obstacle."
+    "descriptionEn": "A journey to keep growing, facing challenges, and stepping forward together toward a brighter future."
   },
   {
     "id": "rasa-terpendam",
@@ -51,7 +51,7 @@
     "type": "3rd Single",
     "coverImage": "/images/albums/RASA TERPENDAM ART COVER.webp",
     "themeColor": "#38BDF8",
-    "description": "Balada emosional yang menyentuh hati tentang perasaan tulus yang tersimpan rapat dalam keheningan.",
+    "description": "Perasaan cinta yang tersembunyi, dilema untuk mengungkapkan perasaan, dan harapan akan cinta yang terbalas.",
     "mvThumbnail": "/images/albums/RASA TERPENDAM ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/TCaltF7L2Wk",
     "titleTrack": {
@@ -63,7 +63,7 @@
         "youtube": "https://youtu.be/TCaltF7L2Wk?si=FjV4DGAKBU0RDFif"
       }
     },
-    "descriptionEn": "An emotional ballad that touches the heart, about sincere feelings kept tightly in silence."
+    "descriptionEn": "Hidden feelings of love, the dilemma of expressing one's heart, and the hope for love to be reciprocated."
   },
   {
     "id": "menuju-cahaya",
@@ -73,7 +73,7 @@
     "type": "4th Single",
     "coverImage": "/images/albums/MENUJU CAHAYA ART COVER.webp",
     "themeColor": "#FCD34D",
-    "description": "Harmoni vokal yang membangkitkan asa, membawa pesan optimisme dan kehangatan menuju masa depan yang cerah.",
+    "description": "Menemukan harapan di tengah kesulitan, bangkit dari keterpurukan, dan terus melangkah menuju masa depan yang lebih cerah.",
     "mvThumbnail": "/images/albums/MENUJU CAHAYA ART COVER.webp",
     "iframeUrl": "https://www.youtube-nocookie.com/embed/WD_LIG4ZghI",
     "titleTrack": {
@@ -85,6 +85,6 @@
         "youtube": "https://youtu.be/WD_LIG4ZghI?si=X0-bax6fkqp4IvFc"
       }
     },
-    "descriptionEn": "Vocal harmonies that stir hope, carrying a message of optimism and warmth toward a bright future."
+    "descriptionEn": "Finding hope amidst hardships, rising from adversity, and continuing to step forward toward a brighter future."
   }
 ]

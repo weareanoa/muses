@@ -96,7 +96,7 @@ export default function AddressModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative border border-[#EADBBD] animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-[#1F1A12]">{modalTitle}</h2>
           <button
@@ -112,8 +112,13 @@ export default function AddressModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
+              <label htmlFor="addr-name" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelName} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-name"
                 type="text"
+                autoComplete="name"
                 placeholder={d.phName}
                 value={addressForm.recipientName}
                 onChange={(e) =>
@@ -124,8 +129,13 @@ export default function AddressModal({
               />
             </div>
             <div>
+              <label htmlFor="addr-phone" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelPhone} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-phone"
                 type="tel"
+                autoComplete="tel"
                 placeholder={d.phPhone}
                 value={addressForm.phone}
                 onChange={(e) =>
@@ -139,8 +149,13 @@ export default function AddressModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
+              <label htmlFor="addr-province" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelProvince} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-province"
                 type="text"
+                autoComplete="address-level1"
                 placeholder={d.phProvince}
                 value={addressForm.province}
                 onChange={(e) =>
@@ -151,8 +166,13 @@ export default function AddressModal({
               />
             </div>
             <div>
+              <label htmlFor="addr-city" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelCity} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-city"
                 type="text"
+                autoComplete="address-level2"
                 placeholder={d.phCity}
                 value={addressForm.city}
                 onChange={(e) =>
@@ -166,7 +186,11 @@ export default function AddressModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
+              <label htmlFor="addr-district" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelDistrict} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-district"
                 type="text"
                 placeholder={d.phDistrict}
                 value={addressForm.district}
@@ -178,8 +202,13 @@ export default function AddressModal({
               />
             </div>
             <div>
+              <label htmlFor="addr-postal" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+                {d.labelPostal} <span className="text-[#C28C1D]">*</span>
+              </label>
               <input
+                id="addr-postal"
                 type="text"
+                autoComplete="postal-code"
                 placeholder={d.phPostal}
                 value={addressForm.postalCode}
                 onChange={(e) =>
@@ -192,8 +221,13 @@ export default function AddressModal({
           </div>
 
           <div>
+            <label htmlFor="addr-street" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+              {d.labelStreet} <span className="text-[#C28C1D]">*</span>
+            </label>
             <textarea
+              id="addr-street"
               rows={2}
+              autoComplete="street-address"
               placeholder={d.phStreet}
               value={addressForm.street}
               onChange={(e) =>
@@ -205,7 +239,11 @@ export default function AddressModal({
           </div>
 
           <div>
+            <label htmlFor="addr-detail" className="block text-xs font-semibold text-[#4D422F] mb-1.5">
+              {d.labelDetail}
+            </label>
             <input
+              id="addr-detail"
               type="text"
               placeholder={d.phDetail}
               value={addressForm.detail}
@@ -217,7 +255,7 @@ export default function AddressModal({
           </div>
 
           <div>
-            <div className="text-xs text-[#7A6E58] mb-2 font-medium">{d.markAs}</div>
+            <label className="block text-xs font-semibold text-[#4D422F] mb-2">{d.markAs}</label>
             <div className="flex items-center gap-3">
               <button
                 type="button"

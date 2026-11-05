@@ -78,32 +78,32 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
     const s = status.toLowerCase();
     if (s.includes('avail') || s.includes('tersedia')) {
       return (
-        <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] min-[380px]:text-[9px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#E2EFE3] border border-[#C5E2C8] text-[#346B40] shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#346B40]" />
-          {d.statusAvailable}
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#EAF5EC] text-[#1B5E20] border border-[#2E7D32]/25 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D32] shrink-0" aria-hidden="true" />
+          <span>{d.statusAvailable}</span>
         </span>
       );
     }
     if (s.includes('fast') || s.includes('selling') || s.includes('hampir')) {
       return (
-        <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] min-[380px]:text-[9px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#FCF1CE] border border-[#F3DD9C] text-[#A67812] shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#A67812]" />
-          {d.statusSellingFast}
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#FEF7E6] text-[#8C6200] border border-[#C9971C]/35 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C9971C] shrink-0" aria-hidden="true" />
+          <span>{d.statusSellingFast}</span>
         </span>
       );
     }
     if (s.includes('soon') || s.includes('coming') || s.includes('segera')) {
       return (
-        <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] min-[380px]:text-[9px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#EAE2F8] border border-[#D5C4F3] text-[#6942BD] shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#6942BD]" />
-          {d.statusComingSoon}
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#F2F4F8] text-[#34495E] border border-[#34495E]/20 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#5D6D7E] shrink-0" aria-hidden="true" />
+          <span>{d.statusComingSoon}</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] min-[380px]:text-[9px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#ECE7DC] border border-[#DDD6C8] text-[#7A7165] shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#968C7D]" />
-        {d.statusSoldOut}
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#F2EFEA] text-[#6B6358] border border-[#D5CEC2] shrink-0">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#9E9689] shrink-0" aria-hidden="true" />
+        <span>{d.statusSoldOut}</span>
       </span>
     );
   };
