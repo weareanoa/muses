@@ -1,0 +1,4 @@
+# Changes to the deploy pipeline need the repo owner's review.
+# Note: this only takes effect once pull requests / branch protection are in use;
+# direct pushes to main are not gated by this file alone.
+.github/workflows/ @testwiththeo
