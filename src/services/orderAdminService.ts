@@ -71,14 +71,20 @@ export const orderAdminService = {
     const sb = getSupabaseClient();
     if (!sb) return { success: false, error: 'UNAVAILABLE' };
 
-    await sb.rpc('expire_stale_orders');
+    try {
+      void sb.rpc('expire_stale_orders');
+    } catch {}
+
     const { data, error } = await sb
       .from('transactions')
-      .select('*, transaction_items(*), order_reviews(*), profiles(name, email, phone)')
+      .select('*, transaction_items(*), order_reviews(*), profiles:profiles!transactions_user_id_fkey(name, email, phone)')
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) return { success: false, error: 'UNKNOWN' };
+    if (error) {
+      console.error('[orderAdminService.listOrders] Error fetching transactions:', error);
+      return { success: false, error: error.message || 'UNKNOWN' };
+    }
     return { success: true, data: (data || []).map(normalizeAdminOrder) };
   },
 

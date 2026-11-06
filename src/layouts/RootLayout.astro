@@ -1,7 +1,6 @@
 ---
 import { withBase } from "../lib/paths";
 import '../styles/global.css';
-import PreloaderBuffer from '../components/ui/PreloaderBuffer.astro';
 import CartDrawer from '../components/islands/CartDrawer';
 import MemberModal from '../components/islands/MemberModal';
 import UserNavIsland from '../components/islands/UserNavIsland';
@@ -61,8 +60,6 @@ const isItemActive =(id: string) => {
     <title>{title}</title>
   </head>
   <body class="bg-[#FCFAF5] text-[#1F1A12] selection:bg-[#C9971C] selection:text-[#1F1A12]">
-    <PreloaderBuffer locale={locale} />
-
     {!hideNavbar && (
     <header
       id="main-header"

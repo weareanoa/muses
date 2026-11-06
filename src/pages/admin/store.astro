@@ -1,25 +1,15 @@
 ---
-import RootLayout from '../../layouts/RootLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import AdminStoreIsland from '../../components/islands/AdminStoreIsland';
 import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
 
 const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
 const d = getDict(locale);
-
-// Halaman admin Store, sepasang dengan /admin/schedules.
-// Sengaja TIDAK di-prerender: gate admin dicek di browser lewat sesi
-// Supabase (lihat AdminStoreIsland + authService.getSupabaseAdminProfile),
-// dan penegakan tulisnya ada di RLS Supabase (policy admin products).
 ---
 
-<RootLayout
+<AdminLayout
   title={d.meta.adminStoreTitle}
   description={d.meta.adminStoreDesc}
-  currentPath="/admin/store"
-  solidHeader={true}
-  hideNavbar={true}
 >
-  <div class="relative min-h-screen pt-8 sm:pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
-    <AdminStoreIsland client:load locale={locale} />
-  </div>
-</RootLayout>
+  <AdminStoreIsland client:load locale={locale} />
+</AdminLayout>

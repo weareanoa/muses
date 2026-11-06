@@ -36,3 +36,4 @@ __pycache__/
 .wrangler/
 .dev.vars
 .hermes/
+.zcode/

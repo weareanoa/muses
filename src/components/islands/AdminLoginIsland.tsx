@@ -3,12 +3,12 @@ import { withBase } from '../../lib/paths';
 import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
 import { authService } from '../../services/authService';
 import { fmt, getDict, type Locale } from '../../i18n/dictionary';
-
-// Halaman login KHUSUS admin, terpisah dari /login publik.
-// Ini hanya pintu masuk UI: yang benar-benar melindungi data adalah role
-// admin di profiles + RLS Supabase, dan gate yang sama di /admin/schedules.
-// Akun biasa yang login di sini tetap ditolak dan tidak diarahkan ke
-// halaman admin.
+import { AdminField, AdminNotice } from '../admin/ui';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Card } from '../ui/card';
+import { AdminLogoMark } from '../admin/AdminGate';
+import { Loader2 } from 'lucide-react';
 
 type View = 'checking' | 'no-supabase' | 'form' | 'forbidden';
 
@@ -83,101 +83,94 @@ export default function AdminLoginIsland({ locale = 'id' }: { locale?: Locale })
 
   if (view === 'checking') {
     return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center text-sm text-[#6E6453]">
-        {d.checking}
-      </div>
+      <Card className="p-8 text-center">
+        <Loader2 className="mx-auto h-6 w-6 animate-spin text-zinc-400" />
+        <p className="mt-3 text-xs font-medium text-zinc-600">{d.checking}</p>
+      </Card>
     );
   }
 
   if (view === 'no-supabase') {
     return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8">
-        <h2 className="text-lg font-bold text-[#1F1A12]">{d.noSupabaseTitle}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-          {d.loginNoSupabaseBody}
-        </p>
-      </div>
+      <Card className="p-8 space-y-3">
+        <h2 className="text-base font-semibold text-zinc-900">{d.noSupabaseTitle}</h2>
+        <p className="text-xs text-zinc-500 leading-relaxed">{d.loginNoSupabaseBody}</p>
+      </Card>
     );
   }
 
   if (view === 'forbidden') {
     return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center">
-        <h2 className="text-lg font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
-        <p className="mt-2 text-sm text-[#6E6453]">
-          {fmt(d.loginForbiddenBody, { account: accountEmail ? (locale === 'id' ? `Akun ${accountEmail}` : `Account ${accountEmail}`) : (locale === 'id' ? 'Akun ini' : 'This account') })}
+      <Card className="p-8 text-center space-y-4">
+        <h2 className="text-base font-semibold text-zinc-900">{d.forbiddenTitle}</h2>
+        <p className="text-xs text-zinc-500 leading-relaxed">
+          {fmt(d.loginForbiddenBody, {
+            account: accountEmail
+              ? `${locale === 'id' ? 'Akun' : 'Account'} ${accountEmail}`
+              : locale === 'id'
+                ? 'Akun ini'
+                : 'This account',
+          })}
         </p>
-        <button
-          onClick={handleSignOut}
-          className="mt-5 rounded-[20px] bg-[#C9971C] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#A37418]"
-        >
+        <Button variant="outline" onClick={handleSignOut} className="w-full">
           {d.signOutButton}
-        </button>
-        <div className="mt-3">
-          <a href={withBase('/')} className="text-sm font-medium text-[#8C6A1C]">
+        </Button>
+        <div>
+          <a href={withBase('/')} className="text-xs font-medium text-zinc-500 hover:text-zinc-900">
             {d.backHome}
           </a>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-md">
-      <div className="rounded-[20px] border border-[#E9D9AE] bg-white p-6 sm:p-8">
-        <p className="text-xs font-bold uppercase tracking-wider text-[#8C6A1C]">{d.loginEyebrow}</p>
-        <h1 className="mt-2 text-2xl font-bold text-[#1F1A12]">{d.loginHeading}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-          {d.loginIntro}
-        </p>
+    <div className="mx-auto w-full max-w-sm">
+      <div className="mb-6 flex justify-center">
+        <AdminLogoMark className="h-10" />
+      </div>
+      <Card className="p-6 sm:p-8">
+        <div className="space-y-1">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">{d.loginEyebrow}</p>
+          <h1 className="text-xl font-bold tracking-tight text-zinc-900">{d.loginHeading}</h1>
+          <p className="text-xs text-zinc-500">{d.loginIntro}</p>
+        </div>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="admin-email" className="text-sm font-medium text-[#1F1A12]">
-              {d.emailLabel}
-            </label>
-            <input
+          <AdminField label={d.emailLabel} htmlFor="admin-email">
+            <Input
               id="admin-email"
               type="email"
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={d.emailPlaceholder}
-              className="mt-1.5 w-full rounded-[20px] border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
             />
-          </div>
-          <div>
-            <label htmlFor="admin-password" className="text-sm font-medium text-[#1F1A12]">
-              {d.passwordLabel}
-            </label>
-            <input
+          </AdminField>
+          <AdminField label={d.passwordLabel} htmlFor="admin-password">
+            <Input
               id="admin-password"
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="mt-1.5 w-full rounded-[20px] border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]"
             />
-          </div>
+          </AdminField>
           {error && (
-            <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AdminNotice tone="error" role="alert">
               {error}
-            </p>
+            </AdminNotice>
           )}
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-[20px] bg-[#C9971C] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#A37418] disabled:opacity-60"
-          >
+          <Button type="submit" loading={busy} className="w-full">
             {busy ? d.checkingSubmit : d.submit}
-          </button>
+          </Button>
         </form>
-        <p className="mt-5 text-center text-sm text-[#6E6453]">
-          <a href={withBase('/')} className="font-medium text-[#8C6A1C]">
+        <p className="mt-5 text-center text-xs text-zinc-500">
+          <a href={withBase('/')} className="font-medium text-zinc-600 hover:text-zinc-900">
             {d.backHome}
           </a>
         </p>
-      </div>
+      </Card>
     </div>
   );
 }

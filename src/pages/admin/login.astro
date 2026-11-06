@@ -1,24 +1,17 @@
 ---
-import RootLayout from '../../layouts/RootLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import AdminLoginIsland from '../../components/islands/AdminLoginIsland';
 import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
 
 const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
 const d = getDict(locale);
-
-// Halaman login KHUSUS admin, terpisah dari /login publik.
-// Sengaja TIDAK di-prerender: status sesi dicek di browser lewat
-// authService.getSupabaseAdminProfile, sama seperti /admin/schedules.
 ---
 
-<RootLayout
+<AdminLayout
   title={d.meta.adminLoginTitle}
   description={d.meta.adminLoginDesc}
-  currentPath="/admin/login"
-  solidHeader={true}
-  hideNavbar={true}
 >
-  <div class="relative min-h-screen pt-8 sm:pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
+  <div class="min-h-screen flex items-center justify-center bg-white px-4 py-12">
     <AdminLoginIsland client:load locale={locale} />
   </div>
-</RootLayout>
+</AdminLayout>

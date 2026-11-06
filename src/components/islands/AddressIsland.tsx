@@ -508,14 +508,23 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
               </p>
             )}
 
-            <button
-              type="button"
-              onClick={handlePlaceOrder}
-              disabled={placing}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-60"
-            >
-              {d.orderButton}
-            </button>
+            {!user ? (
+              <a
+                href={withBase('/login?redirect=/checkout')}
+                className="w-full block text-center py-3.5 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer"
+              >
+                Masuk untuk Melanjutkan Checkout
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePlaceOrder}
+                disabled={placing}
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-60"
+              >
+                {placing ? 'Memproses Pesanan...' : d.orderButton}
+              </button>
+            )}
           </div>
         </aside>
       </div>

@@ -1,32 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Lock, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Lock, ShieldAlert } from 'lucide-react';
 import { withBase } from '../../lib/paths';
 import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
 import { authService } from '../../services/authService';
 import { fmt, getDict, type Locale } from '../../i18n/dictionary';
+import { Button } from '../ui/button';
+import { Card } from '../ui/card';
 
 export type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';
 
+const SESSION_CACHE_KEY = 'muses_admin_cached_auth';
+
 export function useAdminGate() {
-  const [gate, setGate] = useState<GateState>('checking');
-  const [adminEmail, setAdminEmail] = useState('');
+  const [gate, setGate] = useState<GateState>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem(SESSION_CACHE_KEY);
+      if (cached) return 'ready';
+    }
+    return 'checking';
+  });
+  const [adminEmail, setAdminEmail] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem(SESSION_CACHE_KEY) || '';
+    }
+    return '';
+  });
 
   useEffect(() => {
     let alive = true;
     (async () => {
       if (!isSupabaseConfigured()) {
-        if (alive) setGate('no-supabase');
+        if (alive) {
+          if (typeof window !== 'undefined') sessionStorage.removeItem(SESSION_CACHE_KEY);
+          setGate('no-supabase');
+        }
         return;
       }
       try {
         const result = await authService.getSupabaseAdminProfile();
         if (!alive) return;
-        setAdminEmail(result.user?.email || '');
-        if (!result.isLoggedIn) setGate('login-required');
-        else if (!result.isAdmin) setGate('forbidden');
-        else setGate('ready');
+        if (!result.isLoggedIn) {
+          if (typeof window !== 'undefined') sessionStorage.removeItem(SESSION_CACHE_KEY);
+          setGate('login-required');
+        } else if (!result.isAdmin) {
+          if (typeof window !== 'undefined') sessionStorage.removeItem(SESSION_CACHE_KEY);
+          setAdminEmail(result.user?.email || '');
+          setGate('forbidden');
+        } else {
+          const email = result.user?.email || 'admin@muses.id';
+          if (typeof window !== 'undefined') sessionStorage.setItem(SESSION_CACHE_KEY, email);
+          setAdminEmail(email);
+          setGate('ready');
+        }
       } catch {
-        if (alive) setGate('login-required');
+        if (alive) {
+          if (typeof window !== 'undefined') sessionStorage.removeItem(SESSION_CACHE_KEY);
+          setGate('login-required');
+        }
       }
     })();
     return () => {
@@ -35,12 +65,22 @@ export function useAdminGate() {
   }, []);
 
   const signOut = async () => {
+    if (typeof window !== 'undefined') sessionStorage.removeItem(SESSION_CACHE_KEY);
     const sb = getSupabaseClient();
     if (sb) await sb.auth.signOut();
     window.location.href = withBase('/admin/login');
   };
 
   return { gate, adminEmail, signOut };
+}
+
+export function AdminLogoMark({ className = 'h-8' }: { className?: string }) {
+  return (
+    <picture className="flex items-center justify-center">
+      <source media="(max-width: 639px)" srcSet={withBase('/images/muses_logo_3d_clean_mobile.webp')} type="image/webp" />
+      <img src={withBase('/images/muses_logo_3d_clean.webp')} alt="MUSES" className={`${className} w-auto object-contain`} />
+    </picture>
+  );
 }
 
 interface AdminGateScreenProps {
@@ -51,6 +91,11 @@ interface AdminGateScreenProps {
 }
 
 export function AdminGateScreen({ gate, adminEmail, locale, onSignOut }: AdminGateScreenProps) {
+  // Never show intrusive checking screen while navigating
+  if (gate === 'checking') {
+    return null;
+  }
+
   const d = getDict(locale).admin;
   const account = adminEmail
     ? `${locale === 'id' ? 'Akun' : 'Account'} ${adminEmail}`
@@ -58,74 +103,64 @@ export function AdminGateScreen({ gate, adminEmail, locale, onSignOut }: AdminGa
       ? 'Akun ini'
       : 'This account';
 
-  const card = 'max-w-md w-full rounded-3xl border border-[#E9D9AE] bg-white p-8 text-center shadow-lg';
-  const iconWrap = 'mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border';
-  const backLink = (
-    <a href={withBase('/')} className="text-xs font-semibold text-[#8C6A1C] hover:underline">
-      {d.backHome}
-    </a>
-  );
+  const iconWrap = 'mx-auto flex h-11 w-11 items-center justify-center rounded-xl border';
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center p-4">
-      {gate === 'checking' && (
-        <div className={card}>
-          <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-[#C9971C] border-t-transparent" />
-          <p className="mt-4 font-semibold text-[#1F1A12]">{d.checking}</p>
+    <div className="flex min-h-screen items-center justify-center bg-white px-4 py-12">
+      <div className="w-full max-w-sm text-center">
+        <div className="mb-6 flex justify-center">
+          <AdminLogoMark className="h-9" />
         </div>
-      )}
 
-      {gate === 'no-supabase' && (
-        <div className={card}>
-          <div className={`${iconWrap} bg-amber-50 text-amber-700 border-amber-200`}>
-            <AlertTriangle className="h-6 w-6" />
-          </div>
-          <h2 className="mt-4 text-xl font-bold text-[#1F1A12]">{d.noSupabaseTitle}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">{d.homeNoSupabaseBody}</p>
-          <div className="mt-6">{backLink}</div>
-        </div>
-      )}
-
-      {gate === 'login-required' && (
-        <div className={card}>
-          <div className={`${iconWrap} bg-[#FFF5DC] text-[#8C6A1C] border-[#E9D9AE]`}>
-            <Lock className="h-6 w-6" />
-          </div>
-          <h2 className="mt-4 text-xl font-bold text-[#1F1A12]">{d.loginRequiredTitleHome}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">{d.loginRequiredBody}</p>
-          <div className="mt-6 flex flex-col gap-3">
-            <a
-              href={withBase('/admin/login')}
-              className="inline-flex items-center justify-center rounded-full bg-[#C9971C] px-6 py-3 text-sm font-bold text-white hover:brightness-105"
-            >
-              {d.loginButton}
+        {gate === 'no-supabase' && (
+          <Card className="p-8 space-y-4">
+            <div className={`${iconWrap} border-amber-200 bg-amber-50 text-amber-600`}>
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <h2 className="text-base font-semibold text-zinc-900">{d.noSupabaseTitle}</h2>
+            <p className="text-xs text-zinc-500 leading-relaxed">{d.homeNoSupabaseBody}</p>
+            <a href={withBase('/')} className="inline-block text-xs font-medium text-zinc-600 hover:text-zinc-900">
+              {d.backHome}
             </a>
-            {backLink}
-          </div>
-        </div>
-      )}
+          </Card>
+        )}
 
-      {gate === 'forbidden' && (
-        <div className={card}>
-          <div className={`${iconWrap} bg-red-50 text-red-700 border-red-200`}>
-            <ShieldCheck className="h-7 w-7" />
-          </div>
-          <h2 className="mt-4 text-xl font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-            {fmt(d.homeForbiddenBody, { account })}
-          </p>
-          <div className="mt-6 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={onSignOut}
-              className="rounded-full bg-[#C9971C] px-6 py-3 text-sm font-bold text-white hover:bg-[#A37418] transition-colors cursor-pointer"
-            >
-              {d.signOutButton}
-            </button>
-            {backLink}
-          </div>
-        </div>
-      )}
+        {gate === 'login-required' && (
+          <Card className="p-8 space-y-4">
+            <div className={`${iconWrap} border-zinc-200 bg-zinc-50 text-zinc-800`}>
+              <Lock className="h-5 w-5" />
+            </div>
+            <h2 className="text-base font-semibold text-zinc-900">{d.loginRequiredTitleHome}</h2>
+            <p className="text-xs text-zinc-500 leading-relaxed">{d.loginRequiredBody}</p>
+            <div className="pt-2 flex flex-col items-center gap-3">
+              <Button onClick={() => (window.location.href = withBase('/admin/login'))} className="w-full">
+                {d.loginButton}
+              </Button>
+              <a href={withBase('/')} className="text-xs text-zinc-500 hover:text-zinc-900">
+                {d.backHome}
+              </a>
+            </div>
+          </Card>
+        )}
+
+        {gate === 'forbidden' && (
+          <Card className="p-8 space-y-4">
+            <div className={`${iconWrap} border-rose-200 bg-rose-50 text-rose-600`}>
+              <ShieldAlert className="h-5 w-5" />
+            </div>
+            <h2 className="text-base font-semibold text-zinc-900">{d.forbiddenTitle}</h2>
+            <p className="text-xs text-zinc-500 leading-relaxed">{fmt(d.homeForbiddenBody, { account })}</p>
+            <div className="pt-2 flex flex-col items-center gap-3">
+              <Button variant="outline" onClick={onSignOut} className="w-full">
+                {d.signOutButton}
+              </Button>
+              <a href={withBase('/')} className="text-xs text-zinc-500 hover:text-zinc-900">
+                {d.backHome}
+              </a>
+            </div>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

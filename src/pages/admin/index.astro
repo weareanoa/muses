@@ -1,24 +1,15 @@
 ---
-import RootLayout from '../../layouts/RootLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import AdminHomeIsland from '../../components/islands/AdminHomeIsland';
 import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
 
 const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
 const d = getDict(locale);
-
-// Menu admin: dua pilihan, jadwal dan store. Sama seperti halaman admin
-// lain, halaman ini sengaja TIDAK di-prerender: gate admin dicek di
-// browser lewat sesi Supabase, dan penegakan tulisnya ada di RLS.
 ---
 
-<RootLayout
+<AdminLayout
   title={d.meta.adminHomeTitle}
   description={d.meta.adminHomeDesc}
-  currentPath="/admin"
-  solidHeader={true}
-  hideNavbar={true}
 >
-  <div class="relative min-h-screen pt-8 sm:pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
-    <AdminHomeIsland client:load locale={locale} />
-  </div>
-</RootLayout>
+  <AdminHomeIsland client:load locale={locale} />
+</AdminLayout>

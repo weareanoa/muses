@@ -1,0 +1,35 @@
+---
+import { withBase } from '../lib/paths';
+import '../styles/global.css';
+import { resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
+const {
+  title = 'MUSES Admin Portal',
+  description = 'Portal administrasi MUSES untuk manajemen pesanan, jadwal tur, dan etalase toko.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={locale} class="h-full bg-white">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body class="h-full bg-white font-['Poppins',sans-serif] text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white">
+    <slot />
+  </body>
+</html>

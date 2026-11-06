@@ -1,30 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { withBase } from '../../lib/paths';
-import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
-import { authService } from '../../services/authService';
+import { getSupabaseClient } from '../../lib/supabase';
 import { scheduleService } from '../../services/scheduleService';
-import { fmt, getDict, type Locale, DATE_LOCALE } from '../../i18n/dictionary';
+import { orderAdminService, type AdminOrderDTO } from '../../services/orderAdminService';
+import { formatRupiah } from '../../lib/format';
+import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 import AdminShell from '../admin/AdminShell';
+import { AdminGateScreen, useAdminGate } from '../admin/AdminGate';
+import {
+  AdminButton,
+  AdminCard,
+  AdminSectionCard,
+  AdminStatCard,
+  AdminStatusPill,
+} from '../admin/ui';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../ui/table';
 import type { ScheduleDTO } from '../../types/database';
 import {
   CalendarDays,
   ShoppingBag,
-  ShieldCheck,
-  Sparkles,
   ArrowRight,
   Plus,
-  ExternalLink,
   MapPin,
   Clock,
-  Package,
-  Layers,
-  ChevronRight,
-  AlertTriangle,
-  Lock,
   ClipboardList,
+  Package,
+  Inbox,
+  ShieldCheck,
+  ChevronRight,
 } from 'lucide-react';
-
-type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';
 
 interface ProductSummary {
   id: string;
@@ -36,581 +42,384 @@ interface ProductSummary {
   is_featured?: boolean;
 }
 
+let cachedOverviewData: {
+  schedules: ScheduleDTO[];
+  products: ProductSummary[];
+  recentOrders: AdminOrderDTO[];
+  pendingVerification: number;
+} | null = null;
+
 export default function AdminHomeIsland({ locale }: { locale: Locale }) {
   const d = getDict(locale).admin;
-  const [gate, setGate] = useState<GateState>('checking');
-  const [adminEmail, setAdminEmail] = useState('');
-  const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
-  const [products, setProducts] = useState<ProductSummary[]>([]);
-  const [loadingData, setLoadingData] = useState(false);
-  const [pendingVerification, setPendingVerification] = useState(0);
+  const h = d.home;
+  const { gate, adminEmail, signOut } = useAdminGate();
+  const [schedules, setSchedules] = useState<ScheduleDTO[]>(() => cachedOverviewData?.schedules || []);
+  const [products, setProducts] = useState<ProductSummary[]>(() => cachedOverviewData?.products || []);
+  const [recentOrders, setRecentOrders] = useState<AdminOrderDTO[]>(() => cachedOverviewData?.recentOrders || []);
+  const [pendingVerification, setPendingVerification] = useState(() => cachedOverviewData?.pendingVerification || 0);
+  const [loadingData, setLoadingData] = useState(() => !cachedOverviewData);
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setGate('no-supabase');
-      return;
-    }
-    authService
-      .getSupabaseAdminProfile()
-      .then(async (result) => {
-        if (!result.isLoggedIn) {
-          setGate('login-required');
-          return;
-        }
-        if (!result.isAdmin) {
-          setAdminEmail(result.user?.email || '');
-          setGate('forbidden');
-          return;
-        }
-        setAdminEmail(result.user?.email || '');
-        setGate('ready');
+    if (gate !== 'ready') return;
+    let alive = true;
+    (async () => {
+      const sb = getSupabaseClient();
+      if (sb) void sb.rpc('expire_stale_orders');
 
-        // Fetch dashboard overview metrics
-        setLoadingData(true);
-        try {
-          const schedRes = await scheduleService.getAdminSchedules();
-          if (schedRes.success && schedRes.data) {
-            setSchedules(schedRes.data);
-          }
-        } catch {
-          // keep fallback
-        }
-
-        try {
-          const sb = getSupabaseClient();
-          if (sb) {
-            const { data } = await sb.from('products').select('*');
-            if (data) {
-              setProducts(data);
-            }
-          }
-        } catch {
-          // ignore
-        }
-
-        try {
-          const sb = getSupabaseClient();
-          if (sb) {
-            await sb.rpc('expire_stale_orders');
-            const { count } = await sb
+      const [schedRes, prodRes, ordersRes, pendingRes] = await Promise.allSettled([
+        scheduleService.getAdminSchedules(),
+        sb ? sb.from('products').select('*') : Promise.resolve({ data: null }),
+        orderAdminService.listOrders(6),
+        sb
+          ? sb
               .from('transactions')
               .select('id', { count: 'exact', head: true })
-              .eq('status', 'awaiting_verification');
-            setPendingVerification(count ?? 0);
-          }
-        } catch {
-          // ignore
-        }
-        setLoadingData(false);
-      })
-      .catch(() => {
-        setGate('login-required');
-      });
-  }, []);
+              .eq('status', 'awaiting_verification')
+          : Promise.resolve({ count: 0 }),
+      ]);
 
-  const handleSignOut = async () => {
-    const sb = getSupabaseClient();
-    if (sb) await sb.auth.signOut();
-    window.location.href = withBase('/admin/login');
-  };
+      if (!alive) return;
 
-  const accountSubject = adminEmail
-    ? locale === 'id'
-      ? `Akun ${adminEmail}`
-      : `Account ${adminEmail}`
-    : locale === 'id'
-      ? 'Akun ini'
-      : 'This account';
+      let nextSched = schedules;
+      if (schedRes.status === 'fulfilled' && schedRes.value.success && schedRes.value.data) {
+        nextSched = schedRes.value.data;
+        setSchedules(nextSched);
+      }
 
-  if (gate === 'checking') {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-4 rounded-3xl border border-[#E9D9AE] bg-white p-8 text-center shadow-xs max-w-sm w-full">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFF4DB] to-[#F5E2B5] border border-[#E9D9AE]">
-            <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#C9971C] border-t-transparent" />
-          </div>
-          <div>
-            <p className="font-semibold text-[#1F1A12]">{d.checking}</p>
-            <p className="text-xs text-[#6E6453] mt-1">
-              {locale === 'id'
-                ? 'Memvalidasi kredensial dan hak akses pengelola...'
-                : 'Validating manager credentials and permissions...'}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+      let nextProd = products;
+      if (prodRes.status === 'fulfilled' && (prodRes.value as any)?.data) {
+        nextProd = (prodRes.value as any).data;
+        setProducts(nextProd);
+      }
+
+      let nextOrders = recentOrders;
+      if (ordersRes.status === 'fulfilled' && ordersRes.value.success && ordersRes.value.data) {
+        nextOrders = ordersRes.value.data;
+        setRecentOrders(nextOrders);
+      }
+
+      let nextPending = pendingVerification;
+      if (pendingRes.status === 'fulfilled' && typeof (pendingRes.value as any)?.count === 'number') {
+        nextPending = (pendingRes.value as any).count;
+        setPendingVerification(nextPending);
+      }
+
+      setLoadingData(false);
+
+      cachedOverviewData = {
+        schedules: nextSched,
+        products: nextProd,
+        recentOrders: nextOrders,
+        pendingVerification: nextPending,
+      };
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [gate]);
+
+  if (gate !== 'ready') {
+    return <AdminGateScreen gate={gate} adminEmail={adminEmail} locale={locale} onSignOut={signOut} />;
   }
 
-  if (gate === 'no-supabase') {
-    return (
-      <div className="flex min-h-[70vh] items-center justify-center p-4">
-        <div className="max-w-md w-full rounded-3xl border border-[#E9D9AE] bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 border border-amber-200">
-            <AlertTriangle className="h-6 w-6" />
-          </div>
-          <h2 className="mt-4 text-xl font-bold text-[#1F1A12]">{d.noSupabaseTitle}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-            {d.homeNoSupabaseBody}
-          </p>
-          <div className="mt-6 flex justify-center">
-            <a
-              href={withBase('/')}
-              className="rounded-full border border-[#E9D9AE] px-6 py-2.5 text-sm font-semibold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC]"
-            >
-              {d.backHome}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (gate === 'login-required') {
-    return (
-      <div className="flex min-h-[70vh] items-center justify-center p-4">
-        <div className="max-w-md w-full rounded-3xl border border-[#E9D9AE] bg-white p-8 sm:p-10 text-center shadow-xl">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFF5DC] to-[#F7E5BD] border border-[#E9D9AE] text-[#8C6A1C] shadow-2xs">
-            <Lock className="h-6 w-6" />
-          </div>
-          <h2 className="mt-5 text-xl font-bold tracking-tight text-[#1F1A12]">
-            {d.loginRequiredTitleHome}
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-            {d.loginRequiredBody}
-          </p>
-          <div className="mt-7 flex flex-col gap-3">
-            <a
-              href={withBase('/admin/login')}
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#C9971C] via-[#D8A730] to-[#B38317] px-6 py-3 text-sm font-bold text-white shadow-xs hover:brightness-105 transition-all"
-            >
-              {d.loginButton}
-            </a>
-            <a
-              href={withBase('/')}
-              className="text-xs font-semibold text-[#8C6A1C] hover:underline"
-            >
-              {d.backHome}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (gate === 'forbidden') {
-    return (
-      <div className="flex min-h-[70vh] items-center justify-center p-4">
-        <div className="max-w-md w-full rounded-3xl border border-[#E9D9AE] bg-white p-8 sm:p-10 text-center shadow-xl">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-700 border border-red-200">
-            <ShieldCheck className="h-7 w-7" />
-          </div>
-          <h2 className="mt-5 text-xl font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-            {fmt(d.homeForbiddenBody, { account: accountSubject })}
-          </p>
-          <div className="mt-7 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="rounded-full bg-[#C9971C] px-6 py-3 text-sm font-bold text-white hover:bg-[#A37418] transition-colors"
-            >
-              {d.signOutButton}
-            </button>
-            <a
-              href={withBase('/')}
-              className="text-xs font-semibold text-[#8C6A1C] hover:underline"
-            >
-              {d.backHome}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Calculate statistics
   const totalSchedules = schedules.length;
   const availableSchedules = schedules.filter((s) => s.status === 'Available').length;
   const sellingFastSchedules = schedules.filter((s) => s.status === 'Selling Fast').length;
 
   const totalProducts = products.length;
   const featuredProducts = products.filter((p) => p.is_featured).length;
-  const chekiCount = products.filter(
-    (p) => (p.catalog_type || p.category || '').toUpperCase() === 'CHEKI',
-  ).length;
-  const merchCount = products.filter(
-    (p) => (p.catalog_type || p.category || '').toUpperCase() === 'MERCHANDISE',
-  ).length;
-  const vcCount = products.filter(
-    (p) => (p.catalog_type || p.category || '').toUpperCase() === 'VIDEOCALL',
-  ).length;
+  const catOf = (p: ProductSummary) => (p.catalog_type || p.category || '').toUpperCase();
+  const chekiCount = products.filter((p) => catOf(p) === 'CHEKI').length;
+  const merchCount = products.filter((p) => catOf(p) === 'MERCHANDISE').length;
+  const vcCount = products.filter((p) => catOf(p) === 'VIDEOCALL').length;
 
-  // Upcoming top schedules (up to 4)
-  const upcomingSchedules = schedules.slice(0, 4);
+  const nextUpcoming = schedules[0];
+  const valueOrDots = (v: React.ReactNode) => (loadingData ? '···' : v);
 
   return (
     <AdminShell
       currentTab="overview"
       adminEmail={adminEmail}
       locale={locale}
-      onSignOut={handleSignOut}
-      title={locale === 'id' ? 'Dashboard Ringkasan' : 'Dashboard Overview'}
+      onSignOut={signOut}
+      title={h.title}
       subtitle={d.landingIntro}
       actions={
         <div className="flex items-center gap-2">
-          <a
-            href={withBase('/admin/schedules')}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#E9D9AE] bg-white px-3.5 py-2 text-xs font-bold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC] transition-all shadow-2xs"
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => (window.location.href = withBase('/admin/schedules'))}
           >
-            <CalendarDays className="h-3.5 w-3.5" />
-            <span>{locale === 'id' ? 'Jadwal Tur' : 'Schedules'}</span>
-          </a>
-          <a
-            href={withBase('/admin/orders')}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#E9D9AE] bg-white px-3.5 py-2 text-xs font-bold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC] transition-all shadow-2xs"
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            <span className="hidden sm:inline">{d.addSchedButton.replace('+ ', '')}</span>
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => (window.location.href = withBase('/admin/store'))}
           >
-            <ClipboardList className="h-3.5 w-3.5" />
-            <span>{locale === 'id' ? 'Pesanan' : 'Orders'}</span>
-          </a>
-          <a
-            href={withBase('/admin/store')}
-            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#C9971C] to-[#B38317] px-4 py-2 text-xs font-bold text-white shadow-xs hover:brightness-105 transition-all"
-          >
-            <ShoppingBag className="h-3.5 w-3.5" />
-            <span>{locale === 'id' ? 'Kelola Store' : 'Manage Store'}</span>
-          </a>
+            <ShoppingBag className="h-3.5 w-3.5 mr-1" />
+            <span>{h.manageStore}</span>
+          </Button>
         </div>
       }
     >
-      <div className="space-y-8">
-        {/* Top KPI Metric Cards (Reference style) */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Card 1: Schedules */}
-          <div className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-                {locale === 'id' ? 'Total Jadwal' : 'Total Shows'}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF6DE] text-[#8C6A1C] border border-[#E9D9AE]">
-                <CalendarDays className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold tracking-tight text-[#1F1A12]">
-                {loadingData ? '...' : totalSchedules}
-              </div>
-              <div className="mt-1 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-800 border border-emerald-200/60">
-                  {availableSchedules} {locale === 'id' ? 'Tersedia' : 'Available'}
-                </span>
-                {sellingFastSchedules > 0 && (
-                  <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/60">
-                    {sellingFastSchedules} Fast
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Store Products */}
-          <div className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-                {locale === 'id' ? 'Katalog Store' : 'Store Catalog'}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF6DE] text-[#8C6A1C] border border-[#E9D9AE]">
-                <ShoppingBag className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold tracking-tight text-[#1F1A12]">
-                {loadingData ? '...' : totalProducts}
-              </div>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-[#6E6453]">
-                <span className="font-semibold text-[#1F1A12]">{featuredProducts}</span>{' '}
-                {locale === 'id' ? 'unggulan' : 'featured'}
-                {totalProducts === 0 && (
-                  <span className="text-[11px] text-amber-800 font-medium">
-                    (default code)
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <a
+      <div className="space-y-6">
+        {/* Top 3 Minimalist KPI Stat Cards */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          <AdminStatCard
+            label={h.kpiVerify}
+            value={valueOrDots(pendingVerification)}
+            icon={<ClipboardList className="h-5 w-5" />}
             href={withBase('/admin/orders')}
-            className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-                {locale === 'id' ? 'Perlu Verifikasi' : 'Needs Verification'}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF6DE] text-[#8C6A1C] border border-[#E9D9AE]">
-                <ClipboardList className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold tracking-tight text-[#1F1A12]">
-                {loadingData ? '...' : pendingVerification}
-              </div>
-              <p className="mt-1 text-xs text-[#6E6453]">
-                {locale === 'id' ? 'pembayaran menunggu dicek' : 'payments waiting to be checked'}
-              </p>
-            </div>
-          </a>
+            badge={
+              pendingVerification > 0 ? (
+                <Badge variant="warning">{pendingVerification} Butuh Verifikasi</Badge>
+              ) : (
+                <Badge variant="success">Semua Beres</Badge>
+              )
+            }
+            hint={h.kpiVerifyHint}
+          />
 
-          {/* Card 4: Access Level */}
-          <div className="group relative overflow-hidden rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs transition-all duration-300 hover:border-[#C9971C]/50 hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-                {locale === 'id' ? 'Hak Akses' : 'Access Level'}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF6DE] text-[#8C6A1C] border border-[#E9D9AE]">
-                <Sparkles className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-[#1F1A12]">
-                Super Admin
-              </div>
-              <p className="mt-1 truncate text-xs text-[#6E6453]">
-                {adminEmail || d.verifiedSession}
-              </p>
-            </div>
-          </div>
+          <AdminStatCard
+            label={h.kpiSchedules}
+            value={valueOrDots(totalSchedules)}
+            icon={<CalendarDays className="h-5 w-5" />}
+            href={withBase('/admin/schedules')}
+            badge={
+              <Badge variant="success">
+                {`${availableSchedules} ${h.kpiAvailable}`}
+              </Badge>
+            }
+            hint={
+              sellingFastSchedules > 0 ? (
+                <span className="text-amber-600 font-medium">{`${sellingFastSchedules} ${h.kpiFast}`}</span>
+              ) : undefined
+            }
+          />
+
+          <AdminStatCard
+            label={h.kpiCatalog}
+            value={valueOrDots(totalProducts)}
+            icon={<Package className="h-5 w-5" />}
+            href={withBase('/admin/store')}
+            badge={
+              totalProducts === 0 ? (
+                <Badge variant="secondary">Kode Default</Badge>
+              ) : (
+                <Badge variant="secondary">
+                  {featuredProducts} {h.kpiFeatured}
+                </Badge>
+              )
+            }
+            hint={totalProducts === 0 ? h.kpiDefaultCode : `${totalProducts} produk`}
+          />
         </div>
 
-        {/* Two Feature Overview Cards (Split Grid) */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Card 1: Jadwal Tur Overview */}
-          <div className="flex flex-col justify-between rounded-3xl border border-[#EADCB9] bg-white p-6 sm:p-7 shadow-xs">
-            <div>
-              <div className="flex items-center justify-between border-b border-[#EADCB9]/60 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFF4DB] to-[#F5E2B5] text-[#8C6A1C] border border-[#E9D9AE]">
-                    <CalendarDays className="h-5 w-5" />
+        {/* 2-Column Minimalist Layout */}
+        <div className="grid gap-6 lg:grid-cols-12 items-start">
+          {/* Left Column (8 / 12): Recent Customer Orders Table */}
+          <div className="lg:col-span-8 space-y-6">
+            <AdminSectionCard
+              title={h.recentOrders}
+              description={h.recentOrdersSub}
+              actions={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => (window.location.href = withBase('/admin/orders'))}
+                >
+                  <span>{h.viewAllOrders}</span>
+                  <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                </Button>
+              }
+            >
+              <div className="-mx-5 -my-5">
+                {recentOrders.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{h.orderCustomer}</TableHead>
+                        <TableHead>Tanggal</TableHead>
+                        <TableHead>{h.orderAmount}</TableHead>
+                        <TableHead>{h.orderStatus}</TableHead>
+                        <TableHead className="text-right">{h.orderAction}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recentOrders.map((order) => {
+                        const dateStr = order.createdAt
+                          ? new Date(order.createdAt).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-GB', {
+                              day: 'numeric',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : '-';
+
+                        return (
+                          <TableRow
+                            key={order.id}
+                            className="cursor-pointer"
+                            onClick={() => (window.location.href = withBase(`/admin/orders`))}
+                          >
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs font-semibold text-zinc-800 uppercase">
+                                  {order.customerName.charAt(0) || 'U'}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-medium text-zinc-900 truncate max-w-[140px] sm:max-w-[200px]">
+                                    {order.customerName}
+                                  </p>
+                                  <p className="font-mono text-[10px] text-zinc-400 truncate">
+                                    {order.orderCode || order.id}
+                                  </p>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-zinc-500 text-xs whitespace-nowrap">{dateStr}</TableCell>
+                            <TableCell className="font-semibold text-zinc-900 text-xs whitespace-nowrap">
+                              {formatRupiah(order.payableAmount || order.totalPrice)}
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                              <AdminStatusPill status={order.status} locale={locale} />
+                            </TableCell>
+                            <TableCell className="text-right whitespace-nowrap">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.location.href = withBase('/admin/orders');
+                                }}
+                              >
+                                {h.review}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="p-8 text-center">
+                    <Inbox className="h-6 w-6 text-zinc-300 mx-auto mb-2" />
+                    <p className="text-xs text-zinc-500">Belum ada pesanan terbaru.</p>
                   </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-[#1F1A12] leading-tight">
-                      {d.schedCardTitle}
-                    </h2>
-                    <p className="text-xs text-[#6E6453]">
-                      {locale === 'id'
-                        ? 'Jadwal konser dan penampilan live MUSES'
-                        : 'Concerts and live performances'}
-                    </p>
-                  </div>
-                </div>
+                )}
+              </div>
+            </AdminSectionCard>
+          </div>
+
+          {/* Right Column (4 / 12): Highlights & Operational Widgets */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Next Tour Schedule Card */}
+            <AdminCard className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-zinc-900">
+                  Jadwal Tur Terdekat
+                </span>
                 <a
                   href={withBase('/admin/schedules')}
-                  className="rounded-full bg-[#FCFAF5] border border-[#E9D9AE] px-3.5 py-1.5 text-xs font-bold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC] transition-colors"
+                  className="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 transition-colors"
                 >
-                  {d.schedCardButton} →
+                  {h.openSchedules}
+                  <ChevronRight className="h-3 w-3" />
                 </a>
               </div>
 
-              {/* Schedule Preview List */}
-              <div className="mt-4 space-y-2.5">
-                {upcomingSchedules.length > 0 ? (
-                  upcomingSchedules.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between rounded-2xl border border-[#E9D9AE]/60 bg-[#FCFAF5] p-3 transition-colors hover:border-[#C9971C]/50"
-                    >
-                      <div className="min-w-0 pr-3">
-                        <p className="truncate text-sm font-bold text-[#1F1A12]">
-                          {item.tourName} · {item.city}
-                        </p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-[#6E6453]">
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-[#8C6A1C]" />
-                            {item.venue}
-                          </span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3 text-[#8C6A1C]" />
-                            {item.showTime}
-                          </span>
-                        </div>
-                      </div>
-                      <span
-                        className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                          item.status === 'Available'
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : item.status === 'Selling Fast'
-                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                              : item.status === 'Sold Out'
-                                ? 'bg-red-50 text-red-800 border border-red-200'
-                                : 'bg-purple-50 text-purple-800 border border-purple-200'
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-[#E9D9AE] p-6 text-center text-xs text-[#6E6453]">
-                    {locale === 'id'
-                      ? 'Belum ada jadwal yang tampil.'
-                      : 'No tour schedules listed yet.'}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-[#EADCB9]/60 flex items-center justify-between">
-              <span className="text-xs text-[#6E6453]">
-                {totalSchedules}{' '}
-                {locale === 'id' ? 'jadwal terdaftar' : 'total events listed'}
-              </span>
-              <a
-                href={withBase('/admin/schedules')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8C6A1C] hover:text-[#1F1A12] transition-colors"
-              >
-                <span>{locale === 'id' ? 'Buka Ruang Jadwal' : 'Go to Schedules'}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </div>
-
-          {/* Card 2: Store Catalog Overview */}
-          <div className="flex flex-col justify-between rounded-3xl border border-[#EADCB9] bg-white p-6 sm:p-7 shadow-xs">
-            <div>
-              <div className="flex items-center justify-between border-b border-[#EADCB9]/60 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFF4DB] to-[#F5E2B5] text-[#8C6A1C] border border-[#E9D9AE]">
-                    <ShoppingBag className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-[#1F1A12] leading-tight">
-                      {d.storeCardTitle}
-                    </h2>
-                    <p className="text-xs text-[#6E6453]">
-                      {locale === 'id'
-                        ? 'Cheki, merchandise resmi, dan tiket videocall'
-                        : 'Cheki, official merch, and videocall tickets'}
+              {nextUpcoming ? (
+                <div className="rounded-lg border border-zinc-100 bg-zinc-50/50 p-4 space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm font-semibold text-zinc-900 leading-tight">
+                      {nextUpcoming.tourName}
                     </p>
+                    <AdminStatusPill status={nextUpcoming.status} locale={locale} />
+                  </div>
+                  <div className="space-y-1 text-xs text-zinc-500">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                      <span className="truncate">{nextUpcoming.city} · {nextUpcoming.venue}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                      <span>{nextUpcoming.day} {nextUpcoming.month} {nextUpcoming.year} · {nextUpcoming.showTime}</span>
+                    </div>
                   </div>
                 </div>
+              ) : (
+                <div className="p-6 text-center text-xs text-zinc-400">
+                  {h.emptySchedules}
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => (window.location.href = withBase('/admin/schedules'))}
+                className="w-full"
+              >
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                <span>{d.addSchedButton.replace('+ ', '')}</span>
+              </Button>
+            </AdminCard>
+
+            {/* Store Catalog Breakdown */}
+            <AdminCard className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-zinc-900">
+                  {h.catalogCardSub}
+                </span>
                 <a
                   href={withBase('/admin/store')}
-                  className="rounded-full bg-[#FCFAF5] border border-[#E9D9AE] px-3.5 py-1.5 text-xs font-bold text-[#8C6A1C] hover:border-[#C9971C] hover:bg-[#FFF9EC] transition-colors"
+                  className="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 transition-colors"
                 >
-                  {d.storeCardButton} →
+                  {h.openStore}
+                  <ChevronRight className="h-3 w-3" />
                 </a>
               </div>
 
-              {/* Category Pills & Breakdown */}
-              <div className="mt-5 grid grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-[#E9D9AE]/80 bg-[#FCFAF5] p-3 text-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">
-                    Cheki
-                  </span>
-                  <div className="mt-1 text-xl font-extrabold text-[#1F1A12]">
-                    {chekiCount}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { name: 'Cheki', count: chekiCount },
+                  { name: 'Merch', count: merchCount },
+                  { name: 'VC', count: vcCount },
+                ].map((cat) => (
+                  <div
+                    key={cat.name}
+                    className="flex flex-col items-center justify-center rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 text-center"
+                  >
+                    <span className="text-[10px] font-medium text-zinc-500 uppercase">
+                      {cat.name}
+                    </span>
+                    <span className="mt-1 text-lg font-bold text-zinc-900">
+                      {loadingData ? '···' : cat.count}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-[#6E6453]">
-                    {locale === 'id' ? 'item terdaftar' : 'items'}
-                  </span>
-                </div>
-                <div className="rounded-2xl border border-[#E9D9AE]/80 bg-[#FCFAF5] p-3 text-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">
-                    Merch
-                  </span>
-                  <div className="mt-1 text-xl font-extrabold text-[#1F1A12]">
-                    {merchCount}
-                  </div>
-                  <span className="text-[10px] text-[#6E6453]">
-                    {locale === 'id' ? 'item terdaftar' : 'items'}
-                  </span>
-                </div>
-                <div className="rounded-2xl border border-[#E9D9AE]/80 bg-[#FCFAF5] p-3 text-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">
-                    Videocall
-                  </span>
-                  <div className="mt-1 text-xl font-extrabold text-[#1F1A12]">
-                    {vcCount}
-                  </div>
-                  <span className="text-[10px] text-[#6E6453]">
-                    {locale === 'id' ? 'item terdaftar' : 'items'}
-                  </span>
-                </div>
+                ))}
               </div>
 
-              {/* Notice or status */}
-              <div className="mt-4 rounded-2xl border border-[#E9D9AE]/60 bg-[#FFFBF2] p-4 text-xs text-[#6E6453]">
-                <p className="font-semibold text-[#1F1A12]">
-                  {totalProducts === 0
-                    ? locale === 'id'
-                      ? 'Status Katalog: Menggunakan Data Default Kode'
-                      : 'Catalog Status: Using Built-in Code'
-                    : locale === 'id'
-                      ? `Status Katalog: ${totalProducts} Produk Aktif di Supabase`
-                      : `Catalog Status: ${totalProducts} Products Active in Database`}
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/40 p-3 text-xs text-zinc-600 leading-relaxed">
+                <p className="font-medium text-zinc-800">
+                  {totalProducts === 0 ? h.catalogStatusDefault : fmt(h.catalogStatusActive, { count: totalProducts })}
                 </p>
-                <p className="mt-1 leading-relaxed">
-                  {totalProducts === 0
-                    ? d.warningBody
-                    : locale === 'id'
-                      ? 'Produk yang ada di database mengontrol penuh katalog yang tampil kepada pengunjung di halaman Store.'
-                      : 'Database products have full authority over what visitors see on the public Store page.'}
+                <p className="mt-0.5 text-[11px] text-zinc-400">
+                  {totalProducts === 0 ? d.warningBody : h.catalogStatusBody}
                 </p>
               </div>
-            </div>
 
-            <div className="mt-6 pt-4 border-t border-[#EADCB9]/60 flex items-center justify-between">
-              <span className="text-xs text-[#6E6453]">
-                {featuredProducts}{' '}
-                {locale === 'id' ? 'produk sorotan unggulan' : 'featured highlight items'}
-              </span>
-              <a
-                href={withBase('/admin/store')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8C6A1C] hover:text-[#1F1A12] transition-colors"
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => (window.location.href = withBase('/admin/store'))}
+                className="w-full"
               >
-                <span>{locale === 'id' ? 'Buka Ruang Store' : 'Go to Store'}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Operational Guidance Card (Styled like Pro Banner in reference) */}
-        <div className="relative overflow-hidden rounded-3xl border border-[#E9D9AE] bg-gradient-to-r from-[#FFFBF2] via-[#FDF8EB] to-[#F5EBCB] p-6 sm:p-8 shadow-xs">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#8C6A1C] border border-[#E9D9AE] shadow-2xs">
-                <Sparkles className="h-3.5 w-3.5 text-[#C9971C]" />
-                <span>MUSES Management System</span>
-              </div>
-              <h3 className="mt-3 text-xl font-bold text-[#1F1A12]">
-                {locale === 'id'
-                  ? 'Sistem Sinkronisasi Instan & Keamanan RLS'
-                  : 'Instant Sync & Row Level Security'}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-                {locale === 'id'
-                  ? 'Setiap penambahan atau perubahan jadwal dan produk langsung diamankan dengan kebijakan database RLS (Row Level Security). Hanya akun pengelola terverifikasi yang dapat mengubah data publik.'
-                  : 'All schedule and product updates are immediately secured with PostgreSQL Row Level Security. Only verified admin accounts can mutate live public data.'}
-              </p>
-            </div>
-            <div className="flex shrink-0 flex-wrap gap-3">
-              <a
-                href={withBase('/admin/schedules')}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#C9971C] via-[#D8A730] to-[#B38317] px-5 py-2.5 text-sm font-bold text-white shadow-xs hover:brightness-105 transition-all"
-              >
-                <Plus className="h-4 w-4" />
-                <span>{d.addSchedButton}</span>
-              </a>
-              <a
-                href={withBase('/admin/store')}
-                className="inline-flex items-center gap-2 rounded-full border border-[#C9971C] bg-white px-5 py-2.5 text-sm font-bold text-[#8C6A1C] hover:bg-[#FFF9EC] transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                <span>{d.addProductButton}</span>
-              </a>
-            </div>
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                <span>{d.addProductButton.replace('+ ', '')}</span>
+              </Button>
+            </AdminCard>
           </div>
         </div>
       </div>

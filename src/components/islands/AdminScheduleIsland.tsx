@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { withBase } from '../../lib/paths';
-import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
-import { authService } from '../../services/authService';
 import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { DATE_LOCALE, fmt, getDict, translateServiceError, type Locale } from '../../i18n/dictionary';
-import { Plus } from 'lucide-react';
-
-type GateState = 'checking' | 'no-supabase' | 'login-required' | 'forbidden' | 'ready';
+import AdminShell from '../admin/AdminShell';
+import { AdminGateScreen, useAdminGate } from '../admin/AdminGate';
+import {
+  AdminField,
+  AdminNotice,
+  AdminSectionCard,
+  AdminSelect,
+  AdminStatusPill,
+  ConfirmButton,
+  EmptyState,
+} from '../admin/ui';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../ui/table';
+import { Plus, Calendar, MapPin, Clock, Edit2, Trash2, Sparkles, X } from 'lucide-react';
 
 const STATUS_OPTIONS = ['Available', 'Selling Fast', 'Sold Out', 'Coming Soon'] as const;
 
@@ -74,69 +84,49 @@ function sortByTargetDate(items: ScheduleDTO[]): ScheduleDTO[] {
   });
 }
 
-const inputClass =
-  'mt-1.5 w-full rounded-xl border border-[#E9D9AE] bg-[#FCFAF5] px-4 py-3 text-base text-[#1F1A12] outline-none focus:border-[#C9971C]';
-const labelClass = 'block text-sm font-medium text-[#1F1A12]';
+let cachedSchedules: ScheduleDTO[] | null = null;
 
 export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).admin;
-  const [gate, setGate] = useState<GateState>('checking');
-  const [adminEmail, setAdminEmail] = useState('');
-  const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { gate, adminEmail, signOut } = useAdminGate();
+  const [schedules, setSchedules] = useState<ScheduleDTO[]>(() => cachedSchedules || []);
+  const [loading, setLoading] = useState(() => !cachedSchedules);
   const [form, setForm] = useState<ScheduleDTO>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
 
   const loadSchedules = async () => {
+    if (!cachedSchedules) setLoading(true);
     const res = await scheduleService.getAdminSchedules();
+    setLoading(false);
     if (res.success && res.data) {
-      setSchedules(sortByTargetDate(res.data));
-    } else {
+      const sorted = sortByTargetDate(res.data);
+      cachedSchedules = sorted;
+      setSchedules(sorted);
+    } else if (!cachedSchedules) {
       setError(res.error ? translateServiceError(locale, res.error) : d.errLoadSched);
     }
   };
 
   useEffect(() => {
-    // Gate admin di sini sengaja memakai getSupabaseAdminProfile(),
-    // bukan getSessionUser(): yang terakhir jatuh kembali ke user
-    // demo lokal kalau tidak ada sesi Supabase, dan itu bukan bukti admin.
-    // Penegakan sesungguhnya tetap di RLS Supabase.
-    if (!isSupabaseConfigured()) {
-      setGate('no-supabase');
-      return;
+    if (gate === 'ready') {
+      loadSchedules();
     }
-    authService
-      .getSupabaseAdminProfile()
-      .then(async (result) => {
-        if (!result.isLoggedIn) {
-          setGate('login-required');
-          return;
-        }
-        if (!result.isAdmin) {
-          setAdminEmail(result.user?.email || '');
-          setGate('forbidden');
-          return;
-        }
-        setAdminEmail(result.user?.email || '');
-        setGate('ready');
-        setLoading(true);
-        await loadSchedules();
-        setLoading(false);
-      })
-      .catch(() => {
-        setGate('login-required');
-      });
-  }, []);
+  }, [gate]);
+
+  if (gate !== 'ready') {
+    return <AdminGateScreen gate={gate} adminEmail={adminEmail} locale={locale} onSignOut={signOut} />;
+  }
 
   const startNew = () => {
     setEditingId(null);
     setForm(EMPTY_FORM);
     setError('');
     setNotice('');
+    setIsFormOpen(true);
   };
 
   const startEdit = (item: ScheduleDTO) => {
@@ -144,7 +134,14 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
     setForm({ ...item, targetDate: toDatetimeLocal(item.targetDate) });
     setError('');
     setNotice('');
+    setIsFormOpen(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingId(null);
+    setForm(EMPTY_FORM);
   };
 
   const fillFromTargetDate = () => {
@@ -178,8 +175,6 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
       return;
     }
 
-    // ID baru dibuat dari tur + kota + tanggal, dan dipastikan unik
-    // terhadap daftar yang sedang tampil (bukan sekadar timestamp acak).
     let finalId = trimmed.id;
     if (!editingId) {
       const baseId =
@@ -200,8 +195,6 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
       ...trimmed,
       id: finalId,
       ...deriveDateFields(trimmed.targetDate, locale),
-      // Kalau tanggal diisi tapi field hari/bulan/tahun dikosongkan
-      // manual, tetap pakai hasil turunan dari tanggal.
       day: trimmed.day || deriveDateFields(trimmed.targetDate, locale).day || '',
       dayName: trimmed.dayName || deriveDateFields(trimmed.targetDate, locale).dayName || '',
       month: trimmed.month || deriveDateFields(trimmed.targetDate, locale).month || '',
@@ -216,8 +209,7 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
       return;
     }
     setNotice(editingId ? d.noticeUpdatedSched : d.noticeAddedSched);
-    setEditingId(null);
-    setForm(EMPTY_FORM);
+    closeForm();
     await loadSchedules();
   };
 
@@ -225,7 +217,6 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
     setError('');
     setNotice('');
     const res = await scheduleService.deleteSchedule(id);
-    setDeletingId(null);
     if (!res.success) {
       setError(res.error ? translateServiceError(locale, res.error) : d.errDeleteSched);
       return;
@@ -234,362 +225,298 @@ export default function AdminScheduleIsland({ locale = 'id' }: { locale?: Locale
     await loadSchedules();
   };
 
-  if (gate === 'checking') {
-    return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center text-sm text-[#6E6453]">
-        {d.checking}
-      </div>
-    );
-  }
-
-  if (gate === 'no-supabase') {
-    return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8">
-        <h2 className="text-lg font-bold text-[#1F1A12]">{d.noSupabaseTitle}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-[#6E6453]">
-          {d.schedNoSupabaseBody}
-        </p>
-      </div>
-    );
-  }
-
-  if (gate === 'login-required') {
-    return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center">
-        <h2 className="text-lg font-bold text-[#1F1A12]">{d.loginRequiredTitleSched}</h2>
-        <p className="mt-2 text-sm text-[#6E6453]">
-          {d.loginRequiredBody}
-        </p>
-        <a
-          href={withBase('/admin/login')}
-          className="mt-5 inline-block rounded-full bg-[#C9971C] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#A37418]"
-        >
-          {d.loginButton}
-        </a>
-      </div>
-    );
-  }
-
-  if (gate === 'forbidden') {
-    return (
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-8 text-center">
-        <h2 className="text-lg font-bold text-[#1F1A12]">{d.forbiddenTitle}</h2>
-        <p className="mt-2 text-sm text-[#6E6453]">
-          {fmt(d.schedForbiddenBody, { account: adminEmail ? (locale === 'id' ? `Akun ${adminEmail}` : `Account ${adminEmail}`) : (locale === 'id' ? 'Akun ini' : 'This account') })}
-        </p>
-        <a
-          href={withBase('/schedule')}
-          className="mt-5 inline-block rounded-full border border-[#C9971C] px-6 py-2.5 text-sm font-bold text-[#8C6A1C]"
-        >
-          {d.backSchedule}
-        </a>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <a
-        href={withBase('/admin')}
-        className="inline-block text-sm font-bold text-[#8C6A1C] hover:underline"
-      >
-        {d.backAdmin}
-      </a>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold tracking-wider uppercase text-[#8C6A1C]">
-            {fmt(d.headerAdmin, { email: adminEmail })}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold text-[#1F1A12]">{d.schedHeading}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-[#6E6453]">
-            {d.schedIntro}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={startNew}
-          className="rounded-full bg-[#C9971C] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#A37418]"
-        >
-          {d.addSchedButton}
-        </button>
-      </div>
-
-      {notice && (
-        <p role="status" className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
-          {notice}
-        </p>
-      )}
-      {error && (
-        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
-
-      <form
-        onSubmit={handleSave}
-        className="rounded-2xl border border-[#E9D9AE] bg-white p-5 sm:p-6"
-      >
-        <h2 className="text-base font-bold text-[#1F1A12]">
-          {editingId ? fmt(d.formTitleEdit, { id: editingId }) : d.formTitleNew}
-        </h2>
-        <p className="mt-1 text-xs text-[#6E6453]">
-          {d.formHint}
-        </p>
-
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelClass} htmlFor="admin-tour">{d.tourName}</label>
-            <input
-              id="admin-tour"
-              className={inputClass}
-              value={form.tourName}
-              onChange={(e) => setForm({ ...form, tourName: e.target.value })}
-              placeholder={d.tourPh}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-title">{d.showTitle}</label>
-            <input
-              id="admin-title"
-              className={inputClass}
-              value={form.title || ''}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder={d.titlePh}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-city">{d.city}</label>
-            <input
-              id="admin-city"
-              className={inputClass}
-              value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
-              placeholder={d.cityPh}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-venue">{d.venue}</label>
-            <input
-              id="admin-venue"
-              className={inputClass}
-              value={form.venue}
-              onChange={(e) => setForm({ ...form, venue: e.target.value })}
-              placeholder={d.venuePh}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-target">{d.target}</label>
-            <input
-              id="admin-target"
-              type="datetime-local"
-              className={inputClass}
-              value={form.targetDate || ''}
-              onChange={(e) => setForm({ ...form, targetDate: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-status">{d.status}</label>
-            <select
-              id="admin-status"
-              className={inputClass}
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-            >
-              {STATUS_OPTIONS.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-door">{d.door}</label>
-            <input
-              id="admin-door"
-              className={inputClass}
-              value={form.doorOpen || ''}
-              onChange={(e) => setForm({ ...form, doorOpen: e.target.value })}
-              placeholder={d.doorPh}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-show">{d.show}</label>
-            <input
-              id="admin-show"
-              className={inputClass}
-              value={form.showTime}
-              onChange={(e) => setForm({ ...form, showTime: e.target.value })}
-              placeholder={d.showPh}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-ticket">{d.ticket}</label>
-            <input
-              id="admin-ticket"
-              className={inputClass}
-              value={form.ticketUrl}
-              onChange={(e) => setForm({ ...form, ticketUrl: e.target.value })}
-              placeholder={d.ticketPh}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor="admin-poster">{d.poster}</label>
-            <input
-              id="admin-poster"
-              className={inputClass}
-              value={form.posterImage}
-              onChange={(e) => setForm({ ...form, posterImage: e.target.value })}
-              placeholder={d.posterPh}
-              required
-            />
-          </div>
-        </div>
-
-        <p className="mt-6 text-sm font-medium text-[#1F1A12]">
-          {d.dateDetailHint}
-        </p>
-
-        <div className="mt-4 flex flex-wrap items-end gap-3">
-          <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
-            <div>
-              <label className={labelClass} htmlFor="admin-day">{d.day}</label>
-              <input
-                id="admin-day"
-                className={inputClass}
-                value={form.day}
-                onChange={(e) => setForm({ ...form, day: e.target.value })}
-                placeholder={d.dayPh}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="admin-dayname">{d.dayName}</label>
-              <input
-                id="admin-dayname"
-                className={inputClass}
-                value={form.dayName}
-                onChange={(e) => setForm({ ...form, dayName: e.target.value })}
-                placeholder={d.dayNamePh}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="admin-month">{d.month}</label>
-              <input
-                id="admin-month"
-                className={inputClass}
-                value={form.month}
-                onChange={(e) => setForm({ ...form, month: e.target.value })}
-                placeholder={d.monthPh}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="admin-year">{d.year}</label>
-              <input
-                id="admin-year"
-                className={inputClass}
-                value={form.year}
-                onChange={(e) => setForm({ ...form, year: e.target.value })}
-                placeholder={d.yearPh}
-              />
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={fillFromTargetDate}
-            className="rounded-full border border-[#C9971C] px-4 py-2.5 text-sm font-bold text-[#8C6A1C]"
-          >
-            {d.autofill}
-          </button>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-full bg-[#C9971C] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#A37418] disabled:opacity-50"
-          >
-            {saving ? d.saving : editingId ? d.saveEditSched : d.saveNewSched}
-          </button>
-          {editingId && (
-            <button
-              type="button"
-              onClick={startNew}
-              className="rounded-full border border-[#E9D9AE] px-6 py-2.5 text-sm font-bold text-[#6E6453]"
-            >
-              {d.cancelEdit}
-            </button>
-          )}
-        </div>
-      </form>
-
-      <div className="rounded-2xl border border-[#E9D9AE] bg-white p-5 sm:p-6">
-        <h2 className="text-base font-bold text-[#1F1A12]">{fmt(d.listTitle, { count: schedules.length })}</h2>
-        {loading ? (
-          <p className="mt-3 text-sm text-[#6E6453]">{d.loadingSched}</p>
-        ) : schedules.length === 0 ? (
-          <p className="mt-3 text-sm text-[#6E6453]">
-            {d.emptySched}
-          </p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {schedules.map((item) => (
-              <li
-                key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E9D9AE] px-4 py-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-[#1F1A12]">
-                    {item.tourName} · {item.city}
-                  </p>
-                  <p className="text-xs text-[#6E6453]">
-                    {item.venue} · {item.showTime} · {item.status}
-                    {item.targetDate ? ` · ${new Date(item.targetDate).toLocaleString(DATE_LOCALE[locale])}` : ''}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => startEdit(item)}
-                    className="rounded-full border border-[#C9971C] px-4 py-2 text-xs font-bold text-[#8C6A1C]"
-                  >
-                    {d.edit}
-                  </button>
-                  {deletingId === item.id ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(item.id)}
-                        className="rounded-full bg-red-700 px-4 py-2 text-xs font-bold text-white"
-                      >
-                        {d.confirmDelete}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDeletingId(null)}
-                        className="rounded-full border border-[#E9D9AE] px-4 py-2 text-xs font-bold text-[#6E6453]"
-                      >
-                        {d.cancel}
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setDeletingId(item.id)}
-                      className="rounded-full border border-red-300 px-4 py-2 text-xs font-bold text-red-700"
-                    >
-                      {d.delete}
-                    </button>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+    <AdminShell
+      currentTab="schedules"
+      adminEmail={adminEmail}
+      locale={locale}
+      onSignOut={signOut}
+      title={d.schedHeading}
+      subtitle={d.schedIntro}
+      actions={
+        <Button size="sm" onClick={startNew}>
+          <Plus className="h-3.5 w-3.5 mr-1" />
+          <span>{d.addSchedButton.replace('+ ', '')}</span>
+        </Button>
+      }
+    >
+      <div className="space-y-6">
+        {notice && (
+          <AdminNotice tone="success" role="status">
+            {notice}
+          </AdminNotice>
         )}
+        {error && (
+          <AdminNotice tone="error" role="alert">
+            {error}
+          </AdminNotice>
+        )}
+
+        {/* Schedule Add/Edit Form Card */}
+        {isFormOpen && (
+          <AdminSectionCard
+            title={editingId ? fmt(d.formTitleEdit, { id: editingId }) : d.formTitleNew}
+            description={d.formHint}
+            actions={
+              <Button variant="ghost" size="sm" onClick={closeForm}>
+                <X className="h-4 w-4" />
+              </Button>
+            }
+          >
+            <form onSubmit={handleSave} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <AdminField label={d.tourName} htmlFor="admin-tour" required>
+                  <Input
+                    id="admin-tour"
+                    value={form.tourName}
+                    onChange={(e) => setForm({ ...form, tourName: e.target.value })}
+                    placeholder={d.tourPh}
+                    required
+                  />
+                </AdminField>
+                <AdminField label={d.showTitle} htmlFor="admin-title">
+                  <Input
+                    id="admin-title"
+                    value={form.title || ''}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    placeholder={d.titlePh}
+                  />
+                </AdminField>
+                <AdminField label={d.city} htmlFor="admin-city" required>
+                  <Input
+                    id="admin-city"
+                    value={form.city}
+                    onChange={(e) => setForm({ ...form, city: e.target.value })}
+                    placeholder={d.cityPh}
+                    required
+                  />
+                </AdminField>
+                <AdminField label={d.venue} htmlFor="admin-venue" required>
+                  <Input
+                    id="admin-venue"
+                    value={form.venue}
+                    onChange={(e) => setForm({ ...form, venue: e.target.value })}
+                    placeholder={d.venuePh}
+                    required
+                  />
+                </AdminField>
+                <AdminField label={d.target} htmlFor="admin-target" required>
+                  <Input
+                    id="admin-target"
+                    type="datetime-local"
+                    value={form.targetDate || ''}
+                    onChange={(e) => setForm({ ...form, targetDate: e.target.value })}
+                    required
+                  />
+                </AdminField>
+                <AdminField label={d.status} htmlFor="admin-status">
+                  <AdminSelect
+                    id="admin-status"
+                    value={form.status}
+                    onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  >
+                    {STATUS_OPTIONS.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                </AdminField>
+                <AdminField label={d.door} htmlFor="admin-door">
+                  <Input
+                    id="admin-door"
+                    value={form.doorOpen || ''}
+                    onChange={(e) => setForm({ ...form, doorOpen: e.target.value })}
+                    placeholder={d.doorPh}
+                  />
+                </AdminField>
+                <AdminField label={d.show} htmlFor="admin-show" required>
+                  <Input
+                    id="admin-show"
+                    value={form.showTime}
+                    onChange={(e) => setForm({ ...form, showTime: e.target.value })}
+                    placeholder={d.showPh}
+                    required
+                  />
+                </AdminField>
+                <AdminField label={d.ticket} htmlFor="admin-ticket">
+                  <Input
+                    id="admin-ticket"
+                    value={form.ticketUrl}
+                    onChange={(e) => setForm({ ...form, ticketUrl: e.target.value })}
+                    placeholder={d.ticketPh}
+                  />
+                </AdminField>
+                <AdminField label={d.poster} htmlFor="admin-poster" required>
+                  <Input
+                    id="admin-poster"
+                    value={form.posterImage}
+                    onChange={(e) => setForm({ ...form, posterImage: e.target.value })}
+                    placeholder={d.posterPh}
+                    required
+                  />
+                </AdminField>
+              </div>
+
+              {/* Date derivation */}
+              <div className="rounded-lg border border-zinc-200/80 bg-zinc-50/50 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-semibold text-zinc-700">{d.dateDetailHint}</span>
+                  <Button type="button" variant="outline" size="sm" onClick={fillFromTargetDate}>
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    <span>{d.autofill}</span>
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <AdminField label={d.day}>
+                    <Input
+                      value={form.day}
+                      onChange={(e) => setForm({ ...form, day: e.target.value })}
+                      placeholder={d.dayPh}
+                    />
+                  </AdminField>
+                  <AdminField label={d.dayName}>
+                    <Input
+                      value={form.dayName}
+                      onChange={(e) => setForm({ ...form, dayName: e.target.value })}
+                      placeholder={d.dayNamePh}
+                    />
+                  </AdminField>
+                  <AdminField label={d.month}>
+                    <Input
+                      value={form.month}
+                      onChange={(e) => setForm({ ...form, month: e.target.value })}
+                      placeholder={d.monthPh}
+                    />
+                  </AdminField>
+                  <AdminField label={d.year}>
+                    <Input
+                      value={form.year}
+                      onChange={(e) => setForm({ ...form, year: e.target.value })}
+                      placeholder={d.yearPh}
+                    />
+                  </AdminField>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <Button type="submit" loading={saving}>
+                  {editingId ? d.saveEditSched : d.saveNewSched}
+                </Button>
+                <Button type="button" variant="outline" onClick={closeForm}>
+                  {d.cancel}
+                </Button>
+              </div>
+            </form>
+          </AdminSectionCard>
+        )}
+
+        {/* Schedules Data Table */}
+        <AdminSectionCard
+          title={fmt(d.listTitle, { count: schedules.length })}
+          description="Daftar jadwal tur aktif yang tampil di situs publik"
+        >
+          {loading ? (
+            <div className="p-8 text-center text-xs text-zinc-400">{d.loadingSched}</div>
+          ) : schedules.length === 0 ? (
+            <EmptyState
+              icon={<Calendar className="h-8 w-8" />}
+              title="Belum ada jadwal tur"
+              description={d.emptySched}
+              action={
+                <Button size="sm" onClick={startNew}>
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  <span>{d.addSchedButton.replace('+ ', '')}</span>
+                </Button>
+              }
+            />
+          ) : (
+            <div className="-mx-5 -my-5">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Tour & Event</TableHead>
+                    <TableHead>Lokasi & Venue</TableHead>
+                    <TableHead>Tanggal & Waktu</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {schedules.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {item.posterImage ? (
+                            <img
+                              src={withBase(item.posterImage)}
+                              alt={item.tourName}
+                              className="h-9 w-9 rounded-md object-cover border border-zinc-200 shrink-0"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-zinc-400">
+                              <Calendar className="h-4 w-4" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="font-medium text-zinc-900 truncate max-w-[200px]">
+                              {item.tourName}
+                            </p>
+                            {item.title && item.title !== item.tourName && (
+                              <p className="text-[11px] text-zinc-400 truncate max-w-[200px]">
+                                {item.title}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-600">
+                          <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                          <span className="truncate max-w-[180px]">{item.city} · {item.venue}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs text-zinc-600">
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                          <span>
+                            {item.day} {item.month} {item.year} ({item.showTime})
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <AdminStatusPill status={item.status} locale={locale} />
+                      </TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => startEdit(item)}
+                          >
+                            <Edit2 className="h-3 w-3 mr-1" />
+                            <span>{d.edit}</span>
+                          </Button>
+                          <ConfirmButton
+                            confirmLabel={d.confirmDelete}
+                            onConfirm={() => handleDelete(item.id)}
+                            size="sm"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </ConfirmButton>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </AdminSectionCard>
       </div>
-    </div>
+    </AdminShell>
   );
 }

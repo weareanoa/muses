@@ -1,35 +1,48 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, MessageCircle, RefreshCw, Search } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  MessageCircle,
+  RefreshCw,
+  Search,
+  Download,
+  Truck,
+  Ticket,
+  CheckCircle2,
+  Clock,
+  Send,
+  Package,
+} from 'lucide-react';
 import AdminShell from '../admin/AdminShell';
 import { AdminGateScreen, useAdminGate } from '../admin/AdminGate';
-import StatusBadge from '../ui/StatusBadge';
-import { orderAdminService, type AdminOrderDTO, type OrderEventDTO } from '../../services/orderAdminService';
+import {
+  orderAdminService,
+  type AdminOrderDTO,
+  type OrderEventDTO,
+} from '../../services/orderAdminService';
 import { formatRupiah } from '../../lib/format';
 import { waLinkTo } from '../../lib/contact';
 import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 import type { ServiceResult } from '../../types/database';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Card } from '../ui/card';
+import { Input } from '../ui/input';
+import { AdminStatusPill, AdminNotice } from '../admin/ui';
+import { cn } from '../../lib/utils';
 
-type Tab = 'verify' | 'unpaid' | 'processing' | 'completed' | 'closed' | 'all' | 'pickup';
+type FulfillmentFilter = 'all' | 'delivery' | 'pickup';
+type StatusTab = 'verify' | 'processing' | 'completed' | 'all';
 
-const TAB_ORDER: Tab[] = ['verify', 'unpaid', 'processing', 'completed', 'closed', 'all', 'pickup'];
-
-const TAB_STATUSES: Record<Exclude<Tab, 'all' | 'pickup'>, string[]> = {
-  verify: ['awaiting_verification'],
-  unpaid: ['unpaid'],
+const STATUS_GROUPS: Record<StatusTab, string[]> = {
+  verify: ['awaiting_verification', 'unpaid'],
   processing: ['processing', 'ready'],
   completed: ['completed'],
-  closed: ['cancelled', 'rejected', 'expired'],
+  all: [], // includes closed, cancelled, rejected
 };
 
 type AdminDict = ReturnType<typeof getDict>['adminOrders'];
 type RunAction = (fn: () => Promise<ServiceResult<true>>) => Promise<string | null>;
-
-const inputClass =
-  'w-full rounded-xl border border-[#E9D9AE] bg-white px-3 py-2 text-xs text-[#1F1A12] placeholder:text-[#A89D86] focus:border-[#C9971C] focus:outline-none';
-const primaryButton =
-  'rounded-full bg-gradient-to-r from-[#C9971C] to-[#B38317] px-4 py-2 text-xs font-bold text-white shadow-xs hover:brightness-105 disabled:opacity-60 cursor-pointer';
-const dangerButton =
-  'rounded-full border border-red-200 bg-white px-4 py-2 text-xs font-bold text-red-700 hover:bg-red-50 disabled:opacity-60 cursor-pointer';
 
 function formatDateTime(value: string | undefined, locale: Locale): string {
   if (!value) return '-';
@@ -41,25 +54,87 @@ function formatDateTime(value: string | undefined, locale: Locale): string {
   });
 }
 
-function sortOrders(orders: AdminOrderDTO[], tab: Tab): AdminOrderDTO[] {
-  const sorted = [...orders];
-  if (tab === 'verify') {
-    return sorted.sort(
-      (a, b) =>
-        new Date(a.proofSubmittedAt || a.createdAt).getTime() -
-        new Date(b.proofSubmittedAt || b.createdAt).getTime()
-    );
-  }
-  return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-}
-
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex justify-between gap-4 text-xs">
-      <span className="text-[#6E6453]">{label}</span>
-      <span className="text-right font-semibold text-[#1F1A12] break-words">{value}</span>
+    <div className="flex justify-between gap-4 text-xs py-0.5">
+      <span className="text-zinc-500">{label}</span>
+      <span className="text-right font-medium text-zinc-900 break-words">{value}</span>
     </div>
   );
+}
+
+function exportOrdersToExcel(orders: AdminOrderDTO[], filterName = 'semua') {
+  const headers = [
+    'No. Pesanan',
+    'Tanggal Pesan',
+    'Nama Pembeli',
+    'No. WhatsApp',
+    'Email Pembeli',
+    'Tipe Pemenuhan',
+    'Alamat / Lokasi Pickup',
+    'Rincian Produk',
+    'Total Pembayaran (IDR)',
+    'Status Pesanan',
+    'No. Resi / Kode Pickup',
+    'Catatan / Referensi',
+  ];
+
+  const escapeCsv = (val: string | number | undefined | null) => {
+    if (val === undefined || val === null) return '""';
+    const s = String(val).replace(/"/g, '""');
+    return `"${s}"`;
+  };
+
+  const rows = orders.map((o) => {
+    const isPickup = o.fulfillmentMethod === 'pickup';
+    const address = isPickup
+      ? `${o.eventTag || 'Venue'} - ${o.pickupLocation || ''} (${o.pickupDate || ''})`
+      : o.shippingAddress
+        ? [
+            o.shippingAddress.street,
+            o.shippingAddress.district,
+            o.shippingAddress.city,
+            o.shippingAddress.province,
+            o.shippingAddress.postalCode,
+          ]
+            .filter(Boolean)
+            .join(', ')
+        : '-';
+
+    const itemsSummary = o.items
+      .map((item) => `${item.name} (${item.variant}) x${item.quantity}`)
+      .join('; ');
+
+    const codeOrResi = isPickup ? o.pickupCode || '-' : o.trackingNumber || '-';
+
+    return [
+      escapeCsv(o.id),
+      escapeCsv(new Date(o.createdAt).toLocaleString('id-ID')),
+      escapeCsv(o.contactName || o.customerName),
+      escapeCsv(o.contactPhone),
+      escapeCsv(o.customerEmail),
+      escapeCsv(isPickup ? 'Ambil di Venue (Pickup)' : 'Kirim Ekspedisi (Delivery)'),
+      escapeCsv(address),
+      escapeCsv(itemsSummary),
+      escapeCsv(o.payableAmount || o.totalPrice),
+      escapeCsv(o.statusLabel || o.status),
+      escapeCsv(codeOrResi),
+      escapeCsv(o.adminNote || o.paymentReference || ''),
+    ].join(',');
+  });
+
+  // UTF-8 BOM (\uFEFF) ensures Excel reads Indonesian text & special characters properly
+  const csvContent = '\uFEFF' + [headers.map(escapeCsv).join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.download = `rekap-pesanan-muses-${filterName}-${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 interface OrderCardProps {
@@ -144,363 +219,469 @@ function OrderCard({ order, locale, d, expanded, busy, onToggle, run }: OrderCar
     submit(() => orderAdminService.reopenOrder(order.id, reason.trim()));
   };
 
-  const buyerLink = order.contactPhone
-    ? waLinkTo(order.contactPhone, fmt(d.waBuyerTemplate, { name: order.contactName, id: order.id }))
+  const invoiceCode = order.orderCode || order.id;
+
+  // WhatsApp Message Helpers
+  const waAskPaymentMessage = fmt(
+    'Halo Kak {name}, kami dari admin MUSES Official mengenai pesanan {id} sebesar {amount}. Apakah sudah melakukan pembayaran? Silakan kirimkan bukti transfernya ya Kak. Terima kasih!',
+    {
+      name: order.contactName,
+      id: invoiceCode,
+      amount: formatRupiah(amount),
+    }
+  );
+
+  const waVerifyMessage = fmt(
+    'Halo Kak {name}, pembayaran untuk pesanan {id} sebesar {amount} sudah berhasil kami verifikasi dan diterima. Pesanan Kakak segera kami proses! Terima kasih :)',
+    {
+      name: order.contactName,
+      id: invoiceCode,
+      amount: formatRupiah(amount),
+    }
+  );
+
+  const waResiMessage = fmt(
+    'Halo Kak {name}, pesanan {id} sudah kami kirimkan dengan nomor resi: {tracking}. Mohon ditunggu ya Kak, terima kasih!',
+    {
+      name: order.contactName,
+      id: invoiceCode,
+      tracking: tracking || order.trackingNumber || '-',
+    }
+  );
+
+  const waPickupMessage = fmt(
+    'Halo Kak {name}, pesanan {id} sudah siap diambil di booth merchandise MUSES ({venue}). Tunjukkan kode pickup ini ke staf: *{code}*. Sampai jumpa!',
+    {
+      name: order.contactName,
+      id: invoiceCode,
+      venue: order.eventTag || 'Venue Konser',
+      code: pickupCode || order.pickupCode || '-',
+    }
+  );
+
+  const buyerGeneralWa = order.contactPhone
+    ? waLinkTo(
+        order.contactPhone,
+        isOpen
+          ? waAskPaymentMessage
+          : fmt('Halo Kak {name}, kami dari admin MUSES Official mengenai pesanan {id}...', {
+              name: order.contactName,
+              id: invoiceCode,
+            })
+      )
     : '';
 
   return (
-    <div className="rounded-3xl border border-[#EADCB9] bg-white shadow-xs">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-3 p-4 sm:p-5 text-left cursor-pointer"
-      >
-        <div className="min-w-0 space-y-1">
-          <p className="font-mono text-sm font-bold text-[#1F1A12] break-all">{order.id}</p>
-          <p className="text-xs text-[#6E6453]">
-            {order.contactName} · {formatDateTime(order.createdAt, locale)} ·{' '}
-            {isPickup ? d.pickup : d.delivery}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-3">
-          <div className="hidden sm:block text-right">
-            <p className="text-sm font-bold text-[#1F1A12]">{formatRupiah(amount)}</p>
+    <Card className="transition-all hover:border-zinc-300">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 border-b border-zinc-100">
+        <div className="flex items-start gap-3 min-w-0">
+          <div
+            className={cn(
+              'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border',
+              isPickup
+                ? 'bg-purple-50 text-purple-700 border-purple-200/80'
+                : 'bg-sky-50 text-sky-700 border-sky-200/80'
+            )}
+          >
+            {isPickup ? <Ticket className="h-5 w-5" /> : <Truck className="h-5 w-5" />}
           </div>
-          <StatusBadge
-            status={order.status}
-            label={locale === 'id' ? order.statusLabel : undefined}
-            locale={locale}
-          />
-          {expanded ? (
-            <ChevronUp className="h-4 w-4 text-[#8C6A1C]" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-[#8C6A1C]" />
-          )}
+
+          <div className="min-w-0 space-y-0.5">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono text-xs font-bold text-zinc-900">
+                {invoiceCode}
+              </span>
+              <Badge variant={isPickup ? 'pastel-purple' : 'pastel-blue'} className="text-[10px] py-0 px-2">
+                {isPickup ? '🎫 Pickup Venue' : '🚚 Delivery'}
+              </Badge>
+              <AdminStatusPill status={order.status} locale={locale} />
+            </div>
+            <p className="text-xs text-zinc-600 font-medium truncate">
+              {order.contactName} · {order.contactPhone || '-'}
+            </p>
+            <p className="text-[11px] text-zinc-400">
+              {formatDateTime(order.createdAt, locale)} · {order.items.length} item
+            </p>
+          </div>
         </div>
-      </button>
+
+        <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0">
+          <div className="text-left sm:text-right">
+            <p className="text-sm font-bold text-zinc-900">{formatRupiah(amount)}</p>
+            {order.uniqueCode ? (
+              <p className="text-[10px] text-zinc-400 font-mono">Kode: +{order.uniqueCode}</p>
+            ) : null}
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            {buyerGeneralWa && (
+              <a
+                href={buyerGeneralWa}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded-md bg-[#25D366] px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-105"
+                title="Chat WhatsApp Pembeli"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                <span className="hidden md:inline">Chat WA</span>
+              </a>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggle}
+              className="h-8 text-xs font-medium"
+            >
+              <span>{expanded ? 'Tutup' : 'Detail'}</span>
+              {expanded ? (
+                <ChevronUp className="h-3.5 w-3.5 ml-1 text-zinc-400" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5 ml-1 text-zinc-400" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {expanded && (
-        <div className="grid gap-6 border-t border-[#EADCB9]/60 p-4 sm:p-5 lg:grid-cols-2">
+        <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-2 bg-zinc-50/30">
+          {/* Kolom Kiri: Rincian Produk, Pembeli, & Alamat */}
           <div className="space-y-4">
-            <div className="rounded-2xl border border-[#E9D9AE] bg-[#FFFBF2] p-4 space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">
+            <div className="rounded-lg border border-zinc-200/80 bg-white p-4 space-y-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
                 {d.amountToReceive}
               </p>
-              <p className="text-2xl font-extrabold text-[#1F1A12]">{formatRupiah(amount)}</p>
+              <p className="text-xl font-bold text-zinc-900">{formatRupiah(amount)}</p>
               {(order.uniqueCode ?? 0) > 0 && (
-                <p className="text-xs text-[#6E6453]">
-                  {d.uniqueCode}: <span className="font-mono font-bold">{order.uniqueCode}</span>
+                <p className="text-xs text-zinc-500">
+                  {d.uniqueCode}: <span className="font-mono font-medium text-zinc-900">{order.uniqueCode}</span>
                 </p>
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">{d.items}</p>
-              {order.items.map((item, idx) => (
-                <div key={item.id || idx} className="flex justify-between gap-3 text-xs">
-                  <span className="text-[#1F1A12]">
-                    {item.name} <span className="text-[#6E6453]">({item.variant})</span> × {item.quantity}
-                  </span>
-                  <span className="font-semibold">{formatRupiah(item.price * (item.quantity || 1))}</span>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                Daftar Produk Pesanan
+              </p>
+              <div className="rounded-lg border border-zinc-100 bg-white p-3 space-y-2">
+                {order.items.map((item, idx) => (
+                  <div key={item.id || idx} className="flex justify-between gap-3 text-xs">
+                    <span className="text-zinc-800">
+                      {item.name} <span className="text-zinc-400">({item.variant})</span> × {item.quantity}
+                    </span>
+                    <span className="font-semibold text-zinc-900">
+                      {formatRupiah(item.price * (item.quantity || 1))}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">{d.buyer}</p>
-              <DetailRow label={d.buyer} value={`${order.contactName} · ${order.contactPhone || '-'}`} />
-              <DetailRow label="Email" value={order.customerEmail || '-'} />
-              {isPickup ? (
-                <>
-                  <DetailRow label={d.pickup} value={order.eventTag} />
-                  <DetailRow label="" value={`${order.pickupDate || ''} · ${order.pickupLocation || ''}`} />
-                </>
-              ) : (
-                order.shippingAddress && (
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                Data Pemesan & Pengambilan
+              </p>
+              <div className="rounded-lg border border-zinc-100 bg-white p-3 space-y-1.5">
+                <DetailRow label="Nama Pembeli" value={order.contactName} />
+                <DetailRow label="No. WhatsApp" value={order.contactPhone || '-'} />
+                <DetailRow label="Email" value={order.customerEmail || '-'} />
+
+                {isPickup ? (
+                  <>
+                    <DetailRow label="Venue Tur" value={order.eventTag} />
+                    <DetailRow
+                      label="Lokasi Pickup"
+                      value={`${order.pickupDate || ''} · ${order.pickupLocation || ''}`}
+                    />
+                    {order.pickupCode && (
+                      <DetailRow
+                        label="Kode Pickup"
+                        value={
+                          <span className="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                            {order.pickupCode}
+                          </span>
+                        }
+                      />
+                    )}
+                  </>
+                ) : (
+                  order.shippingAddress && (
+                    <DetailRow
+                      label="Alamat Pengiriman"
+                      value={[
+                        order.shippingAddress.street,
+                        order.shippingAddress.district,
+                        order.shippingAddress.city,
+                        order.shippingAddress.province,
+                        order.shippingAddress.postalCode,
+                        order.shippingAddress.detail,
+                      ]
+                        .filter(Boolean)
+                        .join(', ')}
+                    />
+                  )
+                )}
+
+                {order.trackingNumber && (
                   <DetailRow
-                    label={d.delivery}
-                    value={[
-                      order.shippingAddress.street,
-                      order.shippingAddress.district,
-                      order.shippingAddress.city,
-                      order.shippingAddress.province,
-                      order.shippingAddress.postalCode,
-                      order.shippingAddress.detail,
-                    ]
-                      .filter(Boolean)
-                      .join(', ')}
+                    label="Nomor Resi"
+                    value={
+                      <span className="font-mono font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded">
+                        {order.trackingNumber}
+                      </span>
+                    }
                   />
-                )
-              )}
-              {buyerLink && (
-                <a
-                  href={buyerLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366] px-3 py-1.5 text-[11px] font-bold text-white hover:brightness-105"
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  {d.contactBuyer}
-                </a>
-              )}
+                )}
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <DetailRow label={d.createdAt} value={formatDateTime(order.createdAt, locale)} />
-              {isOpen && <DetailRow label={d.deadline} value={formatDateTime(order.paymentDeadline, locale)} />}
-              {order.proofSubmittedAt && (
-                <DetailRow label={d.proofAt} value={formatDateTime(order.proofSubmittedAt, locale)} />
-              )}
-              {order.paidAt && <DetailRow label={d.paidAt} value={formatDateTime(order.paidAt, locale)} />}
-              {order.paymentReference && <DetailRow label={d.reference} value={order.paymentReference} />}
-              {order.pickupCode && (
-                <DetailRow label={d.pickupCode} value={<span className="font-mono">{order.pickupCode}</span>} />
-              )}
-              {order.trackingNumber && <DetailRow label={d.tracking} value={order.trackingNumber} />}
-              {order.rejectReason && <DetailRow label={d.rejectReason} value={order.rejectReason} />}
-              {order.adminNote && <DetailRow label={d.adminNote} value={order.adminNote} />}
-              {order.review && (
-                <DetailRow
-                  label={d.buyerRating}
-                  value={`${'★'.repeat(order.review.rating)}${'☆'.repeat(5 - order.review.rating)}${order.review.comment ? ` — ${order.review.comment}` : ''}`}
-                />
-              )}
+            <div className="space-y-1.5 rounded-lg border border-zinc-100 bg-white p-3">
+              <DetailRow label="Waktu Checkout" value={formatDateTime(order.createdAt, locale)} />
+              {isOpen && <DetailRow label="Batas Pembayaran" value={formatDateTime(order.paymentDeadline, locale)} />}
+              {order.paidAt && <DetailRow label="Diverifikasi Pada" value={formatDateTime(order.paidAt, locale)} />}
+              {order.paymentReference && <DetailRow label="Ref. Bank" value={order.paymentReference} />}
+              {order.adminNote && <DetailRow label="Catatan Admin" value={order.adminNote} />}
             </div>
           </div>
 
-          <div className="space-y-5">
+          {/* Kolom Kanan: Aksi Cepat Verifikasi, Resi, & WhatsApp */}
+          <div className="space-y-4">
+            {/* Step 1: Verifikasi Pembayaran */}
             {isOpen && (
-              <div className="space-y-3 rounded-2xl border border-[#E9D9AE] p-4">
-                <p className="text-sm font-bold text-[#1F1A12]">{d.verifyTitle}</p>
-                <p className="text-xs leading-relaxed text-[#6E6453]">{d.verifyHint}</p>
-                <input
-                  className={inputClass}
+              <div className="space-y-3 rounded-lg border border-zinc-200/80 bg-white p-4">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <p className="text-xs font-semibold text-zinc-900">Verifikasi Pembayaran Masuk</p>
+                </div>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Cek mutasi rekening / QRIS dengan nominal <strong>{formatRupiah(amount)}</strong>. Masukkan ID referensi transfer:
+                </p>
+                <Input
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
-                  placeholder={d.referencePh}
+                  placeholder="Contoh: BCA-982341 atau QRIS-Ref"
                 />
-                <button type="button" className={primaryButton} disabled={busy} onClick={handleVerify}>
-                  {busy ? d.busy : d.verifyButton}
-                </button>
+                <Button size="sm" disabled={busy} onClick={handleVerify} className="w-full">
+                  {busy ? 'Menyimpan...' : '✓ Tandai Berhasil Bayar'}
+                </Button>
 
-                <hr className="border-[#EADCB9]/60" />
+                {order.contactPhone && (
+                  <div className="space-y-2 pt-1">
+                    <a
+                      href={waLinkTo(order.contactPhone, waAskPaymentMessage)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 hover:bg-amber-100 transition-colors"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5 text-amber-600" />
+                      <span>Tanya Bukti Transfer via WhatsApp</span>
+                    </a>
 
-                <p className="text-sm font-bold text-[#1F1A12]">{d.rejectTitle}</p>
-                <input
-                  className={inputClass}
+                    <a
+                      href={waLinkTo(order.contactPhone, waVerifyMessage)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#25D366] bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                    >
+                      <Send className="h-3.5 w-3.5 text-[#25D366]" />
+                      <span>Kirim Konfirmasi Berhasil Bayar ke WA</span>
+                    </a>
+                  </div>
+                )}
+
+                <hr className="border-zinc-100 my-2" />
+
+                <p className="text-xs font-semibold text-rose-900">Tolak Pembayaran</p>
+                <Input
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  placeholder={d.reasonPh}
+                  placeholder="Alasan penolakan..."
                 />
-                <label className="flex items-start gap-2 text-xs text-[#6E6453]">
+                <label className="flex items-center gap-2 text-xs text-zinc-600">
                   <input
                     type="checkbox"
                     checked={allowRetry}
                     onChange={(e) => setAllowRetry(e.target.checked)}
-                    className="mt-0.5"
+                    className="rounded border-zinc-300"
                   />
-                  <span>{d.allowRetry}</span>
+                  <span>Bolehkan pembeli upload ulang bukti</span>
                 </label>
-                <button type="button" className={dangerButton} disabled={busy} onClick={handleReject}>
-                  {d.rejectButton}
-                </button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={busy}
+                  onClick={handleReject}
+                  className="w-full"
+                >
+                  Tolak Pembayaran
+                </Button>
               </div>
             )}
 
-            {order.status === 'processing' && (
-              <div className="space-y-3 rounded-2xl border border-[#E9D9AE] p-4">
-                {!isPickup && (
-                  <input
-                    className={inputClass}
-                    value={tracking}
-                    onChange={(e) => setTracking(e.target.value)}
-                    placeholder={d.trackingPh}
-                  />
-                )}
-                <input
-                  className={inputClass}
+            {/* Step 2: Pengiriman (Delivery) - Input Resi */}
+            {order.status === 'processing' && !isPickup && (
+              <div className="space-y-3 rounded-lg border border-zinc-200/80 bg-white p-4">
+                <div className="flex items-center gap-2">
+                  <Truck className="h-4 w-4 text-sky-600" />
+                  <p className="text-xs font-semibold text-zinc-900">Pengiriman Ekspedisi (Delivery)</p>
+                </div>
+                <p className="text-xs text-zinc-500">Masukkan nomor resi pengiriman (JNE/J&T/SiCepat):</p>
+                <Input
+                  value={tracking}
+                  onChange={(e) => setTracking(e.target.value)}
+                  placeholder="Nomor Resi Pengiriman..."
+                />
+                <Input
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder={d.notePh}
+                  placeholder="Catatan kurir/paket..."
                 />
-                <button
-                  type="button"
-                  className={primaryButton}
+                <Button
+                  size="sm"
                   disabled={busy}
                   onClick={() =>
                     submit(() =>
                       orderAdminService.advanceOrder(order.id, 'ready', { note, tracking })
                     )
                   }
+                  className="w-full"
                 >
-                  {isPickup ? d.readyPickup : d.readyShip}
-                </button>
+                  Tandai Sedang Dikirim
+                </Button>
+
+                {order.contactPhone && (
+                  <a
+                    href={waLinkTo(order.contactPhone, waResiMessage)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#25D366] bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                  >
+                    <Send className="h-3.5 w-3.5 text-[#25D366]" />
+                    <span>Kirim Resi via WhatsApp</span>
+                  </a>
+                )}
               </div>
             )}
 
+            {/* Step 2b: Penyiapan Barang di Venue (Pickup) */}
+            {order.status === 'processing' && isPickup && (
+              <div className="space-y-3 rounded-lg border border-zinc-200/80 bg-white p-4">
+                <div className="flex items-center gap-2">
+                  <Ticket className="h-4 w-4 text-purple-600" />
+                  <p className="text-xs font-semibold text-zinc-900">Penyiapan Pickup di Venue</p>
+                </div>
+                <p className="text-xs text-zinc-500">
+                  Paket sudah disiapkan untuk diambil di venue konser:
+                </p>
+                <Button
+                  size="sm"
+                  disabled={busy}
+                  onClick={() =>
+                    submit(() =>
+                      orderAdminService.advanceOrder(order.id, 'ready', { note: 'Barang siap diambil di booth' })
+                    )
+                  }
+                  className="w-full"
+                >
+                  Tandai Siap Diambil di Booth
+                </Button>
+
+                {order.contactPhone && (
+                  <a
+                    href={waLinkTo(order.contactPhone, waPickupMessage)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#25D366] bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                  >
+                    <Send className="h-3.5 w-3.5 text-[#25D366]" />
+                    <span>Kirim Notifikasi Siap Ambil ke WA</span>
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* Step 3: Penyelesaian (Selesai Diterima / Diambil) */}
             {order.status === 'ready' && (
-              <div className="space-y-3 rounded-2xl border border-[#E9D9AE] p-4">
+              <div className="space-y-3 rounded-lg border border-zinc-200/80 bg-white p-4">
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-emerald-600" />
+                  <p className="text-xs font-semibold text-zinc-900">
+                    {isPickup ? 'Verifikasi Pengambilan di Booth' : 'Konfirmasi Paket Diterima'}
+                  </p>
+                </div>
+
                 {isPickup && (
-                  <input
-                    className={`${inputClass} font-mono uppercase`}
+                  <Input
+                    className="font-mono uppercase font-bold"
                     value={pickupCode}
                     onChange={(e) => setPickupCode(e.target.value)}
-                    placeholder={d.pickupCodePh}
+                    placeholder="Masukkan Kode Pickup Pembeli..."
                   />
                 )}
-                <input
-                  className={inputClass}
+                <Input
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder={d.notePh}
+                  placeholder="Catatan penyerahan barang..."
                 />
-                <button
-                  type="button"
-                  className={primaryButton}
+                <Button
+                  size="sm"
                   disabled={busy}
                   onClick={() =>
                     submit(() =>
                       orderAdminService.advanceOrder(order.id, 'completed', { note, pickupCode })
                     )
                   }
+                  className="w-full"
                 >
-                  {d.completeButton}
-                </button>
+                  ✓ Selesaikan Pesanan
+                </Button>
               </div>
             )}
 
-            {(order.status === 'processing' || order.status === 'ready') && (
-              <div className="space-y-3 rounded-2xl border border-red-100 p-4">
-                <p className="text-sm font-bold text-[#1F1A12]">{d.cancelPaidTitle}</p>
-                <p className="text-xs text-[#6E6453]">{d.cancelPaidHint}</p>
-                <input
-                  className={inputClass}
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder={d.reasonPh}
-                />
-                <button type="button" className={dangerButton} disabled={busy} onClick={handleCancel}>
-                  {d.cancelButton}
-                </button>
-              </div>
-            )}
+            {localError && <p className="text-xs font-medium text-rose-600">{localError}</p>}
 
-            {order.status === 'expired' && (
-              <div className="space-y-3 rounded-2xl border border-[#E9D9AE] p-4">
-                <p className="text-sm font-bold text-[#1F1A12]">{d.reopenTitle}</p>
-                <p className="text-xs text-[#6E6453]">{d.reopenHint}</p>
-                <input
-                  className={inputClass}
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder={d.reasonPh}
-                />
-                <button type="button" className={primaryButton} disabled={busy} onClick={handleReopen}>
-                  {d.reopenButton}
-                </button>
-              </div>
-            )}
-
-            {localError && <p className="text-xs font-semibold text-red-700">{localError}</p>}
-
+            {/* Timeline Riwayat Status */}
             <div className="space-y-2">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">{d.timeline}</p>
-              {events.length === 0 ? (
-                <p className="text-xs text-[#6E6453]">{d.noEvents}</p>
-              ) : (
-                <ul className="space-y-1.5">
-                  {events.map((ev) => (
-                    <li key={ev.id} className="text-xs text-[#42392B]">
-                      <span className="font-mono text-[#8C6A1C]">{formatDateTime(ev.createdAt, locale)}</span>{' '}
-                      <span className="font-semibold">{ev.event}</span>
-                      {ev.toStatus ? ` → ${ev.toStatus}` : ''} <span className="text-[#6E6453]">({ev.actorRole})</span>
-                      {ev.note ? ` — ${ev.note}` : ''}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                Riwayat Aktivitas
+              </p>
+              <div className="rounded-lg border border-zinc-100 bg-white p-3 max-h-48 overflow-y-auto">
+                {events.length === 0 ? (
+                  <p className="text-xs text-zinc-400">Belum ada riwayat aktivitas.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {events.map((ev) => (
+                      <li key={ev.id} className="text-xs text-zinc-700">
+                        <span className="font-mono text-zinc-400">{formatDateTime(ev.createdAt, locale)}</span>{' '}
+                        <span className="font-semibold text-zinc-900">{ev.event}</span>
+                        {ev.toStatus ? ` → ${ev.toStatus}` : ''}{' '}
+                        <span className="text-zinc-500">({ev.actorRole})</span>
+                        {ev.note ? ` — ${ev.note}` : ''}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
-interface PickupListProps {
-  orders: AdminOrderDTO[];
-  d: AdminDict;
-  onOpen: (order: AdminOrderDTO) => void;
-}
-
-function PickupList({ orders, d, onOpen }: PickupListProps) {
-  const groups = useMemo(() => {
-    const map = new Map<string, AdminOrderDTO[]>();
-    orders
-      .filter((o) => o.fulfillmentMethod === 'pickup' && (o.status === 'processing' || o.status === 'ready'))
-      .forEach((o) => {
-        const key = `${o.eventTag || '-'} · ${o.pickupDate || ''}`;
-        map.set(key, [...(map.get(key) || []), o]);
-      });
-    return Array.from(map.entries());
-  }, [orders]);
-
-  if (groups.length === 0) {
-    return (
-      <div className="rounded-3xl border border-dashed border-[#E9D9AE] p-10 text-center text-xs text-[#6E6453]">
-        {d.pickupEmpty}
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-base font-bold text-[#1F1A12]">{d.pickupHeading}</h2>
-      {groups.map(([title, list]) => (
-        <div key={title} className="rounded-3xl border border-[#EADCB9] bg-white p-5 shadow-xs space-y-3">
-          <p className="text-sm font-bold text-[#1F1A12]">
-            {title} <span className="text-[#6E6453]">({list.length})</span>
-          </p>
-          {list.map((o) => (
-            <div
-              key={o.id}
-              className="flex flex-col gap-2 rounded-2xl border border-[#E9D9AE]/70 bg-[#FCFAF5] p-3 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="min-w-0 text-xs">
-                <p className="font-bold text-[#1F1A12]">
-                  {o.contactName} · {o.contactPhone}
-                </p>
-                <p className="text-[#6E6453]">
-                  {o.items.map((i) => `${i.name} (${i.quantity}x)`).join(', ')}
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[#1F1A12]">{o.pickupCode}</span>
-                <span className="text-[11px] font-semibold text-[#8C6A1C]">
-                  {o.status === 'ready' ? d.pickupReady : d.pickupPrepared}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onOpen(o)}
-                  className="rounded-full border border-[#E9D9AE] bg-white px-3 py-1 text-[11px] font-bold text-[#8C6A1C] hover:bg-[#FFF9EC] cursor-pointer"
-                >
-                  {d.openOrder}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
+let cachedOrders: AdminOrderDTO[] | null = null;
 
 export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).adminOrders;
   const { gate, adminEmail, signOut } = useAdminGate();
-  const [orders, setOrders] = useState<AdminOrderDTO[]>([]);
-  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'failed'>('loading');
-  const [tab, setTab] = useState<Tab>('verify');
+  const [orders, setOrders] = useState<AdminOrderDTO[]>(() => cachedOrders || []);
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'failed'>(() =>
+    cachedOrders ? 'ready' : 'loading'
+  );
+  const [fulfillmentFilter, setFulfillmentFilter] = useState<FulfillmentFilter>('all');
+  const [statusTab, setStatusTab] = useState<StatusTab>('verify');
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -509,9 +690,10 @@ export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }
   const loadOrders = useCallback(async () => {
     const res = await orderAdminService.listOrders();
     if (res.success && res.data) {
+      cachedOrders = res.data;
       setOrders(res.data);
       setLoadState('ready');
-    } else {
+    } else if (!cachedOrders) {
       setLoadState('failed');
     }
   }, []);
@@ -533,7 +715,7 @@ export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }
       case 'ORDER_NOT_FOUND':
         return d.errState;
       case 'PICKUP_CODE_MISMATCH':
-        return d.errPickupCode;
+        return 'Kode pickup tidak sesuai!';
       case 'AMOUNT_CONFLICT':
         return d.errConflict;
       case 'STOCK_INSUFFICIENT':
@@ -550,58 +732,92 @@ export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }
     setBusy(false);
     await loadOrders();
     if (res.success) {
-      setNotice(d.noticeDone);
+      setNotice('Operasi berhasil disimpan.');
       return null;
     }
     return errorMessage(res.error);
   };
 
-  const counts = useMemo(() => {
-    const result: Record<string, number> = { all: orders.length };
-    (Object.keys(TAB_STATUSES) as (keyof typeof TAB_STATUSES)[]).forEach((key) => {
-      result[key] = orders.filter((o) => TAB_STATUSES[key].includes(o.status)).length;
-    });
-    result.pickup = orders.filter(
-      (o) => o.fulfillmentMethod === 'pickup' && (o.status === 'processing' || o.status === 'ready')
-    ).length;
-    return result;
-  }, [orders]);
+  // Filter Data Berdasarkan Fulfillment (Delivery vs Pickup) & Status
+  const filteredOrders = useMemo(() => {
+    let result = orders;
 
-  const visibleOrders = useMemo(() => {
+    // Filter 1: Metode Pengambilan (Delivery vs Pickup)
+    if (fulfillmentFilter === 'delivery') {
+      result = result.filter((o) => o.fulfillmentMethod !== 'pickup');
+    } else if (fulfillmentFilter === 'pickup') {
+      result = result.filter((o) => o.fulfillmentMethod === 'pickup');
+    }
+
+    // Filter 2: Status Alur
+    if (statusTab !== 'all') {
+      const allowed = STATUS_GROUPS[statusTab];
+      result = result.filter((o) => allowed.includes(o.status));
+    }
+
+    // Filter 3: Search Query
     const query = search.trim().toLowerCase();
-    const inTab =
-      tab === 'all' || tab === 'pickup'
-        ? orders
-        : orders.filter((o) => TAB_STATUSES[tab].includes(o.status));
-    const filtered = query
-      ? inTab.filter((o) =>
-          [o.id, o.contactName, o.contactPhone, o.customerName, o.customerEmail]
-            .join(' ')
-            .toLowerCase()
-            .includes(query)
-        )
-      : inTab;
-    return sortOrders(filtered, tab);
-  }, [orders, tab, search]);
+    if (query) {
+      result = result.filter((o) =>
+        [
+          o.id,
+          o.contactName,
+          o.contactPhone,
+          o.customerName,
+          o.customerEmail,
+          o.pickupCode || '',
+          o.trackingNumber || '',
+          o.eventTag || '',
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(query)
+      );
+    }
 
-  const tabLabels: Record<Tab, string> = {
-    verify: d.tabVerify,
-    unpaid: d.tabUnpaid,
-    processing: d.tabProcessing,
-    completed: d.tabCompleted,
-    closed: d.tabClosed,
-    all: d.tabAll,
-    pickup: d.tabPickup,
-  };
+    // Sort: Terbaru di atas
+    return [...result].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [orders, fulfillmentFilter, statusTab, search]);
 
-  const openFromPickup = (order: AdminOrderDTO) => {
-    setTab('processing');
-    setExpandedId(order.id);
-  };
+  // Counts untuk Tab Status
+  const counts = useMemo(() => {
+    const base =
+      fulfillmentFilter === 'delivery'
+        ? orders.filter((o) => o.fulfillmentMethod !== 'pickup')
+        : fulfillmentFilter === 'pickup'
+          ? orders.filter((o) => o.fulfillmentMethod === 'pickup')
+          : orders;
+
+    return {
+      verify: base.filter((o) => STATUS_GROUPS.verify.includes(o.status)).length,
+      processing: base.filter((o) => STATUS_GROUPS.processing.includes(o.status)).length,
+      completed: base.filter((o) => STATUS_GROUPS.completed.includes(o.status)).length,
+      all: base.length,
+      deliveryTotal: orders.filter((o) => o.fulfillmentMethod !== 'pickup').length,
+      pickupTotal: orders.filter((o) => o.fulfillmentMethod === 'pickup').length,
+    };
+  }, [orders, fulfillmentFilter]);
 
   if (gate !== 'ready') {
-    return <AdminGateScreen gate={gate} adminEmail={adminEmail} locale={locale} onSignOut={signOut} />;
+    return (
+      <AdminGateScreen
+        gate={gate}
+        adminEmail={adminEmail}
+        locale={locale}
+        onSignOut={signOut}
+      />
+    );
   }
+
+  const handleExport = () => {
+    const filterName =
+      fulfillmentFilter === 'all'
+        ? `semua-${statusTab}`
+        : `${fulfillmentFilter}-${statusTab}`;
+    exportOrdersToExcel(filteredOrders, filterName);
+  };
 
   return (
     <AdminShell
@@ -609,75 +825,170 @@ export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }
       adminEmail={adminEmail}
       locale={locale}
       onSignOut={signOut}
-      title={d.heading}
-      subtitle={d.intro}
+      title="Manajemen Pesanan"
+      subtitle="Verifikasi pembayaran transfer/QRIS dan kelola pengiriman atau pickup venue konser"
       actions={
-        <button
-          type="button"
-          onClick={loadOrders}
-          className="inline-flex items-center gap-1.5 rounded-full border border-[#E9D9AE] bg-white px-3.5 py-2 text-xs font-bold text-[#8C6A1C] hover:bg-[#FFF9EC] cursor-pointer"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-          <span>{d.refresh}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            className="text-xs"
+            title="Download Rekap Pesanan ke format Excel/CSV"
+          >
+            <Download className="h-3.5 w-3.5 mr-1 text-emerald-600" />
+            <span>Download Excel</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadOrders}
+            className="text-xs"
+          >
+            <RefreshCw className="h-3.5 w-3.5 mr-1" />
+            <span>Refresh</span>
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6">
-        <div className="flex flex-wrap gap-2">
-          {TAB_ORDER.map((key) => (
+        {/* Tier 1: Segmented Toggle Pengiriman vs Pickup */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
+          <div className="flex items-center gap-1.5 p-1 bg-zinc-100 rounded-lg max-w-fit">
             <button
-              key={key}
               type="button"
-              onClick={() => setTab(key)}
-              className={`rounded-full px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-                tab === key
-                  ? 'bg-[#C9971C] text-white shadow-2xs'
-                  : 'border border-[#E9D9AE] bg-white text-[#6E6453] hover:bg-[#FAF3E2]'
-              }`}
+              onClick={() => setFulfillmentFilter('all')}
+              className={cn(
+                'px-3.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer',
+                fulfillmentFilter === 'all'
+                  ? 'bg-white text-zinc-900 shadow-2xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
+              )}
             >
-              {tabLabels[key]}
-              <span className="ml-1.5 opacity-80">{counts[key] ?? 0}</span>
+              Semua Pesanan ({orders.length})
             </button>
-          ))}
-        </div>
+            <button
+              type="button"
+              onClick={() => setFulfillmentFilter('delivery')}
+              className={cn(
+                'flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer',
+                fulfillmentFilter === 'delivery'
+                  ? 'bg-white text-zinc-900 shadow-2xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
+              )}
+            >
+              <Truck className="h-3.5 w-3.5 text-sky-600" />
+              <span>Pengiriman Ekspedisi ({counts.deliveryTotal})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFulfillmentFilter('pickup')}
+              className={cn(
+                'flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer',
+                fulfillmentFilter === 'pickup'
+                  ? 'bg-white text-zinc-900 shadow-2xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
+              )}
+            >
+              <Ticket className="h-3.5 w-3.5 text-purple-600" />
+              <span>Ambil di Venue ({counts.pickupTotal})</span>
+            </button>
+          </div>
 
-        {tab !== 'pickup' && (
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#A89D86]" />
-            <input
-              className={`${inputClass} pl-9`}
+          {/* Quick Search */}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
+            <Input
+              className="pl-8 h-8 text-xs"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={d.searchPh}
+              placeholder="Cari nama, WhatsApp, ID..."
             />
           </div>
-        )}
+        </div>
+
+        {/* Tier 2: Status Verifikasi & Alur (3 Status Sederhana Mas Hasan) */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={statusTab === 'verify' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusTab('verify')}
+            className="text-xs"
+          >
+            <Clock className="h-3.5 w-3.5 mr-1 text-amber-500" />
+            <span>1. Perlu Verifikasi</span>
+            <span className="ml-1.5 opacity-70">({counts.verify})</span>
+          </Button>
+
+          <Button
+            variant={statusTab === 'processing' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusTab('processing')}
+            className="text-xs"
+          >
+            <Truck className="h-3.5 w-3.5 mr-1 text-sky-500" />
+            <span>2. Diproses & Dikirim</span>
+            <span className="ml-1.5 opacity-70">({counts.processing})</span>
+          </Button>
+
+          <Button
+            variant={statusTab === 'completed' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusTab('completed')}
+            className="text-xs"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5 mr-1 text-emerald-500" />
+            <span>3. Selesai</span>
+            <span className="ml-1.5 opacity-70">({counts.completed})</span>
+          </Button>
+
+          <Button
+            variant={statusTab === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusTab('all')}
+            className="text-xs"
+          >
+            <span>Semua Transaksi</span>
+            <span className="ml-1.5 opacity-70">({counts.all})</span>
+          </Button>
+        </div>
 
         {notice && (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800">
-            {notice}
-          </p>
+          <AdminNotice tone="success">
+            <div className="flex items-center justify-between w-full">
+              <span>{notice}</span>
+              <button
+                type="button"
+                onClick={() => setNotice('')}
+                className="ml-2 text-zinc-500 hover:text-zinc-900"
+              >
+                ×
+              </button>
+            </div>
+          </AdminNotice>
         )}
 
-        {loadState === 'loading' && <p className="text-sm text-[#6E6453]">{d.loading}</p>}
+        {loadState === 'loading' && (
+          <p className="text-xs text-zinc-500">Memuat data pesanan...</p>
+        )}
         {loadState === 'failed' && (
-          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-800">
-            {d.loadFailed}
-          </p>
+          <AdminNotice tone="error">Gagal memuat daftar pesanan dari server.</AdminNotice>
         )}
 
-        {loadState === 'ready' && tab === 'pickup' && (
-          <PickupList orders={orders} d={d} onOpen={openFromPickup} />
-        )}
-
-        {loadState === 'ready' && tab !== 'pickup' && (
+        {/* Daftar Pesanan */}
+        {loadState === 'ready' && (
           <div className="space-y-3">
-            {visibleOrders.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-[#E9D9AE] p-10 text-center text-xs text-[#6E6453]">
-                {d.empty}
+            {filteredOrders.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-zinc-200 bg-white p-12 text-center text-xs text-zinc-500">
+                <Package className="h-8 w-8 text-zinc-300 mx-auto mb-2" />
+                <p className="font-semibold text-zinc-700">Tidak ada pesanan di kategori ini</p>
+                <p className="mt-1 text-zinc-400">
+                  Coba ubah filter atau kata kunci pencarian Anda.
+                </p>
               </div>
             ) : (
-              visibleOrders.map((order) => (
+              filteredOrders.map((order) => (
                 <OrderCard
                   key={order.id}
                   order={order}
@@ -685,7 +996,9 @@ export default function AdminOrdersIsland({ locale = 'id' }: { locale?: Locale }
                   d={d}
                   expanded={expandedId === order.id}
                   busy={busy}
-                  onToggle={() => setExpandedId(expandedId === order.id ? null : order.id)}
+                  onToggle={() =>
+                    setExpandedId(expandedId === order.id ? null : order.id)
+                  }
                   run={run}
                 />
               ))

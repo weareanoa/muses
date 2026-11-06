@@ -1,5 +1,5 @@
 ---
-import RootLayout from '../../layouts/RootLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import AdminSettingsIsland from '../../components/islands/AdminSettingsIsland';
 import { getDict, resolveLocale, LOCALE_COOKIE } from '../../i18n/dictionary';
 
@@ -7,14 +7,9 @@ const locale = resolveLocale(Astro.cookies.get(LOCALE_COOKIE)?.value);
 const d = getDict(locale);
 ---
 
-<RootLayout
+<AdminLayout
   title={d.meta.adminSettingsTitle}
   description={d.meta.adminSettingsDesc}
-  currentPath="/admin/settings"
-  solidHeader={true}
-  hideNavbar={true}
 >
-  <div class="relative min-h-screen pt-8 sm:pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
-    <AdminSettingsIsland client:load locale={locale} />
-  </div>
-</RootLayout>
+  <AdminSettingsIsland client:load locale={locale} />
+</AdminLayout>

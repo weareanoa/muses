@@ -4,7 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DIST_DIR = path.join(__dirname, 'dist');
+const DIST_DIR = fs.existsSync(path.join(__dirname, 'dist', 'client'))
+  ? path.join(__dirname, 'dist', 'client')
+  : path.join(__dirname, 'dist');
 
 // Parse port from env or args (-p 3000 or --port 3000)
 function getPort() {
