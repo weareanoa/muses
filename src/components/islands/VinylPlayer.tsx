@@ -26,6 +26,7 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const currentAlbum = discographyData[selectedAlbumIndex] || discographyData[0];
+  const isDarkAlbum = !!(currentAlbum as { isDark?: boolean }).isDark;
   const titleTrack = currentAlbum.titleTrack;
   const isCurrentPlaying = playing && activeTrack?.albumId === currentAlbum.id;
 
@@ -137,16 +138,17 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
                 src={album.coverImage}
                 alt=""
                 aria-hidden="true"
-                className="w-full h-full object-cover filter blur-[6px] sm:blur-[10px] saturate-[1.35] scale-110 transform-gpu will-change-transform"
+                className="w-full h-full object-cover filter blur-[6px] sm:blur-[10px] saturate-[1.35] brightness-[0.62] scale-110 transform-gpu will-change-transform"
               />
             </div>
           );
         })}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/25 to-black/40" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto py-5 sm:py-14 px-4 sm:px-8">
         <div className="mb-6 min-[380px]:mb-7 sm:mb-10 text-left">
-          <h2 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#1F1A12] leading-none tracking-normal select-none">
+            <h2 className={`text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes leading-none tracking-normal select-none transition-colors duration-500 ${isDarkAlbum ? 'text-[#FCFAF5]' : 'text-[#1F1A12]'}`}>
             {d.heading}
           </h2>
         </div>
@@ -172,11 +174,11 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
                 {currentAlbum.singleTag || currentAlbum.type}
               </span>
 
-              <h3 className="text-xl min-[380px]:text-2xl sm:text-4xl lg:text-5xl font-balbes text-[#18181B] tracking-tight mt-1.5 sm:mt-2.5 font-normal">
+              <h3 className={`text-xl min-[380px]:text-2xl sm:text-4xl lg:text-5xl font-balbes tracking-tight mt-1.5 sm:mt-2.5 font-normal transition-colors duration-500 ${isDarkAlbum ? 'text-white' : 'text-[#18181B]'}`}>
                 {currentAlbum.albumTitle}
               </h3>
 
-              <p className="text-[11px] min-[380px]:text-xs sm:text-sm text-[#555] leading-relaxed mt-1 sm:mt-2 max-w-md">
+              <p className={`text-[11px] min-[380px]:text-xs sm:text-sm leading-relaxed mt-1 sm:mt-2 max-w-md transition-colors duration-500 ${isDarkAlbum ? 'text-white/80' : 'text-[#555]'}`}>
                 {locale === 'en' && (currentAlbum as { descriptionEn?: string }).descriptionEn ? (currentAlbum as { descriptionEn?: string }).descriptionEn : currentAlbum.description}
               </p>
             </div>
