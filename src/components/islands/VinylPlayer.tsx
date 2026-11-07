@@ -130,14 +130,14 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             <div
               key={album.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                isActive ? 'opacity-30 sm:opacity-40' : 'opacity-0'
+                isActive ? 'opacity-45 sm:opacity-60' : 'opacity-0'
               }`}
             >
               <img
                 src={album.coverImage}
                 alt=""
                 aria-hidden="true"
-                className="w-full h-full object-cover filter blur-[10px] sm:blur-[16px] scale-105 transform-gpu will-change-transform"
+                className="w-full h-full object-cover filter blur-[6px] sm:blur-[10px] saturate-[1.35] scale-110 transform-gpu will-change-transform"
               />
             </div>
           );
