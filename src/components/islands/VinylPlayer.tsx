@@ -108,6 +108,8 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             <img
               src={album.coverImage}
               alt={album.albumTitle}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div
@@ -193,6 +195,8 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
                 <img
                   src={withBase(currentAlbum.mvThumbnail || currentAlbum.coverImage)}
                   alt={fmt(d.mvTitle, { album: currentAlbum.albumTitle })}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                 />
 

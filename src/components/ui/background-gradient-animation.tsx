@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "../../lib/utils";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 export const BackgroundGradientAnimation = ({
   gradientBackgroundStart = "rgb(252, 250, 245)",
@@ -34,39 +34,43 @@ export const BackgroundGradientAnimation = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactiveRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef({ x: 0, y: 0 });
+  const targetRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number | null>(null);
 
-  const [curX, setCurX] = useState(0);
-  const [curY, setCurY] = useState(0);
-  const [tgX, setTgX] = useState(0);
-  const [tgY, setTgY] = useState(0);
+  const moveRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    let animId: number;
-    function move() {
+    const move = () => {
+      rafRef.current = null;
+      const pos = posRef.current;
+      const target = targetRef.current;
+      pos.x += (target.x - pos.x) / 15;
+      pos.y += (target.y - pos.y) / 15;
       if (interactiveRef.current) {
-        setCurX((prev) => {
-          const next = prev + (tgX - prev) / 15;
-          return next;
-        });
-        setCurY((prev) => {
-          const next = prev + (tgY - prev) / 15;
-          return next;
-        });
-        interactiveRef.current.style.transform = `translate(${Math.round(
-          curX
-        )}px, ${Math.round(curY)}px)`;
+        interactiveRef.current.style.transform = `translate(${Math.round(pos.x)}px, ${Math.round(pos.y)}px)`;
       }
-      animId = requestAnimationFrame(move);
-    }
-    animId = requestAnimationFrame(move);
-    return () => cancelAnimationFrame(animId);
-  }, [tgX, tgY, curX, curY]);
+      if (Math.abs(target.x - pos.x) > 0.5 || Math.abs(target.y - pos.y) > 0.5) {
+        rafRef.current = requestAnimationFrame(move);
+      }
+    };
+    moveRef.current = move;
+    rafRef.current = requestAnimationFrame(move);
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, []);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      setTgX(event.clientX - rect.left);
-      setTgY(event.clientY - rect.top);
+      targetRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(moveRef.current);
+      }
     }
   };
 

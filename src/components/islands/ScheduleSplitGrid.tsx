@@ -129,6 +129,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
                     <img
                       src={withBase(activeItem.posterImage || '/images/muses_group_frame1.webp')}
                       alt={d.posterAlt}
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   </div>

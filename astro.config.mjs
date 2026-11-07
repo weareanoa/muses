@@ -11,6 +11,10 @@ export default defineConfig({
   adapter: cloudflare(),
   base,
   site: process.env.SITE_URL || undefined,
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   integrations: [react()],
 
   vite: {

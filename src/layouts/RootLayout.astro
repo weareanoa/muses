@@ -54,8 +54,8 @@ const isItemActive =(id: string) => {
     <meta name="theme-color" content="#FCFAF5" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href={withBase("/fonts/Balbes.ttf")} as="font" type="font/ttf" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="preload" href={withBase("/fonts/Balbes.woff2")} as="font" type="font/woff2" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
 
     <title>{title}</title>
   </head>
@@ -95,7 +95,7 @@ const isItemActive =(id: string) => {
           })}
         </nav>
 
-        <UserNavIsland client:load locale={locale} />
+        <UserNavIsland client:idle locale={locale} />
       </div>
     </header>
 
