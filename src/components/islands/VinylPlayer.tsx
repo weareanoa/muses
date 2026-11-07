@@ -223,7 +223,7 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
           </div>
         </div>
 
-        <div className="hidden lg:block pt-8 border-t border-[#C9971C]/15">
+        <div className="hidden lg:block pt-8">
           {renderAlbumThumbnails("grid grid-cols-4 gap-4 sm:gap-6")}
         </div>
 
