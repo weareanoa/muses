@@ -135,12 +135,14 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
                   <div className="text-sm font-bold text-[#1F1A12] truncate leading-tight">
                     {user.name}
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white border border-[#EADBBD] text-[#7A5B10] shadow-2xs shrink-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
-                    {user.role === 'admin' ? 'Admin' : 'Member'}
-                  </span>
+                  {user.role === 'admin' && (
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white border border-[#EADBBD] text-[#7A5B10] shadow-2xs shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
+                      Admin
+                    </span>
+                  )}
                 </div>
-                <div className="text-xs text-[#7A6D56] truncate mt-1">
+                <div className="text-xs text-[#7A6D56] truncate mt-0.5">
                   {user.email}
                 </div>
               </div>
