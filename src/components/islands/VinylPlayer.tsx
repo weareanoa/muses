@@ -131,19 +131,19 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             <div
               key={album.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                isActive ? 'opacity-45 sm:opacity-60' : 'opacity-0'
+                isActive ? 'opacity-55 sm:opacity-75' : 'opacity-0'
               }`}
             >
               <img
                 src={album.coverImage}
                 alt=""
                 aria-hidden="true"
-                className="w-full h-full object-cover filter blur-[6px] sm:blur-[10px] saturate-[1.35] brightness-[0.62] scale-110 transform-gpu will-change-transform"
+                className="w-full h-full object-cover filter blur-[8px] sm:blur-[14px] saturate-[1.45] scale-110 transform-gpu will-change-transform"
               />
             </div>
           );
         })}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/25 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto py-5 sm:py-14 px-4 sm:px-8">
