@@ -90,18 +90,18 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   return (
     <div className="relative w-full max-w-7xl mx-auto">
       <BackgroundGradientAnimation
-        containerClassName="rounded-3xl sm:rounded-[40px] py-6 sm:py-12 px-4 sm:px-10 border border-[#EADBBD]/40 shadow-xs"
-        gradientBackgroundStart="rgb(252, 250, 245)"
-        gradientBackgroundEnd="rgb(250, 246, 238)"
+        containerClassName="w-full bg-transparent py-2 sm:py-6"
+        gradientBackgroundStart="transparent"
+        gradientBackgroundEnd="transparent"
         firstColor="184, 134, 11"
         secondColor="246, 221, 138"
         thirdColor="212, 160, 23"
         fourthColor="235, 196, 95"
         fifthColor="194, 140, 29"
         pointerColor="212, 160, 23"
-        size="80%"
+        size="85%"
       >
-        <div className="text-left mb-6 sm:mb-12 relative z-10">
+        <div className="text-left mb-6 sm:mb-12 relative z-10 px-1">
           <div className="mb-2 sm:mb-3">
             <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
               {d.eyebrow}

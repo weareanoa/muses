@@ -79,7 +79,10 @@ export const BackgroundGradientAnimation = ({
         containerClassName
       )}
       style={{
-        background: `linear-gradient(135deg, ${gradientBackgroundStart}, ${gradientBackgroundEnd})`,
+        background:
+          gradientBackgroundStart && gradientBackgroundStart !== "transparent"
+            ? `linear-gradient(135deg, ${gradientBackgroundStart}, ${gradientBackgroundEnd})`
+            : undefined,
       }}
     >
       <div className={cn("relative z-10", className)}>{children}</div>
