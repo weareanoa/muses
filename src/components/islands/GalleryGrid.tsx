@@ -277,7 +277,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
                 onClick={() => handleCategoryChange(cat)}
                 className={`px-3.5 sm:px-9 py-1 sm:py-2.5 rounded-full text-[11px] sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37412] text-[#1F1A12] shadow-xs'
+                    ? 'bg-muses-gradient text-[#1F1A12] shadow-xs'
                     : 'bg-white border border-[#C9971C]/50 text-[#1F1A12] hover:bg-[#FFFDF7]'
                 }`}
               >
@@ -571,7 +571,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
                 <button
                   type="button"
                   onClick={() => setVisibleLimit((prev) => prev + 6)}
-                  className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-gradient-to-r from-[#B98616] via-[#D3A027] to-[#A37418] text-[#1F1A12] hover:brightness-105 active:scale-95 transition-all shadow-md cursor-pointer flex items-center gap-2"
+                  className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-muses-gradient text-[#1F1A12] hover:brightness-105 active:scale-95 transition-all shadow-md cursor-pointer flex items-center gap-2"
                 >
                   {fmt(d.loadMore, { remaining: filteredItems.length - visibleLimit })}
                 </button>

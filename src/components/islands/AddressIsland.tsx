@@ -251,7 +251,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
         <p className="text-sm text-[#6E6453] mt-1.5 mb-6 max-w-sm">{d.emptyCartBody}</p>
         <a
           href={withBase('/store')}
-          className="px-7 py-3 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] text-sm font-bold shadow-md transition-all"
+          className="px-7 py-3 rounded-full bg-muses-gradient hover:brightness-105 text-[#1F1A12] text-sm font-bold shadow-md transition-all"
         >
           {d.browseStore}
         </a>
@@ -511,7 +511,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
             {!user ? (
               <a
                 href={withBase('/login?redirect=/checkout')}
-                className="w-full block text-center py-3.5 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer"
+                className="w-full block text-center py-3.5 rounded-full bg-muses-gradient hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer"
               >
                 Masuk untuk Melanjutkan Checkout
               </a>
@@ -520,7 +520,7 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
                 type="button"
                 onClick={handlePlaceOrder}
                 disabled={placing}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-60"
+                className="w-full py-3.5 rounded-full bg-muses-gradient hover:brightness-105 text-[#1F1A12] font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-60"
               >
                 {placing ? 'Memproses Pesanan...' : d.orderButton}
               </button>

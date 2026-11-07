@@ -401,7 +401,7 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3.5 rounded-[20px] bg-muses-gradient hover:brightness-105 active:scale-[0.99] text-[#1F1A12] font-bold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.25)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -514,7 +514,7 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3.5 rounded-[20px] bg-muses-gradient hover:brightness-105 active:scale-[0.99] text-[#1F1A12] font-bold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.25)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -564,7 +564,7 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-[20px] bg-muses-gradient hover:brightness-105 active:scale-[0.99] text-[#1F1A12] font-bold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.25)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -651,7 +651,7 @@ export default function AuthIsland({
           <button
             type="submit"
             disabled={isLoading || otpDigits.join('').length !== 6}
-            className="w-full py-3.5 rounded-[20px] bg-gradient-to-r from-[#D7A838] via-[#BF8E25] to-[#8C6010] hover:brightness-105 active:scale-[0.99] text-white font-semibold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.35)] flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-[20px] bg-muses-gradient hover:brightness-105 active:scale-[0.99] text-[#1F1A12] font-bold text-xs tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-[0_4px_14px_rgba(201,151,28,0.25)] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

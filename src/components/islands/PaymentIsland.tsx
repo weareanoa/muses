@@ -185,7 +185,7 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
                   type="button"
                   onClick={handleClaim}
                   disabled={busy || secondsLeft === 0}
-                  className="bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] font-bold text-xs py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer disabled:opacity-60"
+                  className="bg-muses-gradient text-[#1F1A12] font-bold text-xs py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer disabled:opacity-60"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span>{d.iHavePaid}</span>
@@ -238,7 +238,7 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
                 )}
                 <a
                   href={withBase('/orders')}
-                  className="w-full py-3 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-full bg-muses-gradient text-[#1F1A12] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2"
                 >
                   <span>{d.viewHistory}</span>
                   <ArrowRight className="w-4 h-4" />

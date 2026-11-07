@@ -189,7 +189,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
               </p>
               <a
                 href={withBase("/store")}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#C9971C] to-[#9A7420] text-white text-xs font-bold uppercase tracking-wider hover:brightness-110 shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-muses-gradient text-[#1F1A12] text-xs font-bold uppercase tracking-wider hover:brightness-110 shadow-md"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>{d.visitStore}</span>
@@ -296,7 +296,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                       </div>
                       <a
                         href={withBase(`/payment?orderId=${encodeURIComponent(order.id)}`)}
-                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A328] via-[#B8871B] to-[#996B10] text-[#FCFAF5] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
+                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-muses-gradient text-[#1F1A12] font-bold text-xs sm:text-sm shadow-md hover:brightness-110 active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                       >
                         {d.payWithQR}
                       </a>
@@ -388,7 +388,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                         type="button"
                         disabled={isBusy}
                         onClick={() => handleConfirmReceived(order.id)}
-                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer shrink-0"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-muses-gradient text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer shrink-0"
                       >
                         {d.confirmReceived}
                       </button>
@@ -418,7 +418,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                           <button
                             type="button"
                             onClick={() => openRating(order.id)}
-                            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 cursor-pointer shrink-0"
+                            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-muses-gradient text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 cursor-pointer shrink-0"
                           >
                             {d.rateOrder}
                           </button>
@@ -458,7 +458,7 @@ export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
                           type="button"
                           disabled={isBusy}
                           onClick={handleSubmitRating}
-                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4A017] to-[#A57615] text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer"
+                          className="px-5 py-2 rounded-xl bg-muses-gradient text-[#1F1A12] text-xs font-bold shadow-md hover:brightness-105 disabled:opacity-60 cursor-pointer"
                         >
                           {d.ratingSubmit}
                         </button>

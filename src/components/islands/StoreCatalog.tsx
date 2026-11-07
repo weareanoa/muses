@@ -89,10 +89,7 @@ export function StoreCard({
           <button
             type="button"
             onClick={() => onAddToCart(item, selectedVariant)}
-            className="w-full py-1.5 min-[380px]:py-2 sm:py-2.5 rounded-full text-center text-[10.5px] min-[380px]:text-xs sm:text-sm font-bold text-[#1F1A12] shadow-2xs hover:shadow-md hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            style={{
-              background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
-            }}
+            className="w-full py-1.5 min-[380px]:py-2 sm:py-2.5 rounded-full text-center text-[10.5px] min-[380px]:text-xs sm:text-sm font-bold text-[#1F1A12] shadow-2xs hover:shadow-md hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5 bg-muses-gradient"
           >
             {isAdded ? (
               <>
@@ -163,8 +160,7 @@ function ComingSoonPanel({
       <button
         type="button"
         onClick={onShowCheki}
-        className="mt-6 sm:mt-7 px-6 sm:px-8 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#2A1D0B] shadow-xs cursor-pointer transition-[transform,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:brightness-105 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9971C]"
-        style={{ background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 60%, #8A6A1C 100%)' }}
+        className="mt-6 sm:mt-7 px-6 sm:px-8 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#2A1D0B] shadow-xs cursor-pointer transition-[transform,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:brightness-105 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9971C] bg-muses-gradient"
       >
         {d.seeCheki}
       </button>
@@ -262,10 +258,7 @@ export default function StoreCatalog({ locale = 'id' }: { locale?: Locale }) {
       </div>
 
       <div
-        className="relative w-full rounded-2xl sm:rounded-[32px] overflow-hidden shadow-xs mb-5 sm:mb-10 flex flex-col md:flex-row items-center justify-between pl-4 min-[380px]:pl-5 sm:pl-10 lg:pl-14 py-4 min-[380px]:py-5 sm:py-7 md:py-8 pr-2 sm:pr-0 gap-3 sm:gap-6"
-        style={{
-          background: 'linear-gradient(90deg, #B8860B 0%, #F6DD8A 54%, #D4A017 83%, #523C05 100%)',
-        }}
+        className="relative w-full rounded-2xl sm:rounded-[32px] overflow-hidden shadow-xs mb-5 sm:mb-10 flex flex-col md:flex-row items-center justify-between pl-4 min-[380px]:pl-5 sm:pl-10 lg:pl-14 py-4 min-[380px]:py-5 sm:py-7 md:py-8 pr-2 sm:pr-0 gap-3 sm:gap-6 bg-muses-gradient"
       >
         <div className="w-full max-w-xl lg:max-w-2xl z-10 text-left py-0.5 pr-2 sm:pr-6 md:pr-8">
           <span className="inline-block px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-white text-[#9E7B26] font-bold text-[9.5px] sm:text-xs uppercase tracking-wider mb-2 sm:mb-3 shadow-2xs">
@@ -303,14 +296,9 @@ export default function StoreCatalog({ locale = 'id' }: { locale?: Locale }) {
                 aria-label={isComingSoon ? fmt(d.comingSoonAria, { category: categoryLabel(cat) }) : categoryLabel(cat)}
                 className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-8 py-1.5 sm:py-2.5 rounded-full text-[11px] sm:text-sm font-bold whitespace-nowrap shrink-0 cursor-pointer transition-[transform,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9971C] ${
                   isActive
-                    ? 'text-[#2A1D0B] shadow-2xs'
+                    ? 'text-[#2A1D0B] shadow-2xs bg-muses-gradient'
                     : 'border border-[#C9971C]/50 bg-white hover:bg-[#FAF3E2] text-[#1F1A12] font-semibold'
                 }`}
-                style={
-                  isActive
-                    ? { background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 60%, #8A6A1C 100%)' }
-                    : undefined
-                }
               >
                 {categoryLabel(cat)}
                 {isComingSoon && (

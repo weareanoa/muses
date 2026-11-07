@@ -27,7 +27,7 @@ export default function StreamingLinks({
             href={spotify}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] hover:brightness-105 text-[#1F1A12] text-[11px] sm:text-xs font-semibold shadow-xs transition-all duration-200 active:scale-95 shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-muses-gradient hover:brightness-105 text-[#1F1A12] text-[11px] sm:text-xs font-semibold shadow-xs transition-all duration-200 active:scale-95 shrink-0"
             title={d.spotifyTitle}
           >
             <img

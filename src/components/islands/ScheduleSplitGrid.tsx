@@ -200,7 +200,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
               href={activeItem?.ticketUrl || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-[0_6px_16px_rgba(201,151,28,0.3)] hover:shadow-[0_12px_28px_rgba(201,151,28,0.45)] hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-[#D7A227] via-[#E4B841] to-[#A37B1D] text-[#332205] cursor-pointer"
+              className="w-full py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-[0_6px_16px_rgba(201,151,28,0.3)] hover:shadow-[0_12px_28px_rgba(201,151,28,0.45)] hover:scale-[1.02] active:scale-[0.98] bg-muses-gradient text-[#1F1A12] cursor-pointer"
             >
               <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current shrink-0" />
               <span>{d.getTickets}</span>

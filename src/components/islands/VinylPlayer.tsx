@@ -168,7 +168,7 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
 
           <div className="lg:col-span-5 flex flex-col justify-center space-y-2 sm:space-y-4 max-w-sm sm:max-w-lg mx-auto lg:mx-0 w-full text-left">
             <div>
-              <span className="inline-block px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-gradient-to-r from-[#C28C1D] via-[#DBA736] to-[#A37418] text-[#1F1A12] shadow-xs">
+              <span className="inline-block px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-muses-gradient text-[#1F1A12] shadow-xs">
                 {currentAlbum.singleTag || currentAlbum.type}
               </span>
 

@@ -307,7 +307,7 @@ export default function ProfileIsland({ locale = 'id' }: { locale?: Locale }) {
 
                   <button
                     type="submit"
-                    className="px-10 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#D6A628] via-[#BF901B] to-[#8C6912] text-[#1F1A12] font-black text-xs sm:text-sm tracking-wider uppercase shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                    className="px-10 py-2.5 sm:py-3 rounded-full bg-muses-gradient text-[#1F1A12] font-black text-xs sm:text-sm tracking-wider uppercase shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
                   >
                     {d.saveButton}
                   </button>

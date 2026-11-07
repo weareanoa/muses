@@ -27,24 +27,10 @@ export function initNavbar(): NavbarController {
     desktopNavLinks.forEach((link) => {
       const isActive = link.getAttribute('data-nav-id') === id;
       if (isActive) {
-        link.classList.add(
-          'bg-gradient-to-r',
-          'from-[#C28C1D]',
-          'via-[#DBA736]',
-          'to-[#A37418]',
-          'text-[#1F1A12]',
-          'shadow-xs'
-        );
+        link.classList.add('bg-muses-gradient', 'text-[#1F1A12]', 'shadow-xs');
         link.classList.remove('hover:bg-[#C9971C]/10', 'text-[#524838]');
       } else {
-        link.classList.remove(
-          'bg-gradient-to-r',
-          'from-[#C28C1D]',
-          'via-[#DBA736]',
-          'to-[#A37418]',
-          'text-[#1F1A12]',
-          'shadow-xs'
-        );
+        link.classList.remove('bg-muses-gradient', 'text-[#1F1A12]', 'shadow-xs');
         link.classList.add('hover:bg-[#C9971C]/10', 'text-[#524838]');
       }
     });

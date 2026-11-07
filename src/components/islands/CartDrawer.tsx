@@ -127,10 +127,7 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
                   <a
                     href={withBase("/store")}
                     onClick={closeCart}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-[#1F1A12] shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
-                    style={{
-                      background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
-                    }}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-[#1F1A12] shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer bg-muses-gradient"
                   >
                     <span>{d.viewStore}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -271,10 +268,7 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
               <button
                 type="button"
                 onClick={handleCheckout}
-                className="w-full py-3 min-[380px]:py-3.5 sm:py-4 px-6 rounded-full font-bold uppercase tracking-wider text-xs sm:text-sm text-[#1F1A12] shadow-md hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
-                }}
+                className="w-full py-3 min-[380px]:py-3.5 sm:py-4 px-6 rounded-full font-bold uppercase tracking-wider text-xs sm:text-sm text-[#1F1A12] shadow-md hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer bg-muses-gradient"
               >
                 <span>{d.checkoutNow}</span>
                 <ArrowRight className="w-4 h-4" />
