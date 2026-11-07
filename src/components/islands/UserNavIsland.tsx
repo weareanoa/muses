@@ -18,20 +18,6 @@ import { withBase } from '../../lib/paths';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getDict, type Locale } from '../../i18n/dictionary';
 
-function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
-  const initial = useMemo(() => name.trim().charAt(0).toUpperCase() || 'M', [name]);
-  const box = size === 'sm' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
-  return (
-    <span className="relative inline-flex shrink-0">
-      <span
-        className={`${box} rounded-full bg-gradient-to-br from-[#DBA736] to-[#8C6A1C] flex items-center justify-center font-bold text-[#FFF8E7] shadow-[inset_0_1px_2px_rgba(255,255,255,0.35),0_2px_6px_rgba(140,106,28,0.35)]`}
-      >
-        {initial}
-      </span>
-    </span>
-  );
-}
-
 export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale);
   const user = useStore(currentUser);
@@ -144,13 +130,18 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
               role="menu"
               className="menu-in absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)]rounded-2xl bg-white/95 backdrop-blur-2xl border border-[#C9971C]/30 shadow-[0_6px_16px_rgba(90,70,30,0.08),0_20px_48px_rgba(90,70,30,0.18)] p-3 text-left z-50"
             >
-              <div className="px-1.5 pt-1 pb-3 border-b border-[#1F1A12]/10">
-                <div className="flex items-center gap-3">
-                  <Avatar name={user.name} />
-                  <div className="min-w-0">
-                    <div className="text-sm font-bold text-[#1F1A12] truncate">{user.name}</div>
-                    <div className="text-[11px] text-[#6E6453] font-mono truncate">{user.email}</div>
+              <div className="p-3 mb-1 rounded-xl bg-[#FAF6EE]/80 border border-[#EADBBD]/70">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-sm font-bold text-[#1F1A12] truncate leading-tight">
+                    {user.name}
                   </div>
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white border border-[#EADBBD] text-[#7A5B10] shadow-2xs shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
+                    {user.role === 'admin' ? 'Admin' : 'Member'}
+                  </span>
+                </div>
+                <div className="text-xs text-[#7A6D56] truncate mt-1">
+                  {user.email}
                 </div>
               </div>
 
