@@ -167,6 +167,7 @@ export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
 
     if (!overlayRef.current || !containerRef.current) {
       closeMemberModal();
+      window.dispatchEvent(new CustomEvent('close-member-modal'));
       return;
     }
 
@@ -183,6 +184,7 @@ export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
       ease: 'power2.in',
       onComplete: () => {
         closeMemberModal();
+        window.dispatchEvent(new CustomEvent('close-member-modal'));
       },
     });
   };

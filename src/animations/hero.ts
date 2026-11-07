@@ -91,6 +91,12 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
     cardsTrack.addEventListener('mouseleave', resetToDefaultState);
   }
 
+  const onModalClose = () => {
+    cards.forEach((card) => card.setAttribute('data-selected', 'false'));
+    resetToDefaultState();
+  };
+  window.addEventListener('close-member-modal', onModalClose);
+
   if (!canHover && defaultCard) {
     selectCard(defaultCard);
   }
@@ -244,7 +250,13 @@ export function initHeroParallaxAnimation(rootContainer: HTMLElement | null): He
   }, rootContainer);
 
   return {
-    destroy: () => ctx.revert(),
-    revert: () => ctx.revert(),
+    destroy: () => {
+      window.removeEventListener('close-member-modal', onModalClose);
+      ctx.revert();
+    },
+    revert: () => {
+      window.removeEventListener('close-member-modal', onModalClose);
+      ctx.revert();
+    },
   };
 }
