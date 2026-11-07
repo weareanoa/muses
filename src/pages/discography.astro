@@ -13,7 +13,7 @@ const d = getDict(locale);
   description={d.meta.discographyDesc}
   currentPath="/discography"
 >
-  <div class="relative min-h-[calc(100vh-80px)] pt-16 overflow-hidden">
+  <div class="relative min-h-[calc(100svh-80px)] pt-16 pb-[calc(2rem+env(safe-area-inset-bottom))] overflow-hidden">
     <VinylPlayer client:load locale={locale} />
   </div>
 </RootLayout>

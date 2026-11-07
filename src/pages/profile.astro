@@ -14,7 +14,7 @@ const d = getDict(locale);
   currentPath="/profile"
   solidHeader={true}
 >
-  <div class="relative min-h-[calc(100vh-80px)] pt-24 sm:pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
+  <div class="relative min-h-[calc(100svh-80px)] pt-24 sm:pt-28 pb-[calc(6rem+env(safe-area-inset-bottom))] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#FCFAF5]">
     <ProfileIsland client:load locale={locale} />
   </div>
 </RootLayout>
