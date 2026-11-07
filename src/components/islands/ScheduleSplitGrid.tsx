@@ -88,9 +88,9 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   };
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto">
+    <div className="relative w-full overflow-hidden">
       <BackgroundGradientAnimation
-        containerClassName="w-full bg-transparent py-2 sm:py-6"
+        containerClassName="w-full bg-transparent py-8 sm:py-20"
         gradientBackgroundStart="transparent"
         gradientBackgroundEnd="transparent"
         firstColor="184, 134, 11"
@@ -101,19 +101,20 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
         pointerColor="212, 160, 23"
         size="85%"
       >
-        <div className="text-left mb-6 sm:mb-12 relative z-10 px-1">
-          <div className="mb-2 sm:mb-3">
-            <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
-              {d.eyebrow}
-            </span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+          <div className="text-left mb-6 sm:mb-12">
+            <div className="mb-2 sm:mb-3">
+              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
+                {d.eyebrow}
+              </span>
+            </div>
+
+            <h2 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none text-left">
+              {d.heading}
+            </h2>
           </div>
 
-          <h2 className="relative z-10 text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none text-left">
-            {d.heading}
-          </h2>
-        </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start">
         <div className="lg:col-span-5">
           <div className="relative rounded-2xl sm:rounded-3xl bg-white border border-[#C9971C]/35 p-3 sm:p-5 shadow-[0_10px_30px_rgba(201,151,28,0.1)]">
             <div className="relative aspect-[16/9] sm:aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 border border-[#C9971C]/25 bg-[#FAF6EC]">
@@ -269,8 +270,9 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
               </div>
             );
           })}
+            </div>
+          </div>
         </div>
-      </div>
       </BackgroundGradientAnimation>
     </div>
   );
