@@ -100,9 +100,10 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             onClick={() => handleAlbumSelect(idx)}
             className={`group relative aspect-square rounded-lg min-[380px]:rounded-xl sm:rounded-2xl overflow-hidden border-[2px] transition-all duration-300 p-0 bg-white cursor-pointer text-left focus:outline-none ${
               isSelected
-                ? 'border-white ring-2 ring-[#C28C1D]/60 shadow-md scale-[1.03]'
+                ? 'border-white ring-2 shadow-md scale-[1.03]'
                 : 'border-white/40 shadow-xs opacity-85 hover:opacity-100 hover:scale-[1.02]'
             }`}
+            style={isSelected ? { '--tw-ring-color': `${album.themeColor}99` } : undefined}
           >
             <img
               src={album.coverImage}
@@ -186,7 +187,8 @@ export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
             <div className="pt-0.5 sm:pt-1">
               <div
                 onClick={() => setIsVideoModalOpen(true)}
-                className="relative aspect-[16/9] w-full rounded-xl sm:rounded-2xl overflow-hidden border-[1.5px] border-[#D4A017]/70 shadow-md group cursor-pointer bg-black/5"
+                className="relative aspect-[16/9] w-full rounded-xl sm:rounded-2xl overflow-hidden border-[1.5px] shadow-md group cursor-pointer bg-black/5"
+                style={{ borderColor: `${currentAlbum.themeColor}B3` }}
               >
                 <img
                   src={withBase(currentAlbum.mvThumbnail || currentAlbum.coverImage)}
