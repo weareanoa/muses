@@ -4,6 +4,7 @@ import { scheduleService } from '../../services/scheduleService';
 import type { ScheduleDTO } from '../../types/database';
 import { MapPin, Clock, Ticket } from 'lucide-react';
 import { getDict, type Locale } from '../../i18n/dictionary';
+import { BackgroundGradientAnimation } from '../ui/background-gradient-animation';
 
 export type ScheduleItem = ScheduleDTO;
 
@@ -109,18 +110,25 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   };
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto py-2 sm:py-10 px-1 sm:px-4">
-      <div className="absolute -top-12 -left-12 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(242,207,112,0.45)_0%,_rgba(252,250,245,0)_70%)] pointer-events-none blur-2xl" />
-      <div className="absolute -bottom-16 -left-12 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(242,207,112,0.35)_0%,_rgba(252,250,245,0)_70%)] pointer-events-none blur-2xl" />
-      <div className="absolute -top-12 -right-12 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(242,207,112,0.35)_0%,_rgba(252,250,245,0)_70%)] pointer-events-none blur-2xl" />
-      <div className="absolute -bottom-16 -right-12 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(242,207,112,0.45)_0%,_rgba(252,250,245,0)_70%)] pointer-events-none blur-2xl" />
-
-      <div className="absolute bottom-6 left-8 hidden lg:block">
-        <GoldenSparkle className="w-8 h-8" />
-      </div>
-      <div className="absolute bottom-6 right-8 hidden lg:block">
-        <GoldenSparkle className="w-8 h-8" />
-      </div>
+    <div className="relative w-full max-w-7xl mx-auto">
+      <BackgroundGradientAnimation
+        containerClassName="rounded-3xl sm:rounded-[40px] py-4 sm:py-10 px-2 sm:px-6"
+        gradientBackgroundStart="rgb(252, 250, 245)"
+        gradientBackgroundEnd="rgb(250, 246, 238)"
+        firstColor="184, 134, 11"
+        secondColor="246, 221, 138"
+        thirdColor="212, 160, 23"
+        fourthColor="235, 196, 95"
+        fifthColor="194, 140, 29"
+        pointerColor="212, 160, 23"
+        size="80%"
+      >
+        <div className="absolute bottom-6 left-8 hidden lg:block pointer-events-none">
+          <GoldenSparkle className="w-8 h-8" />
+        </div>
+        <div className="absolute bottom-6 right-8 hidden lg:block pointer-events-none">
+          <GoldenSparkle className="w-8 h-8" />
+        </div>
 
       <div className="text-left sm:text-center mb-5 sm:mb-12 relative z-10">
         <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3.5 max-w-lg mb-1.5 sm:mb-2.5">
@@ -299,6 +307,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
           })}
         </div>
       </div>
+      </BackgroundGradientAnimation>
     </div>
   );
 }
