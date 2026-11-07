@@ -181,7 +181,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
                   role="menuitem"
                 >
                   <span className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#C9971C]" />
+                    <UserIcon className="w-4 h-4 text-[#C9971C]" />
                     <span>{d.nav.myProfile}</span>
                   </span>
                 </a>
