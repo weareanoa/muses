@@ -86,7 +86,7 @@ export const BackgroundGradientAnimation = ({
       }}
     >
       <div className={cn("relative z-10", className)}>{children}</div>
-      <div className="gradients-container absolute inset-0 pointer-events-none overflow-hidden blur-3xl opacity-80">
+      <div className="gradients-container absolute inset-0 pointer-events-none overflow-hidden blur-[80px] sm:blur-[120px] opacity-50">
         <div
           className="absolute [transform-origin:center_center] animate-first"
           style={{
@@ -94,7 +94,7 @@ export const BackgroundGradientAnimation = ({
             height: size,
             top: `calc(50% - ${size} / 2)`,
             left: `calc(50% - ${size} / 2)`,
-            background: `radial-gradient(circle at center, rgba(${firstColor}, 0.5) 0%, rgba(${firstColor}, 0) 65%)`,
+            background: `radial-gradient(circle at center, rgba(${firstColor}, 0.22) 0%, rgba(${firstColor}, 0) 65%)`,
           }}
         />
         <div
@@ -104,7 +104,7 @@ export const BackgroundGradientAnimation = ({
             height: size,
             top: `calc(50% - ${size} / 2)`,
             left: `calc(50% - ${size} / 2)`,
-            background: `radial-gradient(circle at center, rgba(${secondColor}, 0.75) 0%, rgba(${secondColor}, 0) 65%)`,
+            background: `radial-gradient(circle at center, rgba(${secondColor}, 0.32) 0%, rgba(${secondColor}, 0) 65%)`,
           }}
         />
         <div
@@ -114,7 +114,7 @@ export const BackgroundGradientAnimation = ({
             height: size,
             top: `calc(50% - ${size} / 2)`,
             left: `calc(50% - ${size} / 2)`,
-            background: `radial-gradient(circle at center, rgba(${thirdColor}, 0.6) 0%, rgba(${thirdColor}, 0) 65%)`,
+            background: `radial-gradient(circle at center, rgba(${thirdColor}, 0.2) 0%, rgba(${thirdColor}, 0) 65%)`,
           }}
         />
         <div
@@ -124,7 +124,7 @@ export const BackgroundGradientAnimation = ({
             height: size,
             top: `calc(50% - ${size} / 2)`,
             left: `calc(50% - ${size} / 2)`,
-            background: `radial-gradient(circle at center, rgba(${fourthColor}, 0.65) 0%, rgba(${fourthColor}, 0) 65%)`,
+            background: `radial-gradient(circle at center, rgba(${fourthColor}, 0.26) 0%, rgba(${fourthColor}, 0) 65%)`,
           }}
         />
         <div
@@ -134,18 +134,18 @@ export const BackgroundGradientAnimation = ({
             height: size,
             top: `calc(50% - ${size} / 2)`,
             left: `calc(50% - ${size} / 2)`,
-            background: `radial-gradient(circle at center, rgba(${fifthColor}, 0.5) 0%, rgba(${fifthColor}, 0) 65%)`,
+            background: `radial-gradient(circle at center, rgba(${fifthColor}, 0.18) 0%, rgba(${fifthColor}, 0) 65%)`,
           }}
         />
 
         {interactive && (
           <div
             ref={interactiveRef}
-            className="absolute -top-1/4 -left-1/4 transition-transform duration-75 pointer-events-none"
+            className="absolute -top-1/4 -left-1/4 transition-transform duration-100 pointer-events-none"
             style={{
               width: size,
               height: size,
-              background: `radial-gradient(circle at center, rgba(${pointerColor}, 0.65) 0%, rgba(${pointerColor}, 0) 65%)`,
+              background: `radial-gradient(circle at center, rgba(${pointerColor}, 0.22) 0%, rgba(${pointerColor}, 0) 65%)`,
             }}
           />
         )}

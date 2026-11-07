@@ -26,9 +26,11 @@ function mapDbScheduleToDto(row: any): ScheduleDTO {
   };
 }
 
+let cachedPublicSchedules: ScheduleDTO[] | null = null;
+
 export const scheduleService = {
   getInitialSchedules(): ScheduleDTO[] {
-    return fallbackSchedules;
+    return cachedPublicSchedules || fallbackSchedules;
   },
 
   async getSchedules(filter?: {
@@ -48,6 +50,7 @@ export const scheduleService = {
         const { data, error } = await query;
         if (!error && data && data.length > 0) {
           const mapped = withBaseDeep(data.map(mapDbScheduleToDto)) as ScheduleDTO[];
+          cachedPublicSchedules = mapped;
           return { success: true, data: mapped };
         }
       } catch (err) {
