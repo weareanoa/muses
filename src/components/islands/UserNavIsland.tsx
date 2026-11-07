@@ -165,7 +165,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
                   role="menuitem"
                 >
                   <span className="flex items-center gap-2">
-                    <ShoppingBag className="w-4 h-4 text-[#C9971C]" />
+                    <ShoppingCart className="w-4 h-4 text-[#C9971C]" />
                     <span>{d.nav.cart}</span>
                   </span>
                   {cartCount > 0 && (
