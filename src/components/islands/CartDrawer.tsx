@@ -110,25 +110,34 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
                 </div>
               </div>
             ) : items.length === 0 ? (
-              <div className="text-center py-14 px-4 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#FAF3E2] border border-[#EADBBD] flex items-center justify-center mx-auto text-[#8C6A1C] shadow-2xs">
-                  <ShoppingBag className="w-8 h-8" />
+              <div className="flex flex-col items-center justify-center min-h-[340px] text-center py-6 px-4 space-y-4 my-auto">
+                <div className="relative mx-auto w-32 h-36 sm:w-36 sm:h-42 flex items-center justify-center">
+                  <img
+                    src={withBase("/images/cart/muses-tote-empty.webp")}
+                    alt="Tas Belanja MUSES"
+                    className="w-full h-full object-contain drop-shadow-md select-none transition-transform duration-300 hover:scale-105"
+                    loading="eager"
+                    width={280}
+                    height={350}
+                  />
                 </div>
-                <div>
-                  <h3 className="text-sm min-[380px]:text-base font-bold text-[#1F1A12]">{d.emptyTitle}</h3>
-                  <p className="text-xs text-[#6E6453] mt-1 max-w-xs mx-auto leading-relaxed">{d.emptyBody}</p>
+                <div className="space-y-1">
+                  <h3 className="text-base sm:text-lg font-bold text-[#1F1A12]">{d.emptyTitle}</h3>
+                  <p className="text-xs text-[#6E6453] max-w-xs mx-auto leading-relaxed">{d.emptyBody}</p>
                 </div>
-                <a
-                  href={withBase("/store")}
-                  onClick={closeCart}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-[#1F1A12] shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
-                  }}
-                >
-                  <span>{d.viewStore}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                <div className="pt-1">
+                  <a
+                    href={withBase("/store")}
+                    onClick={closeCart}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-[#1F1A12] shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(90deg, #B8860B 0%, #D4A017 50%, #A37418 100%)',
+                    }}
+                  >
+                    <span>{d.viewStore}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
               </div>
             ) : (
               items.map((item) => (
