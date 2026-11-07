@@ -8,28 +8,6 @@ import { BackgroundGradientAnimation } from '../ui/background-gradient-animation
 
 export type ScheduleItem = ScheduleDTO;
 
-function GoldenSparkle({ className = 'w-6 h-6' }: { className?: string }) {
-  return (
-    <div className={`relative inline-flex items-center justify-center pointer-events-none select-none ${className}`}>
-      <div className="absolute inset-0 bg-[#E2B73E]/30 rounded-full blur-[6px] transform scale-125" />
-      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full relative z-10 drop-shadow-[0_0_8px_rgba(226,183,62,0.8)]">
-        <path
-          d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"
-          fill="url(#goldStarGrad)"
-        />
-        <circle cx="12" cy="12" r="2.5" fill="#FFFDF8" opacity="0.95" />
-        <defs>
-          <radialGradient id="goldStarGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFF2BF" />
-            <stop offset="35%" stopColor="#E2B73E" />
-            <stop offset="100%" stopColor="#A87713" />
-          </radialGradient>
-        </defs>
-      </svg>
-    </div>
-  );
-}
-
 export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }) {
   const d = getDict(locale).schedule;
   const [schedules, setSchedules] = useState<ScheduleItem[]>(() =>
@@ -112,7 +90,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   return (
     <div className="relative w-full max-w-7xl mx-auto">
       <BackgroundGradientAnimation
-        containerClassName="rounded-3xl sm:rounded-[40px] py-4 sm:py-10 px-2 sm:px-6"
+        containerClassName="rounded-3xl sm:rounded-[40px] py-6 sm:py-12 px-4 sm:px-10 border border-[#EADBBD]/40 shadow-xs"
         gradientBackgroundStart="rgb(252, 250, 245)"
         gradientBackgroundEnd="rgb(250, 246, 238)"
         firstColor="184, 134, 11"
@@ -123,31 +101,17 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
         pointerColor="212, 160, 23"
         size="80%"
       >
-        <div className="absolute bottom-6 left-8 hidden lg:block pointer-events-none">
-          <GoldenSparkle className="w-8 h-8" />
-        </div>
-        <div className="absolute bottom-6 right-8 hidden lg:block pointer-events-none">
-          <GoldenSparkle className="w-8 h-8" />
-        </div>
+        <div className="text-left mb-6 sm:mb-12 relative z-10">
+          <div className="mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
+              {d.eyebrow}
+            </span>
+          </div>
 
-      <div className="text-left sm:text-center mb-5 sm:mb-12 relative z-10">
-        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3.5 max-w-lg mb-1.5 sm:mb-2.5">
-          <div className="h-[1px] w-6 sm:w-auto sm:flex-1 sm:max-w-[100px] bg-gradient-to-r from-transparent to-[#D4A017]/80" />
-          <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-          <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
-            {d.eyebrow}
-          </span>
-          <GoldenSparkle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-          <div className="hidden sm:block h-[1px] flex-1 max-w-[100px] bg-gradient-to-l from-transparent to-[#D4A017]/80" />
-        </div>
-
-        <div className="relative inline-block">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-16 bg-[radial-gradient(ellipse_at_center,_rgba(247,224,143,0.35)_0%,_transparent_70%)] pointer-events-none blur-lg" />
-          <h2 className="relative z-10 text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none">
+          <h2 className="relative z-10 text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none text-left">
             {d.heading}
           </h2>
         </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start relative z-10">
         <div className="lg:col-span-5">
