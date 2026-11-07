@@ -14,7 +14,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
     scheduleService.getInitialSchedules()
   );
   const [selectedId, setSelectedId] = useState<string>(schedules[0]?.id || '');
-  const [countdown, setCountdown] = useState({ days: 8, hours: 11, mins: 36, secs: 6 });
+  const [countdown, setCountdown] = useState<{ days: number; hours: number; mins: number; secs: number } | null>(null);
 
   useEffect(() => {
     scheduleService.getSchedules().then((res) => {
@@ -29,29 +29,27 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   }, [selectedId, schedules]);
 
   useEffect(() => {
-    const target = activeItem?.targetDate
-      ? new Date(activeItem.targetDate).getTime()
-      : new Date().getTime() + 1000 * 60 * 60 * 24 * 8 + 1000 * 60 * 60 * 11 + 1000 * 60 * 36;
+    const target = activeItem?.targetDate ? new Date(activeItem.targetDate).getTime() : NaN;
+    if (Number.isNaN(target)) {
+      setCountdown(null);
+      return;
+    }
 
     const updateTimer = () => {
-      const now = new Date().getTime();
-      const diff = target - now;
-
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mins = Math.floor((diff % (1000 * 60)) / (1000 * 60));
-        const secs = Math.floor((diff % (1000 * 60)) / 1000);
-        setCountdown({ days, hours, mins, secs });
-      } else {
-        setCountdown({ days: 0, hours: 0, mins: 0, secs: 0 });
-      }
+      const diff = Math.max(0, target - Date.now());
+      const sec = Math.floor(diff / 1000);
+      setCountdown({
+        days: Math.floor(sec / 86400),
+        hours: Math.floor((sec % 86400) / 3600),
+        mins: Math.floor((sec % 3600) / 60),
+        secs: sec % 60,
+      });
     };
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [activeItem]);
+  }, [activeItem?.id, activeItem?.targetDate]);
 
   const renderStatusBadge = (status: string) => {
     const s = status.toLowerCase();
@@ -87,10 +85,20 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
     );
   };
 
+  const pad = (n?: number) => (n === undefined ? '--' : String(n).padStart(2, '0'));
+  const units = [
+    { value: countdown?.days, label: d.days },
+    { value: countdown?.hours, label: d.hours },
+    { value: countdown?.mins, label: d.minutes },
+    { value: countdown?.secs, label: d.seconds },
+  ];
+  const ended = countdown !== null && countdown.days + countdown.hours + countdown.mins + countdown.secs === 0;
+  const ease = 'ease-[cubic-bezier(0.23,1,0.32,1)]';
+
   return (
     <div className="relative w-full overflow-hidden">
       <BackgroundGradientAnimation
-        containerClassName="w-full bg-transparent py-8 sm:py-20"
+        containerClassName="w-full bg-transparent py-6 sm:py-12"
         gradientBackgroundStart="transparent"
         gradientBackgroundEnd="transparent"
         firstColor="218, 175, 75"
@@ -101,177 +109,101 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
         pointerColor="235, 205, 130"
         size="85%"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
-          <div className="text-left mb-6 sm:mb-12">
-            <div className="mb-2 sm:mb-3">
-              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase whitespace-nowrap">
-                {d.eyebrow}
-              </span>
-            </div>
-
-            <h2 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none text-left">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 relative z-10">
+          <div className="text-left mb-4 sm:mb-8">
+            <span className="block mb-1.5 text-[10px] sm:text-xs font-semibold tracking-[0.25em] text-[#8C6A1C] uppercase">
+              {d.eyebrow}
+            </span>
+            <h2 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-balbes text-[#18181B] leading-none tracking-normal select-none">
               {d.heading}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start">
-        <div className="lg:col-span-5">
-          <div className="relative rounded-2xl sm:rounded-3xl bg-white border border-[#C9971C]/35 p-3 sm:p-5 shadow-[0_10px_30px_rgba(201,151,28,0.1)]">
-            <div className="relative aspect-[16/9] sm:aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 border border-[#C9971C]/25 bg-[#FAF6EC]">
-              <img
-                src={withBase(activeItem?.posterImage || '/images/muses_group_frame1.webp')}
-                alt={d.posterAlt}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:hidden" />
-              <div className="absolute bottom-2 left-2.5 right-2.5 sm:hidden text-white">
-                <span className="text-[8.5px] font-mono tracking-widest uppercase bg-[#C28C1D] text-[#1F1A12] font-bold px-2 py-0.5 rounded-full inline-block mb-0.5">
-                  {activeItem?.city}
-                </span>
-                <h4 className="text-xs min-[380px]:text-sm font-bold font-display truncate text-white drop-shadow-md">
-                  {activeItem?.title || activeItem?.tourName}
-                </h4>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-              <div className="rounded-lg sm:rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-1.5 sm:py-2 px-1 text-center">
-                <span className="text-base min-[380px]:text-lg sm:text-2xl font-serif font-bold text-[#7A5B18] block leading-none">
-                  {String(countdown.days).padStart(2, '0')}
-                </span>
-                <span className="text-[7.5px] min-[380px]:text-[8px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-0.5 sm:mt-1 block">
-                  {d.days}
-                </span>
-              </div>
-              <div className="rounded-lg sm:rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-1.5 sm:py-2 px-1 text-center">
-                <span className="text-base min-[380px]:text-lg sm:text-2xl font-serif font-bold text-[#7A5B18] block leading-none">
-                  {String(countdown.hours).padStart(2, '0')}
-                </span>
-                <span className="text-[7.5px] min-[380px]:text-[8px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-0.5 sm:mt-1 block">
-                  {d.hours}
-                </span>
-              </div>
-              <div className="rounded-lg sm:rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-1.5 sm:py-2 px-1 text-center">
-                <span className="text-base min-[380px]:text-lg sm:text-2xl font-serif font-bold text-[#7A5B18] block leading-none">
-                  {String(countdown.mins).padStart(2, '0')}
-                </span>
-                <span className="text-[7.5px] min-[380px]:text-[8px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-0.5 sm:mt-1 block">
-                  {d.minutes}
-                </span>
-              </div>
-              <div className="rounded-lg sm:rounded-xl bg-[#FCFAF5] border border-[#C9971C]/35 py-1.5 sm:py-2 px-1 text-center">
-                <span className="text-base min-[380px]:text-lg sm:text-2xl font-serif font-bold text-[#7A5B18] block leading-none">
-                  {String(countdown.secs).padStart(2, '0')}
-                </span>
-                <span className="text-[7.5px] min-[380px]:text-[8px] sm:text-[10px] font-mono font-bold tracking-wider text-[#A08858] uppercase mt-0.5 sm:mt-1 block">
-                  {d.seconds}
-                </span>
-              </div>
-            </div>
-
-            <a
-              href={activeItem?.ticketUrl || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-[0_6px_16px_rgba(201,151,28,0.3)] hover:shadow-[0_12px_28px_rgba(201,151,28,0.45)] hover:scale-[1.02] active:scale-[0.98] bg-muses-gradient text-[#1F1A12] cursor-pointer"
-            >
-              <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current shrink-0" />
-              <span>{d.getTickets}</span>
-            </a>
-          </div>
-        </div>
-
-        <div className="lg:col-span-7 flex flex-col space-y-2.5 sm:space-y-3.5">
-          {schedules.map((item) => {
-            const isSelected = item.id === selectedId;
-
-            return (
-              <div
-                key={item.id}
-                onClick={() => setSelectedId(item.id)}
-                className={`relative rounded-xl sm:rounded-2xl bg-white border transition-all duration-300 p-3 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 shadow-xs hover:shadow-md cursor-pointer group ${
-                  isSelected
-                    ? 'border-[#C9971C] ring-2 ring-[#C9971C]/40 shadow-[0_6px_20px_rgba(201,151,28,0.15)] bg-gradient-to-r from-white to-[#FAF6EC]/40'
-                    : 'border-[#C9971C]/35 hover:border-[#C9971C]'
-                }`}
-              >
-                <div className="flex sm:hidden items-start gap-2.5 w-full">
-                  <div className="flex flex-col items-center justify-center text-center shrink-0 w-11 py-1 px-1 bg-[#FAF6EC] rounded-xl border border-[#C9971C]/25">
-                    <span className="text-lg font-serif font-bold text-[#7A5B18] leading-none">
-                      {item.day}
-                    </span>
-                    <span className="text-[9px] font-serif font-bold tracking-wider text-[#7A5B18] uppercase mt-0.5">
-                      {item.month}
-                    </span>
-                    <span className="text-[7.5px] font-mono text-[#9C8B72] mt-0.5">
-                      {item.year}
-                    </span>
+          {!activeItem ? (
+            <p className="py-10 text-sm text-[#7A6E58]">Belum ada jadwal mendatang.</p>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-5 items-start">
+              <div className="lg:col-span-5">
+                <div className="rounded-2xl bg-white border border-[#C9971C]/30 p-2.5 sm:p-3 shadow-xs">
+                  <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-2.5 bg-[#FAF6EC]">
+                    <img
+                      src={withBase(activeItem.posterImage || '/images/muses_group_frame1.webp')}
+                      alt={d.posterAlt}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1.5 mb-0.5">
-                      <span className="text-[9px] font-mono font-bold tracking-[0.2em] text-[#B8871B] uppercase">
-                        {item.city}
-                      </span>
-                      {renderStatusBadge(item.status)}
-                    </div>
-                    <h3 className="font-display font-bold text-xs min-[380px]:text-sm text-[#2E2104] group-hover:text-[#B8871B] transition-colors leading-snug line-clamp-1">
-                      {item.title || item.tourName || 'MUSES Live'}
-                    </h3>
-                    <div className="flex items-center flex-wrap gap-x-2.5 gap-y-0.5 mt-1 text-[10px] min-[380px]:text-[11px] text-[#7A6E58]">
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#B8871B] shrink-0" />
-                        <span className="truncate max-w-[120px]">{item.venue}</span>
-                      </span>
-                      <span className="inline-flex items-center gap-1 font-mono text-[9.5px]">
-                        <Clock className="w-3 h-3 text-[#B8871B] shrink-0" />
-                        <span>{item.showTime}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-4 flex-1 min-w-0">
-                  <div className="flex flex-col items-center justify-center text-center shrink-0 pr-6 border-r border-[#C9971C]/25 min-w-[64px]">
-                    <span className="text-3xl font-serif font-bold text-[#7A5B18] leading-none">
-                      {item.day}
-                    </span>
-                    <span className="text-xs font-serif font-bold tracking-widest text-[#7A5B18] uppercase mt-1">
-                      {item.month}
-                    </span>
-                    <span className="text-[9px] font-mono text-[#9C8B72] mt-0.5">
-                      {item.year}
-                    </span>
+                  <div className="grid grid-cols-4 gap-1.5 mb-2.5" role="timer" aria-label="Countdown">
+                    {units.map((u) => (
+                      <div key={u.label} className="rounded-lg bg-[#FCFAF5] border border-[#C9971C]/25 py-1.5 text-center">
+                        <span className="block text-lg sm:text-xl font-serif font-bold text-[#7A5B18] leading-none tabular-nums">
+                          {pad(u.value)}
+                        </span>
+                        <span className="block mt-1 text-[8px] sm:text-[9px] font-mono font-bold tracking-wider text-[#A08858] uppercase">
+                          {u.label}
+                        </span>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="flex-1 min-w-0 pr-2">
-                    <div className="text-[10px] font-mono font-bold tracking-[0.2em] text-[#B8871B] uppercase mb-0.5">
-                      {item.city}
-                    </div>
-                    <h3 className="font-display font-bold text-base text-[#2E2104] group-hover:text-[#B8871B] transition-colors truncate">
-                      {item.title || item.tourName || 'MUSES 1st Anniversary Live'}
-                    </h3>
-                    <div className="flex items-center flex-wrap gap-x-3.5 gap-y-1 mt-1 text-[11px] text-[#7A6E58]">
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#B8871B] shrink-0" />
-                        <span className="truncate">{item.venue}</span>
-                      </span>
-                      <span className="inline-flex items-center gap-1 font-mono">
-                        <Clock className="w-3.5 h-3.5 text-[#B8871B] shrink-0" />
-                        <span>{item.showTime}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block shrink-0">
-                  {renderStatusBadge(item.status)}
+                  <a
+                    href={activeItem.ticketUrl && activeItem.ticketUrl !== '#' ? activeItem.ticketUrl : undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-disabled={ended || !activeItem.ticketUrl || activeItem.ticketUrl === '#'}
+                    className={`w-full py-2.5 px-4 rounded-full font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 bg-muses-gradient text-[#1F1A12] cursor-pointer transition-[transform,box-shadow] duration-150 ${ease} active:scale-[0.97] aria-disabled:opacity-50 aria-disabled:pointer-events-none`}
+                  >
+                    <Ticket className="w-3.5 h-3.5 shrink-0" />
+                    <span>{d.getTickets}</span>
+                  </a>
                 </div>
               </div>
-            );
-          })}
+
+              <div className="lg:col-span-7 flex flex-col gap-2">
+                {schedules.map((item) => {
+                  const isSelected = item.id === activeItem.id;
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => setSelectedId(item.id)}
+                      aria-pressed={isSelected}
+                      className={`group w-full text-left rounded-xl bg-white border p-2.5 sm:p-3 flex items-center gap-3 cursor-pointer transition-[border-color,box-shadow,transform] duration-150 ${ease} active:scale-[0.99] ${
+                        isSelected
+                          ? 'border-[#C9971C] shadow-[0_0_0_1px_#C9971C]'
+                          : 'border-[#C9971C]/30 hover:border-[#C9971C]/70'
+                      }`}
+                    >
+                      <div className="shrink-0 w-11 sm:w-12 text-center pr-3 border-r border-[#C9971C]/20">
+                        <span className="block text-xl sm:text-2xl font-serif font-bold text-[#7A5B18] leading-none">{item.day}</span>
+                        <span className="block mt-0.5 text-[10px] font-serif font-bold tracking-widest text-[#7A5B18] uppercase">{item.month}</span>
+                        <span className="block text-[8px] font-mono text-[#9C8B72]">{item.year}</span>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#B8871B] uppercase">{item.city}</div>
+                        <h3 className="font-display font-bold text-sm sm:text-[15px] text-[#2E2104] leading-snug truncate">
+                          {item.title || item.tourName || 'MUSES Live'}
+                        </h3>
+                        <div className="mt-0.5 flex items-center flex-wrap gap-x-3 gap-y-0.5 text-[10.5px] sm:text-[11px] text-[#7A6E58]">
+                          <span className="inline-flex items-center gap-1 min-w-0">
+                            <MapPin className="w-3 h-3 text-[#B8871B] shrink-0" />
+                            <span className="truncate">{item.venue}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1 font-mono">
+                            <Clock className="w-3 h-3 text-[#B8871B] shrink-0" />
+                            <span>{item.showTime}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0">{renderStatusBadge(item.status)}</div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </BackgroundGradientAnimation>
     </div>
