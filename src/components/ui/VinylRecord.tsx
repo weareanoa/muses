@@ -19,12 +19,29 @@ export default function VinylRecord({
   className = '',
 }: VinylRecordProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleTilt = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: -py * 8, y: px * 10 });
+  };
+
+  const resetTilt = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
 
   return (
     <div
-      className={`relative select-none group cursor-pointer w-[145px] h-[145px] min-[380px]:w-[165px] min-[380px]:h-[165px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] ${className}`}
+      className={`relative select-none group cursor-pointer w-[145px] h-[145px] min-[380px]:w-[165px] min-[380px]:h-[165px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] transition-transform duration-300 ease-out will-change-transform ${className}`}
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+      }}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleTilt}
+      onMouseLeave={resetTilt}
       onClick={onTogglePlay}
     >
       <div className="absolute -bottom-6 left-6 right-6 h-16 sm:-bottom-8 sm:left-8 sm:right-8 sm:h-20 rounded-full filter blur-xl sm:blur-2xl opacity-35 pointer-events-none overflow-hidden transition-all duration-700">
