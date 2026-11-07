@@ -75,7 +75,7 @@ export const BackgroundGradientAnimation = ({
       ref={containerRef}
       onMouseMove={interactive ? handleMouseMove : undefined}
       className={cn(
-        "relative overflow-hidden w-full",
+        "relative overflow-clip w-full",
         containerClassName
       )}
       style={{

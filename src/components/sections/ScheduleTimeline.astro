@@ -9,6 +9,6 @@ interface Props {
 const { locale = 'id' } = Astro.props;
 ---
 
-<section id="schedule" data-section="schedule" class="relative bg-[#FCFAF5] border-t border-[#C9971C]/20 overflow-hidden">
+<section id="schedule" data-section="schedule" class="relative bg-[#FCFAF5] border-t border-[#C9971C]/20 overflow-clip">
   <ScheduleSplitGrid client:visible locale={locale} />
 </section>

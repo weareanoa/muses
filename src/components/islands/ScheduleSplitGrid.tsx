@@ -96,7 +96,7 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
   const ease = 'ease-[cubic-bezier(0.23,1,0.32,1)]';
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full overflow-clip">
       <BackgroundGradientAnimation
         containerClassName="w-full bg-transparent py-6 sm:py-12"
         gradientBackgroundStart="transparent"
@@ -122,9 +122,9 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
           {!activeItem ? (
             <p className="py-10 text-sm text-[#7A6E58]">Belum ada jadwal mendatang.</p>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-5 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-5">
               <div className="lg:col-span-5">
-                <div className="rounded-2xl bg-white border border-[#C9971C]/30 p-2.5 sm:p-3 shadow-xs">
+                <div className="rounded-2xl bg-white border border-[#C9971C]/30 p-2.5 sm:p-3 shadow-xs lg:sticky lg:top-24">
                   <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-2.5 bg-[#FAF6EC]">
                     <img
                       src={withBase(activeItem.posterImage || '/images/muses_group_frame1.webp')}
