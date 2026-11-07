@@ -54,10 +54,8 @@ export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-[#FCFAF5] sm:border-l border-[#1F1A12]/15 shadow-2xl flex flex-col justify-between h-full">
           <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-[#EADBBD] bg-white/90 backdrop-blur-md flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4A017] flex items-center justify-center text-white shadow-2xs">
-                <ShoppingCart className="w-4 h-4 text-white" />
-              </div>
+            <div className="flex items-center gap-3">
+              <ShoppingCart className="w-5 h-5 text-[#1F1A12]" strokeWidth={1.8} />
               <div>
                 <h2 className="text-sm min-[380px]:text-base font-bold text-[#1F1A12] leading-none">
                   {fmt(d.title, { count: items.length })}
