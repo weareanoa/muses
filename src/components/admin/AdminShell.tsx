@@ -13,8 +13,8 @@ import {
   Menu,
   X,
   ChevronRight,
-  Shield,
   ArrowUpRight,
+  User,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
@@ -244,8 +244,8 @@ export default function AdminShell({
         <div className="p-4 border-t border-zinc-100 bg-zinc-50/50">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-xs font-semibold text-white shadow-2xs">
-                {adminEmail ? adminEmail.charAt(0).toUpperCase() : <Shield className="h-3.5 w-3.5 text-zinc-300" />}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-white">
+                <User className="h-4 w-4 text-zinc-500" strokeWidth={1.8} />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-xs font-semibold text-zinc-900 leading-tight">
