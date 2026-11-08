@@ -1,6 +1,6 @@
 import { atom, computed } from 'nanostores';
 import { withBase } from '../lib/paths';
-import { isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured, getSupabaseClient } from '../lib/supabase';
 import {
   authService,
   loadLocalCurrentUser,
@@ -28,6 +28,21 @@ if (typeof window !== 'undefined') {
   });
 
   if (isSupabaseConfigured()) {
+    const sb = getSupabaseClient();
+    if (sb) {
+      sb.auth.onAuthStateChange(async (event) => {
+        if (event === 'SIGNED_OUT') {
+          currentUser.set(null);
+          persistLocalSession(null);
+        } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          const remoteUser = await authService.getSessionUser();
+          if (remoteUser) {
+            currentUser.set(remoteUser);
+          }
+        }
+      });
+    }
+
     authService.getSessionUser().then((remoteUser) => {
       if (remoteUser) {
         currentUser.set(remoteUser);
@@ -58,9 +73,9 @@ export async function loginWithGoogle(): Promise<{
   return authService.loginWithGoogle();
 }
 
-export function logoutUser(redirectToAuth = false) {
-  authService.signOut();
+export async function logoutUser(redirectToAuth = false) {
   currentUser.set(null);
+  await authService.signOut();
   if (redirectToAuth && typeof window !== 'undefined') {
     window.location.href = withBase('/auth');
   }

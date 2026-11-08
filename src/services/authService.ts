@@ -151,6 +151,25 @@ export const authService = {
       if (profile) {
         return mapDbProfileToDto(profile, addresses);
       }
+
+      // Fallback aman jika user baru dari OAuth belum memiliki baris profile:
+      // Bentuk UserProfileDTO langsung dari authUser, JANGAN jatuh ke loadLocalCurrentUser()!
+      const meta = authUser.user_metadata || {};
+      const fallbackUser: UserProfileDTO = {
+        id: authUser.id,
+        name: meta.full_name || meta.name || authUser.email?.split('@')[0] || 'User',
+        email: authUser.email || '',
+        phone: authUser.phone || '',
+        username: authUser.email?.split('@')[0] || 'user',
+        authProvider: (authUser.app_metadata?.provider as any) || 'google',
+        avatar: meta.avatar_url || meta.picture || undefined,
+        bias: 'Faril',
+        biasEmoji: '🦋',
+        membershipTier: 'Official MUSES CIRCLE',
+        membershipNumber: `MUSES-${authUser.id.slice(0, 8)}`,
+        addresses: [],
+      };
+      return fallbackUser;
     }
     return loadLocalCurrentUser();
   },
@@ -483,7 +502,13 @@ export const authService = {
     }
     const { data, error } = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          prompt: 'select_account',
+          access_type: 'offline',
+        },
+      },
     });
     if (error || !data?.url) {
       return {
@@ -502,7 +527,21 @@ export const authService = {
   async signOut(): Promise<void> {
     const sb = getSupabaseClient();
     if (sb) {
-      await sb.auth.signOut().catch(() => {});
+      try {
+        await sb.auth.signOut();
+      } catch (err) {
+        console.error('Failed to sign out from Supabase', err);
+      }
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            localStorage.removeItem(key);
+          }
+        });
+        sessionStorage.clear();
+      } catch {}
     }
     persistLocalSession(null);
   },
