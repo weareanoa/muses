@@ -265,18 +265,13 @@ export default function AdminHomeIsland({ locale }: { locale: Locale }) {
                             onClick={() => (window.location.href = withBase(`/admin/orders`))}
                           >
                             <TableCell>
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs font-semibold text-zinc-800 uppercase">
-                                  {order.customerName.charAt(0) || 'U'}
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="font-medium text-zinc-900 truncate max-w-[140px] sm:max-w-[200px]">
-                                    {order.customerName}
-                                  </p>
-                                  <p className="font-mono text-[10px] text-zinc-400 truncate">
-                                    {order.orderCode || order.id}
-                                  </p>
-                                </div>
+                              <div className="min-w-0">
+                                <p className="font-medium text-zinc-900 truncate max-w-[140px] sm:max-w-[200px]">
+                                  {order.customerName}
+                                </p>
+                                <p className="font-mono text-[10px] text-zinc-400 truncate">
+                                  {order.orderCode || order.id}
+                                </p>
                               </div>
                             </TableCell>
                             <TableCell className="text-zinc-500 text-xs whitespace-nowrap">{dateStr}</TableCell>
