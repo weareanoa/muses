@@ -125,15 +125,21 @@ const id = {
   },
   gallery: {
     filterAll: "Semua",
+    filterEvent2026: "Event 2026",
+    filterEvent2025: "Event 2025",
+    filterEvent2024: "Event 2024",
+    filterArchive: "Archive",
     filterConcert: "Konser",
-    filterBts: "Di Balik Layar",
+    filterBts: "Archive",
     filterEvent: "Acara",
-    empty: "Belum ada foto dalam kategori ini.",
-    loadMore: "Muat Lebih Banyak ({remaining} foto tersisa)",
-    allShown: "Semua {count} foto telah ditampilkan.",
+    empty: "Belum ada momen dalam kategori ini.",
+    loadMore: "Tampilkan Lebih Banyak ({remaining} momen tersisa)",
+    allShown: "Semua {count} momen telah ditampilkan.",
     prevAria: "Sebelumnya",
     nextAria: "Berikutnya",
     closeAria: "Tutup",
+    watchVideo: "Tonton Video",
+    showingCount: "Menampilkan {visible} dari {total} momen",
   },
   schedule: {
     eyebrow: "MUSES LIVE & EVENTS",
@@ -913,15 +919,21 @@ const en = {
   },
   gallery: {
     filterAll: "All",
+    filterEvent2026: "Event 2026",
+    filterEvent2025: "Event 2025",
+    filterEvent2024: "Event 2024",
+    filterArchive: "Archive",
     filterConcert: "Concert",
-    filterBts: "Behind the Scenes",
+    filterBts: "Archive",
     filterEvent: "Events",
-    empty: "No photos in this category yet.",
-    loadMore: "Load More ({remaining} photos left)",
-    allShown: "All {count} photos shown.",
+    empty: "No moments in this category yet.",
+    loadMore: "Show More ({remaining} moments left)",
+    allShown: "All {count} moments shown.",
     prevAria: "Previous",
     nextAria: "Next",
     closeAria: "Close",
+    watchVideo: "Watch Video",
+    showingCount: "Showing {visible} of {total} moments",
   },
   schedule: {
     eyebrow: "MUSES LIVE & EVENTS",
@@ -1976,6 +1988,7 @@ export function localizeDemoText(locale: Locale, text: string): string {
 // Gallery card categories come from src/data/gallery.json as Indonesian
 // content strings; only "Konser" differs in English.
 export function localizeGalleryCategory(locale: Locale, category: string): string {
+  if (category === "Behind the Scenes" || category === "bts" || category === "BTS") return "Archive";
   if (locale === "id") return category;
   return category === "Konser" ? "Concert" : category;
 }
