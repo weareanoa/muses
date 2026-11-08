@@ -133,15 +133,6 @@ export default function AddressIsland({ locale = 'id' }: { locale?: Locale }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!pickupName && (user?.name || selectedAddress?.recipientName)) {
-      setPickupName(user?.name || selectedAddress?.recipientName || '');
-    }
-    if (!pickupPhone && (user?.phone || selectedAddress?.phone)) {
-      setPickupPhone(user?.phone || selectedAddress?.phone || '');
-    }
-  }, [user, selectedAddress]);
-
   const openAddModal = () => {
     setEditingAddress(null);
     setIsAddressModalOpen(true);
