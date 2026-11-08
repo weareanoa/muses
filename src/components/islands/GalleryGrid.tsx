@@ -39,12 +39,49 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
   const [dragOffset, setDragOffset] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const dragStartRef = useRef<{ x: number; y: number; time: number; isHorizontal: boolean | null }>({
+  const dragStartRef = useRef<{ x: number; y: number; lastX: number; lastY: number; time: number; isHorizontal: boolean | null }>({
     x: 0,
     y: 0,
+    lastX: 0,
+    lastY: 0,
     time: 0,
     isHorizontal: null,
   });
+
+  // Guard ketukan tidak sengaja di mobile: abaikan buka lightbox kalau
+  // halaman baru saja di-scroll atau jari bergeser jauh sejak touchstart.
+  const touchPointRef = useRef({ x: 0, y: 0, moved: 0, time: 0 });
+  const lastScrollRef = useRef(0);
+  const isTouchDeviceRef = useRef(false);
+
+  useEffect(() => {
+    isTouchDeviceRef.current = window.matchMedia('(hover: none)').matches;
+    const onScroll = () => {
+      lastScrollRef.current = Date.now();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    return () => window.removeEventListener('scroll', onScroll, { capture: true } as EventListenerOptions);
+  }, []);
+
+  const isRecentScroll = () => isTouchDeviceRef.current && Date.now() - lastScrollRef.current < 250;
+
+  const handleCardTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchPointRef.current = { x: t.clientX, y: t.clientY, moved: 0, time: Date.now() };
+  };
+
+  const handleCardTouchEnd = (e: React.TouchEvent) => {
+    const t = e.changedTouches[0];
+    const s = touchPointRef.current;
+    s.moved = Math.max(Math.abs(t.clientX - s.x), Math.abs(t.clientY - s.y));
+  };
+
+  const openLightbox = (idx: number) => {
+    if (isRecentScroll()) return;
+    const s = touchPointRef.current;
+    if (s.moved > 12 && Date.now() - s.time < 600) return;
+    setLightboxIndex(idx);
+  };
 
   const categories = ['Semua', 'Konser', 'Behind the Scenes', 'Event'];
   const categoryLabel = (cat: string) =>
@@ -124,6 +161,8 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
     dragStartRef.current = {
       x: clientX,
       y: clientY,
+      lastX: clientX,
+      lastY: clientY,
       time: Date.now(),
       isHorizontal: null,
     };
@@ -135,6 +174,8 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
     if (!isDragging || filteredItems.length <= 1) return;
     const deltaX = clientX - dragStartRef.current.x;
     const deltaY = clientY - dragStartRef.current.y;
+    dragStartRef.current.lastX = clientX;
+    dragStartRef.current.lastY = clientY;
 
     if (dragStartRef.current.isHorizontal === null) {
       if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
@@ -152,7 +193,12 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
     setIsDragging(false);
 
     const duration = Date.now() - dragStartRef.current.time;
-    const isTap = Math.abs(dragOffset) < 10 && duration < 280;
+    const totalMove = Math.max(
+      Math.abs(dragStartRef.current.lastX - dragStartRef.current.x),
+      Math.abs(dragStartRef.current.lastY - dragStartRef.current.y),
+      Math.abs(dragOffset),
+    );
+    const isTap = totalMove < 12 && duration < 350 && !isRecentScroll();
 
     if (isTap) {
       setLightboxIndex(activeSlide);
@@ -178,7 +224,9 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
     return (
       <div
         key={card.id}
-        onClick={() => setLightboxIndex(idx)}
+        onClick={() => openLightbox(idx)}
+        onTouchStart={handleCardTouchStart}
+        onTouchEnd={handleCardTouchEnd}
         className={`group relative rounded-[16px] min-[380px]:rounded-[20px] sm:rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl hover:shadow-[#1F1A12]/10 bg-[#1F1A12] ${extraClasses}`}
       >
         <img
@@ -401,7 +449,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
                       onClick={() => {
                         if (slideStatus !== 'idle') return;
                         if (depth === 0) {
-                          setLightboxIndex(index);
+                          openLightbox(index);
                         } else {
                           triggerSwipe('left');
                         }
