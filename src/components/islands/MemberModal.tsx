@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '@nanostores/react';
 import { withBase, withBaseDeep } from '../../lib/paths';
 import { activeMemberId, closeMemberModal, openMemberModal } from '../../stores/memberModalStore';
@@ -296,7 +297,7 @@ export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
     );
   };
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       data-lenis-prevent
@@ -620,6 +621,7 @@ export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

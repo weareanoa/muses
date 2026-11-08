@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { withBase } from '../../lib/paths';
 import { X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import galleryItemsRaw from '../../data/gallery.json';
@@ -302,7 +303,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
 
   return (
     <div className="w-full font-['Poppins',sans-serif]">
-      <div className="bg-[#FAF3E2] border border-[#EADBBD] rounded-2xl sm:rounded-[32px] p-3 sm:p-10 lg:p-12 shadow-[0_4px_30px_rgba(201,151,28,0.06)]">
+      <div className="bg-[#FAF3E2] rounded-2xl sm:rounded-[32px] p-3 sm:p-10 lg:p-12 shadow-[0_4px_30px_rgba(201,151,28,0.06)]">
         <div className="mb-3.5 sm:mb-8 space-y-0.5 sm:space-y-1 text-left">
           <span className="block text-[9.5px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-[#9E7B26]">
             {home.galleryEyebrow}
@@ -336,7 +337,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
         </div>
 
         {filteredItems.length === 0 ? (
-          <div className="py-16 text-center text-[#7A6E58] text-sm bg-white/60 rounded-2xl border border-[#EADBBD]">
+          <div className="py-16 text-center text-[#7A6E58] text-sm bg-white/60 rounded-2xl">
             {d.empty}
           </div>
         ) : (
@@ -635,7 +636,7 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
         )}
       </div>
 
-      {activeItem && lightboxIndex !== null && (
+      {activeItem && lightboxIndex !== null && createPortal(
         <div
           data-lenis-prevent
           className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-md select-none touch-none overscroll-contain"
@@ -716,7 +717,8 @@ export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
