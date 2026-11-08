@@ -2,7 +2,7 @@
 // di checkout/pesanan — pembeli diarahkan ke WhatsApp ini).
 export const DANIA_WA_NUMBER = '6285121567150';
 
-export const MUSES_EMAIL = 'theamusing.muses@gmail.com';
+export const MUSES_EMAIL = 'konnichiwa@muses.id';
 
 export function gmailComposeLink(subject?: string, body?: string): string {
   const params = new URLSearchParams({
