@@ -9,6 +9,10 @@ let originalBodyPosition = '';
 let originalBodyTop = '';
 let originalBodyWidth = '';
 
+export function setScrollLockPosition(y: number): void {
+  scrollPosition = Math.max(0, y);
+}
+
 export function lockScroll(): () => void {
   if (typeof window === 'undefined') return () => {};
 

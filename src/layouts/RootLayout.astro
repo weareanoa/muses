@@ -4,6 +4,7 @@ import '../styles/global.css';
 import CartDrawer from '../components/islands/CartDrawer';
 import MemberModal from '../components/islands/MemberModal';
 import UserNavIsland from '../components/islands/UserNavIsland';
+import MobileNavDrawer from '../components/islands/MobileNavDrawer';
 import { getDict, resolveLocale, LOCALE_COOKIE } from '../i18n/dictionary';
 
 interface Props {
@@ -95,7 +96,10 @@ const isItemActive =(id: string) => {
           })}
         </nav>
 
-        <UserNavIsland client:idle locale={locale} />
+        <div class="flex items-center gap-2 sm:gap-3">
+          <UserNavIsland client:idle locale={locale} />
+          <MobileNavDrawer client:load locale={locale} currentPath={currentPath} />
+        </div>
       </div>
     </header>
 

@@ -352,3 +352,32 @@ html.reveal-ready .reveal.is-visible {
     animation: none;
   }
 }
+
+@keyframes drawerFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawerSlideLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-drawer-fade {
+  animation: drawerFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-drawer-slide {
+  animation: drawerSlideLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drawer-fade,
+  .animate-drawer-slide {
+    animation: none;
+  }
+}
