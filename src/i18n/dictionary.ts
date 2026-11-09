@@ -883,7 +883,7 @@ const en = {
   },
   footer: {
     tagline:
-      "Follow Vira, Vely, Mine, Faril, Ndah, Liz, and Lia from their first dream to the next light, at the official home of MUSES.",
+      "Follow the journey of Faril, Mine, Ndah, Vira, Vely, Liz, and Lia in every step, only at the official home of MUSES.",
     copyright1: "\u00a9 2026 MUSES OFFICIAL MANAGEMENT. All Rights Reserved.",
     copyright2: "Local Idol Group Profile & Interactive Music Showcase.",
     follow: "Follow MUSES",
