@@ -73,6 +73,18 @@ export async function loginWithGoogle(): Promise<{
   return authService.loginWithGoogle();
 }
 
+export async function loginWithGoogleIdToken(idToken: string): Promise<{
+  success: boolean;
+  error?: string;
+  user?: User;
+}> {
+  const result = await authService.loginWithGoogleIdToken(idToken);
+  if (result.success && result.user) {
+    currentUser.set(result.user);
+  }
+  return result;
+}
+
 export async function logoutUser(redirectToAuth = false) {
   currentUser.set(null);
   await authService.signOut();

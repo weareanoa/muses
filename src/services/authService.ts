@@ -524,6 +524,30 @@ export const authService = {
     return { success: true };
   },
 
+  async loginWithGoogleIdToken(
+    idToken: string
+  ): Promise<{ success: boolean; user?: UserProfileDTO; error?: string }> {
+    const sb = getSupabaseClient();
+    if (!sb || typeof window === 'undefined') {
+      return {
+        success: false,
+        error: 'Supabase belum dikonfigurasi.',
+      };
+    }
+    const { data, error } = await sb.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+    if (error || !data?.user) {
+      return {
+        success: false,
+        error: error?.message || 'Login Google gagal.',
+      };
+    }
+    const user = await this.getSessionUser();
+    return { success: true, user: user || undefined };
+  },
+
   async signOut(): Promise<void> {
     const sb = getSupabaseClient();
     if (sb) {
