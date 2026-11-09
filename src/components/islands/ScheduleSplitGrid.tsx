@@ -5,6 +5,7 @@ import type { ScheduleDTO } from '../../types/database';
 import { MapPin, Clock, Ticket } from 'lucide-react';
 import { getDict, type Locale } from '../../i18n/dictionary';
 import { BackgroundGradientAnimation } from '../ui/background-gradient-animation';
+import { Badge } from '../ui/badge';
 
 export type ScheduleItem = ScheduleDTO;
 
@@ -55,33 +56,41 @@ export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }
     const s = status.toLowerCase();
     if (s.includes('avail') || s.includes('tersedia')) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#EAF5EC] text-[#1B5E20] border border-[#2E7D32]/25 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D32] shrink-0" aria-hidden="true" />
-          <span>{d.statusAvailable}</span>
-        </span>
+        <Badge
+          variant="success"
+          className="rounded-md px-2 py-0.5 text-[10px] sm:text-[11px] font-medium tracking-wide shrink-0"
+        >
+          {d.statusAvailable}
+        </Badge>
       );
     }
     if (s.includes('fast') || s.includes('selling') || s.includes('hampir')) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#FEF7E6] text-[#8C6200] border border-[#C9971C]/35 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C9971C] shrink-0" aria-hidden="true" />
-          <span>{d.statusSellingFast}</span>
-        </span>
+        <Badge
+          variant="warning"
+          className="rounded-md px-2 py-0.5 text-[10px] sm:text-[11px] font-medium tracking-wide shrink-0"
+        >
+          {d.statusSellingFast}
+        </Badge>
       );
     }
     if (s.includes('soon') || s.includes('coming') || s.includes('segera')) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#F2F4F8] text-[#34495E] border border-[#34495E]/20 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#5D6D7E] shrink-0" aria-hidden="true" />
-          <span>{d.statusComingSoon}</span>
-        </span>
+        <Badge
+          variant="secondary"
+          className="rounded-md px-2 py-0.5 text-[10px] sm:text-[11px] font-medium tracking-wide shrink-0 border border-zinc-200/80 bg-zinc-100 text-zinc-600"
+        >
+          {d.statusComingSoon}
+        </Badge>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase bg-[#F2EFEA] text-[#6B6358] border border-[#D5CEC2] shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#9E9689] shrink-0" aria-hidden="true" />
-        <span>{d.statusSoldOut}</span>
-      </span>
+      <Badge
+        variant="outline"
+        className="rounded-md px-2 py-0.5 text-[10px] sm:text-[11px] font-medium tracking-wide shrink-0 border-zinc-200 text-zinc-400"
+      >
+        {d.statusSoldOut}
+      </Badge>
     );
   };
 
