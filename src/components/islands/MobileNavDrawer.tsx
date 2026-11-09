@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Menu, X, ChevronRight, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronRight } from 'lucide-react';
 import { withBase } from '../../lib/paths';
 import { getDict, type Locale } from '../../i18n/dictionary';
 
@@ -75,15 +75,15 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
 
   return (
     <div className="lg:hidden flex items-center">
-      {/* Trigger Button */}
+      {/* Trigger Button - Clean without rounded badge container */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-9 h-9 rounded-full bg-[#FAF6EE] border border-[#C9971C]/35 text-[#1F1A12] hover:text-[#8C6A1C] hover:bg-[#F3ECE0] flex items-center justify-center transition-all shadow-2xs active:scale-95 focus:outline-hidden"
+        className="p-2 -m-1 text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center active:scale-95 focus:outline-hidden"
         aria-label="Buka Menu Navigasi"
         aria-expanded={isOpen}
       >
-        <Menu className="w-4.5 h-4.5 text-[#2A1D0B]" strokeWidth={2} />
+        <Menu className="w-5 h-5 text-[#1F1A12]" strokeWidth={1.8} />
       </button>
 
       {/* Drawer Overlay */}
@@ -177,19 +177,9 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
             </div>
 
             {/* Footer Drawer */}
-            <div className="p-5 border-t border-[#C9971C]/20 bg-[#FAF6EE]/60 space-y-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#8C6A1C]">
-                  <Sparkles className="w-3.5 h-3.5 text-[#C9971C]" />
-                  <span>MUSES OFFICIAL</span>
-                </div>
-                <p className="text-[11px] text-[#6E6453] leading-relaxed">
-                  Semesta kecil kami, momen kecil, kenangan abadi.
-                </p>
-              </div>
-
+            <div className="p-5 border-t border-[#C9971C]/20 bg-[#FAF6EE]/60 space-y-3">
               {/* Social Media Links */}
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center gap-2">
                 <a
                   href="https://instagram.com/official.muses"
                   target="_blank"
