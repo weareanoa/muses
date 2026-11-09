@@ -68,7 +68,7 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
 
   return (
     <div className="flex items-center gap-2 sm:gap-2.5">
-      {/* Shopping Cart button with circular amber badge */}
+      {/* Shopping Cart button */}
       <button
         type="button"
         onClick={() => openCart()}
@@ -79,11 +79,13 @@ export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
           className="w-4.5 h-4.5 text-[#1F1A12] group-hover:text-[#C9971C] transition-colors"
           strokeWidth={1.8}
         />
-        <span
-          className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#DEB74E] text-[#1F1A12] text-[9.5px] font-bold flex items-center justify-center leading-none shadow-[0_1px_2px_rgba(0,0,0,0.12)] tabular-nums pointer-events-none"
-        >
-          {cartCountDisplay}
-        </span>
+        {cartCountDisplay > 0 && (
+          <span
+            className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#DEB74E] text-[#1F1A12] text-[9.5px] font-bold flex items-center justify-center leading-none shadow-[0_1px_2px_rgba(0,0,0,0.12)] tabular-nums pointer-events-none"
+          >
+            {cartCountDisplay > 99 ? '99+' : cartCountDisplay}
+          </span>
+        )}
       </button>
 
       <LanguageSwitcher locale={locale} />

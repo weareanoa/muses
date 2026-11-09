@@ -48,7 +48,7 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
     { id: 'discography', num: '03', name: d.nav.discography, href: '/#discography' },
     { id: 'schedule', num: '04', name: d.nav.schedule, href: '/#schedule' },
     { id: 'gallery', num: '05', name: d.nav.gallery, href: '/#gallery' },
-    { id: 'store', num: '06', name: d.nav.store, href: '/#store', tag: 'Cheki' },
+    { id: 'store', num: '06', name: d.nav.store, href: '/#store' },
     { id: 'kontak', num: '07', name: d.nav.contact, href: '/#kontak' },
   ];
 
@@ -124,10 +124,10 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full bg-[#FAF6EE] border border-[#C9971C]/30 text-[#1F1A12] hover:bg-[#F0E6D2] flex items-center justify-center transition-all active:scale-95 focus:outline-hidden"
+                  className="p-2 -m-1 text-[#1F1A12] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center active:scale-95 focus:outline-hidden"
                   aria-label="Tutup Menu"
                 >
-                  <X className="w-4 h-4 text-[#2A1D0B]" strokeWidth={2} />
+                  <X className="w-5 h-5 text-[#1F1A12]" strokeWidth={1.8} />
                 </button>
               </div>
 
@@ -158,18 +158,11 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
                         <span className="text-[13px] tracking-wide">{item.name}</span>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        {item.tag && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#E5BF58]/40 text-[#423218] font-bold normal-case tracking-normal">
-                            {item.tag}
-                          </span>
-                        )}
-                        <ChevronRight
-                          className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 ${
-                            isActive ? 'text-[#1F1A12]' : 'text-[#8C6A1C]/60 group-hover:text-[#1F1A12]'
-                          }`}
-                        />
-                      </div>
+                      <ChevronRight
+                        className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 ${
+                          isActive ? 'text-[#1F1A12]' : 'text-[#8C6A1C]/60 group-hover:text-[#1F1A12]'
+                        }`}
+                      />
                     </a>
                   );
                 })}
@@ -179,51 +172,51 @@ export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: Mo
             {/* Footer Drawer */}
             <div className="p-5 border-t border-[#C9971C]/20 bg-[#FAF6EE]/60 space-y-3">
               {/* Social Media Links */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <a
                   href="https://instagram.com/official.muses"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-white border border-[#C9971C]/30 flex items-center justify-center hover:bg-[#C9971C]/15 transition-colors shadow-2xs"
+                  className="p-1.5 -m-1 text-[#6E6453] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center"
                   aria-label="Instagram MUSES"
                 >
-                  <img src={withBase('/icon/Instagram.svg')} alt="" className="w-4 h-4 object-contain" />
+                  <img src={withBase('/icon/Instagram.svg')} alt="" className="w-4.5 h-4.5 object-contain opacity-75 hover:opacity-100 transition-opacity" />
                 </a>
                 <a
                   href="https://tiktok.com/@muses.official"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-white border border-[#C9971C]/30 flex items-center justify-center hover:bg-[#C9971C]/15 transition-colors shadow-2xs"
+                  className="p-1.5 -m-1 text-[#6E6453] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center"
                   aria-label="TikTok MUSES"
                 >
-                  <img src={withBase('/icon/TikTok.svg')} alt="" className="w-4 h-4 object-contain" />
+                  <img src={withBase('/icon/TikTok.svg')} alt="" className="w-4.5 h-4.5 object-contain opacity-75 hover:opacity-100 transition-opacity" />
                 </a>
                 <a
                   href="https://youtube.com/@muses.official"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-white border border-[#C9971C]/30 flex items-center justify-center hover:bg-[#C9971C]/15 transition-colors shadow-2xs"
+                  className="p-1.5 -m-1 text-[#6E6453] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center"
                   aria-label="YouTube MUSES"
                 >
-                  <img src={withBase('/icon/YouTube.svg')} alt="" className="w-4 h-4 object-contain" />
+                  <img src={withBase('/icon/YouTube.svg')} alt="" className="w-4.5 h-4.5 object-contain opacity-75 hover:opacity-100 transition-opacity" />
                 </a>
                 <a
                   href="https://x.com/muses_ofc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-white border border-[#C9971C]/30 flex items-center justify-center hover:bg-[#C9971C]/15 transition-colors shadow-2xs"
+                  className="p-1.5 -m-1 text-[#6E6453] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center"
                   aria-label="X MUSES"
                 >
-                  <img src={withBase('/icon/X (Twitter).svg')} alt="" className="w-4 h-4 object-contain" />
+                  <img src={withBase('/icon/X (Twitter).svg')} alt="" className="w-4.5 h-4.5 object-contain opacity-75 hover:opacity-100 transition-opacity" />
                 </a>
                 <a
                   href="https://open.spotify.com/track/61nWL7aJ1GyNGxi6mhsrYZ"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-white border border-[#C9971C]/30 flex items-center justify-center hover:bg-[#C9971C]/15 transition-colors shadow-2xs"
+                  className="p-1.5 -m-1 text-[#6E6453] hover:text-[#C9971C] transition-colors cursor-pointer flex items-center justify-center"
                   aria-label="Spotify MUSES"
                 >
-                  <img src={withBase('/icon/Spotify.svg')} alt="" className="w-4 h-4 object-contain" />
+                  <img src={withBase('/icon/Spotify.svg')} alt="" className="w-4.5 h-4.5 object-contain opacity-75 hover:opacity-100 transition-opacity" />
                 </a>
               </div>
 
