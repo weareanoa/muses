@@ -1,7 +1,7 @@
 ---
 import { withBase } from '../../lib/paths';
 import { getDict, type Locale } from '../../i18n/dictionary';
-import { gmailComposeLink } from '../../lib/contact';
+import { gmailComposeLink, MUSES_EMAIL } from '../../lib/contact';
 
 interface Props {
   locale?: Locale;
@@ -62,7 +62,7 @@ const gmailUrl = gmailComposeLink(d.emailSubject, d.emailBody);
           rel="noopener noreferrer"
           class="inline-block mt-5 text-lg sm:text-xl font-bold text-[#1A140B] underline decoration-[#C9971C] underline-offset-4 break-all hover:text-[#8E6D24] transition-colors"
         >
-          konnichiwa@muses.id
+          {MUSES_EMAIL}
         </a>
         <p class="text-xs text-[#5C4F39] leading-relaxed mt-3 max-w-lg">
           {d.advice}

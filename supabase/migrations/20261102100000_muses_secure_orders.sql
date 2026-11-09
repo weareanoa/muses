@@ -541,20 +541,9 @@ begin
     raise exception 'INVALID_CONTACT';
   end if;
 
-  loop
-    v_attempt := v_attempt + 1;
-    v_code := 1 + floor(random() * 999)::integer;
-    v_payable := v_subtotal + v_code;
-    exit when not exists (
-      select 1 from public.transactions
-      where payable_amount = v_payable
-        and unique_code > 0
-        and status in ('unpaid', 'awaiting_verification')
-    );
-    if v_attempt > 50 then
-      raise exception 'TRY_AGAIN';
-    end if;
-  end loop;
+  -- Kode unik ditiadakan, pembayaran pas sesuai subtotal (misal pas 40k)
+  v_code := 0;
+  v_payable := v_subtotal;
 
   v_number := 'INV-' || to_char(now() at time zone 'Asia/Jakarta', 'YYYYMMDD')
     || '-' || upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8));

@@ -117,7 +117,8 @@ export default function PaymentIsland({ locale = 'id' }: { locale?: Locale }) {
   const isAwaiting = order.status === 'awaiting_verification';
   const isPaid = ['processing', 'ready', 'completed'].includes(order.status);
   const isClosed = ['expired', 'rejected', 'cancelled'].includes(order.status);
-  const qrUrl = settings?.qrisImageUrl ? resolveAsset(settings.qrisImageUrl) : '';
+  const rawQr = settings?.qrisImageUrl?.trim() || '/qr.PNG';
+  const qrUrl = resolveAsset(rawQr);
   const subtotal = order.totalPrice;
   const closedTitle =
     order.status === 'expired'

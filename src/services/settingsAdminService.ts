@@ -16,7 +16,7 @@ export const DEFAULT_APP_SETTINGS: AppSettingsDTO = {
   maxOpenUnpaidOrders: 2,
   maxQtyPerItem: 10,
   orderCooldownThreshold: 3,
-  qrisImageUrl: '',
+  qrisImageUrl: '/images/payment/qris.png',
 };
 
 function mapSettings(rows: { key: string; value: unknown }[]): AppSettingsDTO {

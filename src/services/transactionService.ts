@@ -160,7 +160,7 @@ export const transactionService = {
   },
 
   async getPaymentSettings(): Promise<PaymentSettings> {
-    const fallback: PaymentSettings = { qrisImageUrl: '', gatewayEnabled: false };
+    const fallback: PaymentSettings = { qrisImageUrl: '/qr.PNG', gatewayEnabled: false };
     const sb = getSupabaseClient();
     if (!sb) return fallback;
 
@@ -170,8 +170,9 @@ export const transactionService = {
       .in('key', ['qris_image_url', 'payment_gateway_enabled']);
 
     const byKey = new Map((data || []).map((row: any) => [row.key, row.value]));
+    const dbQris = String(byKey.get('qris_image_url') ?? '').trim();
     return {
-      qrisImageUrl: String(byKey.get('qris_image_url') ?? ''),
+      qrisImageUrl: dbQris || '/qr.PNG',
       gatewayEnabled: byKey.get('payment_gateway_enabled') === true,
     };
   },
