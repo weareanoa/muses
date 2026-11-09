@@ -8,11 +8,11 @@
 
 export type Locale = "id" | "en";
 
-export const DEFAULT_LOCALE: Locale = "id";
+export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "muses_locale";
 
 export function resolveLocale(cookieValue: string | undefined): Locale {
-  return cookieValue === "en" ? "en" : "id";
+  return cookieValue === "id" ? "id" : "en";
 }
 
 export const DATE_LOCALE: Record<Locale, string> = {

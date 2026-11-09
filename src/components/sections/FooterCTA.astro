@@ -7,7 +7,7 @@ interface Props {
   locale?: Locale;
 }
 
-const { locale = 'id' } = Astro.props;
+const { locale = 'en' } = Astro.props;
 const dict = getDict(locale);
 const d = dict.footer;
 const gmailUrl = gmailComposeLink(dict.contact.emailSubject, dict.contact.emailBody);

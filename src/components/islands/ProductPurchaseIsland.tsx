@@ -46,7 +46,7 @@ interface Props {
   relatedProducts?: Product[];
 }
 
-export default function ProductPurchaseIsland({ product, relatedProducts = [], locale = 'id' }: Props & { locale?: Locale }) {
+export default function ProductPurchaseIsland({ product, relatedProducts = [], locale = 'en' }: Props & { locale?: Locale }) {
   const d = getDict(locale).product;
   const images = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);

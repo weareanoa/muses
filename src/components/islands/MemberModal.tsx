@@ -18,7 +18,7 @@ const modalOrderedMembers = [...membersData].sort(
   (a, b) => MODAL_MEMBER_ORDER.indexOf(a.id as any) - MODAL_MEMBER_ORDER.indexOf(b.id as any)
 );
 
-export default function MemberModal({ locale = 'id' }: { locale?: Locale }) {
+export default function MemberModal({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).member;
   const currentId = useStore(activeMemberId);
   const overlayRef = useRef<HTMLDivElement>(null);

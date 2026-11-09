@@ -25,7 +25,7 @@ const FILTER_TABS = [
 
 type FilterTabId = typeof FILTER_TABS[number]['id'];
 
-export default function HistoryIsland({ locale = 'id' }: { locale?: Locale }) {
+export default function HistoryIsland({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).orders;
   const [activeFilter, setActiveFilter] = useState<FilterTabId>('all');
   const [orders, setOrders] = useState<TransactionDTO[]>([]);

@@ -13,7 +13,7 @@ export function StoreCard({
   item,
   onAddToCart,
   isAdded,
-  locale = 'id',
+  locale = 'en',
 }: {
   item: CatalogItem;
   onAddToCart: (item: CatalogItem, variant: string) => void;
@@ -115,7 +115,7 @@ function ComingSoonPanel({
   category,
   members,
   onShowCheki,
-  locale = 'id',
+  locale = 'en',
 }: {
   category: string;
   members: { name: string; color: string; image: string }[];
@@ -168,7 +168,7 @@ function ComingSoonPanel({
   );
 }
 
-export default function StoreCatalog({ locale = 'id' }: { locale?: Locale }) {
+export default function StoreCatalog({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).store;
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(() =>
     productService.getInitialCatalogItems()

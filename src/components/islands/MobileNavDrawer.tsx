@@ -8,7 +8,7 @@ interface MobileNavDrawerProps {
   currentPath?: string;
 }
 
-export default function MobileNavDrawer({ locale = 'id', currentPath = '/' }: MobileNavDrawerProps) {
+export default function MobileNavDrawer({ locale = 'en', currentPath = '/' }: MobileNavDrawerProps) {
   const d = getDict(locale);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');

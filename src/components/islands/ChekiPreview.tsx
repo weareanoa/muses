@@ -4,7 +4,7 @@ import { addToCart } from '../../stores/cartStore';
 import type { CatalogItemDTO } from '../../types/database';
 import type { Locale } from '../../i18n/dictionary';
 
-export default function ChekiPreview({ items, locale = 'id' }: { items: CatalogItemDTO[]; locale?: Locale }) {
+export default function ChekiPreview({ items, locale = 'en' }: { items: CatalogItemDTO[]; locale?: Locale }) {
   const [addedIds, setAddedIds] = useState<Record<string, boolean>>({});
 
   const handleAddToCart = (item: CatalogItemDTO, variant: string) => {

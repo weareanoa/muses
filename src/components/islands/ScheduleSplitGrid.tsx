@@ -9,7 +9,7 @@ import { Badge } from '../ui/badge';
 
 export type ScheduleItem = ScheduleDTO;
 
-export default function ScheduleSplitGrid({ locale = 'id' }: { locale?: Locale }) {
+export default function ScheduleSplitGrid({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).schedule;
   const [schedules, setSchedules] = useState<ScheduleItem[]>(() =>
     scheduleService.getInitialSchedules()

@@ -16,7 +16,7 @@ import { currentUser } from '../../stores/authStore';
 import { formatRupiah } from '../../lib/format';
 import { fmt, getDict, localizeAddressLabel, localizeOption, type Locale } from '../../i18n/dictionary';
 
-export default function CartDrawer({ locale = 'id' }: { locale?: Locale }) {
+export default function CartDrawer({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).cart;
   const isOpen = useStore(isCartOpen);
   const items = useStore(cartItems);

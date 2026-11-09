@@ -8,7 +8,7 @@ interface Props {
   locale?: Locale;
 }
 
-const { locale = 'id' } = Astro.props;
+const { locale = 'en' } = Astro.props;
 const d = getDict(locale).home;
 
 const members = [...(withBaseDeep(membersRaw) as readonly Member[])].sort(

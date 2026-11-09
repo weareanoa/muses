@@ -45,7 +45,7 @@ function getBentoClasses(idx: number): string {
   }
 }
 
-export default function GalleryGrid({ locale = 'id' }: { locale?: Locale }) {
+export default function GalleryGrid({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).gallery;
   const home = getDict(locale).home;
   const titleOf = (card: GalleryItem) => (locale === 'en' && card.titleEn ? card.titleEn : card.title);

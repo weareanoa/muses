@@ -18,7 +18,7 @@ import { withBase } from '../../lib/paths';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getDict, type Locale } from '../../i18n/dictionary';
 
-export default function UserNavIsland({ locale = 'id' }: { locale?: Locale }) {
+export default function UserNavIsland({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale);
   const user = useStore(currentUser);
   const cartCount = useStore(totalCartCount);

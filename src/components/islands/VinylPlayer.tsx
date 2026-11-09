@@ -17,7 +17,7 @@ import { fmt, getDict, type Locale } from '../../i18n/dictionary';
 
 const discographyData = withBaseDeep(discographyDataRaw);
 
-export default function VinylPlayer({ locale = 'id' }: { locale?: Locale }) {
+export default function VinylPlayer({ locale = 'en' }: { locale?: Locale }) {
   const d = getDict(locale).discography;
   const activeTrack = useStore(currentTrack);
   const playing = useStore(isPlaying);
